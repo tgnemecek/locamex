@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router';
 import { Accounts } from 'meteor/accounts-base';
 
+import { UserTypes } from '../api/user-types';
+
 export default class Signup extends React.Component {
   constructor(props) {
     super(props);
@@ -27,19 +29,6 @@ export default class Signup extends React.Component {
       }
     });
   }
-  getUserTypes() {
-    if (this.state.links.length === 0) {
-      return (
-        <div className="item">
-          <p className="item__status-message">No Links Found</p>
-        </div>
-      );
-    }
-    return this.state.links.map((link) => {
-      const shortUrl = Meteor.absoluteUrl(link._id);
-      return <LinksListItem key={link._id} shortUrl={shortUrl} {...link}/>
-    });
-  }
   render() {
     return (
       <div className="boxed-view">
@@ -50,12 +39,9 @@ export default class Signup extends React.Component {
 
           <form onSubmit={this.onSubmit.bind(this)} noValidate className="boxed-view__form">
             <input type="text" ref="userName" name="userName" placeholder="Nome"/>
-            <input type="text" ref="userLastName" name="userLastName" placeholder="Sobrenome"/>
             <select name="userType">
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
+              <option value="adm">Administrador</option>
+              <option value="guest">Visitante</option>
             </select>
             <input type="email" ref="email" name="email" placeholder="Email"/>
             <input type="password" ref="password" name="password" placeholder="Senha"/>
