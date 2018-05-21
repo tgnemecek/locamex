@@ -1,8 +1,26 @@
-import {Mongo} from 'meteor/mongo';
+import { Mongo } from 'meteor/mongo';
 
 export const UserTypes = new Mongo.Collection('userTypes');
 
-// UserTypes.remove({});
+const userTypes = [
+    {
+        type: 'adm',
+        label: 'Administrador'
+    }, {
+        type: 'guest',
+        label: 'Visitante'
+    },
+    , {
+        type: 'regular',
+        label: 'Teste'
+    }
+]
 
-UserTypes.insert({type: "adm"});
-UserTypes.insert({type: "guest"});
+if(UserTypes.find().count() < userTypes.length) {
+    userTypes.forEach(userType => {
+        if (UserTypes.find({ type: userType.type }).fetch().length === 0) {
+            console.log('Inserted new user type: ' + userType.type);
+            UserTypes.insert(userType);
+        }
+    });
+} 
