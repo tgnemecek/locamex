@@ -58,6 +58,7 @@ export default class AddService extends React.Component {
          isOpen={this.state.isOpen}
          className="boxed-view"
          contentLabel="Adicionar Serviço ao Contrato"
+         appElement={document.body}
          onRequestClose={this.handleModalClose.bind(this)}
          className="boxed-view__box"
          overlayClassName="boxed-view boxed-view--modal"
@@ -94,7 +95,6 @@ class ListServices extends React.Component {
   }
 
   handleChange(e) {
-    console.log('array', servicesArray);
     var newPrice = '';
     this.state.price ? newPrice = this.state.price : newPrice = 0;
     newPrice = parseFloat(Math.round(newPrice * 100) / 100).toFixed(2);
