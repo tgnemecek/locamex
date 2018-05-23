@@ -37,8 +37,8 @@ export const routes = (
     <Route path="/" component={Login} onEnter={onEnterPublicPage}/>
     <Route path="/signup" component={Signup} onEnter={onEnterPublicPage}/>
     <Route path="/dashboard" component={Dashboard} onEnter={onEnterPrivatePage}/>
-    <Route path="/services" component={AddService} onEnter={onEnterPublicPage}/>
-    <Route path="/listservices" component={ListServices} onEnter={onEnterPublicPage}/>
+    <Route path="/services" component={AddService}/>
+    <Route path="/listservices" component={ListServices}/>
     <Route path="*" component={NotFound}/>
   </Router>
 );

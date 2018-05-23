@@ -28,11 +28,10 @@ if (Services.find().count() === 0) {
 
 Meteor.methods({
   'services.remove'(_id) {
-    console.log(this.userId);
-    // if (!this.userId) {
-    //   throw new Meteor.Error('not-authorized');
-    // }
-    //
-    // Services.remove({ _id });
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    Services.remove({ _id });
   }
 })
