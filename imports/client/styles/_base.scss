@@ -30,9 +30,28 @@ a {
   color: black;
 }
 
-input[type=text], input[type=email], input[type=password] {
+label {
+  font-size: $base-font-size;
+  margin: ($space /2);
+  padding: $input-spacing;
+}
+
+input[type=text], input[type=number], input[type=email], input[type=password], select {
   border: 1px solid $input-border;
   font-size: $base-font-size;
-  margin-bottom: $space;
+  margin: ($space /2);
   padding: $input-spacing;
+}
+
+/* Hide HTML5 Up and Down arrows. */
+input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+tr:nth-child(even) {
+    background-color: $grey;
 }

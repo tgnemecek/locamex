@@ -4,11 +4,23 @@ export const Services = new Mongo.Collection('services');
 
 if (Services.find().count() === 0) {
   Services.insert({
-    description: "Novo Serviço 1",
-    price: 10
+    code: '001',
+    description: "Serviço 1",
+    price: 1200
   });
   Services.insert({
-    description: "Novo Serviço 2",
-    price: 20
+    code: '002',
+    description: "Serviço 2",
+    price: 3000
+  });
+  Services.insert({
+    code: '003',
+    description: "Serviço 3",
+    price: 400
+  });
+  Services.insert({
+    code: '004',
+    description: "Serviço 4",
+    price: 2000
   });
 }

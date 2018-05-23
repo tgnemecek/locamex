@@ -1,0 +1,22 @@
+.add-services__select {
+  margin: ($space /2);
+  width: 50%;
+}
+
+.add-services__input {
+  width: 6rem;
+}
+
+.add-services__line-div {
+  align-items: flex-end;
+  display: flex;
+  justify-content: space-between;
+}
+
+.add-services__label {
+  border: none;
+  color: $dark-grey;
+  flex-grow: 1;
+  font-style: italic;
+  margin: ($space /2);
+}

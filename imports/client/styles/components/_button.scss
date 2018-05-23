@@ -1,11 +1,19 @@
+.button__main-div {
+  display: flex;
+  justify-content: center;
+  margin-top: $space;
+}
+
 .button {
   background-color: $button-bg;
   border: none;
   color: $button-color;
   cursor: pointer;
+  flex-basis: 0;
+  flex-grow: 1;
   font-size: $base-font-size;
   line-height: 1.2;
-  margin-bottom: $space;
+  margin: ($space /2);
   padding: $input-spacing;
   text-transform: uppercase;
 }
@@ -19,7 +27,8 @@
   background-color: transparent;
   border: 1px solid $button-pill-color;
   color: $button-pill-color;
-  margin: 0 ($space / 2) 0 0;
+  margin: ($space /2);
+  min-width: 28px;
   padding: .3rem .8rem;
 }
 
@@ -27,6 +36,12 @@
   background: $button-secondary-bg;
   border: 1px solid $button-secondary-border-color;
   color: $button-secondary-color;
+}
+
+.button--danger {
+  background: $button-danger-bg;
+  border: 1px solid $button-danger-border-color;
+  color: $button-danger-color;
 }
 
 .button--link-text {

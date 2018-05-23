@@ -7,6 +7,7 @@ import Signup from '../ui/Signup';
 import Dashboard from '../ui/Dashboard';
 import NotFound from '../ui/NotFound';
 import AddService from '../ui/AddService';
+import ListServices from '../ui/ListServices';
 
 const unauthenticatedPages = ['/', '/signup'];
 const authenticatedPages = ['/dashboard'];
@@ -37,6 +38,7 @@ export const routes = (
     <Route path="/signup" component={Signup} onEnter={onEnterPublicPage}/>
     <Route path="/dashboard" component={Dashboard} onEnter={onEnterPrivatePage}/>
     <Route path="/services" component={AddService} onEnter={onEnterPublicPage}/>
+    <Route path="/listservices" component={ListServices} onEnter={onEnterPublicPage}/>
     <Route path="*" component={NotFound}/>
   </Router>
 );

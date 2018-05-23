@@ -1,0 +1,31 @@
+.list-view__table {
+  width: 100%;
+}
+
+.list-view__tbody {
+  width: 100%;
+}
+
+.list-view__tbody > tr > th, .list-view__tbody > tr > td {
+  padding: ($space /2);
+}
+
+.list-view__left-align {
+  text-align: left;
+}
+
+.list-view__right-align {
+  text-align: right;
+}
+
+.list-view__small {
+  width: 40px;
+}
+
+.list-view__medium {
+  width: 100px;
+}
+
+.list-view__edit {
+  width: 1px;
+}
