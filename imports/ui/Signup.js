@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
-import { Accounts } from 'meteor/accounts-password';
+import { Accounts } from 'meteor/accounts-base';
 
 import { UserTypes } from '../api/user-types';
 
@@ -22,7 +22,7 @@ export default class Signup extends React.Component {
       userType: this.refs.userType.value.trim()
     }
 
-    if (password.length < 9) {
+    if (password.length < 7) {
       return this.setState({error: 'Password must be more than 8 characters long.'})
     }
 
@@ -55,7 +55,7 @@ export default class Signup extends React.Component {
           <form onSubmit={this.onSubmit.bind(this)} noValidate className="boxed-view__form">
             <input type="text" ref="userName" name="userName" placeholder="Nome"/>
             <input type="text" ref="userLastname" name="userLastname" placeholder="Sobrenome"/>
-            <select name="userType">
+            <select name="userType" ref="userType">
               {this.listTypes()}
             </select>
             <input type="email" ref="email" name="email" placeholder="Email"/>
