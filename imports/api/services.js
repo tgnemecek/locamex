@@ -1,4 +1,5 @@
-import {Mongo} from 'meteor/mongo';
+import { Mongo } from 'meteor/mongo';
+import { Meteor } from 'meteor/meteor';
 
 export const Services = new Mongo.Collection('services');
 
@@ -24,3 +25,14 @@ if (Services.find().count() === 0) {
     price: 2000
   });
 }
+
+Meteor.methods({
+  'services.remove'(_id) {
+    console.log(this.userId);
+    // if (!this.userId) {
+    //   throw new Meteor.Error('not-authorized');
+    // }
+    //
+    // Services.remove({ _id });
+  }
+})

@@ -9,10 +9,6 @@ const userTypes = [
     }, {
         type: 'guest',
         label: 'Visitante'
-    },
-    , {
-        type: 'regular',
-        label: 'Teste'
     }
 ]
 
@@ -23,4 +19,4 @@ if(UserTypes.find().count() < userTypes.length) {
             UserTypes.insert(userType);
         }
     });
-} 
+}

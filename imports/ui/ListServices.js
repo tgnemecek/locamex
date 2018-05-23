@@ -1,5 +1,5 @@
 import ReactModal from 'react-modal';
-import React, { Fragment } from 'react'
+import React from 'react';
 
 import PrivateHeader from './PrivateHeader';
 import { Services } from '../api/services';
@@ -51,70 +51,73 @@ class ServiceItem extends React.Component {
     super(props);
     this.state = {
       editOpen: false,
-      removeConfirmation: false
+      confirmationWindow: false
     }
+    this.openEditWindow = this.openEditWindow.bind(this);
+    this.closeEditWindow = this.closeEditWindow.bind(this);
+    this.openConfirmationWindow = this.openConfirmationWindow.bind(this);
+    this.closeConfirmationWindow = this.closeConfirmationWindow.bind(this);
+    this.closeWithRemoval = this.closeWithRemoval.bind(this);
   };
 
   openEditWindow() {
     this.setState({editOpen: true});
   };
 
+  closeEditWindow() {
+    this.setState({
+      editOpen: false,
+      confirmationWindow: false
+    });
+  };
+
+  closeWithRemoval() {
+    Meteor.call('services.remove', this.props._id);
+    this.setState({
+      editOpen: false,
+      confirmationWindow: false
+    });
+  };
+
+  openConfirmationWindow() {
+    this.setState({confirmationWindow: true});
+  };
+
+  closeConfirmationWindow() {
+    this.setState({confirmationWindow: false});
+  }
+
   editServiceScreen(open, description, price) {
     if (open) {
       price = parseFloat(Math.round(price * 100) / 100).toFixed(2);
       return(
-        <Fragment>
-          <ReactModal
-            isOpen={true}
-            className="boxed-view"
-            contentLabel="Editar Serviço"
-            appElement={document.body}
-            onRequestClose={() => this.setState({editOpen: false})}
-            className="boxed-view__box"
-            overlayClassName="boxed-view boxed-view--modal"
-            >
-              <h2>Editar Serviço</h2>
-              <div className="edit-services__main-div">
-                <label>Descrição:</label><input type="text" defaultValue={description}/>
-                <label>Preço Base:</label><input type="number" defaultValue={price}/>
-              <button className="button button--danger edit-services--remove" onClick={() => this.setState({removeConfirmation: true})}>Remover</button>
-              </div>
-              <div className="button__main-div">
-                <button className="button button--secondary" onClick={() => this.setState({editOpen: false})}>Fechar</button>
-                <button className="button">Salvar</button>
-              </div>
-          </ReactModal>
-          <div>
-            {this.state.removeConfirmation ? <ConfirmationMessage title="Deseja excluir este serviço?"/> : undefined}
-          </div>
-        </Fragment>
+        <ReactModal
+          isOpen={true}
+          className="boxed-view"
+          contentLabel="Editar Serviço"
+          appElement={document.body}
+          onRequestClose={() => this.setState({editOpen: false})}
+          className="boxed-view__box"
+          overlayClassName="boxed-view boxed-view--modal"
+          >
+            <h2>Editar Serviço</h2>
+            <div className="edit-services__main-div">
+              <label>Descrição:</label><input type="text" defaultValue={description}/>
+              <label>Preço Base:</label><input type="number" defaultValue={price}/>
+            <button className="button button--danger edit-services--remove" onClick={this.openConfirmationWindow}>Remover</button>
+            </div>
+            <div className="button__main-div">
+              <button className="button button--secondary" onClick={this.closeEditWindow}>Fechar</button>
+              <button className="button">Salvar</button>
+            </div>
+            {this.state.confirmationWindow ? <ConfirmationMessage
+              title="Deseja excluir este serviço?"
+              unmountMe={this.closeConfirmationWindow}
+              confirmMe={this.closeWithRemoval}/> : null}
+        </ReactModal>
       )
     }
   }
-
-  // confirmRemovalScreen(open) {
-  //
-  //   if (open) {
-  //     return(
-  //       <ReactModal
-  //         isOpen={true}
-  //         className="boxed-view"
-  //         contentLabel="Mensagem de Confirmação"
-  //         appElement={document.body}
-  //         onRequestClose={() => this.setState({editOpen: false})}
-  //         className="boxed-view__box"
-  //         overlayClassName="boxed-view boxed-view--modal"
-  //         >
-  //           <h3>Deseja excluir o serviço?</h3>
-  //           <div className="button__main-div">
-  //             <button className="button button--secondary" onClick={() => this.setState({editOpen: false})}>Não</button>
-  //             <button className="button button--danger">Sim</button>
-  //           </div>
-  //           {this.editServiceScreen(this.state.editOpen)}
-  //       </ReactModal>
-  //     )
-  //   }
-  // }
 
   render() {
     return (
@@ -122,7 +125,7 @@ class ServiceItem extends React.Component {
           <td className="list-view__left-align">{this.props.code}</td>
           <td className="list-view__left-align">{this.props.description}</td>
           <td className="list-view__right-align">R$ {this.props.price},00</td>
-          <td className="list-view__right-align list-view__edit"><button onClick={this.openEditWindow.bind(this)}>Editar</button></td>
+          <td className="list-view__right-align list-view__edit"><button onClick={this.openEditWindow}>Editar</button></td>
           {this.editServiceScreen(this.state.editOpen, this.props.description, this.props.price)}
         </tr>
     )
