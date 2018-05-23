@@ -3,25 +3,31 @@ import { Meteor } from 'meteor/meteor';
 
 export const Services = new Mongo.Collection('services');
 
+if (Meteor.isServer) {
+  Meteor.publish('servicesPub', () => {
+    return Services.find();
+  })
+}
+
 if (Services.find().count() === 0) {
   Services.insert({
     code: '001',
-    description: "Serviço 1",
+    description: "Serviço A",
     price: 1200
   });
   Services.insert({
     code: '002',
-    description: "Serviço 2",
+    description: "Serviço B",
     price: 3000
   });
   Services.insert({
     code: '003',
-    description: "Serviço 3",
+    description: "Serviço C",
     price: 400
   });
   Services.insert({
     code: '004',
-    description: "Serviço 4",
+    description: "Serviço D",
     price: 2000
   });
 }

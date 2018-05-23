@@ -1,26 +1,35 @@
 import ReactModal from 'react-modal';
 import React from 'react';
+import { Meteor } from 'meteor/meteor';
 
 import PrivateHeader from './PrivateHeader';
 import { Services } from '../api/services';
 import ConfirmationMessage from './ConfirmationMessage';
-
-var serviceDatabase = Services.find().fetch();
 
 export default class ListServices extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      database: serviceDatabase
+      database: []
     }
   };
+
+  componentDidMount() {
+    this.servicesTracker = Tracker.autorun(() => {
+      Meteor.subscribe('servicesPub');
+      const database = Services.find().fetch();
+      this.setState({ database });
+    })
+  }
+
   render() {
     return (
       <div>
         <PrivateHeader title="Lista de Serviços"/>
         <div className="page-content">
-          {this.state.editOpen ? <EditService/> : undefined}
+          {/* <button onClick={this.openEditWindow}>Criar Novo</button>
+          {this.editServiceScreen(this.state.editOpen, this.props.description, this.props.price)} */}
           <table className="list-view__table">
             <tbody className="list-view__tbody">
               <tr>
