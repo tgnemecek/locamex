@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router';
-import { Accounts } from 'meteor/accounts-password';
-
+import { Accounts } from 'meteor/accounts-base';
+import { Tracker } from 'meteor/tracker';
 import { UserTypes } from '../api/user-types';
 
 export default class Signup extends React.Component {
@@ -16,17 +16,17 @@ export default class Signup extends React.Component {
 
     let email = this.refs.email.value.trim();
     let password = this.refs.password.value.trim();
-    let userProfile = {
+    let profile = {
       userName: this.refs.userName.value.trim(),
       userLastname: this.refs.userLastname.value.trim(),
       userType: this.refs.userType.value.trim()
     }
 
-    if (password.length < 9) {
+    if (password.length < 7) {
       return this.setState({error: 'Password must be more than 8 characters long.'})
     }
 
-    Accounts.createUser({email, password, userProfile}, (err) => {
+    Accounts.createUser({email, password, profile}, (err) => {
       if (err) {
         this.setState({error: err.reason});
       } else {
@@ -35,13 +35,23 @@ export default class Signup extends React.Component {
     });
   }
 
+  componentWillMount() {
+    Tracker.autorun(() => {
+      Meteor.subscribe('getUserTypes');
+      
+      const userTypes = UserTypes.find().fetch();
+      this.setState({ userTypes });
+    })
+  }
+
   listTypes() {
-    let userTypes = UserTypes.find().fetch();
-    return userTypes.map(userType => {
-      return (
-        <option key={userType.type} value={userType.type}>{userType.label}</option>
-      )
-    });
+    if(this.state.userTypes) {
+      return this.state.userTypes.map(userType => {
+        return (
+          <option key={userType.type} value={userType.type}>{userType.label}</option>
+        )
+      });
+    }
   }
 
   render() {
@@ -55,7 +65,7 @@ export default class Signup extends React.Component {
           <form onSubmit={this.onSubmit.bind(this)} noValidate className="boxed-view__form">
             <input type="text" ref="userName" name="userName" placeholder="Nome"/>
             <input type="text" ref="userLastname" name="userLastname" placeholder="Sobrenome"/>
-            <select name="userType">
+            <select name="userType" ref="userType">
               {this.listTypes()}
             </select>
             <input type="email" ref="email" name="email" placeholder="Email"/>
