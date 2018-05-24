@@ -13,11 +13,11 @@ if(Meteor.isServer) {
             label: 'Convidado'
         }
     ];
-    
+
     Meteor.publish('getUserTypes', () => {
         return UserTypes.find();
     });
-    
+
     //adds new userTypes
     if(UserTypes.find().count() < userTypes.length) {
         userTypes.forEach(userType => {
@@ -27,10 +27,10 @@ if(Meteor.isServer) {
             }
         });
     }
-    
+
     //removes old userTypes
     if(UserTypes.find().count() > userTypes.length) {
-        UserTypes.find().fetch().forEach(userType => {        
+        UserTypes.find().fetch().forEach(userType => {
             if (userTypes.filter(uType => uType.type === userType.type).length == 0) {
                 console.log('Removed user type: ' + userType.type);
                 UserTypes.remove({ type: userType.type });
