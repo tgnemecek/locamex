@@ -61,8 +61,13 @@ export default class AddService extends React.Component {
     })
   }
 
+  updateValue() {
+    return 10;
+  }
+
   handleChange(e) {
-    var newPrice = '';
+    let newPrice = '';
+    let inputNumber = this.refs.inputNumber;
 
     this.state.price ? newPrice = this.state.price : newPrice = 0;
     newPrice = parseFloat(Math.round(newPrice * 100) / 100).toFixed(2);
@@ -72,7 +77,7 @@ export default class AddService extends React.Component {
       price: e.target.value
     });
 
-    this.refs.inputNumber.value = newPrice;
+    inputNumber.value = newPrice;
 
   };
 
@@ -80,7 +85,6 @@ export default class AddService extends React.Component {
     return (
       <div className="add-services__line-div" key={key}>
         <select
-          name="services"
           className="add-services__select"
           onChange={this.handleChange.bind(this)}
           onClick={this.handleChange.bind(this)}
@@ -92,8 +96,8 @@ export default class AddService extends React.Component {
           {this.state.price ?
             <label className="add-services__label">Preço Base: R$ {this.state.price},00</label> :
             <label className="add-services__label">-</label>}
-          <input type="number" className="add-services__input--small" ref="quantityInput" placeholder="Qtd."/>
-          <input type="number" className="add-services__input--medium" ref="inputNumber" placeholder="R$"/>
+          <input type="number" className="add-services__input--small" ref="inputQuantity" placeholder="Qtd."/>
+          <input type="number" className="add-services__input--medium" ref="inputNumber" value={this.updateValue.bind(this)} placeholder="R$"/>
         </div>
       </div>
     );
