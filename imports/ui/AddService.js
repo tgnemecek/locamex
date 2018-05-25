@@ -3,6 +3,7 @@ import ReactModal from 'react-modal';
 import "babel-polyfill";
 
 import { Services } from '../api/services';
+import customTypes from '../startup/custom-types';
 
 export default class AddService extends React.Component {
 
@@ -57,6 +58,7 @@ export default class AddService extends React.Component {
 
   onSubmit(e) {
     e.preventDefault();
+    aaa();
   };
 
   handleModalClose() {
@@ -108,11 +110,11 @@ class LineService extends React.Component {
     let inputNumber = this.refs.inputNumber;
 
     this.state.price ? newPrice = this.state.price : newPrice = 0;
-    newPrice = parseFloat(Math.round(newPrice * 100) / 100).toFixed(2);
+    newPrice = customTypes.formatReais(newPrice, false);
 
     this.setState({
       _id: e.target.key,
-      price: e.target.value
+      price: new Number (e.target.value)
     });
 
     inputNumber.value = newPrice;
@@ -135,7 +137,7 @@ class LineService extends React.Component {
         </div>
         <div className="add-services__right-side">
           {this.state.price ?
-            <label className="add-services__label">Preço Base: R$ {this.state.price},00</label> :
+            <label className="add-services__label">Preço Base: {customTypes.formatReais(this.state.price, true)}</label> :
             <label className="add-services__label">-</label>}
           <input type="number" className="add-services__input--small" ref="inputQuantity" placeholder="Qtd."/>
           <input type="number" className="add-services__input--medium" ref="inputNumber" placeholder="R$"/>
