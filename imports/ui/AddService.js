@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactModal from 'react-modal';
+import "babel-polyfill";
 
 import { Services } from '../api/services';
 
@@ -12,6 +13,7 @@ export default class AddService extends React.Component {
       lineCount: 1,
       _id: '',
       price: '',
+      removedLines: [],
       database: []
     }
   };
@@ -24,10 +26,20 @@ export default class AddService extends React.Component {
     })
   };
 
+  existsInArray(array, value) {
+    for (var i = 0; i < array.length; i++) {
+      if (array[i] == value) return true
+    }
+  }
+
   renderLines() {
     var lineBlock = [];
+    var removedLines = this.state.removedLines;
+
     for (var i = 1; i <= this.state.lineCount; i++) {
-      lineBlock[i] = this.listServices(i);
+      if (!removedLines.includes(i)) {
+        lineBlock[i] = <LineService key={i} lineNumber={i} database={this.state.database} removeLine={this.removeLine.bind(this)}/>
+      }
     };
     return lineBlock.map((line) => {
       return line;
@@ -38,16 +50,9 @@ export default class AddService extends React.Component {
     this.setState({lineCount: this.state.lineCount + 1});
   };
 
-  removeLine() {
-    this.setState({lineCount: this.state.lineCount - 1});
-  };
-
-  showRemoveButton() {
-    if (this.state.lineCount < 2) {
-      return undefined;
-    } else {
-      return <button className="button--pill" onClick={this.removeLine.bind(this)}>-</button>
-    };
+  removeLine(lineNumber) {
+    let removedLines = this.state.removedLines;
+    this.setState({ removedLines: removedLines.push(lineNumber) });
   };
 
   onSubmit(e) {
@@ -61,9 +66,42 @@ export default class AddService extends React.Component {
     })
   }
 
-  updateValue() {
-    return 10;
-  }
+  render() {
+     return (
+       <ReactModal
+         isOpen={this.state.isOpen}
+         className="boxed-view"
+         contentLabel="Adicionar Serviço ao Contrato"
+         appElement={document.body}
+         onRequestClose={this.handleModalClose.bind(this)}
+         className="boxed-view__box"
+         overlayClassName="boxed-view boxed-view--modal"
+         >
+         <h1>Adicionar Serviço ao Contrato</h1>
+         <form onSubmit={this.onSubmit.bind(this)} className="boxed-view__form">
+           <div className="add-services__line-div-container">
+             {this.renderLines()}
+             <button className="button--pill button--fix" onClick={this.addLine.bind(this)}>+</button>
+           </div>
+           <div className="button__main-div">
+             <button className="button button--secondary add-services__button" onClick={this.handleModalClose.bind(this)}>Fechar</button>
+             <button className="button add-services__button">Adicionar</button>
+           </div>
+         </form>
+       </ReactModal>
+     );
+  };
+}
+
+class LineService extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      _id: '',
+      price: ''
+    }
+  };
 
   handleChange(e) {
     let newPrice = '';
@@ -81,59 +119,29 @@ export default class AddService extends React.Component {
 
   };
 
-  listServices (key) {
+  render() {
     return (
-      <div className="add-services__line-div" key={key}>
-        <select
-          className="add-services__select"
-          onChange={this.handleChange.bind(this)}
-          onClick={this.handleChange.bind(this)}
-          >
-          <option key="default" hidden value="">Escolha um Serviço</option>
-          {this.state.database.map((service) => {return <option key={service._id} value={service.price}>{service.description}</option>})}
-        </select>
+      <div className="add-services__line-div">
+        <div className="add-services__left-side">
+          <button className="button--pill" onClick={() => this.props.removeLine(this.props.lineNumber)}>x</button>
+          <select
+            className="add-services__select"
+            onChange={this.handleChange.bind(this)}
+            onClick={this.handleChange.bind(this)}
+            >
+            <option key="default" hidden value="">Escolha um Serviço</option>
+            {this.props.database.map((service) => {return <option key={service._id} value={service.price}>{service.description}</option>})}
+          </select>
+        </div>
         <div className="add-services__right-side">
           {this.state.price ?
             <label className="add-services__label">Preço Base: R$ {this.state.price},00</label> :
             <label className="add-services__label">-</label>}
           <input type="number" className="add-services__input--small" ref="inputQuantity" placeholder="Qtd."/>
-          <input type="number" className="add-services__input--medium" ref="inputNumber" value={this.updateValue.bind(this)} placeholder="R$"/>
+          <input type="number" className="add-services__input--medium" ref="inputNumber" placeholder="R$"/>
         </div>
       </div>
-    );
-  };
-
-  render() {
-     return (
-       <ReactModal
-         isOpen={this.state.isOpen}
-         className="boxed-view"
-         contentLabel="Adicionar Serviço ao Contrato"
-         appElement={document.body}
-         onRequestClose={this.handleModalClose.bind(this)}
-         className="boxed-view__box"
-         overlayClassName="boxed-view boxed-view--modal"
-         >
-         <h1>Adicionar Serviço ao Contrato</h1>
-         <form onSubmit={this.onSubmit.bind(this)} className="boxed-view__form">
-           <div>
-             {this.renderLines()}
-           </div>
-           <div className="button__main-div">
-             <button className="button--pill" onClick={this.addLine.bind(this)}>+</button>
-             {this.showRemoveButton()}
-           </div>
-           <div className="button__main-div">
-             <button className="button button--secondary add-services__button" onClick={this.handleModalClose.bind(this)}>Fechar</button>
-             <button className="button add-services__button">Adicionar</button>
-           </div>
-         </form>
-       </ReactModal>
-     );
-  };
-}
-
-
-
-
+      )
+    }
+};
 

@@ -1,5 +1,11 @@
 .add-services__select {
+  flex-grow: 1;
   margin: ($space /2);
+}
+
+.add-services__left-side {
+  display: flex;
+  text-align: left;
   width: 50%;
 }
 
@@ -16,6 +22,10 @@
   width: 6rem;
 }
 
+.add-services__line-div-container {
+  text-align: left;
+}
+
 .add-services__line-div {
   align-items: flex-end;
   display: flex;
@@ -28,4 +38,8 @@
   flex-grow: 1;
   font-style: italic;
   margin: ($space /2);
+}
+
+.button--fix {
+  height: 40px;
 }

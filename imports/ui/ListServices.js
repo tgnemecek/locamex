@@ -62,7 +62,9 @@ class ServiceItem extends React.Component {
     super(props);
     this.state = {
       editOpen: false,
-      confirmationWindow: false
+      confirmationWindow: false,
+      formError: '',
+      price: new Number(this.props.price)
     }
     this.openEditWindow = this.openEditWindow.bind(this);
     this.closeEditWindow = this.closeEditWindow.bind(this);
@@ -99,14 +101,45 @@ class ServiceItem extends React.Component {
     this.setState({confirmationWindow: false});
   }
 
-  createNewService() {
-    Meteor.call('services.insert',
-    this.refs.description.value.trim(),
-    this.refs.price.value.trim());
+  removeSpecialCharacters(e) {
+    let value = e.target.value;
+    value = value.replace(/-./g, '');
+  }
+
+  saveEdits(e) {
+    e.preventDefault();
+
+    let description = this.refs.description.value.trim();
+    let price = this.refs.price.value.trim();
+
+    price = Number(price);
+
+    if (!description || !price) {
+      this.setState({formError: 'Favor preencher todos os campos'})
+      throw new Meteor.Error('required-fields-empty');
+    };
+    Meteor.call('services.update', this.props._id, description, price);
+    this.setState({ price });
     this.closeEditWindow();
   }
 
-  editServiceScreen(open, description, price, createNew) {
+  createNewService(e) {
+    e.preventDefault();
+
+    let description = this.refs.description.value.trim();
+    let price = this.refs.price.value.trim();
+
+    price = Number(price);
+
+    if (!description || !price) {
+      this.setState({formError: 'Favor preencher todos os campos'})
+      throw new Meteor.Error('required-fields-empty');
+    }
+    Meteor.call('services.insert', description, price);
+    this.closeEditWindow();
+  }
+
+  editServiceScreen(open, _id, description, price, createNew) {
     if (open) {
       price = parseFloat(Math.round(price * 100) / 100).toFixed(2);
       return(
@@ -120,15 +153,18 @@ class ServiceItem extends React.Component {
           overlayClassName="boxed-view boxed-view--modal"
           >
             {createNew ? <h2>Criar Novo Serviço</h2> : <h2>Editar Serviço</h2>}
-            <div className="edit-services__main-div">
-              <label>Descrição:</label><input type="text" ref="description" defaultValue={description}/>
-              <label>Preço Base:</label><input type="number" ref="price" defaultValue={price}/>
-              {createNew ? null : <button className="button button--danger edit-services--remove" onClick={this.openConfirmationWindow}>Remover</button>}
-            </div>
-            <div className="button__main-div">
-              <button className="button button--secondary" onClick={this.closeEditWindow}>Fechar</button>
-              {createNew ? <button className="button" onClick={this.createNewService}>Criar</button> : <button className="button">Salvar</button>}
-            </div>
+            {this.state.formError}
+            <form onSubmit={createNew ? this.createNewService : this.saveEdits.bind(this)}>
+              <div className="edit-services__main-div">
+                <label>Descrição:</label><input type="text" ref="description" defaultValue={description}/>
+                <label>Preço Base:</label><input type="number" ref="price" defaultValue={price}/>
+                {createNew ? null : <button type="button" className="button button--danger edit-services--remove" onClick={this.openConfirmationWindow}>Remover</button>}
+              </div>
+              <div className="button__main-div">
+                <button type="button" className="button button--secondary" onClick={this.closeEditWindow}>Fechar</button>
+                {createNew ? <button className="button">Criar</button> : <button className="button">Salvar</button>}
+              </div>
+            </form>
             {this.state.confirmationWindow ? <ConfirmationMessage
               title="Deseja excluir este serviço?"
               unmountMe={this.closeConfirmationWindow}
@@ -151,9 +187,9 @@ class ServiceItem extends React.Component {
           <tr>
             <td className="list-view__left-align">{this.props._id}</td>
             <td className="list-view__left-align">{this.props.description}</td>
-            <td className="list-view__right-align">R$ {this.props.price},00</td>
+            <td className="list-view__right-align">{this.state.price.toLocaleString('pt-br', {minimumFractionDigits: 2 , style: 'currency', currency: 'BRL'})}</td>
             <td className="list-view__right-align list-view__edit"><button className="button--pill list-view__button" onClick={this.openEditWindow}>Editar</button></td>
-            {this.editServiceScreen(this.state.editOpen, this.props.description, this.props.price)}
+            {this.editServiceScreen(this.state.editOpen, this.props._id, this.props.description, this.props.price)}
           </tr>
       )
     }

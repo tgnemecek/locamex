@@ -30,5 +30,15 @@ Meteor.methods({
     }
 
     Services.update({ _id }, { $set: { visible: false } });
+  },
+  'services.update'(_id, description, price) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    Services.update({ _id }, { $set: {
+      description,
+      price
+      } });
   }
 })
