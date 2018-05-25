@@ -15,7 +15,7 @@ Meteor.methods({
       throw new Meteor.Error('not-authorized');
     }
 
-    const _id = Services.find().fetch().length.toString().padStart(4, '0');
+    const _id = Services.find().count().toString().padStart(4, '0');
 
     Services.insert({
       _id,

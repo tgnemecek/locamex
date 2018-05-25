@@ -3,22 +3,31 @@ import ReactModal from 'react-modal';
 
 import { Services } from '../api/services';
 
-var servicesArray = Services.find().fetch();
-
 export default class AddService extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
       isOpen: true,
-      lineCount: 1
+      lineCount: 1,
+      _id: '',
+      price: '',
+      database: []
     }
+  };
+
+  componentDidMount() {
+    this.servicesTracker = Tracker.autorun(() => {
+      Meteor.subscribe('servicesPub');
+      const database = Services.find({ visible: true }).fetch();
+      this.setState({ database });
+    })
   };
 
   renderLines() {
     var lineBlock = [];
     for (var i = 1; i <= this.state.lineCount; i++) {
-      lineBlock[i] = <ListServices key={i}/>
+      lineBlock[i] = this.listServices(i);
     };
     return lineBlock.map((line) => {
       return line;
@@ -52,6 +61,44 @@ export default class AddService extends React.Component {
     })
   }
 
+  handleChange(e) {
+    var newPrice = '';
+
+    this.state.price ? newPrice = this.state.price : newPrice = 0;
+    newPrice = parseFloat(Math.round(newPrice * 100) / 100).toFixed(2);
+
+    this.setState({
+      _id: e.target.key,
+      price: e.target.value
+    });
+
+    this.refs.inputNumber.value = newPrice;
+
+  };
+
+  listServices (key) {
+    return (
+      <div className="add-services__line-div" key={key}>
+        <select
+          name="services"
+          className="add-services__select"
+          onChange={this.handleChange.bind(this)}
+          onClick={this.handleChange.bind(this)}
+          >
+          <option key="default" hidden value="">Escolha um Serviço</option>
+          {this.state.database.map((service) => {return <option key={service._id} value={service.price}>{service.description}</option>})}
+        </select>
+        <div className="add-services__right-side">
+          {this.state.price ?
+            <label className="add-services__label">Preço Base: R$ {this.state.price},00</label> :
+            <label className="add-services__label">-</label>}
+          <input type="number" className="add-services__input--small" ref="quantityInput" placeholder="Qtd."/>
+          <input type="number" className="add-services__input--medium" ref="inputNumber" placeholder="R$"/>
+        </div>
+      </div>
+    );
+  };
+
   render() {
      return (
        <ReactModal
@@ -80,54 +127,6 @@ export default class AddService extends React.Component {
        </ReactModal>
      );
   };
-}
-
-class ListServices extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      _id: '',
-      code: '',
-      description: '',
-      price: ''
-    };
-  }
-
-  handleChange(e) {
-    var newPrice = '';
-    this.state.price ? newPrice = this.state.price : newPrice = 0;
-    newPrice = parseFloat(Math.round(newPrice * 100) / 100).toFixed(2);
-    this.refs.numberInput.value = newPrice;
-
-    this.setState({
-      _id: e.target.key,
-      code: '',
-      description: '',
-      price: e.target.value
-    });
-  };
-
-  render() {
-    return (
-      <div className="add-services__line-div">
-        <select
-          name="services"
-          className="add-services__select"
-          onChange={this.handleChange.bind(this)}
-          onClick={this.handleChange.bind(this)}
-          >
-          <option key="default" hidden value="">Escolha um Serviço</option>
-          {servicesArray.map((services) => {return <option key={services._id} value={services.price}>{services.description}</option>})}
-        </select>
-        {this.state.price ?
-          <label className="add-services__label">Preço Base: R$ {this.state.price},00</label> :
-          <label className="add-services__label">-</label>}
-        <input type="number" className="add-services__input" ref="quantityInput" placeholder="Qtd."/>
-        <input type="number" className="add-services__input" ref="numberInput" placeholder="R$"/>
-      </div>
-    );
-  }
 }
 
 
