@@ -132,6 +132,10 @@ class ServiceItem extends React.Component {
       this.setState({formError: 'Favor preencher todos os campos'})
       throw new Meteor.Error('required-fields-empty');
     }
+    if (description.length > 40) {
+      this.setState({formError: 'Limite de 40 caracteres excedido'})
+      throw new Meteor.Error('string-too-long');
+    }
     Meteor.call('services.insert', description, price);
     this.closeEditWindow();
   }
@@ -151,7 +155,7 @@ class ServiceItem extends React.Component {
           >
             {createNew ? <h2>Criar Novo Serviço</h2> : <h2>Editar Serviço</h2>}
             {this.state.formError}
-            <form onSubmit={createNew ? this.createNewService : this.saveEdits.bind(this)}>
+            <form onSubmit={createNew ? this.createNewService.bind(this) : this.saveEdits.bind(this)}>
               <div className="edit-services__main-div">
                 <label>Descrição:</label><input type="text" ref="description" defaultValue={description}/>
                 <label>Preço Base:</label><input type="number" ref="price" defaultValue={price}/>
@@ -176,7 +180,7 @@ class ServiceItem extends React.Component {
       return(
         <div>
           <button className="button--pill list-view__button" onClick={this.openEditWindow}>+</button>
-          {this.editServiceScreen(this.state.editOpen, '', '', true)}
+          {this.editServiceScreen(this.state.editOpen, '', '', '', true)}
         </div>
       )
     } else {
