@@ -8,6 +8,7 @@ import Dashboard from '../ui/Dashboard';
 import NotFound from '../ui/NotFound';
 import AddService from '../ui/AddService';
 import ListServices from '../ui/ListServices';
+import ListUsers from '../ui/ListUsers';
 
 const unauthenticatedPages = ['/', '/signup'];
 const authenticatedPages = ['/dashboard'];
@@ -39,6 +40,7 @@ export const routes = (
     <Route path="/dashboard" component={Dashboard} onEnter={onEnterPrivatePage}/>
     <Route path="/services" component={AddService}/>
     <Route path="/listservices" component={ListServices}/>
+    <Route path="/listusers" component={ListUsers}/>
     <Route path="*" component={NotFound}/>
   </Router>
 );

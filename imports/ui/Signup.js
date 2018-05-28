@@ -19,7 +19,8 @@ export default class Signup extends React.Component {
     let profile = {
       userName: this.refs.userName.value.trim(),
       userLastname: this.refs.userLastname.value.trim(),
-      userType: this.refs.userType.value.trim()
+      userType: this.refs.userType.value.trim(),
+      visible: true
     }
 
     if (password.length < 7) {
@@ -38,7 +39,7 @@ export default class Signup extends React.Component {
   componentWillMount() {
     Tracker.autorun(() => {
       Meteor.subscribe('getUserTypes');
-      
+
       const userTypes = UserTypes.find().fetch();
       this.setState({ userTypes });
     })
