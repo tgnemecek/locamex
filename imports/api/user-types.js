@@ -3,38 +3,44 @@ import { Mongo } from 'meteor/mongo';
 export const UserTypes = new Mongo.Collection('userTypes');
 
 if(Meteor.isServer) {
-    const userTypes = [
-        {
-            type: 'adm',
-            label: 'Administrador'
-        },
-        {
-            type: 'guest',
-            label: 'Convidado'
-        }
-    ];
 
-    Meteor.publish('getUserTypes', () => {
+    if (Meteor.isServer) {
+      Meteor.publish('userTypesPub', () => {
         return UserTypes.find();
-    });
-
-    //adds new userTypes
-    if(UserTypes.find().count() < userTypes.length) {
-        userTypes.forEach(userType => {
-            if (UserTypes.find({ type: userType.type }).fetch().length === 0) {
-                console.log('Inserted new user type: ' + userType.type);
-                UserTypes.insert(userType);
-            }
-        });
-    }
-
-    //removes old userTypes
-    if(UserTypes.find().count() > userTypes.length) {
-        UserTypes.find().fetch().forEach(userType => {
-            if (userTypes.filter(uType => uType.type === userType.type).length == 0) {
-                console.log('Removed user type: ' + userType.type);
-                UserTypes.remove({ type: userType.type });
-            }
-        });
+      })
     }
 }
+
+Meteor.methods({
+  'userTypes.insert'(description, permissions) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    const _id = UserTypes.find().count().toString().padStart(4, '0');
+
+    UserTypes.insert({
+      _id,
+      description,
+      permissions,
+      visible: true
+    });
+  },
+  'userTypes.hide'(_id) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    UserTypes.update({ _id }, { $set: { visible: false } });
+  },
+  'userTypes.update'(_id, description, permissions) {
+    if (!this.userId) {
+      throw new Meteor.Error('not-authorized');
+    }
+
+    UserTypes.update({ _id }, { $set: {
+      description,
+      permissions
+      } });
+  }
+})

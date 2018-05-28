@@ -18,7 +18,6 @@ export default class Signup extends React.Component {
     let password = this.refs.password.value.trim();
     let profile = {
       userName: this.refs.userName.value.trim(),
-      userLastname: this.refs.userLastname.value.trim(),
       userType: this.refs.userType.value.trim(),
       visible: true
     }
@@ -38,7 +37,7 @@ export default class Signup extends React.Component {
 
   componentWillMount() {
     Tracker.autorun(() => {
-      Meteor.subscribe('getUserTypes');
+      Meteor.subscribe('userTypesPub');
 
       const userTypes = UserTypes.find().fetch();
       this.setState({ userTypes });
@@ -49,7 +48,7 @@ export default class Signup extends React.Component {
     if(this.state.userTypes) {
       return this.state.userTypes.map(userType => {
         return (
-          <option key={userType.type} value={userType.type}>{userType.label}</option>
+          <option key={userType._id} value={userType._id}>{userType.label}</option>
         )
       });
     }
@@ -65,7 +64,6 @@ export default class Signup extends React.Component {
 
           <form onSubmit={this.onSubmit.bind(this)} noValidate className="boxed-view__form">
             <input type="text" ref="userName" name="userName" placeholder="Nome"/>
-            <input type="text" ref="userLastname" name="userLastname" placeholder="Sobrenome"/>
             <select name="userType" ref="userType">
               {this.listTypes()}
             </select>
