@@ -1,9 +1,9 @@
 import React from 'react';
 import ReactModal from 'react-modal';
+import "babel-polyfill";
 
 import { Services } from '../api/services';
-
-var servicesArray = Services.find().fetch();
+import customTypes from '../startup/custom-types';
 
 export default class AddService extends React.Component {
 
@@ -11,14 +11,36 @@ export default class AddService extends React.Component {
     super(props);
     this.state = {
       isOpen: true,
-      lineCount: 1
+      lineCount: 1,
+      _id: '',
+      price: '',
+      removedLines: [],
+      database: []
     }
   };
 
+  componentDidMount() {
+    this.servicesTracker = Tracker.autorun(() => {
+      Meteor.subscribe('servicesPub');
+      const database = Services.find({ visible: true }).fetch();
+      this.setState({ database });
+    })
+  };
+
+  existsInArray(array, value) {
+    for (var i = 0; i < array.length; i++) {
+      if (array[i] == value) return true
+    }
+  }
+
   renderLines() {
     var lineBlock = [];
+    var removedLines = this.state.removedLines;
+
     for (var i = 1; i <= this.state.lineCount; i++) {
-      lineBlock[i] = <ListServices key={i}/>
+      if (!removedLines.includes(i)) {
+        lineBlock[i] = <LineService key={i} lineNumber={i} database={this.state.database} removeLine={this.removeLine.bind(this)}/>
+      }
     };
     return lineBlock.map((line) => {
       return line;
@@ -29,20 +51,14 @@ export default class AddService extends React.Component {
     this.setState({lineCount: this.state.lineCount + 1});
   };
 
-  removeLine() {
-    this.setState({lineCount: this.state.lineCount - 1});
-  };
-
-  showRemoveButton() {
-    if (this.state.lineCount < 2) {
-      return undefined;
-    } else {
-      return <button className="button--pill" onClick={this.removeLine.bind(this)}>-</button>
-    };
+  removeLine(lineNumber) {
+    let removedLines = this.state.removedLines;
+    this.setState({ removedLines: removedLines.push(lineNumber) });
   };
 
   onSubmit(e) {
     e.preventDefault();
+    aaa();
   };
 
   handleModalClose() {
@@ -65,12 +81,9 @@ export default class AddService extends React.Component {
          >
          <h1>Adicionar Serviço ao Contrato</h1>
          <form onSubmit={this.onSubmit.bind(this)} className="boxed-view__form">
-           <div>
+           <div className="add-services__line-div-container">
              {this.renderLines()}
-           </div>
-           <div className="button__main-div">
-             <button className="button--pill" onClick={this.addLine.bind(this)}>+</button>
-             {this.showRemoveButton()}
+             <button className="button--pill button--fix" onClick={this.addLine.bind(this)}>+</button>
            </div>
            <div className="button__main-div">
              <button className="button button--secondary add-services__button" onClick={this.handleModalClose.bind(this)}>Fechar</button>
@@ -82,55 +95,55 @@ export default class AddService extends React.Component {
   };
 }
 
-class ListServices extends React.Component {
+class LineService extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
       _id: '',
-      code: '',
-      description: '',
       price: ''
-    };
-  }
+    }
+  };
 
   handleChange(e) {
-    var newPrice = '';
+    let newPrice = '';
+    let inputNumber = this.refs.inputNumber;
+
     this.state.price ? newPrice = this.state.price : newPrice = 0;
-    newPrice = parseFloat(Math.round(newPrice * 100) / 100).toFixed(2);
-    this.refs.numberInput.value = newPrice;
+    newPrice = customTypes.formatReais(newPrice, false);
 
     this.setState({
       _id: e.target.key,
-      code: '',
-      description: '',
-      price: e.target.value
+      price: new Number (e.target.value)
     });
+
+    inputNumber.value = newPrice;
+
   };
 
   render() {
     return (
       <div className="add-services__line-div">
-        <select
-          name="services"
-          className="add-services__select"
-          onChange={this.handleChange.bind(this)}
-          onClick={this.handleChange.bind(this)}
-          >
-          <option key="default" hidden value="">Escolha um Serviço</option>
-          {servicesArray.map((services) => {return <option key={services._id} value={services.price}>{services.description}</option>})}
-        </select>
-        {this.state.price ?
-          <label className="add-services__label">Preço Base: R$ {this.state.price},00</label> :
-          <label className="add-services__label">-</label>}
-        <input type="number" className="add-services__input" ref="quantityInput" placeholder="Qtd."/>
-        <input type="number" className="add-services__input" ref="numberInput" placeholder="R$"/>
+        <div className="add-services__left-side">
+          <button className="button--pill" onClick={() => this.props.removeLine(this.props.lineNumber)}>x</button>
+          <select
+            className="add-services__select"
+            onChange={this.handleChange.bind(this)}
+            onClick={this.handleChange.bind(this)}
+            >
+            <option key="default" hidden value="">Escolha um Serviço</option>
+            {this.props.database.map((service) => {return <option key={service._id} value={service.price}>{service.description}</option>})}
+          </select>
+        </div>
+        <div className="add-services__right-side">
+          {this.state.price ?
+            <label className="add-services__label">Preço Base: {customTypes.formatReais(this.state.price, true)}</label> :
+            <label className="add-services__label">-</label>}
+          <input type="number" className="add-services__input--small" ref="inputQuantity" placeholder="Qtd."/>
+          <input type="number" className="add-services__input--medium" ref="inputNumber" placeholder="R$"/>
+        </div>
       </div>
-    );
-  }
-}
-
-
-
-
+      )
+    }
+};
 
