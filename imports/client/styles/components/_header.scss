@@ -12,6 +12,7 @@
 
 .header__title {
   margin: $space;
+  width: 280px;
 }
 
 .dropdown {
@@ -33,4 +34,8 @@
 
 .dropdown:hover .dropdown-content {
     transform: scaleY(1);
+}
+
+.header__logout {
+  text-align: right;
 }

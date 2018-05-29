@@ -17,7 +17,7 @@ if(Meteor.isServer) {
         name: "Usuários",
         link: "/listusers"
       }, {
-        name: "Tipos de Usuários",
+        name: "Permissões de Usuários",
         link: "/listusertypes"
       }, {
         name: "Serviços",
@@ -25,11 +25,23 @@ if(Meteor.isServer) {
       }]
     });
     Categories.insert({
+      name: "Contratos",
+      pages: []
+    });
+    Categories.insert({
+      name: "Clientes",
+      pages: []
+    });
+    Categories.insert({
       name: "Produtos",
       pages: []
     });
     Categories.insert({
-      name: "Contratos",
+      name: "Financeiro",
+      pages: []
+    });
+    Categories.insert({
+      name: "Manutenção",
       pages: []
     });
 }

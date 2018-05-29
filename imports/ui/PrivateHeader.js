@@ -35,7 +35,7 @@ export default class PrivateHeader extends React.Component {
               categoryPages={category.pages}
             />
             })}
-          <button className="button button--link-text" onClick={() => Accounts.logout()}>Logout</button>
+          <button className="button button--link-text header__logout" onClick={() => Accounts.logout()}>Logout</button>
         </div>
       </div>
     )
@@ -65,7 +65,7 @@ class MenuItem extends React.Component {
         <button className="button--header" onClick={this.openPages.bind(this)}>{this.props.categoryName}</button>
         <div className="dropdown-content">
           {this.props.categoryPages.map((category) => {
-            return <Link className="button button--link button--header-page" to={category.link}>{category.name}</Link>
+            return <Link className="button button--link button--header-page" key={category.link} to={category.link}>{category.name}</Link>
             })}
         </div>
       </div>

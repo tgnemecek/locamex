@@ -4,10 +4,10 @@ import { Meteor } from 'meteor/meteor';
 
 import customTypes from '../startup/custom-types';
 import PrivateHeader from './PrivateHeader';
-import { Services } from '../api/services';
+import { Clients } from '../api/clients';
 import ConfirmationMessage from './ConfirmationMessage';
 
-export default class ListServices extends React.Component {
+export default class ListClients extends React.Component {
 
   constructor(props) {
     super(props);
@@ -17,9 +17,9 @@ export default class ListServices extends React.Component {
   };
 
   componentDidMount() {
-    this.servicesTracker = Tracker.autorun(() => {
-      Meteor.subscribe('servicesPub');
-      const database = Services.find({ visible: true }).fetch();
+    this.clientsTracker = Tracker.autorun(() => {
+      Meteor.subscribe('clientsPub');
+      const database = Clients.find({ visible: true }).fetch();
       this.setState({ database });
     })
   }
@@ -27,22 +27,20 @@ export default class ListServices extends React.Component {
   render() {
     return (
       <div>
-        <PrivateHeader title="Serviços"/>
+        <PrivateHeader title="Clientes"/>
         <div className="page-content">
           <table className="list-view__table">
             <tbody className="list-view__tbody">
               <tr>
                 <th className="list-view__left-align list-view__small">Código</th>
-                <th className="list-view__left-align">Descrição</th>
-                <th className="list-view__right-align list-view__medium">Preço Base</th>
-                <th className="list-view__right-align list-view__small"><ServiceItem key={0} createNew={true}/></th>
+                <th className="list-view__left-align">Nome Fantasia</th>
+                <th className="list-view__right-align list-view__small"><ClientItem key={0} createNew={true}/></th>
               </tr>
-              {this.state.database.map((services) => {
-                return <ServiceItem
-                  key={services._id}
-                  _id={services._id}
-                  description={services.description}
-                  price={services.price}
+              {this.state.database.map((client) => {
+                return <ClientItem
+                  key={client._id}
+                  _id={client._id}
+                  contacts={client.contacts}
                 />
             })}
             </tbody>
@@ -53,7 +51,7 @@ export default class ListServices extends React.Component {
   }
 }
 
-class ServiceItem extends React.Component {
+class ClientItem extends React.Component {
 
   constructor(props) {
     super(props);
@@ -61,6 +59,7 @@ class ServiceItem extends React.Component {
       editOpen: false,
       confirmationWindow: false,
       formError: '',
+      contacts: this.props.contacts,
       price: new Number(this.props.price)
     }
     this.openEditWindow = this.openEditWindow.bind(this);
@@ -153,12 +152,36 @@ class ServiceItem extends React.Component {
           className="boxed-view__box"
           overlayClassName="boxed-view boxed-view--modal"
           >
-            {createNew ? <h2>Criar Novo Serviço</h2> : <h2>Editar Serviço</h2>}
+            {createNew ? <h2>Cadastrar Novo Cliente</h2> : <h2>Editar Cliente</h2>}
             {this.state.formError}
             <form onSubmit={createNew ? this.createNewService.bind(this) : this.saveEdits.bind(this)}>
               <div className="edit-services__main-div">
-                <label>Descrição:</label><input type="text" ref="description" defaultValue={description}/>
-                <label>Preço Base:</label><input type="number" ref="price" defaultValue={price}/>
+                <select defaultValue="company">
+                  <option value="company">Pessoa Jurídica</option>
+                  <option value="person">Pessoa Física</option>
+                </select>
+                <div className="tab">
+                  <button className="tablinks" onclick="openCity(event, 'Paris')">Principal</button>
+                  {() => {
+                    this.state.contacts.map((contact) => {
+                      return <button className="tablinks" onclick="openCity(event, 'London')">Contato #{contact.order}</button>
+                    })
+                  }}
+                  <button className="tablinks" onclick="openCity(event, 'Paris')">+</button>
+                </div>
+                <div className="edit-services__main-div">
+                  <label>Nome Fantasia:</label><input type="text" ref="description" defaultValue={description}/>
+                  <label>Razão Social:</label><input type="text" ref="description" defaultValue={description}/>
+                  <label>CNPJ:</label><input type="text" ref="description" defaultValue={description}/>
+                  <label>Inscrição Estadual/Municipal:</label><input type="text" ref="description" defaultValue={description}/>
+                </div>
+                <div>
+                  <label>Nome Completo:</label><input type="text" ref="description" defaultValue={description}/>
+                  <label>Email:</label><input type="email" ref="description"/>
+                  <label>Telefone:</label><input type="text" ref="description" defaultValue={description}/>
+                  <label>CPF:</label><input type="text" ref="description" defaultValue={description}/>
+                  <label>Cargo:</label><input type="text" ref="description" defaultValue={description}/>
+                </div>
                 {createNew ? null : <button type="button" className="button button--danger edit-services--remove" onClick={this.openConfirmationWindow}>Remover</button>}
               </div>
               <div className="button__main-div">
@@ -188,7 +211,6 @@ class ServiceItem extends React.Component {
           <tr>
             <td className="list-view__left-align">{this.props._id}</td>
             <td className="list-view__left-align">{this.props.description}</td>
-            <td className="list-view__right-align">{customTypes.formatReais(this.state.price, true)}</td>
             <td className="list-view__right-align list-view__edit"><button className="button--pill list-view__button" onClick={this.openEditWindow}>Editar</button></td>
             {this.editServiceScreen(this.state.editOpen, this.props._id, this.props.description, this.props.price)}
           </tr>

@@ -28,7 +28,7 @@ export default class ListUserTypes extends React.Component {
   render() {
     return (
       <div>
-        <PrivateHeader title="Lista de Tipos de Usuários"/>
+        <PrivateHeader title="Permissões de Usuários"/>
         <div className="page-content">
           <table className="list-view__table">
             <tbody className="list-view__tbody">

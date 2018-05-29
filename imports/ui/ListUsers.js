@@ -27,7 +27,7 @@ export default class ListUsers extends React.Component {
   render() {
     return (
       <div>
-        <PrivateHeader title="Lista de Usuários"/>
+        <PrivateHeader title="Usuários"/>
         <div className="page-content">
           <table className="list-view__table">
             <tbody className="list-view__tbody">
