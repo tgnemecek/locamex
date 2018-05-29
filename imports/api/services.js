@@ -11,9 +11,6 @@ if (Meteor.isServer) {
 
 Meteor.methods({
   'services.insert'(description, price) {
-    if (!this.userId) {
-      throw new Meteor.Error('not-authorized');
-    }
 
     const _id = Services.find().count().toString().padStart(4, '0');
 
@@ -24,17 +21,12 @@ Meteor.methods({
       visible: true
     });
   },
+  
   'services.hide'(_id) {
-    if (!this.userId) {
-      throw new Meteor.Error('not-authorized');
-    }
-
     Services.update({ _id }, { $set: { visible: false } });
   },
+
   'services.update'(_id, description, price) {
-    if (!this.userId) {
-      throw new Meteor.Error('not-authorized');
-    }
 
     Services.update({ _id }, { $set: {
       description,

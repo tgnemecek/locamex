@@ -9,6 +9,7 @@ import NotFound from '../ui/NotFound';
 import AddService from '../ui/AddService';
 import ListServices from '../ui/ListServices';
 import ListUsers from '../ui/ListUsers';
+import ListUserTypes from '../ui/ListUserTypes';
 
 const unauthenticatedPages = ['/', '/signup'];
 const authenticatedPages = ['/dashboard'];
@@ -41,6 +42,7 @@ export const routes = (
     <Route path="/services" component={AddService}/>
     <Route path="/listservices" component={ListServices}/>
     <Route path="/listusers" component={ListUsers}/>
+    <Route path="/listusertypes" component={ListUserTypes}/>
     <Route path="*" component={NotFound}/>
   </Router>
 );

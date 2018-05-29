@@ -1,13 +1,20 @@
 @import './variables';
 @import './base';
-@import './components/boxed-view';
-@import './components/button';
+
 @import './components/header';
 @import './components/page-content';
+@import './components/boxed-view';
+
+
+@import './components/button';
 @import './components/checkbox';
 @import './components/item';
-@import './components/add-services-screen.scss';
-@import './components/edit-services-screen.scss';
+
 @import './components/list-view.scss';
 @import './components/confirmation-message.scss';
-@import './components/edit-users-screen.scss';
+
+@import './components/edit-users.scss';
+@import './components/edit-user-types.scss';
+@import './components/edit-services.scss';
+
+@import './components/add-services.scss';

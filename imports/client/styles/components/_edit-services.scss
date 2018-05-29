@@ -4,6 +4,12 @@
   justify-content: space-between;
 }
 
+.edit-services__main-div > label {
+  font-size: $base-font-size;
+  margin: ($space /2);
+  padding: $input-spacing;
+}
+
 .edit-services__main-div > input[type=text] {
   flex-grow: 1;
 }

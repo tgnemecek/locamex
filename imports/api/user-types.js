@@ -1,4 +1,5 @@
 import { Mongo } from 'meteor/mongo';
+import { Accounts } from 'meteor/accounts-base';
 
 export const UserTypes = new Mongo.Collection('userTypes');
 
@@ -12,10 +13,8 @@ if(Meteor.isServer) {
 }
 
 Meteor.methods({
+
   'userTypes.insert'(description, permissions) {
-    if (!this.userId) {
-      throw new Meteor.Error('not-authorized');
-    }
 
     const _id = UserTypes.find().count().toString().padStart(4, '0');
 
@@ -26,17 +25,18 @@ Meteor.methods({
       visible: true
     });
   },
-  'userTypes.hide'(_id) {
-    if (!this.userId) {
-      throw new Meteor.Error('not-authorized');
-    }
 
+  'userTypes.hide'(_id) {
+
+     let conflicts = Meteor.users.find({ userTypeId: _id }).fetch();
+
+     for (var i = 0; i < conflicts.length; i++) {
+       Meteor.users.update({ _id: conflicts[i]._id }, { $set: {userTypeId: "0001"}});
+     }
     UserTypes.update({ _id }, { $set: { visible: false } });
   },
+
   'userTypes.update'(_id, description, permissions) {
-    if (!this.userId) {
-      throw new Meteor.Error('not-authorized');
-    }
 
     UserTypes.update({ _id }, { $set: {
       description,

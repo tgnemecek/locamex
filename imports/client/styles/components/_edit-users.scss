@@ -1,3 +1,15 @@
+.edit-users__main-div {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.edit-users__main-div > label {
+  font-size: $base-font-size;
+  margin: ($space /2);
+  padding: $input-spacing;
+}
+
 .edit-users__left-labels {
   flex-basis: 110px;
   text-align: left;

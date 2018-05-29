@@ -4,7 +4,6 @@ import { Meteor } from 'meteor/meteor';
 
 import customTypes from '../startup/custom-types';
 import PrivateHeader from './PrivateHeader';
-import { Services } from '../api/services';
 import { UserTypes } from '../api/user-types';
 import ConfirmationMessage from './ConfirmationMessage';
 
@@ -18,7 +17,7 @@ export default class ListUsers extends React.Component {
   };
 
   componentDidMount() {
-    this.servicesTracker = Tracker.autorun(() => {
+    this.userTracker = Tracker.autorun(() => {
       Meteor.subscribe('usersPub');
       const database = Meteor.users.find({ visible: true }).fetch();
       this.setState({ database });
@@ -33,7 +32,7 @@ export default class ListUsers extends React.Component {
           <table className="list-view__table">
             <tbody className="list-view__tbody">
               <tr>
-                <th className="list-view__left-align list-view__small">Código</th>
+                <th className="list-view__left-align list-view__small">Email (Login)</th>
                 <th className="list-view__left-align">Nome</th>
                 <th className="list-view__right-align list-view__medium">Tipo</th>
                 <th className="list-view__right-align list-view__small"><UserItem key={0} createNew={true}/></th>
@@ -42,7 +41,7 @@ export default class ListUsers extends React.Component {
                 return <UserItem
                   key={user._id}
                   _id={user._id}
-                  userName={user.userName}
+                  userName={user.username}
                   userEmail={user.emails[0].address}
                   userTypeId={user.userTypeId}
                 />
@@ -64,6 +63,7 @@ class UserItem extends React.Component {
       confirmationWindow: false,
       formError: '',
       userName: this.props.userName,
+      userEmail: this.props.userEmail,
       userType: '',
       userTypeId: this.props.userTypeId,
       typesDatabase: []
@@ -77,12 +77,13 @@ class UserItem extends React.Component {
   };
 
   componentDidMount() {
-    this.servicesTracker = Tracker.autorun(() => {
+    this.userTypeTracker = Tracker.autorun(() => {
       Meteor.subscribe('userTypesPub');
       const typesDatabase = UserTypes.find({ visible: true }).fetch();
       this.setState({ typesDatabase });
+
       const userType = typesDatabase.find((item) => item._id === this.state.userTypeId);
-      userType ? this.setState({ userType: userType.label }) : null;
+      userType ? this.setState({ userType: userType.description }) : null;
     })
   }
 
@@ -98,7 +99,7 @@ class UserItem extends React.Component {
   };
 
   closeWithRemoval() {
-    Meteor.call('services.hide', this.props._id);
+    Meteor.call('users.hide', this.props._id);
     this.setState({
       editOpen: false,
       confirmationWindow: false
@@ -126,33 +127,34 @@ class UserItem extends React.Component {
     let newEmail = this.refs.email.value.trim();
     let newPassword = this.refs.password.value.trim();
 
-    if (!newUserName || !newEmail) {
-      this.setState({formError: 'Favor preencher todos os campos'})
-      throw new Meteor.Error('required-fields-empty');
-    };
-    if (newPassword && newPassword.length < 6) {
-      this.setState({formError: 'A senha deve ter 6 ou mais caracteres'})
-      throw new Meteor.Error('password-too-long');
-    }
+    Meteor.call('users.update', this.props._id, newUserName, newUserTypeId, newEmail, newPassword, (err) => {
+      if (err) {
+        let i = 0;
+        if (err.error === 'required-fields-empty') {
+          this.setState({formError: 'Favor preencher todos os campos'});
+          i++;
+        }
+        if (err.error === 'password-too-short') {
+          this.setState({formError: 'A senha deve ter 6 ou mais caracteres'});
+          i++;
+        }
+        if (err.error === 'username-too-long') {
+          this.setState({formError: 'O nome não deve exceder 40 caracteres'});
+          i++;
+        }
+        if (i === 0) {
+          this.setState({formError: 'Erro de servidor'});
+        }
+      } else {
+        const userTypeLabel = this.state.typesDatabase.find((item) => item._id === newUserTypeId);
+        this.setState({ userType: userTypeLabel.description });
+        this.setState({ userName: newUserName });
+        this.setState({ userEmail: newEmail });
+        this.setState({ userTypeId: newUserTypeId });
 
-    Meteor.call('users.update', this.props._id, newUserName, newUserTypeId, newEmail, newPassword);
-
-    // Meteor.call('users.update', this.props._id, newUserName, newUserType, newEmail, newPassword, (err, res) => {
-    //   err ? throw new Meteor.Error('method-call-failed') : null;
-    // });
-
-
-    // if (!Meteor.call('users.update', this.props._id, newUserName, newUserType, newEmail, newPassword)) {
-    //   throw new Meteor.Error('method-call-failed');
-    // }
-
-    const userTypeLabel = this.state.typesDatabase.find((item) => item._id === newUserTypeId);
-    this.setState({ userType: userTypeLabel.label });
-    this.setState({ userTypeId: userTypeLabel._id });
-    this.setState({ userName: newUserName });
-    this.setState({ userTypeId: newUserTypeId });
-
-    this.closeEditWindow();
+        this.closeEditWindow();
+      }
+    });
   }
 
   createNewUser(e) {
@@ -171,11 +173,31 @@ class UserItem extends React.Component {
       this.setState({formError: 'Limite de 40 caracteres excedido'})
       throw new Meteor.Error('string-too-long');
     }
-    Meteor.call('users.insert', userName, userTypeId);
-    this.closeEditWindow();
+    Meteor.call('users.insert', userName, userEmail, userTypeId, userPassword, (err) => {
+      if (err) {
+        let i = 0;
+        if (err.error === 'required-fields-empty') {
+          this.setState({formError: 'Favor preencher todos os campos'});
+          i++;
+        }
+        if (err.error === 'password-too-short') {
+          this.setState({formError: 'A senha deve ter 6 ou mais caracteres'});
+          i++;
+        }
+        if (err.error === 'username-too-long') {
+          this.setState({formError: 'O nome não deve exceder 40 caracteres'});
+          i++;
+        }
+        if (i === 0) {
+          this.setState({formError: 'Erro de servidor'});
+        }
+      } else {
+        this.closeEditWindow();
+      }
+    });
   }
 
-  editServiceScreen(open, _id, userName, userTypeId, userEmail, createNew) {
+  editUserScreen(open, _id, userName, userTypeId, userEmail, createNew) {
     if (open) {
       return(
         <ReactModal
@@ -190,14 +212,14 @@ class UserItem extends React.Component {
             {createNew ? <h2>Criar Novo Usuário</h2> : <h2>Editar Usuário</h2>}
             {this.state.formError}
             <form onSubmit={createNew ? this.createNewUser.bind(this) : this.saveEdits.bind(this)}>
-              <div className="edit-services__main-div">
+              <div className="edit-users__main-div">
                 <label className="edit-users__left-labels">Nome Completo:</label>
                 <input type="text" ref="userName" defaultValue={this.state.userName} className="edit-users__full-input"/>
                 <label className="edit-users__left-labels">Email:</label>
                 <input type="email" ref="email" defaultValue={userEmail} className="edit-users__email"/>
                 <label>Tipo de Usuário:</label>
                 <select key={userTypeId} ref="userType" defaultValue={userTypeId}>
-                  {this.state.typesDatabase.map((type) => {return <option key={type._id} value={type._id}>{type.label}</option>})}
+                  {this.state.typesDatabase.map((type) => {return <option key={type._id} value={type._id}>{type.description}</option>})}
                 </select>
                 <label className="edit-users__left-labels">Redefinir Senha:</label>
                 <input type="password" ref="password" className="edit-users__full-input"/>
@@ -222,17 +244,17 @@ class UserItem extends React.Component {
       return(
         <div>
           <button className="button--pill list-view__button" onClick={this.openEditWindow}>+</button>
-          {this.editServiceScreen(this.state.editOpen, '', '', '', '', true)}
+          {this.editUserScreen(this.state.editOpen, '', '', '', '', true)}
         </div>
       )
     } else {
       return (
           <tr>
-            <td className="list-view__left-align">{this.props._id}</td>
+            <td className="list-view__left-align">{this.state.userEmail}</td>
             <td className="list-view__left-align">{this.state.userName}</td>
             <td className="list-view__right-align">{this.state.userType}</td>
             <td className="list-view__right-align list-view__edit"><button className="button--pill list-view__button" onClick={this.openEditWindow}>Editar</button></td>
-            {this.editServiceScreen(this.state.editOpen, this.props._id, this.props.userName, this.state.userTypeId, this.props.userEmail)}
+            {this.editUserScreen(this.state.editOpen, this.props._id, this.props.userName, this.state.userTypeId, this.props.userEmail)}
           </tr>
       )
     }

@@ -30,10 +30,9 @@ a {
   color: black;
 }
 
-label {
-  font-size: $base-font-size;
-  margin: ($space /2);
-  padding: $input-spacing;
+legend {
+  font-size: $large-font-size;
+  padding: 0 $space;
 }
 
 input[type=text], input[type=number], input[type=email], input[type=password], select {
