@@ -90,24 +90,8 @@ class UserTypeItem extends React.Component {
     });
   };
 
-  closeWithRemoval(e) {
-
-    try {
-      Meteor.call('userTypes.hide', this.props._id);
-    } catch (e) {
-      console.log('motivo', e.reason);
-    }
-    // Meteor.call('userTypes.hide', this.props._id, (err) => {
-    //   if (err) {
-    //     alert(err.reason);
-    //     //this.setState({formError: 'Favor selecionar ao menos uma permissão'});
-    //     //this.setState({confirmationWindow: false});
-    // } else {
-    //   // this.setState({
-    //   //   editOpen: false,
-    //   //   confirmationWindow: false
-    //   // });
-    // }})
+  closeWithRemoval() {
+    Meteor.call('userTypes.hide', this.props._id);
   };
 
   openConfirmationWindow() {

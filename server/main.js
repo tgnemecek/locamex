@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import { WebApp } from 'meteor/webapp';
 
+import '../imports/api/categories';
 import '../imports/api/pages';
 import '../imports/api/user-types';
 import '../imports/api/services';

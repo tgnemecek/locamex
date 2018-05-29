@@ -18,6 +18,29 @@
   text-transform: uppercase;
 }
 
+.button--header {
+  background-color: $brand-primary;
+  border: none;
+  color: white;
+  height: 100%;
+  padding: $space;
+}
+
+.button--header:hover {
+  background-color: darken($brand-primary, 5);
+}
+
+.button--header-page {
+  margin: 0 !important;
+  padding: $space;
+  width: 100%;
+  white-space: nowrap;
+}
+
+.button--header-page:hover {
+  background-color: darken($brand-primary, 5);
+}
+
 .button--link {
   display: inline-block;
   text-decoration: none;
