@@ -1,34 +1,75 @@
+.edit-clients__div {
+  background-color: $light-grey;
+  border: 0 solid $grey;
+  border-width: 0 1px 1px 1px;
+  padding: ($space /2);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.edit-clients__select-type {
+  margin: $space auto;
+}
+
+.edit-clients__line-div {
+  display: flex;
+  width: 100%;
+}
+
+.edit-clients__line-div > input {
+  flex-grow: 1;
+}
+
+.edit-clients__line-div > label {
+  font-size: $base-font-size;
+  margin: ($space /2);
+  padding: $input-spacing;
+  text-align: left;
+}
+
+.edit-clients__left-label {
+  width: 120px;
+}
+
+.edit-clients--remove {
+  flex-basis: 500px;
+}
+
 .tab {
-    overflow: hidden;
-    border: 1px solid #ccc;
-    background-color: #f1f1f1;
+  flex-grow: 1;
+  flex-basis: 700px;
+  overflow: hidden;
+  border: 0 solid $grey;
+  border-width: 1px 1px 0 1px;
+  background-color: $light-grey;
 }
-
 /* Style the buttons that are used to open the tab content */
+
 .tab button {
-    background-color: inherit;
-    float: left;
-    border: none;
-    outline: none;
-    cursor: pointer;
-    padding: 14px 16px;
-    transition: 0.3s;
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
 }
-
 /* Change background color of buttons on hover */
+
 .tab button:hover {
-    background-color: #ddd;
+  background-color: #ddd;
 }
-
 /* Create an active/current tablink class */
-.tab button.active {
-    background-color: #ccc;
-}
 
+.tab button.active {
+  background-color: #ccc;
+}
 /* Style the tab content */
+
 .tabcontent {
-    display: none;
-    padding: 6px 12px;
-    border: 1px solid #ccc;
-    border-top: none;
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
 }

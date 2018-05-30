@@ -17,8 +17,8 @@ if(Meteor.isServer) {
       name: "Exemplo",
       type: "Pessoa Jurídica",
       nameOfficial: "Exemplo Empreendimentos",
-      registerES: "192837273",
-      registerMU: "364645445",
+      registryES: "192837273",
+      registryMU: "364645445",
       contacts: [{
         name: "João Carlos",
         telephone: "9554-3122",
