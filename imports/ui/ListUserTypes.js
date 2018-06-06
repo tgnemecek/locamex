@@ -198,7 +198,7 @@ class UserTypeItem extends React.Component {
               </div>
               <div className="button__main-div">
                 <button type="button" className="button button--secondary" onClick={this.closeEditWindow}>Fechar</button>
-                {createNew ? <button className="button">Criar</button> : <button className="button">Salvar</button>}
+                {createNew ? <button className="button button--primary">Criar</button> : <button className="button button--primary">Salvar</button>}
               </div>
             </form>
             {this.state.confirmationWindow ? <ConfirmationMessage

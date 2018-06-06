@@ -62,6 +62,7 @@ class ClientItem extends React.Component {
       formError: '',
       contacts: this.props.contacts,
       formType: 'company',
+      tab: 0,
       price: new Number(this.props.price)
     }
     this.openEditWindow = this.openEditWindow.bind(this);
@@ -69,7 +70,7 @@ class ClientItem extends React.Component {
     this.openConfirmationWindow = this.openConfirmationWindow.bind(this);
     this.closeConfirmationWindow = this.closeConfirmationWindow.bind(this);
     this.closeWithRemoval = this.closeWithRemoval.bind(this);
-    this.createNewService = this.createNewService.bind(this);
+    this.createNewClient = this.createNewClient.bind(this);
   };
 
   openEditWindow() {
@@ -84,7 +85,7 @@ class ClientItem extends React.Component {
   };
 
   closeWithRemoval() {
-    Meteor.call('services.hide', this.props._id);
+    Meteor.call('clients.hide', this.props._id);
     this.setState({
       editOpen: false,
       confirmationWindow: false
@@ -116,12 +117,12 @@ class ClientItem extends React.Component {
       this.setState({formError: 'Favor preencher todos os campos'})
       throw new Meteor.Error('required-fields-empty');
     };
-    Meteor.call('services.update', this.props._id, description, price);
+    Meteor.call('clients.update', this.props._id, description, price);
     this.setState({ price });
     this.closeEditWindow();
   }
 
-  createNewService(e) {
+  createNewClient(e) {
     e.preventDefault();
 
     let description = this.refs.description.value.trim();
@@ -137,61 +138,17 @@ class ClientItem extends React.Component {
       this.setState({formError: 'Limite de 40 caracteres excedido'})
       throw new Meteor.Error('string-too-long');
     }
-    Meteor.call('services.insert', description, price);
+    Meteor.call('clients.insert', description, price);
     this.closeEditWindow();
   }
 
-  showTab() {
-    if (this.state.formType === 'company') {
-      // return (
-      //   <div>
-      //     <form onSubmit={createNew ? this.createNewService.bind(this) : this.saveEdits.bind(this)}>
-      //       <select defaultValue="company" className="edit-clients__select-type">
-      //         <option value="company">Pessoa Jurídica</option>
-      //         <option value="person">Pessoa Física</option>
-      //       </select>
-      //       <div className="tab">
-      //         <button className="tablinks">Principal</button>
-      //         {() => {
-      //           this.state.contacts.map((contact) => {
-      //             return <button className="tablinks">Contato #{contact.order}</button>
-      //           })
-      //         }}
-      //         <button className="tablinks">+</button>
-      //       </div>
-      //       <div className="edit-clients__div">
-      //         <div className="edit-clients__line-div">
-      //           <label className="edit-clients__left-label">Nome Fantasia:</label><input type="text" ref="description" defaultValue={description}/>
-      //           <label>CNPJ:</label><input type="text" ref="description" defaultValue={description}/>
-      //         </div>
-      //         <div className="edit-clients__line-div">
-      //           <label className="edit-clients__left-label">Razão Social:</label><input type="text" ref="description" defaultValue={description}/>
-      //         </div>
-      //         <div className="edit-clients__line-div">
-      //           <label className="edit-clients__left-label">Inscrição Estadual:</label><input type="text" ref="description" defaultValue={description}/>
-      //           <label>Inscrição Municipal:</label><input type="text" ref="description" defaultValue={description}/>
-      //         </div>
-      //         {createNew ? null : <button type="button" className="button button--danger edit-clients--remove" onClick={this.openConfirmationWindow}>Remover</button>}
-      //       </div>
-      //       <div className="button__main-div">
-      //         <button type="button" className="button button--secondary" onClick={this.closeEditWindow}>Fechar</button>
-      //         {createNew ? <button className="button">Criar</button> : <button className="button">Salvar</button>}
-      //       </div>
-      //     </form>
-      //   </div>
-      // )
-    }
-    // if () {
-    //   return(
-    //
-    //   )
-    // }
-    // if () {
-    //   return(
-    //
-    //   )
-    // }
+  changeType(e) {
+    this.setState({ type: e.target.value });
+    console.log(this.state.type);
+  }
 
+  changeTab(e) {
+    this.setState({ tab: e.target.value });
   }
 
   editClientScreen(open, _id, description, price, createNew) {
@@ -208,7 +165,33 @@ class ClientItem extends React.Component {
           >
             {createNew ? <h2>Cadastrar Novo Cliente</h2> : <h2>Editar Cliente</h2>}
             {this.state.formError}
-            {this.showTab.bind(this)}
+            <select defaultValue="company" ref="type" className="edit-clients__select-type" onChange={this.changeTab.bind(this)}>
+              <option value="company">Pessoa Jurídica</option>
+              <option value="person">Pessoa Física</option>
+            </select>
+            <div>
+              <div className="tab">
+                <button className="tablinks">Principal</button>
+                {() => {
+                  this.state.contacts.map((contact) => {
+                    return <button className="tablinks" value={contact.order} onChange={this.changeType.bind(this)}>Contato #{contact.order}</button>
+                  })
+                }}
+                <button className="tablinks">+</button>
+              </div>
+              <TabContents
+                createNew={createNew}
+                type={this.state.type}
+                tab={this.state.tab}
+                createNewClient={this.createNewClient}
+                saveEdits={this.saveEdits}
+              />
+            </div>
+            {createNew ? null : <button type="button" className="button button--danger edit-clients--remove" onClick={this.openConfirmationWindow}>Remover</button>}
+            <div className="button__main-div">
+              <button type="button" className="button button--secondary" onClick={this.closeEditWindow}>Fechar</button>
+              {createNew ? <button className="button button--primary">Criar</button> : <button className="button button--primary">Salvar</button>}
+            </div>
             {this.state.confirmationWindow ? <ConfirmationMessage
               title="Deseja excluir este serviço?"
               unmountMe={this.closeConfirmationWindow}
@@ -232,9 +215,45 @@ class ClientItem extends React.Component {
             <td className="list-view__left-align">{this.props._id}</td>
             <td className="list-view__left-align">{this.props.name}</td>
             <td className="list-view__right-align list-view__edit"><button className="button--pill list-view__button" onClick={this.openEditWindow}>Editar</button></td>
-            {this.editClientScreen(this.state.editOpen, '', '', '')}
+            {this.editClientScreen(this.state.editOpen, this.props._id, this.props.description, this.props.price)}
           </tr>
       )
     }
   }
+}
+
+class TabContents extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      editOpen: false,
+      confirmationWindow: false,
+      formError: ''
+    }
+  };
+
+  render() {
+    if (this.props.type === 'company') {
+      return(
+        <form onSubmit={this.props.createNew ? this.props.createNewClient : this.props.saveEdits}>
+          <div className="edit-clients__div">
+            <div className="edit-clients__line-div">
+              <label className="edit-clients__left-label">Nome Fantasia:</label><input type="text" ref="description" defaultValue={this.props.description}/>
+              <label>CNPJ:</label><input type="text" ref="description" defaultValue={this.props.description}/>
+            </div>
+            <div className="edit-clients__line-div">
+              <label className="edit-clients__left-label">Razão Social:</label><input type="text" ref="description" defaultValue={this.props.description}/>
+            </div>
+            <div className="edit-clients__line-div">
+              <label className="edit-clients__left-label">Inscrição Estadual:</label><input type="text" ref="description" defaultValue={this.props.description}/>
+              <label>Inscrição Municipal:</label><input type="text" ref="description" defaultValue={this.props.description}/>
+            </div>
+          </div>
+        </form>
+      )
+    }
+    return null;
+  }
+
 }

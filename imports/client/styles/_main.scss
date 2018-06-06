@@ -10,12 +10,13 @@
 @import './components/checkbox';
 @import './components/item';
 
-@import './components/list-view.scss';
-@import './components/confirmation-message.scss';
+@import './components/list-view';
+@import './components/confirmation-message';
 
-@import './components/edit-users.scss';
-@import './components/edit-user-types.scss';
-@import './components/edit-services.scss';
-@import './components/edit-clients.scss';
+@import './components/login';
+@import './components/edit-users';
+@import './components/edit-user-types';
+@import './components/edit-services';
+@import './components/edit-clients';
 
-@import './components/add-services.scss';
+@import './components/add-services';
