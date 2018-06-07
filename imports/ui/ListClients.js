@@ -14,6 +14,7 @@ export default class ListClients extends React.Component {
     this.state = {
       database: []
     }
+    this.renderClients = this.renderClients.bind(this);
   };
 
   componentDidMount() {
@@ -22,6 +23,24 @@ export default class ListClients extends React.Component {
       const database = Clients.find().fetch();
       this.setState({ database });
     })
+  }
+
+  renderClients() {
+    if (this.state.database.length > 0) {
+      return this.state.database.map((client) => {
+        return <ClientItem
+          key={client._id}
+          _id={client._id}
+          companyName={client.companyName}
+          officialName={client.officialName}
+          cnpj={client.cnpj}
+          registryES={client.registryES}
+          registryMU={client.registryMU}
+          formType={client.type}
+          contacts={client.contacts}
+        />
+      })
+    }
   }
 
   render() {
@@ -34,21 +53,9 @@ export default class ListClients extends React.Component {
               <tr>
                 <td className="list-view__left-align list-view__small">Código</td>
                 <td className="list-view__left-align">Nome Fantasia</td>
-                <td className="list-view__right-align list-view__small"><ClientItem key={0} createNew={true}/></td>
+                {/* <td className="list-view__right-align list-view__small"><ClientItem key={0} createNew={true}/></td> */}
               </tr>
-              {this.state.database.map((client) => {
-                return <ClientItem
-                  key={client._id}
-                  _id={client._id}
-                  companyName={client.companyName}
-                  officialName={client.officialName}
-                  cnpj={client.cnpj}
-                  registryES={client.registryES}
-                  registryMU={client.registryMU}
-                  formType={client.type}
-                  contacts={client.contacts}
-                />
-            })}
+              {this.renderClients()}
             </tbody>
           </table>
         </div>
@@ -96,7 +103,11 @@ class ClientItem extends React.Component {
 
   componentDidMount() {
 
-    var contacts = this.props.contacts;
+    var contacts = [];
+    for (var i = 0; i < this.props.contacts.length; i++) {
+      contacts[i] = this.props.contacts[i];
+    }
+
     this.setState({ contacts });
 
     if (this.state.formType == 'company') {
@@ -111,10 +122,15 @@ class ClientItem extends React.Component {
   };
 
   closeEditWindow() {
+    var contacts = [];
+    for (var i = 0; i < this.props.contacts.length; i++) {
+      contacts[i] = this.props.contacts[i];
+    }
+
     this.setState({
       editOpen: false,
       confirmationWindow: false,
-      contacts: this.props.contacts
+      contacts
     });
   };
 
@@ -269,7 +285,6 @@ class ClientItem extends React.Component {
   }
 
   newContactTab() {
-    console.log(this.state.contacts, this.props.contacts);
     let contacts = this.state.contacts;
     contacts.push({
       "_id" : this.state.contacts.length,
@@ -279,7 +294,6 @@ class ClientItem extends React.Component {
       cpf: ""
     })
     this.setState({ contacts });
-    console.log(this.state.contacts, this.props.contacts);
   }
 
   changeTab(e) {
@@ -383,7 +397,7 @@ class ClientItem extends React.Component {
           className="boxed-view"
           contentLabel="Editar Serviço"
           appElement={document.body}
-          onRequestClose={() => this.setState({editOpen: false})}
+          onRequestClose={this.closeEditWindow.bind(this)}
           className="boxed-view__box"
           overlayClassName="boxed-view boxed-view--modal"
           >
