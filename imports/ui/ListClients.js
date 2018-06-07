@@ -64,7 +64,12 @@ class ClientItem extends React.Component {
     this.state = {
       editOpen: false,
       confirmationWindow: false,
+      confirmationMessage: '',
       formError: '',
+      isError: false,
+
+      requiredFieldsProposal: [],
+      requiredFieldsContract: [],
 
       formType: this.props.formType,
       formTab: 1,
@@ -74,11 +79,12 @@ class ClientItem extends React.Component {
       cnpj: this.props.cnpj,
       registryES: this.props.registryES,
       registryMU: this.props.registryMU,
-      contacts: this.props.contacts
+      contacts: []
     }
 
     this.tabContentsCompany = this.tabContentsCompany.bind(this);
     this.tabContentsContacts = this.tabContentsContacts.bind(this);
+    this.renderError = this.renderError.bind(this);
 
     this.openEditWindow = this.openEditWindow.bind(this);
     this.closeEditWindow = this.closeEditWindow.bind(this);
@@ -89,8 +95,14 @@ class ClientItem extends React.Component {
   };
 
   componentDidMount() {
+
+    var contacts = this.props.contacts;
+    this.setState({ contacts });
+
     if (this.state.formType == 'company') {
       this.setState({ formTab: 0 });
+    } else {
+      this.setState({ formTab: 1 });
     }
   }
 
@@ -101,7 +113,8 @@ class ClientItem extends React.Component {
   closeEditWindow() {
     this.setState({
       editOpen: false,
-      confirmationWindow: false
+      confirmationWindow: false,
+      contacts: this.props.contacts
     });
   };
 
@@ -113,10 +126,6 @@ class ClientItem extends React.Component {
     });
   };
 
-  openConfirmationWindow() {
-    this.setState({confirmationWindow: true});
-  };
-
   closeConfirmationWindow() {
     this.setState({confirmationWindow: false});
   }
@@ -126,33 +135,104 @@ class ClientItem extends React.Component {
     value = value.replace(/-./g, '');
   }
 
-  saveEdits(e) {
+  renderError() {
+    if (this.state.isError) {
+      var formErrorMessage = [];
+
+      for (var i = 0; i < this.state.formError.length; i++) {
+        formErrorMessage.push(this.state.formError[i]);
+      }
+      if (formErrorMessage.length > 1){
+        formErrorMessage.unshift("Favor preencher os seguintes campos obrigatórios: ")
+      }
+      if (formErrorMessage.length == 1){
+        formErrorMessage.unshift("Favor preencher o seguinte campo obrigatório: ")
+      }
+      return formErrorMessage.map((line) => {
+        return <h3 key={line} className="error-message">{line}</h3>
+      })
+    } else { return null };
+  }
+
+  openConfirmationWindow(e) {
     e.preventDefault();
 
-    var formArray = $("form.form--with-tabs").toArray();
+    var requiredFieldsProposal = [];
+    var requiredFieldsContract = [];
+    var formError = [];
+    var confirmationMessage = [];
 
-    for (var i = 0; i < formArray.length; i++) {
-      if (this.state.formType != 'company' || formArray[i] != formArray[0]) {
-        var inputsArray = $("form.form--with-tabs")[i].find("input").toArray();
-        for (var j = 0; j < inputsArray.length; j++) {
-          inputsArray[j].value ? null : console.log('aaa');
-        }
+    this.setState({ isError: false });
+
+    if (this.state.formType == 'company') {
+      requiredFieldsProposal = [
+        this.refs.companyName,
+        this.refs.contactName_0,
+        this.refs.contactEmail_0,
+        this.refs.contactPhone1_0
+      ];
+      requiredFieldsContract = [
+        this.refs.companyName,
+        this.refs.officialName,
+        this.refs.cnpj,
+        this.refs.registryES,
+        this.refs.registryMU,
+
+        this.refs.contactName_0,
+        this.refs.contactCPF_0,
+        this.refs.contactEmail_0,
+        this.refs.contactPhone1_0
+      ];
+    } else {
+      requiredFieldsProposal = [
+        this.refs.contactName_0,
+        this.refs.contactEmail_0,
+        this.refs.contactPhone1_0
+      ];
+      requiredFieldsContract = [
+        this.refs.contactName_0,
+        this.refs.contactCPF_0,
+        this.refs.contactEmail_0,
+        this.refs.contactPhone1_0
+      ];
+    }
+
+    for (var i = 0; i < requiredFieldsProposal.length; i++) {
+      requiredFieldsProposal[i].value.trim();
+
+      if (requiredFieldsProposal[i].value == '') {
+        formError.push(requiredFieldsProposal[i].name);
+        this.setState({ isError: true, formError });
       }
     }
 
-    let contactsArray = [];
+    if (formError.length > 0) {
+      return;
+    }
 
-    let clientObject = {};
+    for (var i = 0; i < requiredFieldsContract.length; i++) {
+      requiredFieldsContract[i].value.trim();
 
-    let description = this.refs.description.value.trim();
-    let price = this.refs.price.value.trim();
+      if (!requiredFieldsContract[i].value) {
+        confirmationMessage.push(requiredFieldsContract[i].name);
+      }
+    }
 
-    if (!description || !price) {
-      this.setState({formError: 'Favor preencher todos os campos'})
-      throw new Meteor.Error('required-fields-empty');
-    };
-    Meteor.call('clients.update', this.props._id, description, price);
-    this.setState({ price });
+    if (confirmationMessage.length == 0) {
+      console.log(requiredFieldsProposal.length);
+      this.saveEdits();
+      return;
+    }
+
+    confirmationMessage.unshift('Atenção: O formulário contém campos em branco obrigatórios para a emissão de contrato. Deseja continuar mesmo assim?');
+    this.setState({ confirmationMessage });
+    this.setState({ confirmationWindow: true });
+  }
+
+  saveEdits(e) {
+    console.log('saveEdits');
+    // Meteor.call('clients.update', this.props._id, description, price);
+    // this.setState({ price });
     this.closeEditWindow();
   }
 
@@ -189,6 +269,7 @@ class ClientItem extends React.Component {
   }
 
   newContactTab() {
+    console.log(this.state.contacts, this.props.contacts);
     let contacts = this.state.contacts;
     contacts.push({
       "_id" : this.state.contacts.length,
@@ -198,6 +279,7 @@ class ClientItem extends React.Component {
       cpf: ""
     })
     this.setState({ contacts });
+    console.log(this.state.contacts, this.props.contacts);
   }
 
   changeTab(e) {
@@ -218,16 +300,6 @@ class ClientItem extends React.Component {
     }
   }
 
-  updateStates() {
-    this.setState({
-      companyName: this.refs.companyName.value,
-      officialName: this.refs.officialName.value,
-      cnpj: this.refs.cnpj.value,
-      registryES: this.refs.registryES.value,
-      registryMU: this.refs.registryMU.value,
-    });
-  }
-
   changeRequiredFields() {
     if (this.state.formType == 'company') {
       $("div.form--with-tabs")[0].find("input").prop('required, true');////////////MELHORAR ESSA FUNCAO!
@@ -243,25 +315,25 @@ class ClientItem extends React.Component {
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>Nome Fantasia:</label>
-              <input type="text" ref="companyName" defaultValue={this.state.companyName} onChange={this.updateStates.bind(this)}/>
+              <input name="Nome Fantasia" type="text" ref="companyName" defaultValue={this.state.companyName}/>
             </div>
             <div className="form__half-column-2of2">
               <label>CNPJ:</label>
-              <input type="email" ref="cnpj" defaultValue={this.state.cnpj} onChange={this.updateStates.bind(this)}/>
+              <input name="CNPJ" type="text" ref="cnpj" defaultValue={this.state.cnpj}/>
             </div>
           </div>
           <div className="form__row">
             <label>Razão Social:</label>
-            <input type="text" ref="officialName" defaultValue={this.state.officialName} onChange={this.updateStates.bind(this)}/>
+            <input name="Razão Social" type="text" ref="officialName" defaultValue={this.state.officialName}/>
           </div>
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>Inscrição Estadual:</label>
-              <input type="text" ref="registryES" defaultValue={this.state.registryES} onChange={this.updateStates.bind(this)}/>
+              <input name="Inscrição Estadual" type="text" ref="registryES" defaultValue={this.state.registryES}/>
             </div>
             <div className="form__half-column-2of2">
               <label>Inscrição Municipal:</label>
-              <input type="text" ref="registryMU" defaultValue={this.state.registryMU} onChange={this.updateStates.bind(this)}/>
+              <input name="Inscrição Municipal" type="text" ref="registryMU" defaultValue={this.state.registryMU}/>
             </div>
           </div>
         </div>
@@ -276,26 +348,26 @@ class ClientItem extends React.Component {
           {this.showDeleteRegistry()}
           <div className="form__row">
             <label>Nome Completo:</label>
-            <input type="text" defaultValue={contact.name}/>
+            <input name="Nome do Contato" ref={"contactName_" + contact._id} type="text" defaultValue={contact.name}/>
           </div>
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>CPF:</label>
-              <input type="text" defaultValue={contact.cpf}/>
+              <input name="CPF do Contato" ref={"contactCPF_" + contact._id} type="text" defaultValue={contact.cpf}/>
             </div>
             <div className="form__half-column-2of2">
               <label>Email:</label>
-              <input type="email" defaultValue={contact.email}/>
+              <input name="Email do Contato" ref={"contactEmail_" + contact._id} type="email" defaultValue={contact.email}/>
             </div>
           </div>
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>Telefone 1:</label>
-              <input type="text" defaultValue={contact.telephone_1}/>
+              <input name="Telefone 1 do Contato" ref={"contactPhone1_" + contact._id} type="text" defaultValue={contact.telephone_1}/>
             </div>
             <div className="form__half-column-2of2">
               <label>Telefone 2:</label>
-              <input type="text" defaultValue={contact.telephone_2}/>
+              <input ref={"contactPhone2_" + contact._id} type="text" defaultValue={contact.telephone_2}/>
             </div>
           </div>
         </div>
@@ -316,7 +388,9 @@ class ClientItem extends React.Component {
           overlayClassName="boxed-view boxed-view--modal"
           >
             {createNew ? <h2>Cadastrar Novo Cliente</h2> : <h2>Editar Cliente</h2>}
-            {this.state.formError}
+            <div>
+              {this.renderError()}
+            </div>
             <select defaultValue="company" ref="type" className="edit-clients__select-type" onChange={this.changeTab.bind(this)}>
               <option value="company">Pessoa Jurídica</option>
               <option value="person">Pessoa Física</option>
@@ -336,11 +410,11 @@ class ClientItem extends React.Component {
                 <button type="button" className="button button--secondary" onClick={this.closeEditWindow}>Fechar</button>
               </div>
               <div className="button__column2of2">
-                {createNew ? <button className="button button--primary">Criar</button> : <button className="button button--primary">Salvar</button>}
+                {createNew ? <button className="button button--primary">Criar</button> : <button className="button button--primary" onClick={this.openConfirmationWindow.bind(this)}>Salvar</button>}
               </div>
             </form>
             {this.state.confirmationWindow ? <ConfirmationMessage
-              title="Deseja excluir este serviço?"
+              title={this.confirmationMessage}
               unmountMe={this.closeConfirmationWindow}
               confirmMe={this.closeWithRemoval}/> : null}
         </ReactModal>
