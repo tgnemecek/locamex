@@ -5,17 +5,18 @@ export default class ConfirmationMessage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      formError: ''
+      formError: '',
     }
   };
 
   renderError() {
+
     if (typeof(this.props.title) === 'string') {
       return <h3>{this.props.title}</h3>
     }
     if (Array.isArray(this.props.title)) {
       return this.props.title.map((line) => {
-        return <h3 key={line}>{line}</h3>
+        return <div key={line.key}><strong>{line.text}</strong></div>
       })
     }
   }
@@ -26,8 +27,12 @@ export default class ConfirmationMessage extends React.Component {
         <div className="boxed-view__box confirmation-message__box">
           {this.renderError()}
           <div className="button__main-div">
-            <button className="button button--secondary" onClick={this.props.unmountMe}>Não</button>
-            <button className="button button--danger" onClick={this.props.confirmMe}>Sim</button>
+            <div className="button__column1of2">
+              <button className="button button--secondary" onClick={this.props.unmountMe}>Não</button>
+            </div>
+            <div className="button__column2of2">
+              <button className="button button--danger" onClick={this.props.confirmMe}>Sim</button>
+            </div>
           </div>
         </div>
       </div>

@@ -11,6 +11,7 @@
   line-height: 1.2;
   padding: $input-spacing;
   text-transform: uppercase;
+  width: 100%;
 }
 
 .button__column1of2 {
@@ -66,14 +67,12 @@
 
 .button--primary {
   border: 1px solid $brand-primary;
-  width: 100%;
 }
 
 .button--secondary {
   background: $button-secondary-bg;
   border: 1px solid $button-secondary-border-color;
   color: $button-secondary-color;
-  width: 100%;
 }
 
 .button--danger {

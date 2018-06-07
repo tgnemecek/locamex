@@ -53,7 +53,7 @@ export default class ListClients extends React.Component {
               <tr>
                 <td className="list-view__left-align list-view__small">Código</td>
                 <td className="list-view__left-align">Nome Fantasia</td>
-                {/* <td className="list-view__right-align list-view__small"><ClientItem key={0} createNew={true}/></td> */}
+                <td className="list-view__right-align list-view__small"><ClientItem key={0} createNew={true}/></td>
               </tr>
               {this.renderClients()}
             </tbody>
@@ -81,11 +81,6 @@ class ClientItem extends React.Component {
       formType: this.props.formType,
       formTab: 1,
 
-      companyName: this.props.companyName,
-      officialName: this.props.officialName,
-      cnpj: this.props.cnpj,
-      registryES: this.props.registryES,
-      registryMU: this.props.registryMU,
       contacts: []
     }
 
@@ -93,21 +88,16 @@ class ClientItem extends React.Component {
     this.tabContentsContacts = this.tabContentsContacts.bind(this);
     this.renderError = this.renderError.bind(this);
 
-    this.openEditWindow = this.openEditWindow.bind(this);
-    this.closeEditWindow = this.closeEditWindow.bind(this);
-    this.openConfirmationWindow = this.openConfirmationWindow.bind(this);
-    this.closeConfirmationWindow = this.closeConfirmationWindow.bind(this);
-    this.closeWithRemoval = this.closeWithRemoval.bind(this);
-    this.createNewClient = this.createNewClient.bind(this);
   };
 
   componentDidMount() {
 
     var contacts = [];
-    for (var i = 0; i < this.props.contacts.length; i++) {
-      contacts[i] = this.props.contacts[i];
+    if (this.props.contacts) {
+      for (var i = 0; i < this.props.contacts.length; i++) {
+        contacts[i] = this.props.contacts[i];
+      }
     }
-
     this.setState({ contacts });
 
     if (this.state.formType == 'company') {
@@ -230,7 +220,10 @@ class ClientItem extends React.Component {
       requiredFieldsContract[i].value.trim();
 
       if (!requiredFieldsContract[i].value) {
-        confirmationMessage.push(requiredFieldsContract[i].name);
+        confirmationMessage.push({
+          key: i + 3,
+          text: "-" + requiredFieldsContract[i].name,
+        });
       }
     }
 
@@ -240,7 +233,19 @@ class ClientItem extends React.Component {
       return;
     }
 
-    confirmationMessage.unshift('Atenção: O formulário contém campos em branco obrigatórios para a emissão de contrato. Deseja continuar mesmo assim?');
+    confirmationMessage.unshift({
+      key: 2,
+      text: 'Campos inválidos:'
+    });
+    confirmationMessage.unshift({
+      key: 1,
+      text: 'Deseja continuar mesmo assim?'
+    });
+    confirmationMessage.unshift({
+      key: 0,
+      text: 'Atenção: O formulário contém campos inválidos obrigatórios para a emissão de contrato.'
+    });
+
     this.setState({ confirmationMessage });
     this.setState({ confirmationWindow: true });
   }
@@ -249,7 +254,7 @@ class ClientItem extends React.Component {
     console.log('saveEdits');
     // Meteor.call('clients.update', this.props._id, description, price);
     // this.setState({ price });
-    this.closeEditWindow();
+    this.closeEditWindow.bind(this)();
   }
 
   createNewClient(e) {
@@ -269,7 +274,7 @@ class ClientItem extends React.Component {
       throw new Meteor.Error('string-too-long');
     }
     Meteor.call('clients.insert', description, price);
-    this.closeEditWindow();
+    this.closeEditWindow.bind(this)();
   }
 
   showCompanyTab() {
@@ -325,29 +330,29 @@ class ClientItem extends React.Component {
   tabContentsCompany() {
     if (this.state.formType == 'company') {
       return(
-        <div id="company-form" className="form--with-tabs" onSubmit={this.props.createNew ? this.props.createNewClient : this.props.saveEdits}>
+        <div id="company-form" className="form--with-tabs" onSubmit={this.props.createNew ? this.props.createNew : this.props.saveEdits}>
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>Nome Fantasia:</label>
-              <input name="Nome Fantasia" type="text" ref="companyName" defaultValue={this.state.companyName}/>
+              <input name="Nome Fantasia" type="text" ref="companyName" defaultValue={this.props.companyName}/>
             </div>
             <div className="form__half-column-2of2">
               <label>CNPJ:</label>
-              <input name="CNPJ" type="text" ref="cnpj" defaultValue={this.state.cnpj}/>
+              <input name="CNPJ" type="text" ref="cnpj" defaultValue={this.props.cnpj}/>
             </div>
           </div>
           <div className="form__row">
             <label>Razão Social:</label>
-            <input name="Razão Social" type="text" ref="officialName" defaultValue={this.state.officialName}/>
+            <input name="Razão Social" type="text" ref="officialName" defaultValue={this.props.officialName}/>
           </div>
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>Inscrição Estadual:</label>
-              <input name="Inscrição Estadual" type="text" ref="registryES" defaultValue={this.state.registryES}/>
+              <input name="Inscrição Estadual" type="text" ref="registryES" defaultValue={this.props.registryES}/>
             </div>
             <div className="form__half-column-2of2">
               <label>Inscrição Municipal:</label>
-              <input name="Inscrição Municipal" type="text" ref="registryMU" defaultValue={this.state.registryMU}/>
+              <input name="Inscrição Municipal" type="text" ref="registryMU" defaultValue={this.props.registryMU}/>
             </div>
           </div>
         </div>
@@ -405,7 +410,7 @@ class ClientItem extends React.Component {
             <div>
               {this.renderError()}
             </div>
-            <select defaultValue="company" ref="type" className="edit-clients__select-type" onChange={this.changeTab.bind(this)}>
+            <select defaultValue="company" ref="type" className="edit-clients__select-type" disabled={!this.props.createNew} onChange={this.changeTab.bind(this)}>
               <option value="company">Pessoa Jurídica</option>
               <option value="person">Pessoa Física</option>
             </select>
@@ -416,21 +421,21 @@ class ClientItem extends React.Component {
                 })}
               {this.showAddNewTab()}
             </div>
-            <form onSubmit={this.props.createNew ? this.props.createNewClient : this.props.saveEdits}>
+            <form onSubmit={this.props.createNew ? this.props.createNew : this.props.saveEdits}>
               {this.tabContentsCompany()}
               {this.tabContentsContacts()}
-              {createNew ? null : <button type="button" className="button button--danger full-width" onClick={this.openConfirmationWindow}>Remover</button>}
+              {createNew ? null : <button type="button" className="button button--danger full-width" onClick={this.openConfirmationWindow.bind(this)}>Remover</button>}
               <div className="button__column1of2">
-                <button type="button" className="button button--secondary" onClick={this.closeEditWindow}>Fechar</button>
+                <button type="button" className="button button--secondary" onClick={this.closeEditWindow.bind(this)}>Fechar</button>
               </div>
               <div className="button__column2of2">
                 {createNew ? <button className="button button--primary">Criar</button> : <button className="button button--primary" onClick={this.openConfirmationWindow.bind(this)}>Salvar</button>}
               </div>
             </form>
             {this.state.confirmationWindow ? <ConfirmationMessage
-              title={this.confirmationMessage}
-              unmountMe={this.closeConfirmationWindow}
-              confirmMe={this.closeWithRemoval}/> : null}
+              title={this.state.confirmationMessage}
+              unmountMe={this.closeConfirmationWindow.bind(this)}
+              confirmMe={this.closeWithRemoval.bind(this)}/> : null}
         </ReactModal>
       )
     }
@@ -440,7 +445,7 @@ class ClientItem extends React.Component {
     if(this.props.createNew) {
       return(
         <div>
-          <button className="button--pill list-view__button" onClick={this.openEditWindow}>+</button>
+          <button className="button--pill list-view__button" onClick={this.openEditWindow.bind(this)}>+</button>
           {this.editClientScreen(this.state.editOpen, '', '', '', true)}
         </div>
       )
@@ -448,8 +453,8 @@ class ClientItem extends React.Component {
       return (
           <tr>
             <td className="list-view__left-align">{this.props._id}</td>
-            <td className="list-view__left-align">{this.props.name}</td>
-            <td className="list-view__right-align list-view__edit"><button className="button--pill list-view__button" onClick={this.openEditWindow}>Editar</button></td>
+            <td className="list-view__left-align">{this.props.companyName}</td>
+            <td className="list-view__right-align list-view__edit"><button className="button--pill list-view__button" onClick={this.openEditWindow.bind(this)}>Editar</button></td>
             {this.editClientScreen(this.state.editOpen, this.props._id, this.props.description, this.props.price)}
           </tr>
       )
