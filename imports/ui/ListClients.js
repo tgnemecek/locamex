@@ -129,10 +129,23 @@ class ClientItem extends React.Component {
   saveEdits(e) {
     e.preventDefault();
 
+    var formArray = $("form.form--with-tabs").toArray();
+
+    for (var i = 0; i < formArray.length; i++) {
+      if (this.state.formType != 'company' || formArray[i] != formArray[0]) {
+        var inputsArray = $("form.form--with-tabs")[i].find("input").toArray();
+        for (var j = 0; j < inputsArray.length; j++) {
+          inputsArray[j].value ? null : console.log('aaa');
+        }
+      }
+    }
+
+    let contactsArray = [];
+
+    let clientObject = {};
+
     let description = this.refs.description.value.trim();
     let price = this.refs.price.value.trim();
-
-    price = Number(price);
 
     if (!description || !price) {
       this.setState({formError: 'Favor preencher todos os campos'})
@@ -192,7 +205,7 @@ class ClientItem extends React.Component {
     $("div.form__tab").find("button").removeClass("active");
     e.target.classList.add("active");
 
-    var formArray = $("form.form--with-tabs").toArray();
+    var formArray = $("div.form--with-tabs").toArray();
     for (var i = 0; i < formArray.length; i++) {
       formArray[i].classList.add("hidden");
     }
@@ -215,10 +228,18 @@ class ClientItem extends React.Component {
     });
   }
 
+  changeRequiredFields() {
+    if (this.state.formType == 'company') {
+      $("div.form--with-tabs")[0].find("input").prop('required, true');////////////MELHORAR ESSA FUNCAO!
+    } else {
+      $("#company-form").find("input").prop('required, false');
+    }
+  }
+
   tabContentsCompany() {
     if (this.state.formType == 'company') {
       return(
-        <form className="form--with-tabs" onSubmit={this.props.createNew ? this.props.createNewClient : this.props.saveEdits}>
+        <div id="company-form" className="form--with-tabs" onSubmit={this.props.createNew ? this.props.createNewClient : this.props.saveEdits}>
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>Nome Fantasia:</label>
@@ -243,7 +264,7 @@ class ClientItem extends React.Component {
               <input type="text" ref="registryMU" defaultValue={this.state.registryMU} onChange={this.updateStates.bind(this)}/>
             </div>
           </div>
-        </form>
+        </div>
       )
     }
   }
@@ -251,7 +272,7 @@ class ClientItem extends React.Component {
   tabContentsContacts() {
     return this.state.contacts.map((contact) => {
       return(
-        <form key={contact._id} className="form--with-tabs hidden" onSubmit={this.props.createNew ? this.props.createNewClient : this.props.saveEdits}>
+        <div key={contact._id} className="form--with-tabs hidden">
           {this.showDeleteRegistry()}
           <div className="form__row">
             <label>Nome Completo:</label>
@@ -277,7 +298,7 @@ class ClientItem extends React.Component {
               <input type="text" defaultValue={contact.telephone_2}/>
             </div>
           </div>
-        </form>
+        </div>
       )
     })
   }
@@ -307,15 +328,17 @@ class ClientItem extends React.Component {
                 })}
               {this.showAddNewTab()}
             </div>
-            {this.tabContentsCompany()}
-            {this.tabContentsContacts()}
-            {createNew ? null : <button type="button" className="button button--danger full-width" onClick={this.openConfirmationWindow}>Remover</button>}
-            <div className="button__column1of2">
-              <button type="button" className="button button--secondary" onClick={this.closeEditWindow}>Fechar</button>
-            </div>
-            <div className="button__column2of2">
-              {createNew ? <button className="button button--primary">Criar</button> : <button className="button button--primary">Salvar</button>}
-            </div>
+            <form onSubmit={this.props.createNew ? this.props.createNewClient : this.props.saveEdits}>
+              {this.tabContentsCompany()}
+              {this.tabContentsContacts()}
+              {createNew ? null : <button type="button" className="button button--danger full-width" onClick={this.openConfirmationWindow}>Remover</button>}
+              <div className="button__column1of2">
+                <button type="button" className="button button--secondary" onClick={this.closeEditWindow}>Fechar</button>
+              </div>
+              <div className="button__column2of2">
+                {createNew ? <button className="button button--primary">Criar</button> : <button className="button button--primary">Salvar</button>}
+              </div>
+            </form>
             {this.state.confirmationWindow ? <ConfirmationMessage
               title="Deseja excluir este serviço?"
               unmountMe={this.closeConfirmationWindow}
