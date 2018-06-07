@@ -3,7 +3,12 @@
   padding: 0;
 }
 
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
 html {
+  box-sizing: border-box;
   font-size: 62.5%;
 }
 
@@ -38,7 +43,7 @@ legend {
 input[type=text], input[type=number], input[type=email], input[type=password], select {
   border: 1px solid $input-border;
   font-size: $base-font-size;
-  margin: ($space /2);
+  // margin: ($space /2);
   padding: $input-spacing;
 }
 
@@ -53,4 +58,18 @@ input[type="number"] {
 
 tr:nth-child(even) {
     background-color: $grey;
+}
+
+// Common uses
+.align-right {
+  text-align: right;
+}
+
+.placeholder {
+  color: $dark-grey;
+  font-style: italic;
+}
+
+.full-width {
+  width: 100%;
 }

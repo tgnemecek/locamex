@@ -1,6 +1,4 @@
 .button__main-div {
-  display: flex;
-  justify-content: center;
   margin-top: ($space /2);
 }
 
@@ -9,13 +7,24 @@
   border: none;
   color: $button-color;
   cursor: pointer;
-  flex-basis: 0;
-  flex-grow: 1;
   font-size: $base-font-size;
   line-height: 1.2;
-  margin: ($space /2);
   padding: $input-spacing;
   text-transform: uppercase;
+}
+
+.button__column1of2 {
+  display: inline-block;
+  margin-top: ($space /2);
+  padding-right: ($space /2);
+  width: 50%;
+}
+
+.button__column2of2 {
+  display: inline-block;
+  margin-top: ($space /2);
+  padding-left: ($space /2);
+  width: 50%;
 }
 
 .button--header {
@@ -56,19 +65,19 @@
 }
 
 .button--primary {
-  margin: ($space /2) 0 0 ($space /2) !important;
+  border: 1px solid $brand-primary;
+  width: 100%;
 }
 
 .button--secondary {
   background: $button-secondary-bg;
   border: 1px solid $button-secondary-border-color;
   color: $button-secondary-color;
-  margin: ($space /2) ($space /2) 0 0 !important;
+  width: 100%;
 }
 
 .button--danger {
   background: $button-danger-bg;
-  border: 1px solid $button-danger-border-color;
   color: $button-danger-color;
 }
 
@@ -78,4 +87,13 @@
   margin: 0;
   text-decoration: underline;
   text-transform: none;
+}
+
+.button--delete-registry {
+  background: $button-danger-bg;
+  border-color: transparent;
+  color: $button-danger-color;
+  position: absolute;
+  right: 0;
+  margin-right: ($space /2);
 }
