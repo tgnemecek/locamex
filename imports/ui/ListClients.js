@@ -40,12 +40,12 @@ export default class ListClients extends React.Component {
                 return <ClientItem
                   key={client._id}
                   _id={client._id}
-                  formType={client.type}
-                  cnpj={client.cnpj}
                   companyName={client.companyName}
                   officialName={client.officialName}
+                  cnpj={client.cnpj}
                   registryES={client.registryES}
                   registryMU={client.registryMU}
+                  formType={client.type}
                   contacts={client.contacts}
                 />
             })}
@@ -65,11 +65,21 @@ class ClientItem extends React.Component {
       editOpen: false,
       confirmationWindow: false,
       formError: '',
-      contacts: this.props.contacts,
+
       formType: this.props.formType,
-      formTab: 0,
-      price: new Number(this.props.price)
+      formTab: 1,
+
+      companyName: this.props.companyName,
+      officialName: this.props.officialName,
+      cnpj: this.props.cnpj,
+      registryES: this.props.registryES,
+      registryMU: this.props.registryMU,
+      contacts: this.props.contacts
     }
+
+    this.tabContentsCompany = this.tabContentsCompany.bind(this);
+    this.tabContentsContacts = this.tabContentsContacts.bind(this);
+
     this.openEditWindow = this.openEditWindow.bind(this);
     this.closeEditWindow = this.closeEditWindow.bind(this);
     this.openConfirmationWindow = this.openConfirmationWindow.bind(this);
@@ -80,7 +90,7 @@ class ClientItem extends React.Component {
 
   componentDidMount() {
     if (this.state.formType == 'company') {
-      this.setState({ formTab: -1 });
+      this.setState({ formTab: 0 });
     }
   }
 
@@ -155,12 +165,8 @@ class ClientItem extends React.Component {
 
   showCompanyTab() {
     if (this.state.formType == 'company') {
-      return <button value={-1} onClick={this.changeTab.bind(this)} className="active">Empresa</button>
+      return <button value={0} onClick={this.changeTab.bind(this)} className="active">Empresa</button>
     }
-  }
-
-  changeTab(e) {
-    this.setState({ formTab: e.target.value });
   }
 
   showAddNewTab() {
@@ -185,6 +191,95 @@ class ClientItem extends React.Component {
     this.setState({ formTab: e.target.value });
     $("div.form__tab").find("button").removeClass("active");
     e.target.classList.add("active");
+
+    var formArray = $("form.form--with-tabs").toArray();
+    for (var i = 0; i < formArray.length; i++) {
+      formArray[i].classList.add("hidden");
+    }
+    document.getElementsByClassName('form--with-tabs')[e.target.value].classList.remove("hidden");
+  }
+
+  showDeleteRegistry() {
+    if (this.state.formTab > 0) {
+      return <button className="button--delete-registry">Excluir Registro</button>
+    }
+  }
+
+  updateStates() {
+    this.setState({
+      companyName: this.refs.companyName.value,
+      officialName: this.refs.officialName.value,
+      cnpj: this.refs.cnpj.value,
+      registryES: this.refs.registryES.value,
+      registryMU: this.refs.registryMU.value,
+    });
+  }
+
+  tabContentsCompany() {
+    if (this.state.formType == 'company') {
+      return(
+        <form className="form--with-tabs" onSubmit={this.props.createNew ? this.props.createNewClient : this.props.saveEdits}>
+          <div className="form__row">
+            <div className="form__half-column-1of2">
+              <label>Nome Fantasia:</label>
+              <input type="text" ref="companyName" defaultValue={this.state.companyName} onChange={this.updateStates.bind(this)}/>
+            </div>
+            <div className="form__half-column-2of2">
+              <label>CNPJ:</label>
+              <input type="email" ref="cnpj" defaultValue={this.state.cnpj} onChange={this.updateStates.bind(this)}/>
+            </div>
+          </div>
+          <div className="form__row">
+            <label>Razão Social:</label>
+            <input type="text" ref="officialName" defaultValue={this.state.officialName} onChange={this.updateStates.bind(this)}/>
+          </div>
+          <div className="form__row">
+            <div className="form__half-column-1of2">
+              <label>Inscrição Estadual:</label>
+              <input type="text" ref="registryES" defaultValue={this.state.registryES} onChange={this.updateStates.bind(this)}/>
+            </div>
+            <div className="form__half-column-2of2">
+              <label>Inscrição Municipal:</label>
+              <input type="text" ref="registryMU" defaultValue={this.state.registryMU} onChange={this.updateStates.bind(this)}/>
+            </div>
+          </div>
+        </form>
+      )
+    }
+  }
+
+  tabContentsContacts() {
+    return this.state.contacts.map((contact) => {
+      return(
+        <form key={contact._id} className="form--with-tabs hidden" onSubmit={this.props.createNew ? this.props.createNewClient : this.props.saveEdits}>
+          {this.showDeleteRegistry()}
+          <div className="form__row">
+            <label>Nome Completo:</label>
+            <input type="text" defaultValue={contact.name}/>
+          </div>
+          <div className="form__row">
+            <div className="form__half-column-1of2">
+              <label>CPF:</label>
+              <input type="text" defaultValue={contact.cpf}/>
+            </div>
+            <div className="form__half-column-2of2">
+              <label>Email:</label>
+              <input type="email" defaultValue={contact.email}/>
+            </div>
+          </div>
+          <div className="form__row">
+            <div className="form__half-column-1of2">
+              <label>Telefone 1:</label>
+              <input type="text" defaultValue={contact.telephone_1}/>
+            </div>
+            <div className="form__half-column-2of2">
+              <label>Telefone 2:</label>
+              <input type="text" defaultValue={contact.telephone_2}/>
+            </div>
+          </div>
+        </form>
+      )
+    })
   }
 
   editClientScreen(open, _id, description, price, createNew) {
@@ -208,24 +303,12 @@ class ClientItem extends React.Component {
             <div className="form__tab">
               {this.showCompanyTab()}
               {this.state.contacts.map((contact) => {
-                  return <button key={contact._id} value={contact._id} onClick={this.changeTab.bind(this)}>Contato {(contact._id + 1)}</button>
+                  return <button key={contact._id} value={contact._id+1} onClick={this.changeTab.bind(this)}>Contato {(contact._id + 1)}</button>
                 })}
               {this.showAddNewTab()}
             </div>
-            <TabContents
-              key={this.state.formTab}
-              companyName={this.props.companyName}
-              officialName={this.props.officialName}
-              cnpj={this.props.cnpj}
-              registryES={this.props.registryES}
-              registryMU={this.props.registryMU}
-              formType={this.props.formType}
-              formTab={this.state.formTab}
-              contacts={this.props.contacts}
-              createNew={createNew}
-              keepEdits={this.keepEdits}
-              saveEdits={this.saveEdits}
-            />
+            {this.tabContentsCompany()}
+            {this.tabContentsContacts()}
             {createNew ? null : <button type="button" className="button button--danger full-width" onClick={this.openConfirmationWindow}>Remover</button>}
             <div className="button__column1of2">
               <button type="button" className="button button--secondary" onClick={this.closeEditWindow}>Fechar</button>
@@ -261,104 +344,4 @@ class ClientItem extends React.Component {
       )
     }
   }
-}
-
-class TabContents extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      editOpen: false,
-      confirmationWindow: false,
-      companyName: this.props.companyName,
-      officialName: this.props.officialName,
-      cnpj: this.props.cnpj,
-      registryES: this.props.registryES,
-      registryMU: this.props.registryMU,
-      contacts: this.props.contacts,
-      formError: '',
-      formType: this.props.formType
-    }
-  };
-
-  showDeleteRegistry() {
-    if (this.props.formTab > 0) {
-      return <button className="button--delete-registry">Excluir Registro</button>
-    }
-  }
-
-  updateStates() {
-    this.setState({
-      companyName: this.refs.companyName.value,
-      officialName: this.refs.officialName.value,
-      cnpj: this.refs.cnpj.value,
-      registryES: this.refs.registryES.value,
-      registryMU: this.refs.registryMU.value,
-    });
-  }
-
-  render() {
-    if (this.state.formType == 'company' && this.props.formTab == -1) {
-      return(
-        <form className="form--with-tabs" onSubmit={this.props.createNew ? this.props.createNewClient : this.props.saveEdits}>
-          <div className="form__row">
-            <div className="form__half-column-1of2">
-              <label>Nome Fantasia:</label>
-              <input type="text" ref="companyName" defaultValue={this.state.companyName} onChange={this.updateStates.bind(this)}/>
-            </div>
-            <div className="form__half-column-2of2">
-              <label>CNPJ:</label>
-              <input type="email" ref="cnpj" defaultValue={this.state.cnpj} onChange={this.updateStates.bind(this)}/>
-            </div>
-          </div>
-          <div className="form__row">
-            <label>Razão Social:</label>
-            <input type="text" ref="officialName" defaultValue={this.state.officialName} onChange={this.updateStates.bind(this)}/>
-          </div>
-          <div className="form__row">
-            <div className="form__half-column-1of2">
-              <label>Inscrição Estadual:</label>
-              <input type="text" ref="registryES" defaultValue={this.state.registryES} onChange={this.updateStates.bind(this)}/>
-            </div>
-            <div className="form__half-column-2of2">
-              <label>Inscrição Municipal:</label>
-              <input type="text" ref="registryMU" defaultValue={this.state.registryMU} onChange={this.updateStates.bind(this)}/>
-            </div>
-          </div>
-        </form>
-      )
-    } else {
-      return(
-        <form className="form--with-tabs" onSubmit={this.props.createNew ? this.props.createNewClient : this.props.saveEdits}>
-          {this.showDeleteRegistry()}
-          <div className="form__row">
-            <label>Nome Completo:</label>
-            <input type="text" defaultValue={this.state.contacts[this.props.formTab].name}/>
-          </div>
-          <div className="form__row">
-            <div className="form__half-column-1of2">
-              <label>CPF:</label>
-              <input type="text" defaultValue={this.state.contacts[this.props.formTab].cpf}/>
-            </div>
-            <div className="form__half-column-2of2">
-              <label>Email:</label>
-              <input type="email" defaultValue={this.state.contacts[this.props.formTab].email}/>
-            </div>
-          </div>
-          <div className="form__row">
-            <div className="form__half-column-1of2">
-              <label>Telefone 1:</label>
-              <input type="text" defaultValue={this.state.contacts[this.props.formTab].telephone_1}/>
-            </div>
-            <div className="form__half-column-2of2">
-              <label>Telefone 2:</label>
-              <input type="text" defaultValue={this.state.contacts[this.props.formTab].telephone_2}/>
-            </div>
-          </div>
-        </form>
-      )
-    }
-    return null;
-  }
-
 }

@@ -65,6 +65,10 @@ tr:nth-child(even) {
   text-align: right;
 }
 
+.hidden {
+  display: none;
+}
+
 .placeholder {
   color: $dark-grey;
   font-style: italic;
