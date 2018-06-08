@@ -251,10 +251,21 @@ class ClientItem extends React.Component {
   }
 
   saveEdits(e) {
-    console.log('saveEdits');
+
+    var allFields = [
+      this.refs.companyName,
+      this.refs.officialName,
+      this.refs.cnpj,
+      this.refs.registryES,
+      this.refs.registryMU];
+
+      for (var i = 0; i < this.state.contacts.length; i++) {
+
+      }
+
     // Meteor.call('clients.update', this.props._id, description, price);
     // this.setState({ price });
-    this.closeEditWindow.bind(this)();
+    this.closeEditWindow();
   }
 
   createNewClient(e) {
@@ -363,7 +374,7 @@ class ClientItem extends React.Component {
   tabContentsContacts() {
     return this.state.contacts.map((contact) => {
       return(
-        <div key={contact._id} className="form--with-tabs hidden">
+        <div key={contact._id} ={contact._id} className="form--with-tabs hidden">
           {this.showDeleteRegistry()}
           <div className="form__row">
             <label>Nome Completo:</label>
