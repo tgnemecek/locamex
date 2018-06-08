@@ -172,37 +172,38 @@ class ClientItem extends React.Component {
 
     if (this.state.formType == 'company') {
       requiredFieldsProposal = [
-        this.refs.companyName,
-        this.refs.contactName_0,
-        this.refs.contactEmail_0,
-        this.refs.contactPhone1_0
+        customTypes.getRef(this.refs.companyName, 0),
+        customTypes.getRef(this.refs.contactName, 0),
+        customTypes.getRef(this.refs.contactEmail, 0),
+        customTypes.getRef(this.refs.contactPhone1, 0)
       ];
       requiredFieldsContract = [
-        this.refs.companyName,
-        this.refs.officialName,
-        this.refs.cnpj,
-        this.refs.registryES,
-        this.refs.registryMU,
-
-        this.refs.contactName_0,
-        this.refs.contactCPF_0,
-        this.refs.contactEmail_0,
-        this.refs.contactPhone1_0
+        //Company
+        customTypes.getRef(this.refs.companyName, 0),
+        customTypes.getRef(this.refs.officialName, 0),
+        customTypes.getRef(this.refs.cnpj, 0),
+        customTypes.getRef(this.refs.registryES, 0),
+        customTypes.getRef(this.refs.registryMU, 0),
+        //Contact
+        customTypes.getRef(this.refs.contactName, 0),
+        customTypes.getRef(this.refs.contactCPF, 0),
+        customTypes.getRef(this.refs.contactEmail, 0),
+        customTypes.getRef(this.refs.contactPhone1, 0)
       ];
     } else {
       requiredFieldsProposal = [
-        this.refs.contactName_0,
-        this.refs.contactEmail_0,
-        this.refs.contactPhone1_0
+        customTypes.getRef(this.refs.contactName, 0),
+        customTypes.getRef(this.refs.contactEmail, 0),
+        customTypes.getRef(this.refs.contactPhone1, 0)
       ];
       requiredFieldsContract = [
-        this.refs.contactName_0,
-        this.refs.contactCPF_0,
-        this.refs.contactEmail_0,
-        this.refs.contactPhone1_0
+        customTypes.getRef(this.refs.contactName, 0),
+        customTypes.getRef(this.refs.contactCPF, 0),
+        customTypes.getRef(this.refs.contactEmail, 0),
+        customTypes.getRef(this.refs.contactPhone1, 0)
       ];
     }
-
+console.log(this.refs.companyName, requiredFieldsProposal[0]);
     for (var i = 0; i < requiredFieldsProposal.length; i++) {
       requiredFieldsProposal[i].value.trim();
 
@@ -251,18 +252,6 @@ class ClientItem extends React.Component {
   }
 
   saveEdits(e) {
-
-    var allFields = [
-      this.refs.companyName,
-      this.refs.officialName,
-      this.refs.cnpj,
-      this.refs.registryES,
-      this.refs.registryMU];
-
-      for (var i = 0; i < this.state.contacts.length; i++) {
-
-      }
-
     // Meteor.call('clients.update', this.props._id, description, price);
     // this.setState({ price });
     this.closeEditWindow();
@@ -374,30 +363,30 @@ class ClientItem extends React.Component {
   tabContentsContacts() {
     return this.state.contacts.map((contact) => {
       return(
-        <div key={contact._id} ={contact._id} className="form--with-tabs hidden">
+        <div key={contact._id} className="form--with-tabs hidden">
           {this.showDeleteRegistry()}
           <div className="form__row">
             <label>Nome Completo:</label>
-            <input name="Nome do Contato" ref={"contactName_" + contact._id} type="text" defaultValue={contact.name}/>
+            <input name="Nome do Contato" ref="contactName" type="text" defaultValue={contact.name}/>
           </div>
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>CPF:</label>
-              <input name="CPF do Contato" ref={"contactCPF_" + contact._id} type="text" defaultValue={contact.cpf}/>
+              <input name="CPF do Contato" ref="contactCPF" type="text" defaultValue={contact.cpf}/>
             </div>
             <div className="form__half-column-2of2">
               <label>Email:</label>
-              <input name="Email do Contato" ref={"contactEmail_" + contact._id} type="email" defaultValue={contact.email}/>
+              <input name="Email do Contato" ref="contactEmail" type="email" defaultValue={contact.email}/>
             </div>
           </div>
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>Telefone 1:</label>
-              <input name="Telefone 1 do Contato" ref={"contactPhone1_" + contact._id} type="text" defaultValue={contact.telephone_1}/>
+              <input name="Telefone 1 do Contato" ref="contactPhone1" type="text" defaultValue={contact.telephone_1}/>
             </div>
             <div className="form__half-column-2of2">
               <label>Telefone 2:</label>
-              <input ref={"contactPhone2_" + contact._id} type="text" defaultValue={contact.telephone_2}/>
+              <input ref="contactPhone2" type="text" defaultValue={contact.telephone_2}/>
             </div>
           </div>
         </div>
