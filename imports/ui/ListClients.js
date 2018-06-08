@@ -14,7 +14,6 @@ export default class ListClients extends React.Component {
     this.state = {
       database: []
     }
-    this.renderClients = this.renderClients.bind(this);
   };
 
   componentDidMount() {
@@ -25,7 +24,7 @@ export default class ListClients extends React.Component {
     })
   }
 
-  renderClients() {
+  renderClients = (e) => {
     if (this.state.database.length > 0) {
       return this.state.database.map((client) => {
         return <ClientItem
@@ -37,6 +36,7 @@ export default class ListClients extends React.Component {
           registryES={client.registryES}
           registryMU={client.registryMU}
           formType={client.type}
+          observations={client.observations}
           contacts={client.contacts}
         />
       })
@@ -53,7 +53,7 @@ export default class ListClients extends React.Component {
               <tr>
                 <td className="list-view__left-align list-view__small">Código</td>
                 <td className="list-view__left-align">Nome Fantasia</td>
-                <td className="list-view__right-align list-view__small"><ClientItem key={0} createNew={true}/></td>
+                {/* <td className="list-view__right-align list-view__small"><ClientItem key={0} createNew={true}/></td> */}
               </tr>
               {this.renderClients()}
             </tbody>
@@ -80,68 +80,53 @@ class ClientItem extends React.Component {
 
       formType: this.props.formType,
       formTab: 1,
+      contactTabs: this.props.contacts.length,
 
-      contacts: []
+      //States used for controlled inputs
+      companyName: this.props.companyName,
+      cnpj: this.props.cnpj,
+      officialName: this.props.officialName,
+      registryES: this.props.registryES,
+      registryMU: this.props.registryMU,
+      contactInformation: [{
+        contactName: this.props.contactName,
+        contactEmail: this.props.contactEmail,
+        contactCPF: this.props.contactCPF,
+        contactPhone1: this.props.contactPhone1,
+        contactPhone2: this.props.contactPhone2
+      }]
     }
 
-    this.tabContentsCompany = this.tabContentsCompany.bind(this);
-    this.tabContentsContacts = this.tabContentsContacts.bind(this);
-    this.renderError = this.renderError.bind(this);
-
+    this.state["formTab"] = this.state.formType == 'company' ? 0 : 1;
+    this.initialState = this.state;
   };
 
-  componentDidMount() {
-
-    var contacts = [];
-    if (this.props.contacts) {
-      for (var i = 0; i < this.props.contacts.length; i++) {
-        contacts[i] = this.props.contacts[i];
-      }
-    }
-    this.setState({ contacts });
-
-    if (this.state.formType == 'company') {
-      this.setState({ formTab: 0 });
-    } else {
-      this.setState({ formTab: 1 });
-    }
+  handleSubmit = (e) => {
+    return;
   }
 
-  openEditWindow() {
+  handleChange = (e) => {
+    this.setState({ [e.target.name]: e.target.value })
+  }
+
+  openEditWindow = (e) => {
     this.setState({editOpen: true});
   };
 
-  closeEditWindow() {
-    var contacts = [];
-    for (var i = 0; i < this.props.contacts.length; i++) {
-      contacts[i] = this.props.contacts[i];
-    }
-
-    this.setState({
-      editOpen: false,
-      confirmationWindow: false,
-      contacts
-    });
+  closeEditWindow = (e) => {
+    this.setState(this.initialState);
   };
 
-  closeWithRemoval() {
-    Meteor.call('clients.hide', this.props._id);
-    this.setState({
-      editOpen: false,
-      confirmationWindow: false
-    });
-  };
-
-  closeConfirmationWindow() {
-    this.setState({confirmationWindow: false});
+  closeConfirmationWindow = (e) => {
+    this.setState({ confirmationWindow: false });
   }
 
-  removeSpecialCharacters(e) {
+  removeSpecialCharacters = (e) => {
     let value = e.target.value;
     value = value.replace(/-./g, '');
-  }
+  } //Arrumar
 
-  renderError() {
+  renderError = (e) => {
     if (this.state.isError) {
       var formErrorMessage = [];
 
@@ -158,9 +143,10 @@ class ClientItem extends React.Component {
         return <h3 key={line} className="error-message">{line}</h3>
       })
     } else { return null };
-  }
+  } //Testar
 
-  openConfirmationWindow(e) {
+
+  openConfirmationWindow = (e) => { //AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII
     e.preventDefault();
 
     var requiredFieldsProposal = [];
@@ -172,64 +158,63 @@ class ClientItem extends React.Component {
 
     if (this.state.formType == 'company') {
       requiredFieldsProposal = [
-        customTypes.getRef(this.refs.companyName, 0),
-        customTypes.getRef(this.refs.contactName, 0),
-        customTypes.getRef(this.refs.contactEmail, 0),
-        customTypes.getRef(this.refs.contactPhone1, 0)
+        'companyName',
+        'contactName',
+        'contactEmail',
+        'contactPhone1'
       ];
       requiredFieldsContract = [
         //Company
-        customTypes.getRef(this.refs.companyName, 0),
-        customTypes.getRef(this.refs.officialName, 0),
-        customTypes.getRef(this.refs.cnpj, 0),
-        customTypes.getRef(this.refs.registryES, 0),
-        customTypes.getRef(this.refs.registryMU, 0),
+        'companyName',
+        'officialName',
+        'cnpj',
+        'registryES',
+        'registryMU',
         //Contact
-        customTypes.getRef(this.refs.contactName, 0),
-        customTypes.getRef(this.refs.contactCPF, 0),
-        customTypes.getRef(this.refs.contactEmail, 0),
-        customTypes.getRef(this.refs.contactPhone1, 0)
+        'contactName',
+        'contactCPF',
+        'contactEmail',
+        'contactPhone1'
       ];
     } else {
       requiredFieldsProposal = [
-        customTypes.getRef(this.refs.contactName, 0),
-        customTypes.getRef(this.refs.contactEmail, 0),
-        customTypes.getRef(this.refs.contactPhone1, 0)
+        'contactName',
+        'contactEmail',
+        'contactPhone1'
       ];
       requiredFieldsContract = [
-        customTypes.getRef(this.refs.contactName, 0),
-        customTypes.getRef(this.refs.contactCPF, 0),
-        customTypes.getRef(this.refs.contactEmail, 0),
-        customTypes.getRef(this.refs.contactPhone1, 0)
+        'contactName',
+        'contactCPF',
+        'contactEmail',
+        'contactPhone1'
       ];
     }
-console.log(this.refs.companyName, requiredFieldsProposal[0]);
-    for (var i = 0; i < requiredFieldsProposal.length; i++) {
-      requiredFieldsProposal[i].value.trim();
 
-      if (requiredFieldsProposal[i].value == '') {
-        formError.push(requiredFieldsProposal[i].name);
+    for (var i = 0; i < requiredFieldsProposal.length; i++) {
+      var state = this.state[requiredFieldsProposal[i]];
+      console.log(requiredFieldsProposal[i]);
+      state.trim();
+
+      if (!state) {
+        formError.push(state.title);
         this.setState({ isError: true, formError });
+        return;
       }
     }
 
-    if (formError.length > 0) {
-      return;
-    }
-
     for (var i = 0; i < requiredFieldsContract.length; i++) {
-      requiredFieldsContract[i].value.trim();
+      var state = this.state[requiredFieldsContract[i]];
+      state.trim();
 
-      if (!requiredFieldsContract[i].value) {
+      if (!state) {
         confirmationMessage.push({
           key: i + 3,
-          text: "-" + requiredFieldsContract[i].name,
+          text: "-" + state.title,
         });
       }
     }
 
     if (confirmationMessage.length == 0) {
-      console.log(requiredFieldsProposal.length);
       this.saveEdits();
       return;
     }
@@ -251,13 +236,13 @@ console.log(this.refs.companyName, requiredFieldsProposal[0]);
     this.setState({ confirmationWindow: true });
   }
 
-  saveEdits(e) {
+  saveEdits = (e) => {
     // Meteor.call('clients.update', this.props._id, description, price);
     // this.setState({ price });
     this.closeEditWindow();
   }
 
-  createNewClient(e) {
+  createNewClient = (e) => {
     e.preventDefault();
 
     let description = this.refs.description.value.trim();
@@ -274,34 +259,26 @@ console.log(this.refs.companyName, requiredFieldsProposal[0]);
       throw new Meteor.Error('string-too-long');
     }
     Meteor.call('clients.insert', description, price);
-    this.closeEditWindow.bind(this)();
+    this.closeEditWindow();
   }
 
-  showCompanyTab() {
+  showCompanyTab = (e) => {
     if (this.state.formType == 'company') {
-      return <button value={0} onClick={this.changeTab.bind(this)} className="active">Empresa</button>
+      return <button value={0} onClick={this.changeTab} className="active">Empresa</button>
     }
   }
 
-  showAddNewTab() {
-    if (this.state.contacts.length < 5) {
-      return <button className="tablinks placeholder" onClick={this.newContactTab.bind(this)}>Novo Contato</button>
+  showAddNewTab = (e) => {
+    if (this.state.contactTabs < 4) {
+      return <button className="tablinks placeholder" onClick={this.newContactTab}>Novo Contato</button>
     }
   }
 
-  newContactTab() {
-    let contacts = this.state.contacts;
-    contacts.push({
-      "_id" : this.state.contacts.length,
-      name: "",
-      telephone: "",
-      email: "",
-      cpf: ""
-    })
-    this.setState({ contacts });
+  newContactTab = (e) => {
+    this.setState({ contactTabs: this.state.contactTabs + 1 });
   }
 
-  changeTab(e) {
+  changeTab = (e) => {
     this.setState({ formTab: e.target.value });
     $("div.form__tab").find("button").removeClass("active");
     e.target.classList.add("active");
@@ -313,13 +290,33 @@ console.log(this.refs.companyName, requiredFieldsProposal[0]);
     document.getElementsByClassName('form--with-tabs')[e.target.value].classList.remove("hidden");
   }
 
-  showDeleteRegistry() {
+  showDeleteRegistry = (e) => {
     if (this.state.formTab > 0) {
       return <button className="button--delete-registry">Excluir Registro</button>
     }
   }
 
-  changeRequiredFields() {
+  showTabs = (e) => {
+    var totalTabs = [];
+    for (var i = 0; i < this.props.contacts.length; i++) {
+      totalTabs[i] = this.props.contacts[i];
+    }
+    for (var i = totalTabs.length; i < this.state.contactTabs; i++) {
+      totalTabs[i] = {
+        _id: i,
+        name: '',
+        telephone_1: '',
+        telephone_2: '',
+        email: '',
+        cpf: ''
+      };
+    }
+    return totalTabs.map((contact) => {
+        return <button key={contact._id} value={contact._id+1} onChange={this.changeTab}>Contato {(contact._id + 1)}</button>
+      })
+  }
+
+  changeRequiredFields = (e) => {
     if (this.state.formType == 'company') {
       $("div.form--with-tabs")[0].find("input").prop('required, true');////////////MELHORAR ESSA FUNCAO!
     } else {
@@ -327,32 +324,32 @@ console.log(this.refs.companyName, requiredFieldsProposal[0]);
     }
   }
 
-  tabContentsCompany() {
+  tabContentsCompany = (e) => {
     if (this.state.formType == 'company') {
       return(
         <div id="company-form" className="form--with-tabs" onSubmit={this.props.createNew ? this.props.createNew : this.props.saveEdits}>
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>Nome Fantasia:</label>
-              <input name="Nome Fantasia" type="text" ref="companyName" defaultValue={this.props.companyName}/>
+              <input title="Nome Fantasia" type="text" name="companyName" onChange={this.handleChange} value={this.state.companyName}/>
             </div>
             <div className="form__half-column-2of2">
               <label>CNPJ:</label>
-              <input name="CNPJ" type="text" ref="cnpj" defaultValue={this.props.cnpj}/>
+              <input title="CNPJ" type="text" name="cnpj" onChange={this.handleChange} value={this.state.cnpj}/>
             </div>
           </div>
           <div className="form__row">
             <label>Razão Social:</label>
-            <input name="Razão Social" type="text" ref="officialName" defaultValue={this.props.officialName}/>
+            <input title="Razão Social" type="text" name="officialName" onChange={this.handleChange} value={this.state.officialName}/>
           </div>
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>Inscrição Estadual:</label>
-              <input name="Inscrição Estadual" type="text" ref="registryES" defaultValue={this.props.registryES}/>
+              <input title="Inscrição Estadual" type="text" name="registryES" onChange={this.handleChange} value={this.state.registryES}/>
             </div>
             <div className="form__half-column-2of2">
               <label>Inscrição Municipal:</label>
-              <input name="Inscrição Municipal" type="text" ref="registryMU" defaultValue={this.props.registryMU}/>
+              <input title="Inscrição Municipal" type="text" name="registryMU" onChange={this.handleChange} value={this.state.registryMU}/>
             </div>
           </div>
         </div>
@@ -360,33 +357,33 @@ console.log(this.refs.companyName, requiredFieldsProposal[0]);
     }
   }
 
-  tabContentsContacts() {
-    return this.state.contacts.map((contact) => {
+  tabContentsContacts = (e) => {
+    return this.props.contacts.map((contact) => {
       return(
         <div key={contact._id} className="form--with-tabs hidden">
           {this.showDeleteRegistry()}
           <div className="form__row">
             <label>Nome Completo:</label>
-            <input name="Nome do Contato" ref="contactName" type="text" defaultValue={contact.name}/>
+            <input title="Nome do Contato" name="contactName" type="text" onChange={this.handleChange} value={this.state.contactName}/>
           </div>
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>CPF:</label>
-              <input name="CPF do Contato" ref="contactCPF" type="text" defaultValue={contact.cpf}/>
+              <input title="CPF do Contato" name="contactCPF" type="text" onChange={this.handleChange} value={this.state.contactCPF}/>
             </div>
             <div className="form__half-column-2of2">
               <label>Email:</label>
-              <input name="Email do Contato" ref="contactEmail" type="email" defaultValue={contact.email}/>
+              <input title="Email do Contato" name="contactEmail" type="email" onChange={this.handleChange} value={this.state.contactEmail}/>
             </div>
           </div>
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>Telefone 1:</label>
-              <input name="Telefone 1 do Contato" ref="contactPhone1" type="text" defaultValue={contact.telephone_1}/>
+              <input title="Telefone 1 do Contato" name="contactPhone1" type="text" onChange={this.handleChange} value={this.state.contactPhone1}/>
             </div>
             <div className="form__half-column-2of2">
               <label>Telefone 2:</label>
-              <input ref="contactPhone2" type="text" defaultValue={contact.telephone_2}/>
+              <input ref="contactPhone2" type="text" name="contactPhone2" onChange={this.handleChange} value={this.state.contactPhone2}/>
             </div>
           </div>
         </div>
@@ -394,7 +391,11 @@ console.log(this.refs.companyName, requiredFieldsProposal[0]);
     })
   }
 
-  editClientScreen(open, _id, description, price, createNew) {
+  renderForms = (e) => {
+
+  }
+
+  editClientScreen = (open, _id, description, price, createNew) => {
     if (open) {
       return(
         <ReactModal
@@ -402,7 +403,7 @@ console.log(this.refs.companyName, requiredFieldsProposal[0]);
           className="boxed-view"
           contentLabel="Editar Serviço"
           appElement={document.body}
-          onRequestClose={this.closeEditWindow.bind(this)}
+          onRequestClose={this.closeEditWindow}
           className="boxed-view__box"
           overlayClassName="boxed-view boxed-view--modal"
           >
@@ -410,32 +411,31 @@ console.log(this.refs.companyName, requiredFieldsProposal[0]);
             <div>
               {this.renderError()}
             </div>
-            <select defaultValue="company" ref="type" className="edit-clients__select-type" disabled={!this.props.createNew} onChange={this.changeTab.bind(this)}>
+            <select defaultValue="company" ref="type" className="edit-clients__select-type" disabled={!this.props.createNew} onChange={this.changeTab}>
               <option value="company">Pessoa Jurídica</option>
               <option value="person">Pessoa Física</option>
             </select>
             <div className="form__tab">
               {this.showCompanyTab()}
-              {this.state.contacts.map((contact) => {
-                  return <button key={contact._id} value={contact._id+1} onClick={this.changeTab.bind(this)}>Contato {(contact._id + 1)}</button>
-                })}
+              {this.showTabs()}
               {this.showAddNewTab()}
             </div>
             <form onSubmit={this.props.createNew ? this.props.createNew : this.props.saveEdits}>
+              {this.renderForms()}
               {this.tabContentsCompany()}
               {this.tabContentsContacts()}
-              {createNew ? null : <button type="button" className="button button--danger full-width" onClick={this.openConfirmationWindow.bind(this)}>Remover</button>}
+              {createNew ? null : <button type="button" className="button button--danger full-width" onClick={this.openConfirmationWindow}>Remover</button>}
               <div className="button__column1of2">
-                <button type="button" className="button button--secondary" onClick={this.closeEditWindow.bind(this)}>Fechar</button>
+                <button type="button" className="button button--secondary" onClick={this.closeEditWindow}>Fechar</button>
               </div>
               <div className="button__column2of2">
-                {createNew ? <button className="button button--primary">Criar</button> : <button className="button button--primary" onClick={this.openConfirmationWindow.bind(this)}>Salvar</button>}
+                {createNew ? <button className="button button--primary">Criar</button> : <button className="button button--primary" onClick={this.openConfirmationWindow}>Salvar</button>}
               </div>
             </form>
             {this.state.confirmationWindow ? <ConfirmationMessage
               title={this.state.confirmationMessage}
-              unmountMe={this.closeConfirmationWindow.bind(this)}
-              confirmMe={this.closeWithRemoval.bind(this)}/> : null}
+              unmountMe={this.closeConfirmationWindow}
+              confirmMe={this.closeWithRemoval}/> : null}
         </ReactModal>
       )
     }
@@ -445,7 +445,7 @@ console.log(this.refs.companyName, requiredFieldsProposal[0]);
     if(this.props.createNew) {
       return(
         <div>
-          <button className="button--pill list-view__button" onClick={this.openEditWindow.bind(this)}>+</button>
+          <button className="button--pill list-view__button" onClick={this.openEditWindow}>+</button>
           {this.editClientScreen(this.state.editOpen, '', '', '', true)}
         </div>
       )
@@ -454,7 +454,7 @@ console.log(this.refs.companyName, requiredFieldsProposal[0]);
           <tr>
             <td className="list-view__left-align">{this.props._id}</td>
             <td className="list-view__left-align">{this.props.companyName}</td>
-            <td className="list-view__right-align list-view__edit"><button className="button--pill list-view__button" onClick={this.openEditWindow.bind(this)}>Editar</button></td>
+            <td className="list-view__right-align list-view__edit"><button className="button--pill list-view__button" onClick={this.openEditWindow}>Editar</button></td>
             {this.editClientScreen(this.state.editOpen, this.props._id, this.props.description, this.props.price)}
           </tr>
       )

@@ -20,6 +20,7 @@ if(Meteor.isServer) {
       officialName: "Exemplo Empreendimentos",
       registryES: "192837273",
       registryMU: "364645445",
+      observations: 'Cliente do Rio de Janeiro',
       contacts: [{
         "_id" : 0,
         name: "João Carlos",
