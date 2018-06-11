@@ -40,6 +40,13 @@ legend {
   padding: 0 $space;
 }
 
+textarea {
+  font-family: inherit;;
+  min-height: 150px;
+  padding: ($space /2);
+  width: 100%;
+}
+
 input[type=text], input[type=number], input[type=email], input[type=password], select {
   border: 1px solid $input-border;
   font-size: $base-font-size;
