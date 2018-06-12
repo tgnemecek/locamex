@@ -1,8 +1,10 @@
 import ReactModal from 'react-modal';
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
+import Cleave from 'cleave.js/react';
 
 import customTypes from '../startup/custom-types';
+import CustomCleave from '../startup/custom-cleave';
 import PrivateHeader from './PrivateHeader';
 import { Clients } from '../api/clients';
 import ConfirmationMessage from './ConfirmationMessage';
@@ -65,7 +67,7 @@ export default class ListClients extends React.Component {
               <tr>
                 <td className="list-view__left-align list-view__small">Código</td>
                 <td className="list-view__left-align">Nome Fantasia</td>
-                {/* <td className="list-view__right-align list-view__small"><ClientItem key={0} createNew={true}/></td> */}
+                <td className="list-view__right-align list-view__small"><ClientItem key={0} createNew={true}/></td>
               </tr>
               {this.renderClients()}
             </tbody>
@@ -92,7 +94,7 @@ class ClientItem extends React.Component {
 
       formType: this.props.formType,
       formTab: 1,
-      contactTabs: this.props.contacts.length,
+      contactTabs: this.props.contacts ? this.props.contacts.length : '',
 
       //States used for controlled inputs
       companyName: this.props.companyName,
@@ -114,16 +116,18 @@ class ClientItem extends React.Component {
     }
     this.state["formTab"] = this.state.formType == 'company' ? 0 : 1;
 
-    for (var i = 0; i < this.props.contacts.length; i++) {
-      this.state["contactInformation"][i] = {
-        _id: this.props.contacts[i]._id,
-        contactName: this.props.contacts[i].contactName,
-        contactEmail: this.props.contacts[i].contactEmail,
-        contactCPF: this.props.contacts[i].contactCPF,
-        contactPhone1: this.props.contacts[i].contactPhone1,
-        contactPhone2: this.props.contacts[i].contactPhone2,
-        placeholder: false,
-        visible: true
+    if (this.props.contacts) {
+      for (var i = 0; i < this.props.contacts.length; i++) {
+        this.state["contactInformation"][i] = {
+          _id: this.props.contacts[i]._id,
+          contactName: this.props.contacts[i].contactName,
+          contactEmail: this.props.contacts[i].contactEmail,
+          contactCPF: this.props.contacts[i].contactCPF,
+          contactPhone1: this.props.contacts[i].contactPhone1,
+          contactPhone2: this.props.contacts[i].contactPhone2,
+          placeholder: false,
+          visible: true
+        }
       }
     }
     this.initialState = this.state;
@@ -134,7 +138,12 @@ class ClientItem extends React.Component {
   }
 
   handleChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value })
+    if (e.target.rawValue) {
+      e.target.setRawValue(e.target.rawValue);
+      this.setState({ [e.target.name]: e.target.rawValue });
+    } else {
+      this.setState({ [e.target.name]: e.target.value });
+    }
   }
 
   handleChangeContact = (e) => {
@@ -296,11 +305,11 @@ class ClientItem extends React.Component {
         cleanContacts.push(contact);
       }
     })
-    console.log(state.contactInformation, cleanContacts);
     state.contactInformation = cleanContacts;
 
     Meteor.call('clients.update', this.props._id, state);
     this.closeEditWindow();
+    window.location.reload();
   }
 
   createNewClient = (e) => {
@@ -410,7 +419,9 @@ class ClientItem extends React.Component {
             </div>
             <div className="form__half-column-2of2">
               <label>CNPJ:</label>
-              <input title="CNPJ" type="text" name="cnpj" onChange={this.handleChange} value={this.state.cnpj}/>
+              <CustomCleave
+                format="cnpj"
+                title="CNPJ" type="text" name="cnpj" onChange={this.handleChange} value={this.state.cnpj}/>
             </div>
           </div>
           <div className="form__row">
@@ -420,11 +431,15 @@ class ClientItem extends React.Component {
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>Inscrição Estadual:</label>
-              <input title="Inscrição Estadual" type="text" name="registryES" onChange={this.handleChange} value={this.state.registryES}/>
+              <CustomCleave
+                format="registryES"
+                title="Inscrição Estadual" type="text" name="registryES" onChange={this.handleChange} value={this.state.registryES}/>
             </div>
             <div className="form__half-column-2of2">
               <label>Inscrição Municipal:</label>
-              <input title="Inscrição Municipal" type="text" name="registryMU" onChange={this.handleChange} value={this.state.registryMU}/>
+              <CustomCleave
+                format="registryMU"
+                title="Inscrição Municipal" type="text" name="registryMU" onChange={this.handleChange} value={this.state.registryMU}/>
             </div>
           </div>
         </div>
@@ -441,14 +456,16 @@ class ClientItem extends React.Component {
             <label>Nome Completo:</label>
             <input title="Nome do Contato" id={"contactName" + index}
               name="contactName" type="text" onChange={this.handleChangeContact}
-              disabled={!contact.placeholder}
+              // disabled={!contact.placeholder}
               value={this.state.contactInformation[index].contactName}/>
           </div>
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>CPF:</label>
-              <input title="CPF do Contato" id={"contactCPF" + index}
-                name="contactCPF" type="text" onChange={this.handleChangeContact}
+              <CustomCleave
+                format="cpf"
+                title="CPF do Contato" id={"contactCPF" + index}
+                name="contactCPF" type="number" onChange={this.handleChangeContact}
                 value={this.state.contactInformation[index].contactCPF}/>
             </div>
             <div className="form__half-column-2of2">
@@ -461,13 +478,17 @@ class ClientItem extends React.Component {
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>Telefone 1:</label>
-              <input title="Telefone 1 do Contato" id={"contactPhone1" + index}
+              <CustomCleave
+                format="phone"
+                title="Telefone 1 do Contato" id={"contactPhone1" + index}
                 name="contactPhone1" type="text" onChange={this.handleChangeContact}
-                value={this.state.contactInformation[index].contactPhone1}/>
+                defaultValue="123"/>
             </div>
             <div className="form__half-column-2of2">
               <label>Telefone 2:</label>
-              <input ref="contactPhone2" type="text" id={"contactPhone2" + index}
+              <CustomCleave
+                format="phone"
+                ref="contactPhone2" type="text" id={"contactPhone2" + index}
                 name="contactPhone2" onChange={this.handleChangeContact}
                 value={this.state.contactInformation[index].contactPhone2}/>
             </div>

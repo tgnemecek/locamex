@@ -16,26 +16,26 @@ if(Meteor.isServer) {
       _id: "0000",
       companyName: "Exemplo",
       type: "company",
-      cnpj: "3123131233",
+      cnpj: 3123131233,
       officialName: "Exemplo Empreendimentos",
-      registryES: "192837273",
-      registryMU: "364645445",
+      registryES: 192837273,
+      registryMU: 364645445,
       observations: 'Cliente do Rio de Janeiro',
       contacts: [{
         "_id": "0000",
         contactName: "João Carlos",
-        contactPhone1: "9554-3122",
-        contactPhone2: "1234-1234",
+        contactPhone1: 95543122,
+        contactPhone2: 12341234,
         contactEmail: "joao.carlos@exemplo.com",
-        contactCPF: "532.353.653-12",
+        contactCPF: 33568712098,
         visible: false
       }, {
         _id: "0001",
         contactName: "Cristina Clara",
-        contactPhone1: "5467-5333",
+        contactPhone1: 54675333,
         contactPhone2: "",
         contactEmail: "cristina.clara@exemplo.com",
-        contactCPF: "887.774.1638-76",
+        contactCPF: 24498709933,
         visible: true
       }]
     });
@@ -74,7 +74,6 @@ if(Meteor.isServer) {
 
       for (var i = 0; i < state.contactInformation.length; i++) {
         if (state.contactInformation[i]._id == '') {
-          console.log(newContacts);
           newContacts.push(state.contactInformation[i]);
           continue;
         }
