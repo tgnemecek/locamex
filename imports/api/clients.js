@@ -16,7 +16,7 @@ if(Meteor.isServer) {
       _id: "0000",
       companyName: "Exemplo",
       type: "company",
-      cnpj: 3123131233,
+      cnpj: 79288413000173,
       officialName: "Exemplo Empreendimentos",
       registryES: 192837273,
       registryMU: 364645445,
@@ -24,15 +24,15 @@ if(Meteor.isServer) {
       contacts: [{
         "_id": "0000",
         contactName: "João Carlos",
-        contactPhone1: 95543122,
-        contactPhone2: 12341234,
+        contactPhone1: 1195543122,
+        contactPhone2: 1112341234,
         contactEmail: "joao.carlos@exemplo.com",
         contactCPF: 33568712098,
         visible: false
       }, {
         _id: "0001",
         contactName: "Cristina Clara",
-        contactPhone1: 54675333,
+        contactPhone1: 1254675333,
         contactPhone2: "",
         contactEmail: "cristina.clara@exemplo.com",
         contactCPF: 24498709933,

@@ -1,12 +1,12 @@
 import ReactModal from 'react-modal';
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
-import Cleave from 'cleave.js/react';
 
 import customTypes from '../startup/custom-types';
-import CustomCleave from '../startup/custom-cleave';
 import PrivateHeader from './PrivateHeader';
 import { Clients } from '../api/clients';
+
+import CustomInput from './CustomInput';
 import ConfirmationMessage from './ConfirmationMessage';
 
 export default class ListClients extends React.Component {
@@ -130,30 +130,24 @@ class ClientItem extends React.Component {
         }
       }
     }
-    this.initialState = this.state;
+    this.initialState = JSON.parse(JSON.stringify(this.state));
   };
 
   handleSubmit = (e) => {
     return;
   }
 
-  handleChange = (e) => {
-    if (e.target.rawValue) {
-      e.target.setRawValue(e.target.rawValue);
-      this.setState({ [e.target.name]: e.target.rawValue });
+  handleChange = (name, value, id) => {
+    if (name.target) {
+      this.setState({ [name.target.name]: name.target.value });
     } else {
-      this.setState({ [e.target.name]: e.target.value });
+      this.setState({ [name]: value });
     }
   }
 
-  handleChangeContact = (e) => {
-
+  handleChangeContact = (name, value, id) => {
     let contactInformation = this.state.contactInformation;
-    let name = e.target.name;
-    let idAndName = e.target.id;
-    let id = idAndName.replace(name, "");
-
-    contactInformation[id][name] = e.target.value;
+    contactInformation[id][name] = value;
     this.setState({ contactInformation });
   }
 
@@ -162,7 +156,7 @@ class ClientItem extends React.Component {
   };
 
   closeEditWindow = (e) => {
-    this.setState(this.initialState);
+    this.setState(JSON.parse(JSON.stringify(this.initialState)));
   };
 
   closeConfirmationWindow = (e) => {
@@ -203,41 +197,42 @@ class ClientItem extends React.Component {
     var requiredFieldsProposal = [];
     var requiredFieldsContract = [];
     var formError = [];
+    var errorCount = 0;
     var confirmationMessage = [];
 
     this.setState({ isError: false });
 
     if (this.state.formType == 'company') {
       requiredFieldsProposal = [
-        {key: 'contactName', title: 'Nome do Contato'},
-        {key: 'contactEmail', title: 'Email do Contato'},
-        {key: 'contactPhone1', title: 'Telefone 1 do Contato'},
-        {key: 'companyName', title: 'Nome da Empresa'}
+        {key: 'contactName', title: 'Nome do Contato', type: 'text'},
+        {key: 'contactEmail', title: 'Email do Contato', type: 'email'},
+        {key: 'contactPhone1', title: 'Telefone 1 do Contato', type: 'text'},
+        {key: 'companyName', title: 'Nome da Empresa', type: 'text'}
       ];
       requiredFieldsContract = [
         //Company
-        {key: 'companyName', title: 'Nome da Empresa'},
-        {key: 'officialName', title: 'Razão Social'},
-        {key: 'cnpj', title: 'CNPJ'},
-        {key: 'registryES', title: 'Inscrição Estadual'},
-        // {key: 'registryMU', title: 'Inscrição Municipal'},
+        {key: 'companyName', title: 'Nome da Empresa', type: 'text'},
+        {key: 'officialName', title: 'Razão Social', type: 'text'},
+        {key: 'cnpj', title: 'CNPJ', type: 'cnpj'},
+        {key: 'registryES', title: 'Inscrição Estadual', type: 'text'},
+        // {key: 'registryMU', title: 'Inscrição Municipal', type: 'text'},
         //Contact
-        {key: 'contactName', title: 'Nome do Contato'},
-        {key: 'contactCPF', title: 'CPF do Contato'},
-        {key: 'contactEmail', title: 'Email do Contato'},
-        {key: 'contactPhone1', title: 'Telefone 1 do Contato'}
+        {key: 'contactName', title: 'Nome do Contato', type: 'text'},
+        {key: 'contactCPF', title: 'CPF do Contato', type: 'cpf'},
+        {key: 'contactEmail', title: 'Email do Contato', type: 'email'},
+        {key: 'contactPhone1', title: 'Telefone 1 do Contato', type: 'text'}
       ];
     } else {
       requiredFieldsProposal = [
-        {key: 'contactName', title: 'Nome do Contato'},
-        {key: 'contactEmail', title: 'Email do Contato'},
-        {key: 'contactPhone1', title: 'Telefone 1 do Contato'}
+        {key: 'contactName', title: 'Nome do Contato', type: 'text'},
+        {key: 'contactEmail', title: 'Email do Contato', type: 'email'},
+        {key: 'contactPhone1', title: 'Telefone 1 do Contato', type: 'text'}
       ];
       requiredFieldsContract = [
-        {key: 'contactName', title: 'Nome do Contato'},
-        {key: 'contactCPF', title: 'CPF do Contato'},
-        {key: 'contactEmail', title: 'Email do Contato'},
-        {key: 'contactPhone1', title: 'Telefone 1 do Contato'}
+        {key: 'contactName', title: 'Nome do Contato', type: 'text'},
+        {key: 'contactCPF', title: 'CPF do Contato', type: 'cpf'},
+        {key: 'contactEmail', title: 'Email do Contato', type: 'email'},
+        {key: 'contactPhone1', title: 'Telefone 1 do Contato', type: 'text'}
       ];
     }
 
@@ -250,11 +245,35 @@ class ClientItem extends React.Component {
         state.trim();
       }
       if (!state) {
+        errorCount++;
         formError.push(requiredFieldsProposal[i].title);
         this.setState({ isError: true, formError });
-        return;
+      } else {
+        if (requiredFieldsProposal[i].type == 'cpf') {
+          if (!customTypes.checkCPF(state)) {
+            errorCount++;
+            formError.push(requiredFieldsProposal[i].title + " Inválido");
+            this.setState({ isError: true, formError });
+          }
+        }
+        if (requiredFieldsProposal[i].type == 'cnpj') {
+          if (!customTypes.checkCNPJ(state)) {
+            errorCount++;
+            formError.push(requiredFieldsProposal[i].title + " Inválido");
+            this.setState({ isError: true, formError });
+          }
+        }
+        if (requiredFieldsProposal[i].type == 'email') {
+          if (!customTypes.checkEmail(state)) {
+            errorCount++;
+            formError.push(requiredFieldsProposal[i].title + " Inválido");
+            this.setState({ isError: true, formError });
+          }
+        }
       }
     }
+
+    if (errorCount) {return}
 
     for (var i = 0; i < requiredFieldsContract.length; i++) {
       var state = this.state[requiredFieldsContract[i].key];
@@ -415,31 +434,41 @@ class ClientItem extends React.Component {
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>Nome Fantasia:</label>
-              <input title="Nome Fantasia" type="text" name="companyName" onChange={this.handleChange} value={this.state.companyName}/>
+              <CustomInput title="Nome Fantasia" name="companyName"
+                type="text"
+                defaultValue={this.state.companyName}
+                onChange={this.handleChange}/>
             </div>
             <div className="form__half-column-2of2">
               <label>CNPJ:</label>
-              <CustomCleave
-                format="cnpj"
-                title="CNPJ" type="text" name="cnpj" onChange={this.handleChange} value={this.state.cnpj}/>
+              <CustomInput title="CNPJ" name="cnpj"
+                type="cnpj"
+                defaultValue={this.state.cnpj}
+                onChange={this.handleChange}
+                />
             </div>
           </div>
           <div className="form__row">
             <label>Razão Social:</label>
-            <input title="Razão Social" type="text" name="officialName" onChange={this.handleChange} value={this.state.officialName}/>
+            <CustomInput title="Razão Social" name="officialName"
+              type="text"
+              defaultValue={this.state.officialName}
+              onChange={this.handleChange}/>
           </div>
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>Inscrição Estadual:</label>
-              <CustomCleave
-                format="registryES"
-                title="Inscrição Estadual" type="text" name="registryES" onChange={this.handleChange} value={this.state.registryES}/>
+              <CustomInput title="Inscrição Estadual" name="registryES"
+                type="text"
+                defaultValue={this.state.registryES}
+                onChange={this.handleChange}/>
             </div>
             <div className="form__half-column-2of2">
               <label>Inscrição Municipal:</label>
-              <CustomCleave
-                format="registryMU"
-                title="Inscrição Municipal" type="text" name="registryMU" onChange={this.handleChange} value={this.state.registryMU}/>
+              <CustomInput title="Inscrição Municipal" name="registryMU"
+                type="text"
+                defaultValue={this.state.registryMU}
+                onChange={this.handleChange}/>
             </div>
           </div>
         </div>
@@ -454,43 +483,41 @@ class ClientItem extends React.Component {
           {this.showDeleteRegistry()}
           <div className="form__row">
             <label>Nome Completo:</label>
-            <input title="Nome do Contato" id={"contactName" + index}
-              name="contactName" type="text" onChange={this.handleChangeContact}
-              // disabled={!contact.placeholder}
-              value={this.state.contactInformation[index].contactName}/>
+            <CustomInput title="Nome do Contato" name="contactName" id={index}
+              type="text"
+              defaultValue={this.state.contactInformation[index].contactName}
+              onChange={this.handleChangeContact}/>
           </div>
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>CPF:</label>
-              <CustomCleave
-                format="cpf"
-                title="CPF do Contato" id={"contactCPF" + index}
-                name="contactCPF" type="number" onChange={this.handleChangeContact}
-                value={this.state.contactInformation[index].contactCPF}/>
+              <CustomInput title="CPF do Contato" name="contactCPF" id={index}
+                type="cpf"
+                defaultValue={this.state.contactInformation[index].contactCPF}
+                onChange={this.handleChangeContact}/>
             </div>
             <div className="form__half-column-2of2">
               <label>Email:</label>
-              <input title="Email do Contato" id={"contactEmail" + index}
-                name="contactEmail" type="email" onChange={this.handleChangeContact}
-                value={this.state.contactInformation[index].contactEmail}/>
+              <CustomInput title="Email do Contato" name="contactEmail" id={index}
+                type="email"
+                defaultValue={this.state.contactInformation[index].contactEmail}
+                onChange={this.handleChangeContact}/>
             </div>
           </div>
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>Telefone 1:</label>
-              <CustomCleave
-                format="phone"
-                title="Telefone 1 do Contato" id={"contactPhone1" + index}
-                name="contactPhone1" type="text" onChange={this.handleChangeContact}
-                defaultValue="123"/>
+              <CustomInput title="Telefone 1 do Contato" name="contactPhone1" id={index}
+                type="phone"
+                defaultValue={this.state.contactInformation[index].contactPhone1}
+                onChange={this.handleChangeContact}/>
             </div>
             <div className="form__half-column-2of2">
               <label>Telefone 2:</label>
-              <CustomCleave
-                format="phone"
-                ref="contactPhone2" type="text" id={"contactPhone2" + index}
-                name="contactPhone2" onChange={this.handleChangeContact}
-                value={this.state.contactInformation[index].contactPhone2}/>
+              <CustomInput title="Telefone 2 do Contato" name="contactPhone2" id={index}
+                type="text"
+                value={this.state.contactInformation[index].contactPhone2}
+                onChange={this.handleChangeContact}/>
             </div>
           </div>
         </div>
@@ -539,7 +566,6 @@ class ClientItem extends React.Component {
               {this.tabContentsCompany()}
               {this.tabContentsContacts()}
               {this.tabContentObservations()}
-              {createNew ? null : <button type="button" className="button button--danger full-width" onClick={this.openConfirmationWindow}>Remover</button>}
               <div className="button__column1of2">
                 <button type="button" className="button button--secondary" onClick={this.closeEditWindow}>Fechar</button>
               </div>

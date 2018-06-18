@@ -142,7 +142,7 @@ class ServiceItem extends React.Component {
 
   editServiceScreen(open, _id, description, price, createNew) {
     if (open) {
-      price = customTypes.formatReais(price, false);
+      price = customTypes.format(price, 'reais');
       return(
         <ReactModal
           isOpen={true}
@@ -188,7 +188,7 @@ class ServiceItem extends React.Component {
           <tr>
             <td className="list-view__left-align">{this.props._id}</td>
             <td className="list-view__left-align">{this.props.description}</td>
-            <td className="list-view__right-align">{customTypes.formatReais(this.state.price, true)}</td>
+            <td className="list-view__right-align">{customTypes.format(this.state.price, 'reaisPrefix')}</td>
             <td className="list-view__right-align list-view__edit"><button className="button--pill list-view__button" onClick={this.openEditWindow}>Editar</button></td>
             {this.editServiceScreen(this.state.editOpen, this.props._id, this.props.description, this.props.price)}
           </tr>

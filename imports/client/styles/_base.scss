@@ -47,7 +47,7 @@ textarea {
   width: 100%;
 }
 
-input[type=text], input[type=number], input[type=email], input[type=password], select {
+input, select {
   border: 1px solid $input-border;
   font-size: $base-font-size;
   // margin: ($space /2);
