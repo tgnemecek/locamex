@@ -61,7 +61,10 @@ export default class CustomInput extends React.Component {
       return value;
   }
 
-  formatValue = (inputValue) => {
+  formatValue = (inputValue, obj) => {
+    let start = obj ? obj.selectionStart : 0;
+    let end = obj ? obj.selectionEnd : 0;
+
     let displayValue = inputValue;
     let exportValue = inputValue;
 
@@ -78,14 +81,23 @@ export default class CustomInput extends React.Component {
           exportValue = displayValue;
       }
     }
+    if (this.props.upperCase && this.props.type == "text") {
+      displayValue = displayValue.toUpperCase();
+      exportValue = exportValue.toUpperCase();
+    }
+    start = start + (displayValue.length - inputValue.length);
+    end = end + (displayValue.length - inputValue.length);
     this.setState({
       displayValue,
       exportValue
-    }, () => {this.props.onChange(this.props.name, this.validateInput(exportValue), this.props.id, this.state.valid)});
+    }, () => {
+      this.props.onChange(this.props.name, this.validateInput(exportValue), this.props.id, this.state.valid);
+      obj ? obj.setSelectionRange(start, end) : null;
+    });
   }
 
   onChange = (e) => {
-    this.formatValue(e.target.value);
+    this.formatValue(e.target.value, e.target);
   }
 
   render() {

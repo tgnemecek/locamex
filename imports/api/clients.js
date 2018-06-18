@@ -39,18 +39,57 @@ if(Meteor.isServer) {
         visible: true
       }]
     });
+    Clients.insert({
+      _id: "0001",
+      companyName: "",
+      type: "person",
+      cnpj: "",
+      officialName: "",
+      registryES: "",
+      registryMU: "",
+      observations: "AAA",
+      contacts: [{
+        "_id": "0000",
+        contactName: "João Augusto",
+        contactPhone1: 11960324996,
+        contactPhone2: 11947348222,
+        contactEmail: "joao.augusto@gmail.com",
+        contactCPF: 29577660002,
+        visible: true
+      }]
+    });
   }
 
   Meteor.methods({
-    'clients.insert'(description, price) {
+    'clients.insert'(state) {
 
       const _id = Clients.find().count().toString().padStart(4, '0');
 
+      let type = state.formType;
+      let observations = state.observations;
+      //Conditional Fields. If its not a company, the fields are empty
+      let companyName = state.formType == 'company' ? state.companyName : '';
+      let cnpj = state.formType == 'company' ? state.cnpj : '';
+      let officialName = state.formType == 'company' ? state.officialName : '';
+      let registryES = state.formType == 'company' ? state.registryES : '';
+      let registryMU = state.formType == 'company' ? state.registryMU : '';
+
+      let contacts = [];
+
+      state.contactInformation.forEach((contact, i) => {
+        contacts[i] = JSON.parse(JSON.stringify(contact));
+      })
+
       Clients.insert({
         _id,
-        description,
-        price,
-        visible: true
+        companyName,
+        type,
+        cnpj,
+        officialName,
+        registryES,
+        registryMU,
+        observations,
+        contacts
       });
     },
 

@@ -15,8 +15,12 @@ export default class ConfirmationMessage extends React.Component {
       return <h3>{this.props.title}</h3>
     }
     if (Array.isArray(this.props.title)) {
-      return this.props.title.map((line) => {
-        return <div key={line.key}><strong>{line.text}</strong></div>
+      return this.props.title.map((line, index, array) => {
+        if (index == 0) {
+          return <div key={line.key}><strong>{line.text}</strong></div>
+        } else {
+          return <div key={line.key}>{line.text}</div>
+        }
       })
     }
   }
