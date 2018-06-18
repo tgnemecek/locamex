@@ -44,6 +44,7 @@ export default class ListClients extends React.Component {
         return <ClientItem
           key={client._id}
           _id={client._id}
+          createNew={false}
           companyName={client.companyName}
           officialName={client.officialName}
           cnpj={client.cnpj}
@@ -67,7 +68,10 @@ export default class ListClients extends React.Component {
               <tr>
                 <td className="list-view__left-align list-view__small">Código</td>
                 <td className="list-view__left-align">Nome Fantasia</td>
-                <td className="list-view__right-align list-view__small"><ClientItem key={0} createNew={true}/></td>
+                <td className="list-view__right-align list-view__small"><ClientItem
+                                                                              key={0}
+                                                                              formType="company"
+                                                                              createNew={true}/></td>
               </tr>
               {this.renderClients()}
             </tbody>
@@ -162,11 +166,6 @@ class ClientItem extends React.Component {
   closeConfirmationWindow = (e) => {
     this.setState({ confirmationWindow: false });
   }
-
-  removeSpecialCharacters = (e) => {
-    let value = e.target.value;
-    value = value.replace(/-./g, '');
-  } //Arrumar
 
   renderError = () => {
     if (Array.isArray(this.state.formError)) {
@@ -303,11 +302,11 @@ class ClientItem extends React.Component {
     });
     confirmationMessage.unshift({
       key: 1,
-      text: 'Deseja continuar mesmo assim?'
+      text: 'O formulário contém campos inválidos obrigatórios para a emissão de contrato. Deseja continuar mesmo assim?'
     });
     confirmationMessage.unshift({
       key: 0,
-      text: 'Atenção: O formulário contém campos inválidos obrigatórios para a emissão de contrato.'
+      text: 'Atenção:'
     });
 
     this.setState({ confirmationMessage });
@@ -351,10 +350,44 @@ class ClientItem extends React.Component {
     this.closeEditWindow();
   }
 
+  showDeleteRegistry = (e) => {
+    if (this.state.contactInformation[this.state.formTab] !== undefined) {
+      if (this.state.formTab >= 0 && !this.state.contactInformation[this.state.formTab].placeholder) {
+        return <button className="button--delete-registry"
+          value={this.state.contactInformation[this.state.formTab]._id}
+          onClick={this.removeContact}>Excluir Contato</button>
+      }
+    }
+  }
+
+  removeContact = (e) => {
+    e.preventDefault();
+    if (this.props.contacts.length == 1) {
+      this.setState({ formError: "O cliente deve ter pelo menos um contato." });
+      return;
+    }
+    Meteor.call('clients.hideContact', this.props._id, e.target.value);
+    this.closeEditWindow();
+    window.location.reload();
+  }
+
+//------------- Tabs:
   showCompanyTab = (e) => {
     if (this.state.formType == 'company') {
       return <button value={-1} onClick={this.changeTab} className="active">Empresa</button>
+    } else {
+      return <button value={-1} onClick={this.changeTab} className="hidden"></button>
     }
+  }
+
+  showContactTabs = (e) => {
+    return this.state.contactInformation.map((contact, index) => {
+      if (!this.state.formType == 'company' && index == 0) {
+        return <button key={index} value={index} onClick={this.changeTab} className="active">Contato {index+1}</button>
+      } else {
+        return <button key={index} value={index} onClick={this.changeTab}>Contato {index+1}</button>
+      }
+    })
   }
 
   showAddNewTab = (e) => {
@@ -397,40 +430,24 @@ class ClientItem extends React.Component {
     } else {
       document.getElementById('observations-form').classList.remove("hidden");
     }
-
   }
 
-  showDeleteRegistry = (e) => {
-    if (this.state.contactInformation[this.state.formTab] !== undefined) {
-      if (this.state.formTab >= 0 && !this.state.contactInformation[this.state.formTab].placeholder) {
-        return <button className="button--delete-registry"
-          value={this.state.contactInformation[this.state.formTab]._id}
-          onClick={this.removeContact}>Excluir Contato</button>
-      }
-    }
-  }
+  changeFormType = (e) => {
+    let obj = {}
+    let element = '';
 
-  removeContact = (e) => {
-    e.preventDefault();
-    if (this.props.contacts.length == 1) {
-      this.setState({ formError: "O cliente deve ter pelo menos um contato." });
-      return;
-    }
-    Meteor.call('clients.hideContact', this.props._id, e.target.value);
-    this.closeEditWindow();
-    window.location.reload();
-  }
+    this.setState({formType: e.target.value}, () => {
+      element = this.state.formType == 'company' ? $("div.form__tab").find("button")[0] : $("div.form__tab").find("button")[1];
+    });
 
-  showTabs = (e) => {
-    return this.state.contactInformation.map((contact, index) => {
-        return <button key={index} value={index} onClick={this.changeTab}>Contato {index+1}</button>
-      })
+    obj.target = element;
+    this.changeTab(obj);
   }
-
+//------------- Contents:
   tabContentsCompany = (e) => {
     if (this.state.formType == 'company') {
       return(
-        <div id="company-form" className="form--with-tabs" onSubmit={this.props.createNew ? this.props.createNew : this.props.saveEdits}>
+        <div id="company-form" className="form--with-tabs" onSubmit={this.props.createNew ? this.props.saveEdits : this.props.saveEdits}>
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>Nome Fantasia:</label>
@@ -473,7 +490,7 @@ class ClientItem extends React.Component {
           </div>
         </div>
       )
-    }
+    } else return <div id="company-form" className="form--with-tabs"></div>
   }
 
   tabContentsContacts = (e) => {
@@ -527,7 +544,7 @@ class ClientItem extends React.Component {
 
   tabContentObservations = (e) => {
     return (
-      <div id="observations-form" className="form--with-tabs hidden" onSubmit={this.props.createNew ? this.props.createNew : this.props.saveEdits}>
+      <div id="observations-form" className="form--with-tabs hidden" onSubmit={this.props.createNew ? this.props.saveEdits : this.props.saveEdits}>
         <div className="form__row">
           <label>Observações:</label>
           <textarea title="Observações" name="observations" onChange={this.handleChange} value={this.state.observations}></textarea>
@@ -536,11 +553,10 @@ class ClientItem extends React.Component {
     )
   }
 
-  editClientScreen = (open, _id, description, price, createNew) => {
-    if (open) {
+  editWindow = () => {
       return(
         <ReactModal
-          isOpen={true}
+          isOpen={this.state.editOpen}
           className="boxed-view"
           contentLabel="Editar Serviço"
           appElement={document.body}
@@ -548,21 +564,21 @@ class ClientItem extends React.Component {
           className="boxed-view__box"
           overlayClassName="boxed-view boxed-view--modal"
           >
-            {createNew ? <h2>Cadastrar Novo Cliente</h2> : <h2>Editar Cliente</h2>}
+            {this.props.createNew ? <h2>Cadastrar Novo Cliente</h2> : <h2>Editar Cliente</h2>}
             <div>
               {this.renderError()}
             </div>
-            <select defaultValue="company" ref="type" className="edit-clients__select-type" disabled={!this.props.createNew} onChange={this.changeTab}>
+            <select defaultValue="company" ref="type" className="edit-clients__select-type" disabled={!this.props.createNew} onChange={this.changeFormType}>
               <option value="company">Pessoa Jurídica</option>
               <option value="person">Pessoa Física</option>
             </select>
             <div className="form__tab">
               {this.showCompanyTab()}
-              {this.showTabs()}
+              {this.showContactTabs()}
               {this.showAddNewTab()}
               <button value={999} onClick={this.changeTab}>Observações</button>
             </div>
-            <form onSubmit={this.props.createNew ? this.props.createNew : this.props.saveEdits}>
+            <form onSubmit={this.props.saveEdits}>
               {this.tabContentsCompany()}
               {this.tabContentsContacts()}
               {this.tabContentObservations()}
@@ -570,7 +586,7 @@ class ClientItem extends React.Component {
                 <button type="button" className="button button--secondary" onClick={this.closeEditWindow}>Fechar</button>
               </div>
               <div className="button__column2of2">
-                {createNew ? <button className="button button--primary">Criar</button> : <button className="button button--primary" onClick={this.openConfirmationWindow}>Salvar</button>}
+                {this.props.createNew ? <button className="button button--primary">Criar</button> : <button className="button button--primary" onClick={this.openConfirmationWindow}>Salvar</button>}
               </div>
             </form>
             {this.state.confirmationWindow ? <ConfirmationMessage
@@ -579,7 +595,6 @@ class ClientItem extends React.Component {
               confirmMe={this.saveEdits}/> : null}
         </ReactModal>
       )
-    }
   }
 
   render() {
@@ -587,7 +602,7 @@ class ClientItem extends React.Component {
       return(
         <div>
           <button className="button--pill list-view__button" onClick={this.openEditWindow}>+</button>
-          {this.editClientScreen(this.state.editOpen, '', '', '', true)}
+          {this.editWindow()}
         </div>
       )
     } else {
@@ -596,7 +611,7 @@ class ClientItem extends React.Component {
             <td className="list-view__left-align">{this.props._id}</td>
             <td className="list-view__left-align">{this.props.companyName}</td>
             <td className="list-view__right-align list-view__edit"><button className="button--pill list-view__button" onClick={this.openEditWindow}>Editar</button></td>
-            {this.editClientScreen(this.state.editOpen, this.props._id, this.props.description, this.props.price)}
+            {this.editWindow()}
           </tr>
       )
     }
