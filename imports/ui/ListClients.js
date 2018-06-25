@@ -33,7 +33,7 @@ export default class ListClients extends React.Component {
           key={client._id}
           _id={client._id}
           createNew={false}
-          companyName={client.companyName}
+          clientName={client.clientName}
           officialName={client.officialName}
           cnpj={client.cnpj}
           registryES={client.registryES}
@@ -52,17 +52,22 @@ export default class ListClients extends React.Component {
         <PrivateHeader title="Clientes"/>
         <div className="page-content">
           <table className="list-view__table">
-            <tbody className="list-view__tbody">
-              <tr>
-                <td className="list-view__left-align list-view__small">Código</td>
-                <td className="list-view__left-align">Nome Fantasia</td>
-                <td className="list-view__right-align list-view__small"><ClientItem
-                                                                              key={0}
-                                                                              formType="company"
-                                                                              createNew={true}/></td>
+            <tbody>
+              <tr className="list-view-table-row">
+                <th className="list-view__left-align list-view--item-div">
+                  Código
+                  <div className="list-view__sort-div"><button>⯅</button><button>⯆</button></div>
+                </th>
+                <th className="list-view__left-align list-view--item-div flex-grow-1">
+                  Nome Fantasia
+                  <div className="list-view__sort-div"><button>⯅</button><button>⯆</button></div>
+                </th>
+                <th className="list-view__right-align list-view--item-div">
+                  <ClientItem key={0} formType="company" createNew={true}/>
+                </th>
               </tr>
               {this.renderClients()}
-            </tbody>
+              </tbody>
           </table>
         </div>
       </div>
@@ -88,7 +93,7 @@ class ClientItem extends React.Component {
       formTab: 1,
 
       //States used for controlled inputs
-      companyName: this.props.companyName ? this.props.companyName : '',
+      clientName: this.props.clientName ? this.props.clientName : '',
       cnpj: this.props.cnpj ? this.props.cnpj : '',
       officialName: this.props.officialName ? this.props.officialName : '',
       registryES: this.props.registryES ? this.props.registryES : '',
@@ -196,11 +201,11 @@ class ClientItem extends React.Component {
         {key: 'contactName', title: 'Nome do Contato', type: 'text'},
         {key: 'contactEmail', title: 'Email do Contato', type: 'email'},
         {key: 'contactPhone1', title: 'Telefone 1 do Contato', type: 'text'},
-        {key: 'companyName', title: 'Nome da Empresa', type: 'text'}
+        {key: 'clientName', title: 'Nome da Empresa', type: 'text'}
       ];
       requiredFieldsContract = [
         //Company
-        {key: 'companyName', title: 'Nome da Empresa', type: 'text'},
+        {key: 'clientName', title: 'Nome da Empresa', type: 'text'},
         {key: 'officialName', title: 'Razão Social', type: 'text'},
         {key: 'cnpj', title: 'CNPJ', type: 'cnpj'},
         {key: 'registryES', title: 'Inscrição Estadual', type: 'text'},
@@ -422,9 +427,9 @@ class ClientItem extends React.Component {
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>Nome Fantasia:</label>
-              <CustomInput title="Nome Fantasia" name="companyName"
+              <CustomInput title="Nome Fantasia" name="clientName"
                 type="text"
-                defaultValue={this.state.companyName}
+                defaultValue={this.state.clientName}
                 onChange={this.handleChange}/>
             </div>
             <div className="form__half-column-2of2">
@@ -588,10 +593,10 @@ class ClientItem extends React.Component {
       )
     } else {
       return (
-          <tr>
-            <td className="list-view__left-align">{this.props._id}</td>
-            <td className="list-view__left-align">{this.props.formType == 'company' ? this.props.companyName : this.props.contacts[0].contactName}</td>
-            <td className="list-view__right-align list-view__edit"><button className="button--pill list-view__button" onClick={this.openEditWindow}>Editar</button></td>
+          <tr className="list-view-table-row">
+            <td className="list-view__left-align list-view--item-div">{this.props._id}</td>
+            <td className="list-view__left-align list-view--item-div flex-grow-1">{this.props.clientName}</td>
+            <td className="list-view__right-align list-view--item-div"><button className="button--pill list-view__button" onClick={this.openEditWindow}>Editar</button></td>
             {this.editWindow()}
           </tr>
       )

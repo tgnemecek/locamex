@@ -63,24 +63,11 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
 tr:nth-child(even) {
     background-color: $grey;
-}
-
-// Common uses
-.align-right {
-  text-align: right;
-}
-
-.hidden {
-  display: none;
-}
-
-.placeholder {
-  color: $dark-grey;
-  font-style: italic;
-}
-
-.full-width {
-  width: 100%;
 }
