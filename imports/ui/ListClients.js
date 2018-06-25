@@ -339,6 +339,16 @@ class ClientItem extends React.Component {
     })
   }
 
+  showContactTabs = (e) => {
+    return this.state.contactInformation.map((contact, index) => {
+      if (!this.state.formType == 'company' && index == 0) {
+        return <button key={index} value={index} onClick={this.changeTab} className="active">Contato {index+1}</button>
+      } else {
+        return <button key={index} value={index} onClick={this.changeTab}>Contato {index+1}</button>
+      }
+    })
+  }
+
   showAddNewTab = (e) => {
     if (this.state.contactInformation.length < 10) {
       return <button className="tablinks placeholder" onClick={this.addNewTab}>Novo Contato</button>
