@@ -22,19 +22,7 @@ export default class ListClients extends React.Component {
     this.clientsTracker = Tracker.autorun(() => {
       Meteor.subscribe('clientsPub');
       const database = Clients.find().fetch();
-
-      // let contacts = [];
-      // let contactsNew = [];
-      // for (var i = 0; i < database.length; i++) {
-      //   contacts = database[i].contacts;
-      //   for (var j = 0; j < contacts.length; j++) {
-      //     if (contacts[j].visible) {
-      //       contactsNew.push(contacts[j]);
-      //     }
-      //   }
-      //   database[i].contacts = contactsNew;
-      // }
-      this.setState({ database }, () => console.log(this.state.database));
+      this.setState({ database });
     })
   }
 
@@ -98,7 +86,6 @@ class ClientItem extends React.Component {
 
       formType: this.props.formType,
       formTab: 1,
-      contactTabs: this.props.contacts ? this.props.contacts.length : '',
 
       //States used for controlled inputs
       companyName: this.props.companyName ? this.props.companyName : '',
@@ -151,6 +138,7 @@ class ClientItem extends React.Component {
     this.setState({ contactInformation });
   }
 
+//------------- Close/Open Window:
   openEditWindow = (e) => {
     this.setState({editOpen: true});
   };
@@ -158,6 +146,16 @@ class ClientItem extends React.Component {
   closeEditWindow = (e) => {
     this.setState(JSON.parse(JSON.stringify(this.initialState)));
   };
+
+  confirmationWindow = () => {
+    let closeWindow = () => this.setState({ confirmationWindow: false });
+    if (this.state.confirmationWindow) {
+      return <ConfirmationMessage
+        title={this.state.confirmationMessage}
+        unmountMe={closeWindow}
+        confirmMe={this.saveEdits}/>
+    } else return null
+  }
 
   renderError = () => {
     if (Array.isArray(this.state.formError)) {
@@ -307,33 +305,21 @@ class ClientItem extends React.Component {
 
   saveEdits = (e) => {
     let state = this.state;
-    let cleanContacts = [];
-console.log(this.state);
+    let contactInformation = [];
+
     state.contactInformation.forEach((contact, index, array) => {
       delete contact["placeholder"];
-      if (!contact.contactName) {
-        array.splice(index, 1);
-        // cleanContacts.push(contact);
+      if (contact.contactName) {
+        contactInformation.push(contact);
       }
     })
-    // console.log(cleanContacts);
-    // state.contactInformation = cleanContacts;
-console.log(this.state);
     if (this.props.createNew) {
       Meteor.call('clients.insert', state);
     } else { Meteor.call('clients.update', this.props._id, state) }
-    this.closeEditWindow();
-    // window.location.reload();
-  }
-
-  showDeleteRegistry = (e) => {
-    if (this.state.contactInformation[this.state.formTab] !== undefined) {
-      if (this.state.formTab >= 0 && !this.state.contactInformation[this.state.formTab].placeholder) {
-        return <button className="button--delete-registry"
-          value={this.state.contactInformation[this.state.formTab]._id}
-          onClick={this.removeContact}>Excluir Contato</button>
-      }
-    }
+    this.setState({
+      editOpen: false,
+      contactInformation
+    });
   }
 
 //------------- Tabs:
@@ -354,7 +340,7 @@ console.log(this.state);
   }
 
   showAddNewTab = (e) => {
-    if (this.state.contactTabs < 4) {
+    if (this.state.contactInformation.length < 10) {
       return <button className="tablinks placeholder" onClick={this.addNewTab}>Novo Contato</button>
     }
   }
@@ -363,7 +349,7 @@ console.log(this.state);
 
     let contactInformation = this.state.contactInformation;
     let lastTab = contactInformation.length;
-    let contactTabs = this.state.contactTabs;
+    let contactTabs = this.state.contactInformation.length;
 
     contactInformation[lastTab] = {
       _id: '',
@@ -375,8 +361,7 @@ console.log(this.state);
       placeholder: true,
       visible: true
     }
-    contactTabs++;
-    this.setState({ contactInformation, contactTabs });
+    this.setState({ contactInformation });
   }
 
   changeTab = (e) => {
@@ -530,14 +515,14 @@ console.log(this.state);
     )
   }
 
-  confirmationWindow = () => {
-    let closeWindow = () => this.setState({ confirmationWindow: false });
-    if (this.state.confirmationWindow) {
-      return <ConfirmationMessage
-        title={this.state.confirmationMessage}
-        unmountMe={closeWindow}
-        confirmMe={this.saveEdits}/>
-    } else return null
+  showDeleteRegistry = (e) => {
+    if (this.state.contactInformation[this.state.formTab] !== undefined) {
+      if (this.state.formTab >= 0 && !this.state.contactInformation[this.state.formTab].placeholder) {
+        return <button className="button--delete-registry"
+          value={this.state.contactInformation[this.state.formTab]._id}
+          onClick={this.removeContact}>Excluir Contato</button>
+      }
+    }
   }
 
   editWindow = () => {

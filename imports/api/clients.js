@@ -12,52 +12,52 @@ if(Meteor.isServer) {
 
     Clients.remove({});
 
-    Clients.insert({
-      _id: "0000",
-      companyName: "Exemplo",
-      type: "company",
-      cnpj: 79288413000173,
-      officialName: "Exemplo Empreendimentos",
-      registryES: 192837273,
-      registryMU: 364645445,
-      observations: 'Cliente do Rio de Janeiro',
-      contacts: [{
-        "_id": "0000",
-        contactName: "João Carlos",
-        contactPhone1: 1195543122,
-        contactPhone2: 1112341234,
-        contactEmail: "joao.carlos@exemplo.com",
-        contactCPF: 33568712098,
-        visible: false
-      }, {
-        _id: "0001",
-        contactName: "Cristina Clara",
-        contactPhone1: 1254675333,
-        contactPhone2: "",
-        contactEmail: "cristina.clara@exemplo.com",
-        contactCPF: 24498709933,
-        visible: true
-      }]
-    });
-    Clients.insert({
-      _id: "0001",
-      companyName: "",
-      type: "person",
-      cnpj: "",
-      officialName: "",
-      registryES: "",
-      registryMU: "",
-      observations: "AAA",
-      contacts: [{
-        "_id": "0000",
-        contactName: "João Augusto",
-        contactPhone1: 11960324996,
-        contactPhone2: 11947348222,
-        contactEmail: "joao.augusto@gmail.com",
-        contactCPF: 29577660002,
-        visible: true
-      }]
-    });
+  //   Clients.insert({
+  //     _id: "0000",
+  //     companyName: "Exemplo",
+  //     type: "company",
+  //     cnpj: 79288413000173,
+  //     officialName: "Exemplo Empreendimentos",
+  //     registryES: 192837273,
+  //     registryMU: 364645445,
+  //     observations: 'Cliente do Rio de Janeiro',
+  //     contacts: [{
+  //       "_id": "0000",
+  //       contactName: "João Carlos",
+  //       contactPhone1: 1195543122,
+  //       contactPhone2: 1112341234,
+  //       contactEmail: "joao.carlos@exemplo.com",
+  //       contactCPF: 70844246018,
+  //       visible: false
+  //     }, {
+  //       _id: "0001",
+  //       contactName: "Cristina Clara",
+  //       contactPhone1: 1254675333,
+  //       contactPhone2: "",
+  //       contactEmail: "cristina.clara@exemplo.com",
+  //       contactCPF: 68383721005,
+  //       visible: true
+  //     }]
+  //   });
+  //   Clients.insert({
+  //     _id: "0001",
+  //     companyName: "João Augusto",
+  //     type: "person",
+  //     cnpj: "",
+  //     officialName: "",
+  //     registryES: "",
+  //     registryMU: "",
+  //     observations: "AAA",
+  //     contacts: [{
+  //       "_id": "0000",
+  //       contactName: "João Augusto",
+  //       contactPhone1: 11960324996,
+  //       contactPhone2: 11947348222,
+  //       contactEmail: "joao.augusto@gmail.com",
+  //       contactCPF: 29577660002,
+  //       visible: true
+  //     }]
+  //   });
   }
 
   Meteor.methods({
@@ -68,7 +68,7 @@ if(Meteor.isServer) {
       let type = state.formType;
       let observations = state.observations;
       //Conditional Fields. If its not a company, the fields are empty
-      let companyName = state.formType == 'company' ? state.companyName : '';
+      let companyName = state.formType == 'company' ? state.companyName : state.contactInformation[0].contactName;
       let cnpj = state.formType == 'company' ? state.cnpj : '';
       let officialName = state.formType == 'company' ? state.officialName : '';
       let registryES = state.formType == 'company' ? state.registryES : '';
