@@ -6,6 +6,7 @@ import customTypes from '../startup/custom-types';
 import PrivateHeader from './PrivateHeader';
 import { Clients } from '../api/clients';
 
+import List from './List';
 import CustomInput from './CustomInput';
 import ConfirmationMessage from './ConfirmationMessage';
 
