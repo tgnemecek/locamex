@@ -17,6 +17,7 @@ export default class ListClients extends React.Component {
     this.state = {
       database: []
     }
+    this.createNewButton = <th><ClientItem key={0} formType="company" createNew={true}/></th>
   };
 
   componentDidMount() {
@@ -27,7 +28,7 @@ export default class ListClients extends React.Component {
     })
   }
 
-  renderClients = (e) => {
+  calculateClients = (e) => {
     if (this.state.database.length > 0) {
       return this.state.database.map((client, index) => {
         return <ClientItem
@@ -52,24 +53,11 @@ export default class ListClients extends React.Component {
       <div>
         <PrivateHeader title="Clientes"/>
         <div className="page-content">
-          <table className="list-view__table">
-            <tbody>
-              <tr className="list-view-table-row">
-                <th className="list-view__left-align list-view--item-div">
-                  Código
-                  <div className="list-view__sort-div"><button>⯅</button><button>⯆</button></div>
-                </th>
-                <th className="list-view__left-align list-view--item-div flex-grow-1">
-                  Nome Fantasia
-                  <div className="list-view__sort-div"><button>⯅</button><button>⯆</button></div>
-                </th>
-                <th className="list-view__right-align list-view--item-div">
-                  <ClientItem key={0} formType="company" createNew={true}/>
-                </th>
-              </tr>
-              {this.renderClients()}
-              </tbody>
-          </table>
+          <List
+            header={[{title: "Código", style: {}}, {title: "Nome Fantasia", style: {flexGrow: 1}}]}
+            editButton={true}
+            createNewButton={this.createNewButton}
+            items={this.calculateClients()}/>
         </div>
       </div>
       )
