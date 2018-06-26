@@ -20,8 +20,8 @@ export default class EditClient extends React.Component {
       requiredFieldsProposal: [],
       requiredFieldsContract: [],
 
-      formType: this.props.formType,
-      formTab: 1,
+      formType: this.props.formType ? this.props.formType : "company",
+      formTab: this.props.formType ? 1 : 0,
 
       //States used for controlled inputs
       clientName: this.props.clientName ? this.props.clientName : '',
@@ -248,18 +248,19 @@ export default class EditClient extends React.Component {
 
 //------------- Tabs:
   showCompanyTab = (e) => {
-    let className = "hidden";
-    if (this.state.formType == 'company') { className = "active" }
-    return <button value={-1} onClick={this.changeTab} id="companyTab" className={className}>Empresa</button>
+    let className = 'hidden';
+    if (this.state.formType == 'company') {
+      className = this.state.formTab == 0 ? 'active' : '';
+    }
+    return <button value={0} onClick={this.changeTab} id="companyTab"
+              className={className}>Empresa</button>
   }
 
   showContactTabs = (e) => {
     return this.state.contactInformation.map((contact, index) => {
-      if (!this.state.formType == 'company' && index == 0) {
-        return <button key={index} value={index} onClick={this.changeTab} className="active">Contato {index+1}</button>
-      } else {
-        return <button key={index} value={index} onClick={this.changeTab}>Contato {index+1}</button>
-      }
+      let trueIndex = index + 1;
+      return <button key={trueIndex} value={trueIndex} onClick={this.changeTab}
+                className={this.state.formTab == trueIndex ? 'active' : ''}>Contato {trueIndex}</button>
     })
   }
 
@@ -285,104 +286,77 @@ export default class EditClient extends React.Component {
       placeholder: true,
       visible: true
     }
-    this.setState({ contactInformation });
+    this.setState({ contactInformation, formTab: lastTab+1 });
   }
 
   changeTab = (e) => {
     this.setState({ formTab: e.target.value });
-    $("div.form__tab").find("button").removeClass("active");
-    e.target.classList.add("active");
-
-    var formArray = $("div.form--with-tabs").toArray();
-    for (var i = 0; i < formArray.length; i++) {
-      formArray[i].classList.add("hidden");
-    }
-    if (e.target.value !== "999") { //Observações
-      document.getElementsByClassName('form--with-tabs')[(Number(e.target.value) + 1)].classList.remove("hidden");
-    } else {
-      document.getElementById('observations-form').classList.remove("hidden");
-    }
   }
 
   changeFormType = (e) => {
-
-    let allTabs = $("div.form__tab").find("button");
-    let firstContactTab = document.getElementById('firstContactTab');
-    let companyTab = document.getElementById('companyTab');
-    let forms = document.getElementsByClassName('form--with-tabs');
-    let n = '';
-
-    this.setState({ formType: e.target.value, formTab: 0 });
-    allTabs.removeClass("active");
-
-    if (e.target.value == 'company') {
-      companyTab.classList.add("active");
-      n = 0;
-    }
-    if (e.target.value == 'person') {
-      firstContactTab.classList.add("active");
-      n = 1;
-    }
-    for (var i = 0; i < forms.length; i++) {
-      forms[i].classList.add("hidden");
-    }
-    forms[n].classList.remove("hidden");
+    this.setState({ formType: e.target.value, formTab: e.target.value == 'company' ? 0 : 1 });
   }
 //------------- Contents:
   tabContentsCompany = (e) => {
-    if (this.state.formType == 'company') {
-      return(
-        <div id="company-form" className="form--with-tabs">
-          <div className="form__row">
-            <div className="form__half-column-1of2">
-              <label>Nome Fantasia:</label>
-              <CustomInput title="Nome Fantasia" name="clientName"
-                type="text"
-                defaultValue={this.state.clientName}
-                onChange={this.handleChange}/>
-            </div>
-            <div className="form__half-column-2of2">
-              <label>CNPJ:</label>
-              <CustomInput title="CNPJ" name="cnpj"
-                type="cnpj"
-                defaultValue={this.state.cnpj}
-                onChange={this.handleChange}
-                />
-            </div>
-          </div>
-          <div className="form__row">
-            <label>Razão Social:</label>
-            <CustomInput title="Razão Social" name="officialName"
+    var className = "form--with-tabs hidden";
+    if (this.state.formType == 'company' && this.state.formTab == 0) {
+      className = "form--with-tabs";
+    }
+
+    return(
+      <div id="company-form" className={className}>
+        <div className="form__row">
+          <div className="form__half-column-1of2">
+            <label>Nome Fantasia:</label>
+            <CustomInput title="Nome Fantasia" name="clientName"
               type="text"
-              defaultValue={this.state.officialName}
-              upperCase={true}
+              defaultValue={this.state.clientName}
               onChange={this.handleChange}/>
           </div>
-          <div className="form__row">
-            <div className="form__half-column-1of2">
-              <label>Inscrição Estadual:</label>
-              <CustomInput title="Inscrição Estadual" name="registryES"
-                type="text"
-                defaultValue={this.state.registryES}
-                onChange={this.handleChange}/>
-            </div>
-            <div className="form__half-column-2of2">
-              <label>Inscrição Municipal:</label>
-              <CustomInput title="Inscrição Municipal" name="registryMU"
-                type="text"
-                defaultValue={this.state.registryMU}
-                onChange={this.handleChange}/>
-            </div>
+          <div className="form__half-column-2of2">
+            <label>CNPJ:</label>
+            <CustomInput title="CNPJ" name="cnpj"
+              type="cnpj"
+              defaultValue={this.state.cnpj}
+              onChange={this.handleChange}
+              />
           </div>
         </div>
-      )
-    } else return <div id="company-form" className="form--with-tabs"></div>
+        <div className="form__row">
+          <label>Razão Social:</label>
+          <CustomInput title="Razão Social" name="officialName"
+            type="text"
+            defaultValue={this.state.officialName}
+            upperCase={true}
+            onChange={this.handleChange}/>
+        </div>
+        <div className="form__row">
+          <div className="form__half-column-1of2">
+            <label>Inscrição Estadual:</label>
+            <CustomInput title="Inscrição Estadual" name="registryES"
+              type="text"
+              defaultValue={this.state.registryES}
+              onChange={this.handleChange}/>
+          </div>
+          <div className="form__half-column-2of2">
+            <label>Inscrição Municipal:</label>
+            <CustomInput title="Inscrição Municipal" name="registryMU"
+              type="text"
+              defaultValue={this.state.registryMU}
+              onChange={this.handleChange}/>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   tabContentsContacts = (e) => {
     return this.state.contactInformation.map((contact, index) => {
+      let trueIndex = index + 1;
+      let className = this.state.formTab == trueIndex ? "form--with-tabs" : "form--with-tabs hidden";
+
       return(
-        <div key={index} className={this.state.formType == 'person' && index == 0 ? "form--with-tabs" : "form--with-tabs hidden"}>
+        <div key={index} className={className}>
           {index !== 0 ? this.showDeleteRegistry() : null}
           <div className="form__row">
             <label>Nome Completo:</label>
@@ -429,8 +403,12 @@ export default class EditClient extends React.Component {
   }
 
   tabContentObservations = (e) => {
+    var className = "form--with-tabs hidden";
+    if (this.state.formTab == 999) {
+      className = "form--with-tabs";
+    }
     return (
-      <div id="observations-form" className="form--with-tabs hidden" onSubmit={this.props.createNew ? this.props.saveEdits : this.props.saveEdits}>
+      <div id="observations-form" className={className} onSubmit={this.props.createNew ? this.props.saveEdits : this.props.saveEdits}>
         <div className="form__row">
           <label>Observações:</label>
           <textarea title="Observações" name="observations" onChange={this.handleChange} value={this.state.observations}></textarea>
@@ -440,9 +418,10 @@ export default class EditClient extends React.Component {
   }
 
   showDeleteRegistry = (e) => {
+    let contact = this.state.contactInformation[this.state.formTab-1];
     return (
       <button className="button--delete-registry"
-        value={this.state.contactInformation[this.state.formTab]._id}
+        value={contact ? contact._id : 999}
         onClick={this.removeContact}>Excluir Contato
       </button>
     )

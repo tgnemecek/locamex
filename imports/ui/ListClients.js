@@ -16,7 +16,6 @@ export default class ListClients extends React.Component {
       editOpen: false,
       data: {}
     }
-    // this.createNewButton = <th><ClientItem key={0} formType="company" createNew={true}/></th>
   };
 
   componentDidMount() {
@@ -40,11 +39,6 @@ export default class ListClients extends React.Component {
             database={this.state.database}
             />
         </div>
-        {/* <ClientItem
-          editOpen={this.state.editOpen}
-          closeEditWindow={this.closeEditWindow}
-          data={this.state.data}
-          /> */}
       </div>
       )
   }

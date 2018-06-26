@@ -8,9 +8,9 @@ export default class List extends React.Component {
     super(props);
     this.state = {
       editOpen: false,
-      itemIndex: []
+      createOpen: false,
+      itemIndex: 0
     }
-    // this.createNewButton = <th><ClientItem key={0} formType="company" createNew={true}/></th>
   };
 
   editWindow = () => {
@@ -20,6 +20,7 @@ export default class List extends React.Component {
 
     switch (this.props.type) {
       case "clients":
+        this.createNewButton = <th><EditClient key={0} formType="company" createNew={true}/></th>
         return (
           <EditClient
             editOpen={this.state.editOpen}
@@ -41,12 +42,24 @@ export default class List extends React.Component {
     }
   }
 
+  createWindow = () => {
+    switch (this.props.type) {
+      case 'clients':
+        return <EditClient editOpen={this.state.createOpen} closeEditWindow={this.closeEditWindow} createNew={true}/>
+        break;
+    }
+  }
+
   openEditWindow = (e) => {
     this.setState({editOpen: true, itemIndex: e.target.value});
   }
 
+  openCreateWindow = (e) => {
+    this.setState({createOpen: true});
+  }
+
   closeEditWindow = () => {
-    this.setState({editOpen: false});
+    this.setState({editOpen: false, createOpen: false});
   }
 
   renderSortButtons = (i) => {
@@ -84,19 +97,6 @@ export default class List extends React.Component {
           </tr>
 
         )
-        // return <ClientItem
-        //   key={client.index}
-        //   _id={client._id}
-        //   createNew={false}
-        //   clientName={client.clientName}
-        //   officialName={client.officialName}
-        //   cnpj={client.cnpj}
-        //   registryES={client.registryES}
-        //   registryMU={client.registryMU}
-        //   formType={client.type}
-        //   observations={client.observations}
-        //   contacts={client.contacts}
-        // />
       })
     }
   }
@@ -108,7 +108,9 @@ export default class List extends React.Component {
           <tbody>
             <tr className="list-view-table-row">
               {this.renderHeader()}
-              {this.props.createNewButton}
+              <th>
+                <button className="button--pill list-view__button" onClick={this.openCreateWindow}>Create</button>
+              </th>
               <th className="list-view__right-align list-view--item-div">
               </th>
             </tr>
@@ -116,9 +118,8 @@ export default class List extends React.Component {
             </tbody>
         </table>
         {this.state.editOpen ? this.editWindow() : null}
+        {this.state.createOpen ? this.createWindow() : null}
       </div>
-
-
     )
   }
 }
