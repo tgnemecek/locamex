@@ -130,7 +130,7 @@ if(Meteor.isServer) {
       }
 
       Clients.update({ _id }, { $set: {
-        clientName: state.clientName,
+        clientName: state.formType == 'company' ? state.clientName : state.contactInformation[0].contactName,
         cnpj: state.cnpj,
         officialName: state.officialName,
         registryES: state.registryES,
