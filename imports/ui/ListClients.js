@@ -5,6 +5,7 @@ import { Meteor } from 'meteor/meteor';
 import { Clients } from '../api/clients';
 
 import PrivateHeader from './PrivateHeader';
+import SearchBar from './SearchBar';
 import List from './List';
 
 export default class ListClients extends React.Component {
@@ -12,18 +13,22 @@ export default class ListClients extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      database: [],
-      editOpen: false,
-      data: {}
+      fullDatabase: [],
+      filteredDatabase: []
     }
   };
 
   componentDidMount() {
     this.clientsTracker = Tracker.autorun(() => {
       Meteor.subscribe('clientsPub');
-      const database = Clients.find().fetch();
-      this.setState({ database });
+      var fullDatabase = Clients.find().fetch();
+      this.setState({ fullDatabase, filteredDatabase: fullDatabase });
     })
+  }
+
+  searchReturn = (filteredDatabase) => {
+    this.setState({ filteredDatabase });
+    alert(filteredDatabase);
   }
 
   render() {
@@ -31,12 +36,16 @@ export default class ListClients extends React.Component {
       <div>
         <PrivateHeader title="Clientes"/>
         <div className="page-content">
+          <SearchBar
+            database={this.state.fullDatabase}
+            options={[{title: "Nome Fantasia", value: "clientName"}]}
+            searchReturn={this.searchReturn}/>
           <List
             type="clients"
             header={[{title: "Código", style: {}}, {title: "Nome Fantasia", style: {flexGrow: 1}}]}
             editButton={true}
             createNewButton={this.createNewButton}
-            database={this.state.database}
+            database={this.state.filteredDatabase}
             />
         </div>
       </div>

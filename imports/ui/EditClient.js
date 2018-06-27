@@ -73,7 +73,6 @@ export default class EditClient extends React.Component {
     this.setState({ contactInformation });
   }
 //------------- Close/Open Window:
-
   confirmationWindow = () => {
     let closeWindow = () => this.setState({ confirmationWindow: false });
     if (this.state.confirmationWindow) {
@@ -245,7 +244,6 @@ export default class EditClient extends React.Component {
     } else { Meteor.call('clients.update', this.props._id, state) }
     this.props.closeEditWindow();
   }
-
 //------------- Tabs:
   showCompanyTab = (e) => {
     let className = 'hidden';

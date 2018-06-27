@@ -109,7 +109,7 @@ export default class List extends React.Component {
             <tr className="list-view-table-row">
               {this.renderHeader()}
               <th>
-                <button className="button--pill list-view__button" onClick={this.openCreateWindow}>Create</button>
+                <button className="button--pill list-view__button" onClick={this.openCreateWindow}>+</button>
               </th>
               <th className="list-view__right-align list-view--item-div">
               </th>
