@@ -31,7 +31,7 @@ export default class SearchBar extends React.Component {
 
     let value = makeEqual(this.state.value);
     let j = 0;
-    let result = []; 
+    let result = [];
 
     function makeEqual(str) {
       return customTypes.removeSpecialChars(str).toUpperCase();
@@ -42,7 +42,6 @@ export default class SearchBar extends React.Component {
       Object.getOwnPropertyNames(item).forEach((key) => {
         if (this.state.option == 'all' && j == 0) {
           if (makeEqual(item[key]).search(value) !== -1) {
-            console.log(value, makeEqual(item[key]));
             result.push(item);
             j++;
           }

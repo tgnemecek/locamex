@@ -89,9 +89,10 @@ export default class List extends React.Component {
       return this.props.database.map((item, index) => {
         return (
           <tr className="list-view-table-row" key={index}>
-            <td className="list-view__left-align list-view--item-div">{item._id}</td>
-            <td className="list-view__left-align list-view--item-div flex-grow-1">{item.clientName}</td>
-            <td className="list-view__right-align list-view--item-div">
+            <td className="list-view__left-align list-view--item-div" style={this.props.header[0].style}>{item._id}</td>
+            <td className="list-view__left-align list-view--item-div">{item.clientName}</td>
+            <td className="list-view__left-align list-view--item-div">{item.type == 'company' ? "PJ" : "PF"}</td>
+            <td className="list-view__left-align list-view--item-div">
               <button className="button--pill list-view__button" value={index} onClick={this.openEditWindow}>Editar</button>
             </td>
           </tr>

@@ -28,7 +28,6 @@ export default class ListClients extends React.Component {
 
   searchReturn = (filteredDatabase) => {
     this.setState({ filteredDatabase });
-    alert(filteredDatabase);
   }
 
   render() {
@@ -42,7 +41,7 @@ export default class ListClients extends React.Component {
             searchReturn={this.searchReturn}/>
           <List
             type="clients"
-            header={[{title: "Código", style: {}}, {title: "Nome Fantasia", style: {flexGrow: 1}}]}
+            header={[{title: "Código"}, {title: "Nome Fantasia", style: {flexGrow: 1}}, {title: "Tipo"}]}
             editButton={true}
             createNewButton={this.createNewButton}
             database={this.state.filteredDatabase}
