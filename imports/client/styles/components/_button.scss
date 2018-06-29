@@ -96,3 +96,18 @@
   right: 0;
   margin-right: ($space /2);
 }
+
+.button--add {
+  margin: 0 !important;
+  width: 54px !important;
+}
+
+.button--sort {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 2rem;
+  line-height: 1px;
+  margin-left: 10px;
+  transform: scale(1, 0.7) translateY(3px);
+}

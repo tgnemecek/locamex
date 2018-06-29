@@ -62,38 +62,37 @@ export default class List extends React.Component {
     this.setState({editOpen: false, createOpen: false});
   }
 
-  renderSortButtons = (i) => {
-    if (i !== this.props.header.length || this.props.editMethod == undefined) {
-      return (
-        <div className="list-view__sort-div">
-          <button>⯅</button>
-          <button>⯆</button>
-        </div>
-      )
-    } else return null
+  setClassName = () => {
+    let className = 'table-main ';
+    switch (this.props.type) {
+      case 'clients':
+        className += 'table-clients'
+        break;
+    }
+    return className;
   }
 
   renderHeader = () => {
     return this.props.header.map((header, i, array) => {
       return (
-        <th key={i} className="list-view__left-align list-view--item-div" style={header.style}>
+        <th key={i}>
           {header.title}
-          {this.renderSortButtons(i)}
+          {header.enableSort ? <button className="button--sort">⬍</button> : null}
         </th>
       )
     })
   }
 
-  renderItems = (e) => {
+  renderBody = (e) => {
     if (this.props.database.length > 0) {
       return this.props.database.map((item, index) => {
         return (
-          <tr className="list-view-table-row" key={index}>
-            <td className="list-view__left-align list-view--item-div" style={this.props.header[0].style}>{item._id}</td>
-            <td className="list-view__left-align list-view--item-div">{item.clientName}</td>
-            <td className="list-view__left-align list-view--item-div">{item.type == 'company' ? "PJ" : "PF"}</td>
-            <td className="list-view__left-align list-view--item-div">
-              <button className="button--pill list-view__button" value={index} onClick={this.openEditWindow}>Editar</button>
+          <tr key={index}>
+            <td>{item._id}</td>
+            <td>{item.clientName}</td>
+            <td>{item.type == 'company' ? "PJ" : "PF"}</td>
+            <td>
+              <button className="button--pill button--add" value={index} onClick={this.openEditWindow}>Editar</button>
             </td>
           </tr>
 
@@ -105,17 +104,15 @@ export default class List extends React.Component {
   render () {
     return (
       <div>
-        <table className="list-view__table">
+        <table className={this.setClassName()}>
           <tbody>
-            <tr className="list-view-table-row">
+            <tr>
               {this.renderHeader()}
               <th>
-                <button className="button--pill list-view__button" onClick={this.openCreateWindow}>+</button>
-              </th>
-              <th className="list-view__right-align list-view--item-div">
+                <button className="button--pill button--add" onClick={this.openCreateWindow}>+</button>
               </th>
             </tr>
-            {this.renderItems()}
+            {this.renderBody()}
             </tbody>
         </table>
         {this.state.editOpen ? this.editWindow() : null}

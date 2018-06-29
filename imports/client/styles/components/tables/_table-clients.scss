@@ -1,0 +1,20 @@
+.table-main th:nth-child(1),
+.table-main td:nth-child(1) {
+  width: 90px;
+}
+
+.table-main th:nth-child(2),
+.table-main td:nth-child(2) {
+}
+
+.table-main th:nth-child(3),
+.table-main td:nth-child(3) {
+  text-align: center !important;
+  width: 80px;
+}
+
+.table-main th:nth-child(4),
+.table-main td:nth-child(4) {
+  text-align: right !important;
+  width: 1px;
+}

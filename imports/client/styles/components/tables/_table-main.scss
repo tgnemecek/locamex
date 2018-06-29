@@ -1,0 +1,23 @@
+.table-main {
+  border-collapse: collapse;
+  display: table;
+  width: 100%;
+}
+
+.table-main th,
+.table-main td {
+  border: 1px solid $dark-grey;
+  padding: ($space /4) ($space /2) ($space /4) ($space /2);
+  text-align: left;
+}
+
+.table-main tr:nth-child(even) {
+  background-color: $grey;
+}
+
+.table-main__sort-div {
+  display: inline-flex;
+  flex-direction: column;
+  height: 100%;
+  margin-right: 5px;
+}

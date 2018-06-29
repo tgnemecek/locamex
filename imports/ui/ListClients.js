@@ -16,6 +16,16 @@ export default class ListClients extends React.Component {
       fullDatabase: [],
       filteredDatabase: []
     }
+    this.header = [{
+      title: "Código",
+      enableSort: true
+    }, {
+      title: "Nome Fantasia",
+      enableSort: true
+    }, {
+      title: "Tipo",
+      enableSort: false
+    }]
   };
 
   componentDidMount() {
@@ -41,9 +51,8 @@ export default class ListClients extends React.Component {
             searchReturn={this.searchReturn}/>
           <List
             type="clients"
-            header={[{title: "Código"}, {title: "Nome Fantasia", style: {flexGrow: 1}}, {title: "Tipo"}]}
+            header={this.header}
             editButton={true}
-            createNewButton={this.createNewButton}
             database={this.state.filteredDatabase}
             />
         </div>

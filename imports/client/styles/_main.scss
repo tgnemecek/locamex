@@ -11,8 +11,6 @@
 @import './components/button';
 @import './components/checkbox';
 @import './components/item';
-
-@import './components/list-view';
 @import './components/confirmation-message';
 
 @import './components/login';
@@ -22,3 +20,6 @@
 @import './components/edit-clients';
 
 @import './components/add-services';
+
+@import './components/tables/table-clients';
+@import './components/tables/table-main';
