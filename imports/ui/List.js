@@ -2,6 +2,7 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 
 import EditClient from './EditClient';
+import SortButton from './SortButton';
 
 export default class List extends React.Component {
   constructor(props) {
@@ -77,7 +78,10 @@ export default class List extends React.Component {
       return (
         <th key={i}>
           {header.title}
-          {header.enableSort ? <button className="button--sort">⬍</button> : null}
+          {header.enableSort ? <SortButton
+                                      database={this.props.database}
+                                      sortItems={this.props.sortItems}
+                                      itemValue={header.value}/> : null}
         </th>
       )
     })
@@ -92,7 +96,7 @@ export default class List extends React.Component {
             <td>{item.clientName}</td>
             <td>{item.type == 'company' ? "PJ" : "PF"}</td>
             <td>
-              <button className="button--pill button--add" value={index} onClick={this.openEditWindow}>Editar</button>
+              <button className="button--pill button--list" value={index} onClick={this.openEditWindow}>Editar</button>
             </td>
           </tr>
 
@@ -109,7 +113,7 @@ export default class List extends React.Component {
             <tr>
               {this.renderHeader()}
               <th>
-                <button className="button--pill button--add" onClick={this.openCreateWindow}>+</button>
+                <button className="button--pill button--list" onClick={this.openCreateWindow}>+</button>
               </th>
             </tr>
             {this.renderBody()}

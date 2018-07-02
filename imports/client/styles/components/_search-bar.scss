@@ -1,0 +1,25 @@
+.search-bar {
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: $space;
+}
+
+.search-bar input {
+  width: 100%;
+}
+
+.search-bar__block {
+  display: inline-block;
+  padding: ($space /2);
+  text-align: left;
+}
+
+.search-bar__block label {
+  display: block;
+  margin-left: ($space /2);
+  font-size: inherit;
+}
+
+.search-bar__block--main {
+  flex-grow: 1;
+}

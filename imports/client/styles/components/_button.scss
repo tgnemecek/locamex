@@ -97,9 +97,14 @@
   margin-right: ($space /2);
 }
 
-.button--add {
-  margin: 0 !important;
-  width: 54px !important;
+.button--list {
+  margin: 0;
+  width: 60px !important;
+}
+
+.button--search-bar {
+  margin: 0 0 8px 0;
+  width: 60px !important;
 }
 
 .button--sort {

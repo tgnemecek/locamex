@@ -270,7 +270,7 @@ export default class customTypes {
     ];
 
     for(var i = 0; i < defaultDiacriticsRemovalMap.length; i++) {
-      str = str.toString().replace(defaultDiacriticsRemovalMap[i].letters, defaultDiacriticsRemovalMap[i].base);
+      str = str ? str.toString().replace(defaultDiacriticsRemovalMap[i].letters, defaultDiacriticsRemovalMap[i].base) : "";
     }
     return str;
   }
