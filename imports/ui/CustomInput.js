@@ -14,8 +14,14 @@ export default class CustomInput extends React.Component {
   };
 
   componentDidMount() {
-    if (this.props.defaultValue) {
-      this.formatValue(this.props.defaultValue.toString());
+    if (this.props.value) {
+      this.formatValue(this.props.value.toString());
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.value !== prevProps.value) {
+      this.formatValue(this.props.value.toString());
     }
   }
 
@@ -103,6 +109,7 @@ export default class CustomInput extends React.Component {
   render() {
     return <input
               ref="input"
+              disabled={this.props.disabled}
               style={this.state.style}
               value={this.state.displayValue}
               onChange={this.onChange}>

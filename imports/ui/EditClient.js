@@ -1,5 +1,6 @@
 import ReactModal from 'react-modal';
 import React from 'react';
+import update from 'immutability-helper';
 import { Meteor } from 'meteor/meteor';
 
 import customTypes from '../startup/custom-types';
@@ -230,18 +231,22 @@ export default class EditClient extends React.Component {
   }
 
   saveEdits = (e) => {
-    let state = this.state;
-    let contactInformation = [];
+    var contactInformation = this.state.contactInformation;
+    var emptyIndexes = [];
 
-    state.contactInformation.forEach((contact, index, array) => {
+    this.state.contactInformation.forEach((contact, index, array) => {
       delete contact["placeholder"];
-      if (contact.contactName) {
-        contactInformation.push(contact);
+      if (!contact.contactName) {
+        contactInformation.splice(index, 1);
       }
-    })
+    });
+
+    this.setState({contactInformation});
+
     if (this.props.createNew) {
-      Meteor.call('clients.insert', state);
-    } else { Meteor.call('clients.update', this.props._id, state) }
+      Meteor.call('clients.insert', this.state);
+    } else { Meteor.call('clients.update', this.props._id, this.state) };
+
     this.props.closeEditWindow();
   }
 //------------- Tabs:
@@ -308,14 +313,15 @@ export default class EditClient extends React.Component {
             <label>Nome Fantasia:</label>
             <CustomInput title="Nome Fantasia" name="clientName"
               type="text"
-              defaultValue={this.state.clientName}
+              value={this.state.clientName}
               onChange={this.handleChange}/>
           </div>
           <div className="form__half-column-2of2">
             <label>CNPJ:</label>
             <CustomInput title="CNPJ" name="cnpj"
               type="cnpj"
-              defaultValue={this.state.cnpj}
+              value={this.state.cnpj}
+              disabled={true}
               onChange={this.handleChange}
               />
           </div>
@@ -324,7 +330,7 @@ export default class EditClient extends React.Component {
           <label>Razão Social:</label>
           <CustomInput title="Razão Social" name="officialName"
             type="text"
-            defaultValue={this.state.officialName}
+            value={this.state.officialName}
             upperCase={true}
             onChange={this.handleChange}/>
         </div>
@@ -333,14 +339,14 @@ export default class EditClient extends React.Component {
             <label>Inscrição Estadual:</label>
             <CustomInput title="Inscrição Estadual" name="registryES"
               type="text"
-              defaultValue={this.state.registryES}
+              value={this.state.registryES}
               onChange={this.handleChange}/>
           </div>
           <div className="form__half-column-2of2">
             <label>Inscrição Municipal:</label>
             <CustomInput title="Inscrição Municipal" name="registryMU"
               type="text"
-              defaultValue={this.state.registryMU}
+              value={this.state.registryMU}
               onChange={this.handleChange}/>
           </div>
         </div>
@@ -360,7 +366,7 @@ export default class EditClient extends React.Component {
             <label>Nome Completo:</label>
             <CustomInput title="Nome do Contato" name="contactName" id={index}
               type="text"
-              defaultValue={this.state.contactInformation[index].contactName}
+              value={this.state.contactInformation[index].contactName}
               onChange={this.handleChangeContact}/>
           </div>
           <div className="form__row">
@@ -368,14 +374,15 @@ export default class EditClient extends React.Component {
               <label>CPF:</label>
               <CustomInput title="CPF do Contato" name="contactCPF" id={index}
                 type="cpf"
-                defaultValue={this.state.contactInformation[index].contactCPF}
+                disabled={index == 0 ? true : false}
+                value={this.state.contactInformation[index].contactCPF}
                 onChange={this.handleChangeContact}/>
             </div>
             <div className="form__half-column-2of2">
               <label>Email:</label>
               <CustomInput title="Email do Contato" name="contactEmail" id={index}
                 type="email"
-                defaultValue={this.state.contactInformation[index].contactEmail}
+                value={this.state.contactInformation[index].contactEmail}
                 onChange={this.handleChangeContact}/>
             </div>
           </div>
@@ -384,13 +391,13 @@ export default class EditClient extends React.Component {
               <label>Telefone 1:</label>
               <CustomInput title="Telefone 1 do Contato" name="contactPhone1" id={index}
                 type="phone"
-                defaultValue={this.state.contactInformation[index].contactPhone1}
+                value={this.state.contactInformation[index].contactPhone1}
                 onChange={this.handleChangeContact}/>
             </div>
             <div className="form__half-column-2of2">
               <label>Telefone 2:</label>
               <CustomInput title="Telefone 2 do Contato" name="contactPhone2" id={index}
-                type="text"
+                type="phone"
                 value={this.state.contactInformation[index].contactPhone2}
                 onChange={this.handleChangeContact}/>
             </div>
@@ -416,11 +423,25 @@ export default class EditClient extends React.Component {
   }
 
   showDeleteRegistry = (e) => {
-    let contact = this.state.contactInformation[this.state.formTab-1];
+
+    var removeContact = (e) => {
+      e.preventDefault();
+      var index = (Number(e.target.value) -1);
+
+      this.setState((prevState) => {
+        let contactInformation = prevState.contactInformation;
+        contactInformation.splice(index, 1);
+        return {
+          contactInformation: contactInformation,
+          formTab: (prevState.formTab - 1)
+        }
+      });
+    }
+
     return (
       <button className="button--delete-registry"
-        value={contact ? contact._id : 999}
-        onClick={this.removeContact}>Excluir Contato
+        value={this.state.formTab}
+        onClick={removeContact}>Excluir Contato
       </button>
     )
   }
