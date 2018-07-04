@@ -37,10 +37,10 @@ export const onAuthChange = (isAuthenticated) => {
   }
 };
 
-const ListServices = <ListPage type="services"/>;
-const ListUsers = <ListPage type="services"/>;
-const ListUserTypes = <ListPage type="services"/>;
-const ListClients = (props) => return <ListPage type="clients"/>;
+const ListServices = (props) => { return <ListPage type="services"/> };
+const ListUsers = (props) => { return <ListPage type="users"/> };
+const ListUserTypes = (props) => { return <ListPage type="user-types"/> };
+const ListClients = (props) => { return <ListPage type="clients"/> };
 
 
 export const routes = (
@@ -52,7 +52,7 @@ export const routes = (
     {/* <Route path="/listservices" component={ListServices}/>
     <Route path="/listusers" component={ListUsers}/>
     <Route path="/listusertypes" component={ListUserTypes}/> */}
-    <Route path="/listclients" component={ListClients()}/>
+    <Route path="/listclients" component={ListClients}/>
     <Route path="*" component={NotFound}/>
   </Router>
 );

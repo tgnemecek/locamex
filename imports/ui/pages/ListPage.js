@@ -16,36 +16,40 @@ export default class ListPage extends React.Component {
       fullDatabase: [],
       filteredDatabase: []
     }
-    this.header = [{
-      title: "Código",
-      value: "_id",
-      enableSort: true
-    }, {
-      title: "Nome Fantasia",
-      value: "clientName",
-      enableSort: true
-    }, {
-      title: "Tipo",
-      value: "type",
-      enableSort: false
-    }];
-    this.searchOptions = [{
-      title: "Nome Fantasia",
-      value: "clientName"
-    }, {
-      title: "Razão Social",
-      value: "officialName"
-    }, {
-      title: "CNPJ",
-      value: "cnpj"
-    }, {
-      title: "Email",
-      value: "contactEmail"
-    }, {
-      title: "CPF",
-      value: "contactCPF"
-    }, ]
-  };
+    switch (this.props.type) {
+      case "clients":
+        this.header = [{
+          title: "Código",
+          value: "_id",
+          enableSort: true
+        }, {
+          title: "Nome Fantasia",
+          value: "clientName",
+          enableSort: true
+        }, {
+          title: "Tipo",
+          value: "type",
+          enableSort: false
+        }];
+        this.searchOptions = [{
+          title: "Nome Fantasia",
+          value: "clientName"
+        }, {
+          title: "Razão Social",
+          value: "officialName"
+        }, {
+          title: "CNPJ",
+          value: "cnpj"
+        }, {
+          title: "Email",
+          value: "contactEmail"
+        }, {
+          title: "CPF",
+          value: "contactCPF"
+        }, ]
+        break;
+    }
+  }
 
   componentDidMount() {
     this.clientsTracker = Tracker.autorun(() => {

@@ -65,29 +65,11 @@ export default class SearchBar extends React.Component {
     }
 
     for (var i = 0; i < database.length; i++) {
-      debugger;
       if (searchInsideObject(database[i])) {
         result.push(database[i]);
       }
     }
-
     this.props.searchReturn(result);
-
-    // for (var i = 0; i < database.length; i++) {
-    //   for (var key of Object.keys(database[i])) {
-    //     if (searchInsideArray(database[i][key])) {
-    //       result.push(database[i]);
-    //       continue;
-    //     } else {
-    //       if (key == this.state.option || this.state.option == 'all') {
-    //         if (compare(database[i][key])) {
-    //           result.push(database[i]);
-    //           continue;
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
   }
 
 
