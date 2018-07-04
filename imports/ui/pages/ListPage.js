@@ -2,13 +2,13 @@ import ReactModal from 'react-modal';
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 
-import { Clients } from '../api/clients';
+import { Clients } from '../../api/clients';
 
-import PrivateHeader from './PrivateHeader';
-import SearchBar from './SearchBar';
-import List from './List';
+import PrivateHeader from '../PrivateHeader';
+import SearchBar from '../SearchBar';
+import List from '../List';
 
-export default class ListClients extends React.Component {
+export default class ListPage extends React.Component {
 
   constructor(props) {
     super(props);

@@ -7,10 +7,11 @@ import Signup from '../ui/Signup';
 import Dashboard from '../ui/Dashboard';
 import NotFound from '../ui/NotFound';
 import AddService from '../ui/AddService';
-import ListServices from '../ui/ListServices';
-import ListUsers from '../ui/ListUsers';
-import ListUserTypes from '../ui/ListUserTypes';
-import ListClients from '../ui/ListClients';
+
+import ListPage from '../ui/pages/ListPage';
+// import ListUsers from '../ui/pages/ListUsers';
+// import ListUserTypes from '../ui/pages/ListUserTypes';
+// import ListClients from '../ui/pages/ListClients';
 
 const unauthenticatedPages = ['/', '/signup'];
 const authenticatedPages = ['/dashboard'];
@@ -35,16 +36,23 @@ export const onAuthChange = (isAuthenticated) => {
     browserHistory.replace('/');
   }
 };
+
+const ListServices = <ListPage type="services"/>;
+const ListUsers = <ListPage type="services"/>;
+const ListUserTypes = <ListPage type="services"/>;
+const ListClients = (props) => return <ListPage type="clients"/>;
+
+
 export const routes = (
   <Router history={browserHistory}>
     <Route path="/" component={Login} onEnter={onEnterPublicPage}/>
     <Route path="/signup" component={Signup} onEnter={onEnterPublicPage}/>
     <Route path="/dashboard" component={Dashboard} onEnter={onEnterPrivatePage}/>
     <Route path="/services" component={AddService}/>
-    <Route path="/listservices" component={ListServices}/>
+    {/* <Route path="/listservices" component={ListServices}/>
     <Route path="/listusers" component={ListUsers}/>
-    <Route path="/listusertypes" component={ListUserTypes}/>
-    <Route path="/listclients" component={ListClients}/>
+    <Route path="/listusertypes" component={ListUserTypes}/> */}
+    <Route path="/listclients" component={ListClients()}/>
     <Route path="*" component={NotFound}/>
   </Router>
 );
