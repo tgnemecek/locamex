@@ -8,6 +8,7 @@ import Dashboard from '../ui/Dashboard';
 import NotFound from '../ui/NotFound';
 import AddService from '../ui/AddService';
 
+import ContractPage from '../ui/pages/ContractPage';
 import ListPage from '../ui/pages/ListPage';
 // import ListUsers from '../ui/pages/ListUsers';
 // import ListUserTypes from '../ui/pages/ListUserTypes';
@@ -48,7 +49,7 @@ export const routes = (
     <Route path="/" component={Login} onEnter={onEnterPublicPage}/>
     <Route path="/signup" component={Signup} onEnter={onEnterPublicPage}/>
     <Route path="/dashboard" component={Dashboard} onEnter={onEnterPrivatePage}/>
-    <Route path="/services" component={AddService}/>
+    <Route path="/contract/:contractId" component={ContractPage}/>
     {/* <Route path="/listservices" component={ListServices}/>
     <Route path="/listusers" component={ListUsers}/>
     <Route path="/listusertypes" component={ListUserTypes}/> */}
