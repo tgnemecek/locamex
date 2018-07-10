@@ -1,3 +1,120 @@
 .contract {
+  border: 1px solid $dark-grey;
   background: $light-grey;
+}
+//HEADER
+.contract__header {
+  background: $grey;
+  height: 70px;
+  position: relative;
+}
+
+.contract__overtitle {
+  color: $dark-grey;
+  font-size: ($base-font-size * 0.85);
+  top: 0;
+  left: 2px;
+}
+
+.contract__top-buttons {
+  top: 0;
+  right: 0;
+  button {
+    font-size: 2.1rem;
+    height: 25px;
+    line-height: 1px;
+    margin-left: 5px;
+  }
+}
+
+.contract__header div {
+  position: absolute;
+  margin: 10px;
+}
+
+.contract__title {
+  bottom: 0;
+  left: 0;
+  line-height: 1px;
+}
+
+.contract__subtitle {
+  color: $dark-grey;
+  bottom: 0;
+  right: 0;
+}
+
+.contract--active {
+  color: $active;
+}
+
+.contract--inactive {
+  color: $inactive;
+}
+
+.contract--cancelled {
+  color: $cancelled;
+}
+
+//BODY
+.contract__body {
+  padding: $space;
+}
+//BODY-TOP
+.contract__body--top {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.contract__item {
+  padding: 5px;
+  width: 50%;
+  label {
+    width: 100%;
+    margin-left: 10px;
+  }
+  select, input {
+    width: 100%;
+    margin-right: 10px;
+    vertical-align: bottom;
+  }
+}
+
+.contract__item--address {
+  display: inline-flex;
+  justify-content: space-between;
+  div {
+    flex-basis: 150px;
+  }
+}
+//BODY-MIDDLE
+.contract__body--middle {
+  height: 500px;
+  margin-bottom: 10px;
+  overflow-y: auto;
+}
+
+.contract__list {
+  margin: 10px 0;
+  label {
+    margin: 100px;
+  }
+}
+//BODY-BOTTOM
+.contract__body--bottom {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  button {
+    width: calc(50% - 5px);
+  }
+  div {
+    color: $footer-text-color;
+    font-style: italic;
+    text-align: center;
+    width: 100%;
+    margin-top: 10px;
+  }
 }

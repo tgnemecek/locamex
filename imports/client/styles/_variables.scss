@@ -5,6 +5,10 @@ $light-grey: #f9f9f9;
 $dark-grey: #777777;
 $red: #ad0808;
 $light-red: #ff4d4d;
+//Status-Colors
+$active: #1f9138;
+$inactive: #8e7f1c;
+$cancelled: #8e1b1b;
 
 // Spacing
 $space: 1.4rem;
@@ -16,7 +20,7 @@ $large-font-size: 1.8rem;
 
 // Form inputs
 $input-border: $grey;
-$input-spacing: 1rem;
+$input-spacing: .8rem;
 
 // Boxed view
 $boxed-view-overlay-bg: $grey;
@@ -42,3 +46,6 @@ $header-color: white;
 $item-bg: $light-grey;
 $item-border: darken($item-bg, 8%);
 $item-text-color: $dark-grey;
+
+// Footer
+$footer-text-color: $dark-grey;

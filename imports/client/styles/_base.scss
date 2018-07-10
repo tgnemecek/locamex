@@ -48,9 +48,10 @@ textarea {
 }
 
 input, select {
+  height: 35px;
   border: 1px solid $input-border;
   font-size: $base-font-size;
-  // margin: ($space /2);
+  margin: 0;
   padding: $input-spacing;
 }
 
