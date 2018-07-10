@@ -25,6 +25,9 @@
     line-height: 1px;
     margin-left: 5px;
   }
+  .content-inside {
+    background: yellow;
+  }
 }
 
 .contract__header div {
@@ -68,11 +71,11 @@
   width: 100%;
 }
 
-.contract__item {
+.contract__item--generic {
   padding: 5px;
   width: 50%;
   label {
-    width: 100%;
+    display: block;
     margin-left: 10px;
   }
   select, input {
@@ -82,11 +85,32 @@
   }
 }
 
-.contract__item--address {
+.contract__item--calendar {
+  display: inline-flex;
+  justify-content: space-between;
+  width: 100%;
+  div {
+    flex-basis: 150px;
+    margin: 0;
+  }
+}
+
+.contract__item--small {
+  padding: 5px;
+  width: 50%;
   display: inline-flex;
   justify-content: space-between;
   div {
     flex-basis: 150px;
+  }
+  label {
+    display: block;
+    margin-left: 10px;
+  }
+  select, input {
+    width: 100%;
+    margin-right: 10px;
+    vertical-align: bottom;
   }
 }
 //BODY-MIDDLE
@@ -96,12 +120,13 @@
   overflow-y: auto;
 }
 
-.contract__list {
+.contract__list-container {
   margin: 10px 0;
-  label {
-    margin: 100px;
+  input {
+    text-align: right;
   }
 }
+
 //BODY-BOTTOM
 .contract__body--bottom {
   display: flex;

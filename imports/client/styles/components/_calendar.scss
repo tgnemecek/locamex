@@ -1,0 +1,66 @@
+.calendar__box {
+  position: relative;
+  background-color: $boxed-view-bg;
+  padding: 2.4rem;
+  text-align: center;
+}
+
+.calendar__close-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.calendar__header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: $space;
+  button {
+    cursor: pointer;
+  }
+}
+
+.calendar {
+  border: 1px solid black;
+  border-collapse: collapse;
+  th {
+    cursor: pointer;
+    padding: ($space /4);
+  }
+  td {
+    cursor: pointer;
+    height: 30px;
+    width: 30px;
+  }
+  button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    height: 100%;
+    width: 100%;
+    padding: ($space /4);
+  }
+}
+
+.calendar tr:nth-child(even) {
+  background-color: $grey;
+}
+
+.calendar__day--grayed {
+  background-color: $dark-grey;
+  cursor: default !important;
+  font-style: italic;
+}
+
+.calendar__day--active {
+  background-color: $active !important;
+}
+
+.calendar__lower-button-div {
+  margin-top: 10px;
+  width: 100%;
+  button {width: 100%;}
+}

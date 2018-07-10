@@ -17,8 +17,8 @@ if(Meteor.isServer) {
     status: "active", //active-inactive-cancelled
     createdBy: "Funcionário 1",
     creationDate: 123123123,
-    startDate: 123123123,
-    duration: 192837273,
+    startDate: new Date(),
+    duration: 6,
     observations: 'Exposição nova',
     deliveryAddress: {
       country: "Brasil",

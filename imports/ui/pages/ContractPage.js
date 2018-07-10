@@ -26,7 +26,7 @@ export default class ContractPage extends React.Component {
         status: "inactive",
         createdBy: "FAZER!!",
         creationDate: "FAZER!!",
-        startDate: "",
+        startDate: new Date(),
         duration: "",
         observations: "",
         deliveryAddress: "",

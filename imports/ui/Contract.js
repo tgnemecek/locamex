@@ -1,6 +1,7 @@
-import ReactModal from 'react-modal';
-import React from 'react';
 import { Meteor } from 'meteor/meteor';
+import React from 'react';
+import ReactModal from 'react-modal';
+import moment from 'moment';
 
 import customTypes from '../startup/custom-types';
 
@@ -9,6 +10,7 @@ import { Services } from '../api/services';
 
 import CustomInput from './CustomInput';
 import ConfirmationMessage from './ConfirmationMessage';
+import Calendar from './Calendar';
 
 export default class Contract extends React.Component {
 
@@ -29,7 +31,10 @@ export default class Contract extends React.Component {
 
       clientsDatabase: [],
       productsDatabase: [],
-      servicesDatabase: []
+      servicesDatabase: [],
+
+      calendarOpen: false,
+      observationsOpen: false
     }
   }
 
@@ -60,6 +65,32 @@ export default class Contract extends React.Component {
     })
   }
 
+  toggleCalendar = (e) => {
+    e ? e.preventDefault() : null;
+    var calendarOpen = !this.state.calendarOpen;
+    this.setState({ calendarOpen });
+  }
+
+  changeDate = (startDate) => {
+    this.setState({ startDate });
+    this.toggleCalendar();
+  }
+
+  toggleObservations = (e) => {
+    e ? e.preventDefault() : null;
+    var observationsOpen = !this.state.observationsOpen;
+    this.setState({ observationsOpen });
+  }
+
+  saveObservations = (observations) => {
+    this.setState({ observations });
+    this.toggleObservations();
+  }
+
+  checkIfHasContent = () => {
+    return this.state.observations ? "content-inside" : "";
+  }
+
   render () {
     return (
       <form className="contract">
@@ -68,7 +99,12 @@ export default class Contract extends React.Component {
             <p>Contrato criado por: <strong>Jurgen</strong></p>
           </div>
           <div className="contract__top-buttons">
-            <button>⚠</button>
+            <button onClick={this.toggleObservations} className={this.checkIfHasContent()}>⚠</button>
+            {this.state.observationsOpen ? <Observations
+                                                  observations={this.state.observations}
+                                                  closeObservations={this.toggleObservations}
+                                                  saveObservations={this.saveObservations}
+                                                  /> : null}
             <button>⎙</button>
             <button>✖</button>
           </div>
@@ -81,27 +117,44 @@ export default class Contract extends React.Component {
         </div>
         <div className="contract__body">
           <div className="contract__body--top">
-            <div className="contract__item">
+            <div className="contract__item--generic">
               <label>Cliente:</label>
               <select>
                 {this.selectClient()}
               </select>
             </div>
-            <div className="contract__item">
+            <div className="contract__item--generic">
               <label>Endereço de Entrega:</label>
               <input type="text"/>
             </div>
-            <div className="contract__item">
-              <label>Calendário:</label>
-              <select>
-                {this.selectClient()}
-              </select>
+            <div className="contract__item--small">
+              <div>
+                <label>Entrega:</label>
+                <input readOnly value={moment(this.state.startDate).format("DD-MMMM-YYYY")} onClick={this.toggleCalendar} style={{cursor: "pointer"}}/>
+                {this.state.calendarOpen ? <Calendar
+                                                closeCalendar={this.toggleCalendar}
+                                                changeDate={this.changeDate}
+                                                /> : null}
+              </div>
+              <div>
+                <label>Duração:</label>
+                <input type="number"/>
+              </div>
+              <div>
+                <label style={{visibility: "hidden"}}>Período:</label>
+                <select>
+                  <option value="months">meses</option>
+                  <option value="days">dias</option>
+                </select>
+              </div>
             </div>
-            <div className="contract__item contract__item--address">
+            <div className="contract__item--small">
               <div>
                 <label>Estado:</label>
-                <select>
-                  {this.selectClient()}
+                <select defaultValue="SP">
+                  {customTypes.states.map((item, i) => {
+                    return <option key={i} value={item}>{item}</option>
+                  })}
                 </select>
               </div>
               <div>
@@ -113,9 +166,6 @@ export default class Contract extends React.Component {
                 <input type="number"/>
               </div>
             </div>
-          </div>
-          <div className="contract__body--top">
-
           </div>
           <div className="contract__body--middle">
             <div className="contract__list">
@@ -223,5 +273,45 @@ class ContractList extends React.Component {
         </div>
       )
     }
+  }
+}
+
+class Observations extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      observations: this.props.observations
+    }
+  }
+
+  onChange = (e) => {
+    var observations = e.target.value;
+    this.setState({ observations });
+  }
+
+  saveEdits = () => {
+    this.props.saveObservations(this.state.observations);
+  }
+
+  render() {
+      return (
+        <ReactModal
+          isOpen={true}
+          contentLabel="Observações"
+          appElement={document.body}
+          onRequestClose={this.props.closeObservations}
+          className="observations__box"
+          overlayClassName="boxed-view boxed-view--modal"
+          >
+            <div>
+              <button onClick={this.props.closeObservations} className="calendar__close-button">✖</button>
+              <h3>Observações:</h3>
+              <textarea value={this.state.observations} onChange={this.onChange}/>
+              <div className="calendar__lower-button-div">
+                <button type="button" className="button button--primary" onClick={this.saveEdits}>OK</button>
+              </div>
+            </div>
+        </ReactModal>
+      )
   }
 }
