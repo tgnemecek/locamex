@@ -71,17 +71,25 @@
   width: 100%;
 }
 
-.contract__item--generic {
+.contract__item-wrap {
   padding: 5px;
   width: 50%;
+  display: inline-flex;
+  justify-content: space-between;
+  > div {
+    flex-basis: 1px;
+    flex-grow: 1;
+  }
   label {
     display: block;
     margin-left: 10px;
   }
   select, input {
     width: 100%;
-    margin-right: 10px;
     vertical-align: bottom;
+  }
+  .contract__item-wrap--margin-right {
+    margin-right: 5px;
   }
 }
 
@@ -92,25 +100,6 @@
   div {
     flex-basis: 150px;
     margin: 0;
-  }
-}
-
-.contract__item--small {
-  padding: 5px;
-  width: 50%;
-  display: inline-flex;
-  justify-content: space-between;
-  div {
-    flex-basis: 150px;
-  }
-  label {
-    display: block;
-    margin-left: 10px;
-  }
-  select, input {
-    width: 100%;
-    margin-right: 10px;
-    vertical-align: bottom;
   }
 }
 //BODY-MIDDLE

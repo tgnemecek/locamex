@@ -21,10 +21,10 @@ if(Meteor.isServer) {
     duration: 6,
     observations: 'Exposição nova',
     deliveryAddress: {
-      country: "Brasil",
       state: "SP",
       city: "São Paulo",
-      street: "Rua Sonia Ribeiro, 1212",
+      street: "Rua Sonia Ribeiro",
+      number: 1212,
       additional: "Casa 4",
       district: "Brooklin Paulista",
       zip: 04621010

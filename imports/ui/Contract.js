@@ -91,6 +91,26 @@ export default class Contract extends React.Component {
     return this.state.observations ? "content-inside" : "";
   }
 
+  handleChangeZIP = (name, value) => {
+    this.state.deliveryAddress[name] = value;
+    if (value.length == 8) {
+      var object = customTypes.checkCEP(value, (data) => {
+        if (data) {
+          this.state.deliveryAddress.street = data.logradouro;
+          this.state.deliveryAddress.district = data.bairro;
+          this.state.deliveryAddress.city = data.localidade;
+          this.state.deliveryAddress.state = data.uf;
+        } else return;
+      });
+    }
+    this.forceUpdate();
+  }
+
+  handleChangeAdress = (name, value) => {
+    this.state.deliveryAddress[name] = value;
+    this.forceUpdate();
+  }
+
   render () {
     return (
       <form className="contract">
@@ -117,26 +137,41 @@ export default class Contract extends React.Component {
         </div>
         <div className="contract__body">
           <div className="contract__body--top">
-            <div className="contract__item--generic">
-              <label>Cliente:</label>
-              <select>
-                {this.selectClient()}
-              </select>
+            <div className="contract__item-wrap">
+              <div style={{flexGrow: 1}}>
+                <label>Cliente:</label>
+                <select>
+                  {this.selectClient()}
+                </select>
+              </div>
             </div>
-            <div className="contract__item--generic">
-              <label>Endereço de Entrega:</label>
-              <input type="text"/>
-            </div>
-            <div className="contract__item--small">
+            <div className="contract__item-wrap">
+              <div className="contract__item-wrap--margin-right">
+                <label>Endereço de Entrega:</label>
+                <CustomInput name="street"
+                  type="text"
+                  value={this.state.deliveryAddress.street}
+                  onChange={this.handleChangeAddress}/>
+              </div>
               <div>
-                <label>Entrega:</label>
-                <input readOnly value={moment(this.state.startDate).format("DD-MMMM-YYYY")} onClick={this.toggleCalendar} style={{cursor: "pointer"}}/>
+                <label>Número:</label>
+                <CustomInput name="number"
+                  type="number"
+                  value={this.state.deliveryAddress.number}
+                  onChange={this.handleChangeAddress}/>
+              </div>
+            </div>
+            <div className="contract__item-wrap">
+              <div className="contract__item-wrap--margin-right">
+                <label>Data da Entrega:</label>
+                <input readOnly value={moment(this.state.startDate).format("DD-MMMM-YYYY")}
+                  onClick={this.toggleCalendar} style={{cursor: "pointer"}}/>
                 {this.state.calendarOpen ? <Calendar
                                                 closeCalendar={this.toggleCalendar}
                                                 changeDate={this.changeDate}
                                                 /> : null}
               </div>
-              <div>
+              <div className="contract__item-wrap--margin-right">
                 <label>Duração:</label>
                 <input type="number"/>
               </div>
@@ -148,8 +183,8 @@ export default class Contract extends React.Component {
                 </select>
               </div>
             </div>
-            <div className="contract__item--small">
-              <div>
+            <div className="contract__item-wrap">
+              <div className="contract__item-wrap--margin-right">
                 <label>Estado:</label>
                 <select defaultValue="SP">
                   {customTypes.states.map((item, i) => {
@@ -157,13 +192,19 @@ export default class Contract extends React.Component {
                   })}
                 </select>
               </div>
-              <div>
+              <div className="contract__item-wrap--margin-right">
                 <label>Complemento:</label>
-                <input type="text"/>
+                <CustomInput name="additional"
+                  type="text"
+                  value={this.state.deliveryAddress.additional}
+                  onChange={this.handleChangeAddress}/>
               </div>
               <div>
                 <label>CEP:</label>
-                <input type="number"/>
+                <CustomInput name="zip"
+                  type="number"
+                  value={this.state.deliveryAddress.zip}
+                  onChange={this.handleChangeZIP}/>
               </div>
             </div>
           </div>
