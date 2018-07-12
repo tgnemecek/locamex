@@ -7,6 +7,7 @@ import customTypes from '../startup/custom-types';
 
 import { Clients } from '../api/clients';
 import { Services } from '../api/services';
+import '../api/docx';
 
 import CustomInput from './CustomInput';
 import ConfirmationMessage from './ConfirmationMessage';
@@ -400,6 +401,11 @@ class Documents extends React.Component {
     this.setState({ observations });
   }
 
+  generate = () => {
+    var dir = __dirname;
+    Meteor.call('docx', dir);
+  }
+
   render() {
       return (
         <ReactModal
@@ -439,7 +445,7 @@ class Documents extends React.Component {
                 </div>
               </div>
               <div className="contract__box-view--footer">
-                <button type="button" className="button button--primary" onClick={this.saveEdits}>Gerar</button>
+                <button type="button" className="button button--primary" onClick={this.generate}>Gerar</button>
               </div>
             </div>
         </ReactModal>

@@ -8,6 +8,7 @@ import '../imports/api/clients';
 import '../imports/api/contracts';
 import '../imports/api/users';
 import '../imports/api/user-types';
+import '../imports/api/docx';
 import '../imports/startup/simple-schema-configuration';
 
 Meteor.startup(() => {
