@@ -14,8 +14,17 @@ export default class customTypes {
       value = value.toString();
       switch (type) {
         case 'number':
-          return Number(value.replace(/\D+/g, ''));
+          return value.replace(/\D+/g, '');
           break;
+        case 'zip':
+            value = value.replace(/\D+/g, '');
+            if (value.length > 5) {
+              value = value.substring(0, 5) + "-" + value.substring(5);
+            }
+            if (value.length > 8) {
+              value = value.substring(0, 9);
+            }
+            break;
         case 'phone':
           value = value.replace(/\D+/g, '');
           if (value.length > 0) {

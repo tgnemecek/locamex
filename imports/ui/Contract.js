@@ -34,7 +34,9 @@ export default class Contract extends React.Component {
       servicesDatabase: [],
 
       calendarOpen: false,
-      observationsOpen: false
+      observationsOpen: false,
+      documentsOpen: false,
+      invalidZip: false
     }
   }
 
@@ -76,6 +78,12 @@ export default class Contract extends React.Component {
     this.toggleCalendar();
   }
 
+  toggleDocuments = (e) => {
+    e ? e.preventDefault() : null;
+    var documentsOpen = !this.state.documentsOpen;
+    this.setState({ documentsOpen });
+  }
+
   toggleObservations = (e) => {
     e ? e.preventDefault() : null;
     var observationsOpen = !this.state.observationsOpen;
@@ -91,8 +99,11 @@ export default class Contract extends React.Component {
     return this.state.observations ? "content-inside" : "";
   }
 
-  handleChangeZIP = (name, value) => {
-    this.state.deliveryAddress[name] = value;
+  setZip = (e) => {
+    e.preventDefault();
+
+    var value = e.target.value;
+    this.state.deliveryAddress.zip = value;
     if (value.length == 8) {
       var object = customTypes.checkCEP(value, (data) => {
         if (data) {
@@ -100,13 +111,22 @@ export default class Contract extends React.Component {
           this.state.deliveryAddress.district = data.bairro;
           this.state.deliveryAddress.city = data.localidade;
           this.state.deliveryAddress.state = data.uf;
-        } else return;
+          this.state.deliveryAddress.number = '';
+          this.state.deliveryAddress.additional = '';
+          this.setState({ invalidZip: false });
+        } else {
+          this.setState({ invalidZip: true });
+          return;
+        }
       });
+    } else {
+      if (value.length < 8) { this.setState({ invalidZip: false }) };
+      if (value.length > 8) { this.setState({ invalidZip: true }) };
     }
     this.forceUpdate();
   }
 
-  handleChangeAdress = (name, value) => {
+  handleChangeAddress = (name, value) => {
     this.state.deliveryAddress[name] = value;
     this.forceUpdate();
   }
@@ -125,7 +145,11 @@ export default class Contract extends React.Component {
                                                   closeObservations={this.toggleObservations}
                                                   saveObservations={this.saveObservations}
                                                   /> : null}
-            <button>⎙</button>
+            <button onClick={this.toggleDocuments}>⎙</button>
+            {this.state.documentsOpen ? <Documents
+                                              closeDocuments={this.toggleDocuments}
+                                              contractState={this.state}
+                                              /> : null}
             <button>✖</button>
           </div>
           <div className="contract__title">
@@ -153,7 +177,7 @@ export default class Contract extends React.Component {
                   value={this.state.deliveryAddress.street}
                   onChange={this.handleChangeAddress}/>
               </div>
-              <div>
+              <div className="contract__item-wrap--force-small">
                 <label>Número:</label>
                 <CustomInput name="number"
                   type="number"
@@ -186,7 +210,7 @@ export default class Contract extends React.Component {
             <div className="contract__item-wrap">
               <div className="contract__item-wrap--margin-right">
                 <label>Estado:</label>
-                <select defaultValue="SP">
+                <select name="state" value={this.state.deliveryAddress.state} onChange={this.handleChangeAddress}>
                   {customTypes.states.map((item, i) => {
                     return <option key={i} value={item}>{item}</option>
                   })}
@@ -202,9 +226,11 @@ export default class Contract extends React.Component {
               <div>
                 <label>CEP:</label>
                 <CustomInput name="zip"
-                  type="number"
+                  type="zip"
                   value={this.state.deliveryAddress.zip}
-                  onChange={this.handleChangeZIP}/>
+                  forceInvalid={this.state.invalidZip}
+                  onChange={this.handleChangeAddress}/>
+                <button className="contract__zip-button" value={this.state.deliveryAddress.zip} onClick={this.setZip}>↺</button>
               </div>
             </div>
           </div>
@@ -341,15 +367,79 @@ class Observations extends React.Component {
           contentLabel="Observações"
           appElement={document.body}
           onRequestClose={this.props.closeObservations}
-          className="observations__box"
+          className="contract__box-view"
           overlayClassName="boxed-view boxed-view--modal"
           >
             <div>
-              <button onClick={this.props.closeObservations} className="calendar__close-button">✖</button>
-              <h3>Observações:</h3>
-              <textarea value={this.state.observations} onChange={this.onChange}/>
-              <div className="calendar__lower-button-div">
+              <button onClick={this.props.closeObservations} className="button--close-box">✖</button>
+              <div className="contract__box-view--header">
+                <h3>Observações:</h3>
+              </div>
+              <div className="contract__box-view--body">
+                <textarea value={this.state.observations} onChange={this.onChange}/>
+              </div>
+              <div className="contract__box-view--footer">
                 <button type="button" className="button button--primary" onClick={this.saveEdits}>OK</button>
+              </div>
+            </div>
+        </ReactModal>
+      )
+  }
+}
+
+class Documents extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      document: ''
+    }
+  }
+
+  onChange = (e) => {
+    var observations = e.target.value;
+    this.setState({ observations });
+  }
+
+  render() {
+      return (
+        <ReactModal
+          isOpen={true}
+          contentLabel="Emitir Documentos"
+          appElement={document.body}
+          onRequestClose={this.props.closeDocuments}
+          className="contract__box-view contract__box-view--documents"
+          overlayClassName="boxed-view boxed-view--modal"
+          >
+            <div>
+              <button onClick={this.props.closeDocuments} className="button--close-box">✖</button>
+              <div className="contract__box-view--header">
+                <h3>Emitir Documentos:</h3>
+              </div>
+              <div className="contract__box-view--body">
+                <div>
+                  <select onChange={this.onChange}>
+                    <option value="proposal-long">Proposta Longo Prazo</option>
+                    <option value="proposal-short">Proposta Curto Prazo</option>
+                    <option value="contract-short">Contrato Longo Prazo</option>
+                    <option value="contract-long">Contrato Curto Prazo</option>
+                    <option value="invoice-sending">Nota Fiscal de Remessa</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="radio-button-container">
+                    <input type="radio" name="format" value="word"/>
+                    <span className="checkmark"></span>
+                    Word
+                  </label>
+                  <label className="radio-button-container">
+                    <input type="radio" name="format" value="pdf"/>
+                    <span className="checkmark"></span>
+                    PDF
+                  </label>
+                </div>
+              </div>
+              <div className="contract__box-view--footer">
+                <button type="button" className="button button--primary" onClick={this.saveEdits}>Gerar</button>
               </div>
             </div>
         </ReactModal>

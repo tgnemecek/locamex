@@ -93,7 +93,7 @@ export default class Calendar extends React.Component {
           overlayClassName="boxed-view boxed-view--modal"
           >
             <div>
-              <button onClick={this.props.closeCalendar} className="calendar__close-button">✖</button>
+              <button onClick={this.props.closeCalendar} className="button--close-box">✖</button>
               <div className="calendar__header">
                 <button value={-1} onClick={this.changeMonth}>◄</button>
                 <h3>{moment().month(this.state.monthIndex).format('MMMM') + "/" + this.state.yearIndex}</h3>

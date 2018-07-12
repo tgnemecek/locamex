@@ -15,13 +15,16 @@ export default class CustomInput extends React.Component {
 
   componentDidMount() {
     if (this.props.value) {
-      this.formatValue(this.props.value.toString());
+      this.formatValue(this.props.value);
     }
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.value !== prevProps.value) {
-      this.formatValue(this.props.value.toString());
+      this.formatValue(this.props.value);
+    }
+    if (this.props.forceInvalid !== prevProps.forceInvalid) {
+      this.redBorder(this.props.forceInvalid);
     }
   }
 
@@ -71,6 +74,7 @@ export default class CustomInput extends React.Component {
     let start = obj ? obj.selectionStart : 0;
     let end = obj ? obj.selectionEnd : 0;
 
+    inputValue = inputValue.toString();
     let displayValue = inputValue;
     let exportValue = inputValue;
 
@@ -81,6 +85,7 @@ export default class CustomInput extends React.Component {
         case 'cnpj':
         case 'number':
         case 'phone':
+        case 'zip':
           exportValue = displayValue.replace(/\D+/g, '');
           break;
         default:

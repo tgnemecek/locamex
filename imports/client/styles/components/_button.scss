@@ -115,3 +115,62 @@
   margin-left: 10px;
   transform: scale(1, 0.7) translateY(3px);
 }
+
+.button--close-box {
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+}
+
+.radio-button-container {
+  position: relative;
+  padding-left: 35px;
+  margin: ($space);
+  cursor: pointer;
+  font-size: 22px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  input {
+    position: absolute;
+    cursor: pointer;
+    margin-right: ($space /4);
+    vertical-align: middle;
+    opacity: 0;
+  }
+  .checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    border-radius: 50%;
+    background-color: #eee;
+  }
+  input:checked ~ .checkmark {
+    background-color: $brand-primary;
+  }
+  .checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+  input:checked ~ .checkmark:after {
+    display: block;
+  }
+  .checkmark:after {
+    left: 8px;
+    top: 2px;
+    width: 10px;
+    height: 15px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+}
