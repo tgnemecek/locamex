@@ -4,10 +4,10 @@ import ReactModal from 'react-modal';
 import moment from 'moment';
 
 import customTypes from '../startup/custom-types';
+import generatePdf from '../api/html-pdf';
 
 import { Clients } from '../api/clients';
 import { Services } from '../api/services';
-import '../api/docx';
 
 import CustomInput from './CustomInput';
 import ConfirmationMessage from './ConfirmationMessage';
@@ -401,9 +401,8 @@ class Documents extends React.Component {
     this.setState({ observations });
   }
 
-  generate = () => {
-    var dir = __dirname;
-    Meteor.call('docx', dir);
+  generate = (e) => {
+    generatePdf();
   }
 
   render() {
