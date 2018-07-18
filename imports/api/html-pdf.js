@@ -7,14 +7,13 @@ var pdf = require('html-pdf');
 
 if (Meteor.isClient) {
   var Buffer = require('buffer/').Buffer;
-  var blob;
   export default function generatePdf() {
     function meteorCall() {
       return new Promise((resolve, reject) => {
         Meteor.call('html-pdf', (err, res) => {
           if (err) reject(err);
           if (res) {
-            blob = new Blob([res], {type: 'application/pdf'});
+            var blob = new Blob([res], {type: 'application/pdf'});
             resolve(blob);
           }
         });
@@ -24,7 +23,6 @@ if (Meteor.isClient) {
       console.log('calling');
       var result = await meteorCall();
       FileSaver.saveAs(result, 'contrato.pdf');
-      console.log(result);
     }
     asyncCall();
   }
@@ -36,55 +34,48 @@ if (Meteor.isServer) {
 
   Meteor.methods({
     async 'html-pdf'() {
-      // var a = new Promise((resolve, reject) => {
-      //   setTimeout(() => { resolve(1) }, 3000);
-      // }).then((value) => {
-      //   function c () {
-      //     setTimeout(() => {return value + 1}, 1000)
-      //   };
-      //   return c();
-      // });
-      // await a;
-      // console.log(a);
-      // tentativa 1
-      // var options = { format: 'Letter' };
-      // var html = ReactDOMServer.renderToString(contractShort());
-      // var result = new Promise (resolve => {
-      // pdf.create(html, options).toFile((err, file) => {
-      //     if (err) throw new Error('erro');
-      //     console.log(1, file);
-      //     resolve(file);
-      //   })
-      // }).then((value) => {
-      //   function readFile() {
-      //     fs.readFile(value.filename, (err, data) => {
-      //       if (err) throw new Error('erro');
-      //       console.log(2, data);
-      //       return 'data';
-      //     })
-      //   }
-      //   return readFile();
-      // })
-      // // return await result;
-      // await result;
-      // console.log(3, result);
       var options = { format: 'Letter' };
       var html = ReactDOMServer.renderToString(contractShort());
-      const createFile = () => {
+      const createDirectory = () => {
         return new Promise(resolve => {
-          pdf.create(html, options).toFile((err, file) => {
-            resolve(file);
+          tmp.dir({}, (err, path, cleanupCallback) => {
+            if (err) throw err;
+            resolve(path);
           })
-        })
+        }).catch(e => console.log(e))
       }
-      const readFile = (value) => {
+      const createFile = (path) => {
         return new Promise(resolve => {
-          fs.readFile(value.filename, (err, data) => {
-            resolve(data);
+          var name = '/contract.pdf';
+          pdf.create(html, options).toFile(path + name, (err, file) => {
+            if (err) throw err;
+            if (file) {
+              var obj = {
+                filename: file.filename,
+                path: path,
+                name: name
+              };
+              resolve(obj);
+            }
           })
-        })
+        }).catch(e => console.log(e));
       }
-      return await readFile(await createFile())
+      const readFile = (obj) => {
+        return new Promise(resolve => {
+          fs.readFile(obj.filename, (err, data) => {
+            if (err) throw err;
+            if (data) resolve(data);
+            cleanDirectory(obj.path, obj.name);
+          })
+        }).catch(e => console.log(e))
+      }
+      const cleanDirectory = (path, name) => {
+        fs.unlink(path + name, (err) => {
+          if (err) return console.log(err);
+          fs.rmdir(path, err => console.log(err));
+        });
+      }
+      return await readFile(await createFile(await createDirectory()));
     }
   })
 }

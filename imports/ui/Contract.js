@@ -392,7 +392,8 @@ class Documents extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      document: ''
+      document: '',
+      status: 'idle'
     }
   }
 
