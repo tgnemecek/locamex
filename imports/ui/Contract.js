@@ -403,7 +403,7 @@ class Documents extends React.Component {
   }
 
   generate = (e) => {
-    generatePdf();
+    generatePdf(this.state);
   }
 
   render() {

@@ -63,3 +63,54 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 input[type="number"] {
   -moz-appearance: textfield;
 }
+// DELETE BELOW
+.doc__body {
+  font-family: Helvetica, Arial, sans-serif;
+  margin: 40px;
+}
+.doc__header {
+  height: 50px;
+}
+.doc__left-box {
+  display: inline-block;
+  float: left;
+}
+.doc__right-box {
+  float: right;
+}
+.doc__title {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.doc__paragraph {
+  text-align: justify;
+  text-indent: 20px;
+}
+.doc__table, .doc__table th, .doc__table td {
+  border: 1px solid black;
+  border-collapse: collapse;
+  padding: 5px;
+  width: 100%;
+}
+.doc__table th:nth-child(1),
+.doc__table td:nth-child(1) {
+  width: 20px;
+}
+
+.doc__table th:nth-child(2),
+.doc__table td:nth-child(2) {
+  width: 60px;
+}
+
+.doc__table th:nth-child(3),
+.doc__table td:nth-child(3) {
+  text-align: center !important;
+  width: 80px;
+}
+
+.doc__table th:nth-child(4),
+.doc__table td:nth-child(4) {
+  text-align: center !important;
+  width: 1px;
+}

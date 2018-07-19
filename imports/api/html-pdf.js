@@ -33,9 +33,18 @@ if (Meteor.isServer) {
   var tmp = require('tmp');
 
   Meteor.methods({
-    async 'html-pdf'() {
+    async 'html-pdf'(state) {
       var options = { format: 'Letter' };
-      var html = ReactDOMServer.renderToString(contractShort());
+      var html = ReactDOMServer.renderToString(contractShort(state));
+      // Alternate function readHtml can read any html file in 'D:/'
+      // const readHtml = () => {
+      //   return new Promise(resolve => {
+      //     fs.readFile(process.env.HOMEPATH + '../../../Contrato.html', (err, data) => {
+      //       if (err) console.log(err);
+      //       resolve(data.toString());
+      //     })
+      //   })
+      // }
       const createDirectory = () => {
         return new Promise(resolve => {
           tmp.dir({}, (err, path, cleanupCallback) => {
