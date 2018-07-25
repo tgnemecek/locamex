@@ -5,6 +5,7 @@ import moment from 'moment';
 
 import customTypes from '../startup/custom-types';
 import generatePdf from '../api/html-pdf';
+import pdfmake from '../client/pdfmake';
 
 import { Clients } from '../api/clients';
 import { Services } from '../api/services';
@@ -28,7 +29,11 @@ export default class Contract extends React.Component {
       duration: this.props.duration,
       observations: this.props.observations,
       deliveryAddress: this.props.deliveryAddress,
-      products: this.props.products,
+      billing: this.props.billing,
+
+      products: [],
+      services: [],
+      representatives: '',
 
       clientsDatabase: [],
       productsDatabase: [],
@@ -37,6 +42,7 @@ export default class Contract extends React.Component {
       calendarOpen: false,
       observationsOpen: false,
       documentsOpen: false,
+      billingOpen: false,
       invalidZip: false
     }
   }
@@ -91,6 +97,12 @@ export default class Contract extends React.Component {
     this.setState({ observationsOpen });
   }
 
+  toggleBilling = (e) => {
+    e ? e.preventDefault() : null;
+    var billingOpen = !this.state.billingOpen;
+    this.setState({ billingOpen });
+  }
+
   saveObservations = (observations) => {
     this.setState({ observations });
     this.toggleObservations();
@@ -98,6 +110,10 @@ export default class Contract extends React.Component {
 
   checkIfHasContent = () => {
     return this.state.observations ? "content-inside" : "";
+  }
+
+  setRepresentatives = (representatives) => {
+    this.setState({ representatives });
   }
 
   setZip = (e) => {
@@ -149,6 +165,13 @@ export default class Contract extends React.Component {
             <button onClick={this.toggleDocuments}>⎙</button>
             {this.state.documentsOpen ? <Documents
                                               closeDocuments={this.toggleDocuments}
+                                              contractState={this.state}
+                                              clientsDatabase={this.state.clientsDatabase}
+                                              setRepresentatives={this.setRepresentatives}
+                                              /> : null}
+            <button onClick={this.toggleBilling}>$</button>
+            {this.state.billingOpen ? <Billing
+                                              closeBilling={this.toggleBilling}
                                               contractState={this.state}
                                               /> : null}
             <button>✖</button>
@@ -393,17 +416,122 @@ class Documents extends React.Component {
     super(props);
     this.state = {
       document: '',
-      status: 'idle'
+      representatives: ''
     }
   }
 
-  onChange = (e) => {
-    var observations = e.target.value;
-    this.setState({ observations });
+  representativesOnChange = (e) => {
+    var representatives = e.target.value;
+    this.setState({ representatives });
   }
 
   generate = (e) => {
-    generatePdf(this.state);
+    var clients = this.props.clientsDatabase;
+    var print = {
+      contractInfo: {
+        _id: this.props.contractState._id,
+        startDate: this.props.contractState.startDate,
+        duration: this.props.contractState.duration,
+        deliveryAddress: {
+          number: 1212,
+          street: 'Rua Sonia Ribeiro',
+          zip: '04621010',
+          district: 'Campo Belo',
+          city: 'São Paulo',
+          state: 'SP',
+        },
+        products: [{
+          _id: '0000',
+          name: 'Container LOCA 610 RSTC',
+          price: 1500,
+          quantity: 2,
+          restitution: 30000
+        }, {
+          _id: '0055',
+          name: 'Container LOCA 300',
+          price: 500,
+          quantity: 3,
+          restitution: 20000
+        }],
+        services: [{
+          _id: '0010',
+          name: 'Movimentação',
+          price: 3000,
+          quantity: 2
+        }, {
+          _id: '0016',
+          name: 'Acoplamento',
+          price: 1000,
+          quantity: 2
+        }, {
+          _id: '0099',
+          name: 'Munck',
+          price: 900,
+          quantity: 1
+        }]
+      },
+      clientInfo: {},
+      billingInfo: {},
+    }
+    for (var i = 0; i < clients.length; i++) {
+      if (clients[i]._id == this.props.contractState.clientId) {
+        print.clientInfo = clients[i];
+      }
+    }
+    // var print = {
+    //   // Company Information
+    //   // clientName: '',
+    //   // clientType: '',
+    //   // cpfCnpj: '',
+    //   // registry: '',
+    //   // typeOfregistry: '', // MU or ES
+    //   // clientAddress: '',
+    //
+    //   // Contract General Information
+    //   // Contract Address
+    //
+    //   phone: '',
+    //   email: '',
+    //   representative: [//Name, CPF, RG
+    //     {},{}
+    //   ],
+    //   products: [
+    //     {}, {}
+    //   ],
+    //   services: [
+    //     {}, {}
+    //   ],
+    //   startingDate: '',
+    //   endingDate: '',
+    //   period: '',
+    //   billing: {
+    //     totalCharges: '',
+    //     startingChargeDate: '',
+    //     charges: [{
+    //       number: '',
+    //       description: '',
+    //       value: ''
+    //     }]
+    //   },
+    //   witnessNumber: 2
+    // }
+    // this.props.setRepresentatives();
+    var seller = {
+      contact: 'Nome do Vendedor',
+      phone: '(11) 94514-8263',
+      email: 'tgnemecek@gmail.com'
+    };
+    var representatives = [{
+      name: 'Alonso Pinheiro',
+      cpf: 44097844533,
+      rg: 358520319
+    }, {
+      name: 'Alonso Pinheiro',
+      cpf: 44097844533,
+      rg: 358520319
+    }]
+    console.log(print, seller, representatives);
+    pdfmake(print, seller, representatives);
   }
 
   render() {
@@ -423,7 +551,7 @@ class Documents extends React.Component {
               </div>
               <div className="contract__box-view--body">
                 <div>
-                  <select onChange={this.onChange}>
+                  <select>
                     <option value="proposal-long">Proposta Longo Prazo</option>
                     <option value="proposal-short">Proposta Curto Prazo</option>
                     <option value="contract-short">Contrato Longo Prazo</option>
@@ -432,6 +560,9 @@ class Documents extends React.Component {
                   </select>
                 </div>
                 <div>
+                  <select onChange={this.representativesOnChange}>
+                    <option value={{_id: 0, contactId: 123}}></option>
+                  </select>
                   <label className="radio-button-container">
                     <input type="radio" name="format" value="word"/>
                     <span className="checkmark"></span>
@@ -446,6 +577,98 @@ class Documents extends React.Component {
               </div>
               <div className="contract__box-view--footer">
                 <button type="button" className="button button--primary" onClick={this.generate}>Gerar</button>
+              </div>
+            </div>
+        </ReactModal>
+      )
+  }
+}
+
+class Billing extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      charges: []
+    }
+  }
+
+  representativesOnChange = (e) => {
+    var representatives = e.target.value;
+    this.setState({ representatives });
+  }
+
+  updateTable = (name, value) => {
+    debugger;
+    var charges = this.state.charges;
+    if (value > charges.length) {
+      for (var i = charges.length; i < (value + charges.length); i++) {
+        charges.push({
+          startDate: '',
+          description: `Cobrança número ${(i + 1) - charges.length} referente ao Valor Total do Contrato`,
+          value: ''
+        })
+      }
+    }
+    if (value < charges.length) {
+      charges.splice(-1, (charges.length - value));
+    }
+    this.setState({ charges });
+  }
+
+  renderBody = () => {
+    return this.state.charges.map((charge, i, array) => {
+      return (
+        <tr>
+          <td>{(i + 1) + '/' + array.length}</td>
+          <td>{charge.startDate}</td>
+          <td>{charge.startDate}</td>
+          <td>{charge.description}</td>
+          <td>{charge.value}</td>
+        </tr>
+      )
+    })
+  }
+
+  render() {
+      return (
+        <ReactModal
+          isOpen={true}
+          contentLabel="Emitir Documentos"
+          appElement={document.body}
+          onRequestClose={this.props.closeBilling}
+          className="contract__box-view contract__box-view--documents"
+          overlayClassName="boxed-view boxed-view--modal"
+          >
+            <div>
+              <button onClick={this.props.closeBilling} className="button--close-box">✖</button>
+              <div className="contract__box-view--header">
+                <h3>Tabela de Cobrança:</h3>
+              </div>
+              <div className="contract__box-view--body">
+                <div>
+                  <label>Número de Cobranças:</label>
+                  <CustomInput
+                    type="number"
+                    value={this.state.charges.length}
+                    onChange={this.updateTable}/>
+                </div>
+                <div>
+                  <table>
+                    <tbody>
+                      <tr>
+                        <th>Número</th>
+                        <th>Período</th>
+                        <th>Vencimento</th>
+                        <th>Descrição da Cobrança</th>
+                        <th>Valor</th>
+                      </tr>
+                      {this.renderBody()}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div className="contract__box-view--footer">
+                <button type="button" className="button button--primary" onClick={this.saveEdits}>Salvar</button>
               </div>
             </div>
         </ReactModal>

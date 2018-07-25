@@ -12,7 +12,7 @@ export default class customTypes {
 
     if (value) {
       value = value.toString();
-      switch (type) {
+      switch (type.toLowerCase()) {
         case 'number':
           return value.replace(/\D+/g, '');
           break;
@@ -73,7 +73,22 @@ export default class customTypes {
             value = value.substring(0, 14);
           }
           break;
-        case 'reaisPrefix':
+        case 'rg':
+          value = value.replace(/\D+/g, '');
+          if (value.length > 2) {
+            value = value.substring(0, 2) + "." + value.substring(2);
+          }
+          if (value.length > 6) {
+            value = value.substring(0, 6) + "." + value.substring(6);
+          }
+          if (value.length > 10) {
+            value = value.substring(0, 10) + "-" + value.substring(10);
+          }
+          if (value.length > 12) {
+            value = value.substring(0, 13);
+          }
+          break;
+        case 'reaisprefix':
           value = Number(value);
           return value.toLocaleString('pt-br', reais);
           break;

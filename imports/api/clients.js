@@ -18,7 +18,15 @@ if(Meteor.isServer) {
     officialName: "Exemplo Empreendimentos",
     registryES: 192837273,
     registryMU: 364645445,
-    observations: 'Cliente do Rio de Janeiro',
+    address: {
+      number: '100',
+      street: 'Rua Joaquim Távora',
+      district: 'Vila Mariana',
+      city: 'São Paulo',
+      state: 'SP',
+      zip: '04015010'
+    },
+    observations: '',
     contacts: [{
       "_id": "0000",
       contactName: "João Carlos",
@@ -45,6 +53,14 @@ if(Meteor.isServer) {
     officialName: "",
     registryES: "",
     registryMU: "",
+    address: {
+      number: '100',
+      street: 'Rua Joaquim Távora',
+      district: 'Vila Mariana',
+      city: 'São Paulo',
+      state: 'SP',
+      zip: '04015010'
+    },
     observations: "AAA",
     contacts: [{
       "_id": "0000",

@@ -15,6 +15,7 @@
     "mammoth": "^1.4.6",
     "meteor-node-stubs": "~0.2.0",
     "moment": "^2.22.2",
+    "pdfmake": "^0.1.37",
     "react": "^15.4.1",
     "react-dom": "^15.4.1",
     "react-modal": "^3.4.4",

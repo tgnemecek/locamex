@@ -7,8 +7,8 @@ export default class Calendar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      monthIndex: 6, //HARD-CODED,
-      yearIndex: 2018, //HARD-CODED,
+      monthIndex: new Date().getMonth(),
+      yearIndex: new Date().getFullYear(),
       dayIndex: 1,
       selectedDate: new Date()
     }

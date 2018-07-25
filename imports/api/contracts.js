@@ -14,11 +14,12 @@ if(Meteor.isServer) {
     _id: "0000",
     clientId: "0000",
     type: "rent", //rent-sell
-    status: "active", //active-inactive-cancelled
+    status: "active", //active-inactive-cancelled-finished
     createdBy: "Funcionário 1",
     creationDate: 123123123,
     startDate: new Date(),
     duration: 6,
+    billing: '',
     observations: 'Exposição nova',
     deliveryAddress: {
       state: "SP",

@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
+import React from 'react';
 import ReactDOMServer from 'react-dom/server';
-import contractShort from '../docs/contract-short';
+import ContractShort from '../docs/contract-short';
 import FileSaver from 'file-saver';
 
 var pdf = require('html-pdf');
@@ -35,7 +36,7 @@ if (Meteor.isServer) {
   Meteor.methods({
     async 'html-pdf'(state) {
       var options = { format: 'Letter' };
-      var html = ReactDOMServer.renderToString(contractShort(state));
+      var html = ReactDOMServer.renderToString(<ContractShort/>);
       // Alternate function readHtml can read any html file in 'D:/'
       // const readHtml = () => {
       //   return new Promise(resolve => {
