@@ -635,6 +635,12 @@ class Billing extends React.Component {
     this.setState({ equalDivision });
   }
 
+  inputFormat = (name, value, id, valid) => {
+    var charges = this.state.charges;
+    charges[name].price = value;
+    this.setState({ charges });
+  }
+
   updateTable = (name, value) => {
     value = Number(value);
     var charges = JSON.parse(JSON.stringify(this.state.charges));
@@ -668,7 +674,11 @@ class Billing extends React.Component {
           <td>{charge.startDate}</td>
           <td>{charge.startDate}</td>
           <td>{charge.description}</td>
-          <td>{this.state.equalDivision ? equalValue : <CustomInput type="number" placeholder={equalValue}/>}</td>
+          <td>{this.state.equalDivision ? equalValue : <CustomInput name={i} type="reaisPrefix" //FIX THIS. HOW TO IMPLEMENT REAIS IN ONCHANGE??
+                                                              onBlur={true}
+                                                              onChange={this.inputFormat}
+                                                              placeholder={equalValue}
+                                                              />}</td>
         </tr>
       )
     })
@@ -676,6 +686,7 @@ class Billing extends React.Component {
 
   calcDifference = () => {
     return null;
+    // customTypes.format(this.totalValue, "reaisPrefix")
   }
 
   render() {
@@ -716,21 +727,17 @@ class Billing extends React.Component {
                         <th>Valor</th>
                       </tr>
                     </thead>
-                  </table>
-                  <table className="table-main table-billing">
                     <tbody>
                       {this.renderBody()}
                     </tbody>
-                  </table>
-                  <table className="table-main table-billing">
                     <tfoot>
-                      <tr className="table-billing--footer">
+                      <tr>
                         <td colSpan="4" style={{fontStyle: "italic"}}>Restante:</td>
                         <td>{this.calcDifference()}</td>
                       </tr>
-                      <tr className="table-billing--footer">
-                        <td colSpan="4"><b>Valor Total do Contrato:</b></td>
-                        <td>{customTypes.format(this.totalValue, "reaisPrefix")}</td>
+                      <tr>
+                        <th colSpan="4"><b>Valor Total do Contrato:</b></th>
+                        <th>{customTypes.format(this.totalValue, "reaisPrefix")}</th>
                       </tr>
                     </tfoot>
                   </table>

@@ -89,6 +89,9 @@ export default class customTypes {
           }
           break;
         case 'reaisprefix':
+        debugger;
+          value = value.replace('R$', '');
+          value = value.replace(',00', '');
           value = Number(value);
           return value.toLocaleString('pt-br', reais);
           break;
