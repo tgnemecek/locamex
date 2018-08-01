@@ -163,6 +163,16 @@
   }
 }
 
+.contract__box-view--billing {
+  width: 800px !important;
+  .contract__box-view--body > div {
+    margin-bottom: $space;
+  }
+  label {
+    cursor: pointer;
+  }
+}
+
 .contract__box-view--footer {
   margin-top: 10px;
   width: 100%;

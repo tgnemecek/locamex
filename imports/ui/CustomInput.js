@@ -114,6 +114,7 @@ export default class CustomInput extends React.Component {
   render() {
     return <input
               ref="input"
+              placeholder={this.props.placeholder}
               disabled={this.props.disabled}
               style={this.state.style}
               value={this.state.displayValue}

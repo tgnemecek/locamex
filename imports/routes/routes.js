@@ -13,7 +13,6 @@ import ListPage from '../ui/pages/ListPage';
 // import ListUsers from '../ui/pages/ListUsers';
 // import ListUserTypes from '../ui/pages/ListUserTypes';
 // import ListClients from '../ui/pages/ListClients';
-import ContractShort from '../docs/contract-short';
 
 const unauthenticatedPages = ['/', '/signup'];
 const authenticatedPages = ['/dashboard'];
@@ -43,7 +42,6 @@ const ListServices = (props) => { return <ListPage type="services"/> };
 const ListUsers = (props) => { return <ListPage type="users"/> };
 const ListUserTypes = (props) => { return <ListPage type="user-types"/> };
 const ListClients = (props) => { return <ListPage type="clients"/> };
-const ContractShort1 = (props) => { return <ContractShort/> }; //dev
 
 
 export const routes = (
@@ -56,7 +54,6 @@ export const routes = (
     <Route path="/listusers" component={ListUsers}/>
     <Route path="/listusertypes" component={ListUserTypes}/> */}
     <Route path="/listclients" component={ListClients}/>
-    <Route path="/c" component={ContractShort1}/>
     <Route path="*" component={NotFound}/>
   </Router>
 );

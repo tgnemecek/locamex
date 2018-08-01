@@ -1,6 +1,5 @@
 import ReactModal from 'react-modal';
 import React from 'react';
-import update from 'immutability-helper';
 import { Meteor } from 'meteor/meteor';
 
 import customTypes from '../startup/custom-types';

@@ -1,0 +1,75 @@
+.table-billing th:nth-child(1),
+.table-billing td:nth-child(1) {
+  text-align: center !important;
+  width: 80px;
+}
+
+.table-billing th:nth-child(2),
+.table-billing td:nth-child(2) {
+  text-align: center !important;
+  width: 80px;
+}
+
+.table-billing th:nth-child(3),
+.table-billing td:nth-child(3) {
+  text-align: center !important;
+  width: 220px;
+}
+
+.table-billing th:nth-child(4),
+.table-billing td:nth-child(4) {
+  text-align: left !important;
+  width: 150px;
+}
+
+.table-billing th:nth-child(5),
+.table-billing td:nth-child(5) {
+  text-align: right !important;
+  width: 100px;
+}
+
+.table-billing {
+  font-size: $base-font-size;
+  tbody {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  th, td {
+    padding: 5px 5px;
+  }
+  input {
+    font-size: $base-font-size;
+    height: initial;
+    width: 100px;
+    padding: 7px;
+  }
+  .table-billing--footer td {
+    text-align: right !important;
+  }
+}
+
+// .table-billing {
+//   font-size: $base-font-size;
+//   thead > tr, tfoot > tr {
+//     display: block;
+//     position: relative;
+//   }
+//   tbody {
+//     display: block;
+//     width: 100%;
+//     max-height: 300px;
+//     overflow-y: auto;
+//   }
+//   th, td {
+//     padding: 5px 5px;
+//   }
+//   input {
+//     font-size: $base-font-size;
+//     height: initial;
+//     width: 100px;
+//     padding: 7px;
+//   }
+//   .table-billing--footer td {
+//     text-align: right !important;
+//   }
+// }

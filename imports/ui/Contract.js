@@ -4,7 +4,6 @@ import ReactModal from 'react-modal';
 import moment from 'moment';
 
 import customTypes from '../startup/custom-types';
-import generatePdf from '../api/html-pdf';
 import pdfmake from '../client/pdfmake';
 
 import { Clients } from '../api/clients';
@@ -31,7 +30,35 @@ export default class Contract extends React.Component {
       deliveryAddress: this.props.deliveryAddress,
       billing: this.props.billing,
 
-      products: [],
+      products: [{ //HARD-CODED
+        _id: '0000',
+        name: 'Container LOCA 610 RSTC',
+        price: 1500,
+        quantity: 2,
+        restitution: 30000
+      }, {
+        _id: '0055',
+        name: 'Container LOCA 300',
+        price: 500,
+        quantity: 3,
+        restitution: 20000
+      }],
+      services: [{
+        _id: '0010',
+        name: 'Movimentação',
+        price: 3000,
+        quantity: 2
+      }, {
+        _id: '0016',
+        name: 'Acoplamento',
+        price: 1000,
+        quantity: 2
+      }, {
+        _id: '0099',
+        name: 'Munck',
+        price: 900,
+        quantity: 1
+      }],
       services: [],
       representatives: '',
 
@@ -588,8 +615,14 @@ class Billing extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      charges: []
+      charges: [],
+      equalDivision: true
     }
+    this.totalValue = this.props.contractState.products.reduce((acc, current) => {
+      return {
+        price: acc.price + current.price
+      }
+    }).price;
   }
 
   representativesOnChange = (e) => {
@@ -597,36 +630,52 @@ class Billing extends React.Component {
     this.setState({ representatives });
   }
 
+  divisionChange = (e) => {
+    var equalDivision = e.target.checked;
+    this.setState({ equalDivision });
+  }
+
   updateTable = (name, value) => {
-    debugger;
-    var charges = this.state.charges;
+    value = Number(value);
+    var charges = JSON.parse(JSON.stringify(this.state.charges));
+    var newCharges = [];
+    var difference = Math.abs(charges.length - value);
     if (value > charges.length) {
-      for (var i = charges.length; i < (value + charges.length); i++) {
-        charges.push({
+      for (var i = 0; i < difference; i++) {
+        newCharges.push({
           startDate: '',
-          description: `Cobrança número ${(i + 1) - charges.length} referente ao Valor Total do Contrato`,
+          description: `Cobrança #${i +  charges.length + 1} referente ao Valor Total do Contrato`,
           value: ''
         })
       }
+      charges = charges.concat(newCharges);
+      this.setState({ charges });
     }
     if (value < charges.length) {
-      charges.splice(-1, (charges.length - value));
+      for (var i = 0; i < value; i++) {
+        newCharges.push(charges[i]);
+      }
+      this.setState({ charges: newCharges });
     }
-    this.setState({ charges });
   }
 
   renderBody = () => {
+    var equalValue = customTypes.format((this.totalValue /this.state.charges.length), "reaisPrefix");
     return this.state.charges.map((charge, i, array) => {
       return (
-        <tr>
+        <tr key={i}>
           <td>{(i + 1) + '/' + array.length}</td>
           <td>{charge.startDate}</td>
           <td>{charge.startDate}</td>
           <td>{charge.description}</td>
-          <td>{charge.value}</td>
+          <td>{this.state.equalDivision ? equalValue : <CustomInput type="number" placeholder={equalValue}/>}</td>
         </tr>
       )
     })
+  }
+
+  calcDifference = () => {
+    return null;
   }
 
   render() {
@@ -636,7 +685,7 @@ class Billing extends React.Component {
           contentLabel="Emitir Documentos"
           appElement={document.body}
           onRequestClose={this.props.closeBilling}
-          className="contract__box-view contract__box-view--documents"
+          className="contract__box-view contract__box-view--billing"
           overlayClassName="boxed-view boxed-view--modal"
           >
             <div>
@@ -653,8 +702,12 @@ class Billing extends React.Component {
                     onChange={this.updateTable}/>
                 </div>
                 <div>
-                  <table>
-                    <tbody>
+                  <label>Parcelas iguais:</label>
+                  <input type="checkbox" checked={this.state.equalDivision} onChange={this.divisionChange}/>
+                </div>
+                <div>
+                  <table className="table-main table-billing">
+                    <thead>
                       <tr>
                         <th>Número</th>
                         <th>Período</th>
@@ -662,8 +715,24 @@ class Billing extends React.Component {
                         <th>Descrição da Cobrança</th>
                         <th>Valor</th>
                       </tr>
+                    </thead>
+                  </table>
+                  <table className="table-main table-billing">
+                    <tbody>
                       {this.renderBody()}
                     </tbody>
+                  </table>
+                  <table className="table-main table-billing">
+                    <tfoot>
+                      <tr className="table-billing--footer">
+                        <td colSpan="4" style={{fontStyle: "italic"}}>Restante:</td>
+                        <td>{this.calcDifference()}</td>
+                      </tr>
+                      <tr className="table-billing--footer">
+                        <td colSpan="4"><b>Valor Total do Contrato:</b></td>
+                        <td>{customTypes.format(this.totalValue, "reaisPrefix")}</td>
+                      </tr>
+                    </tfoot>
                   </table>
                 </div>
               </div>
