@@ -79,14 +79,17 @@ export default class CustomInput extends React.Component {
     let exportValue = inputValue;
 
     if (inputValue) {
-      displayValue = customTypes.format(inputValue, this.props.type);
       switch (this.props.type) {
-        case 'reaisPrefix':
+        case 'currency':
+          displayValue = customTypes.format(inputValue, 'currencyInput');
+          exportValue = customTypes.format(displayValue, 'numberFromCurrency');
+          break;
         case 'cpf':
         case 'cnpj':
         case 'number':
         case 'phone':
         case 'zip':
+          displayValue = customTypes.format(inputValue, this.props.type);
           exportValue = displayValue.replace(/\D+/g, '');
           break;
         default:
@@ -108,19 +111,8 @@ export default class CustomInput extends React.Component {
     });
   }
 
-  onBlur = (e) => {
-    if (this.props.onBlur) {
-      this.formatValue(e.target.value, e.target);
-    }
-  }
-
   onChange = (e) => {
-    var value = e.target.value;
-    if (!this.props.onBlur) {
-      this.formatValue(value, e.target);
-    } else {
-      this.setState({ displayValue: value });
-    }
+    this.formatValue(e.target.value, e.target);
   }
 
   render() {
@@ -128,7 +120,6 @@ export default class CustomInput extends React.Component {
               ref="input"
               placeholder={this.props.placeholder}
               disabled={this.props.disabled}
-              onBlur={this.onBlur}
               style={this.state.style}
               value={this.state.displayValue}
               onChange={this.onChange}>

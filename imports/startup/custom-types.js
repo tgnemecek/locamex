@@ -4,7 +4,7 @@ export default class customTypes {
 
   static format = (value, type) => {
 
-    let reais = {
+    let realOptions = {
       minimumFractionDigits: 2,
       style: 'currency',
       currency: 'BRL'
@@ -12,11 +12,11 @@ export default class customTypes {
 
     if (value) {
       value = value.toString();
-      switch (type.toLowerCase()) {
-        case 'number':
+      switch (type.toUpperCase()) {
+        case 'NUMBER':
           return value.replace(/\D+/g, '');
           break;
-        case 'zip':
+        case 'ZIP':
             value = value.replace(/\D+/g, '');
             if (value.length > 5) {
               value = value.substring(0, 5) + "-" + value.substring(5);
@@ -25,7 +25,7 @@ export default class customTypes {
               value = value.substring(0, 9);
             }
             break;
-        case 'phone':
+        case 'PHONE':
           value = value.replace(/\D+/g, '');
           if (value.length > 0) {
             value = value.substring(0, 0) + "(" + value.substring(0);
@@ -40,7 +40,7 @@ export default class customTypes {
             value = value.substring(0, 15);
           }
           break;
-        case 'cnpj':
+        case 'CNPJ':
           value = value.replace(/\D+/g, '');
           if (value.length > 2) {
             value = value.substring(0, 2) + "." + value.substring(2);
@@ -58,7 +58,7 @@ export default class customTypes {
             value = value.substring(0, 18);
           }
           break;
-        case 'cpf':
+        case 'CPF':
           value = value.replace(/\D+/g, '');
           if (value.length > 3) {
             value = value.substring(0, 3) + "." + value.substring(3);
@@ -73,7 +73,7 @@ export default class customTypes {
             value = value.substring(0, 14);
           }
           break;
-        case 'rg':
+        case 'RG':
           value = value.replace(/\D+/g, '');
           if (value.length > 2) {
             value = value.substring(0, 2) + "." + value.substring(2);
@@ -88,23 +88,28 @@ export default class customTypes {
             value = value.substring(0, 13);
           }
           break;
-        case 'reaisprefix':
-        debugger;
-          value = value.replace('R$', '');
-          value = value.replace(',00', '');
-          value = Number(value);
-          return value.toLocaleString('pt-br', reais);
+        case 'CURRENCY':
+          value = customTypes.round(Number(value), 2);
+          value = Number(value).toLocaleString('pt-br', realOptions);
           break;
-        case 'reais':
-          value = Number(value);
-          return parseFloat(Math.round(value * 100) / 100).toFixed(2);
+        case 'CURRENCYINPUT':
+          value = value.replace(/\D+/g, '');
+          value = value.replace('R$', '').replace(/^0+/g, '').trim();
+          value = Number(value / 100).toLocaleString('pt-br', realOptions);
           break;
+        case 'NUMBERFROMCURRENCY':
+          value = Number(value.replace('R$', '').replace(',', '.').trim());
         default:
           value = value;
       }
       return value;
     }
     return null;
+  }
+
+  static round = (value, decimals) => {
+    typeof(value) == 'string' ? value.replace(',', '.') : null;
+    return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
   }
 
   static getRef = (object, i) => {

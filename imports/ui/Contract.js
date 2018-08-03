@@ -359,7 +359,7 @@ class ContractList extends React.Component {
         <tr key={i}>
           <td>{item._id}</td>
           <td>{item.description}</td>
-          <td>{customTypes.format(item.price, "reaisPrefix")}</td>
+          <td>{customTypes.format(item.price, "currency")}</td>
           <td>{this.quantity()}</td>
         </tr>
       )
@@ -616,13 +616,16 @@ class Billing extends React.Component {
     super(props);
     this.state = {
       charges: [],
-      equalDivision: true
+      equalDivision: true,
+      difference: 0,
+      valid: false
     }
     this.totalValue = this.props.contractState.products.reduce((acc, current) => {
       return {
         price: acc.price + current.price
       }
     }).price;
+    this.inputValues = [];
   }
 
   representativesOnChange = (e) => {
@@ -665,19 +668,33 @@ class Billing extends React.Component {
     }
   }
 
+  onChange = (name, value, id) => {
+    this.inputValues[name] = value;
+    var total = this.inputValues.reduce((acc, current) => acc + current);
+    var difference = this.totalValue - total;
+    this.setState({
+      difference,
+      valid: !difference
+    });
+  }
+
   renderBody = () => {
-    var equalValue = customTypes.format((this.totalValue /this.state.charges.length), "reaisPrefix");
+    var equalValue = customTypes.round(this.totalValue / this.state.charges.length, 2);
+    var equalValueStr;
+    var rest = customTypes.round(this.totalValue - (equalValue * this.state.charges.length), 2);
     return this.state.charges.map((charge, i, array) => {
+      if (i == 0) {
+        equalValueStr = customTypes.format(equalValue + rest, "currency")
+      } else equalValueStr = customTypes.format(equalValue, "currency");
       return (
         <tr key={i}>
           <td>{(i + 1) + '/' + array.length}</td>
           <td>{charge.startDate}</td>
           <td>{charge.startDate}</td>
           <td>{charge.description}</td>
-          <td>{this.state.equalDivision ? equalValue : <CustomInput name={i} type="reaisPrefix" //FIX THIS. HOW TO IMPLEMENT REAIS IN ONCHANGE??
-                                                              onBlur={true}
-                                                              onChange={this.inputFormat}
-                                                              placeholder={equalValue}
+          <td>{this.state.equalDivision ? equalValueStr : <CustomInput name={i} type="currency"
+                                                              onChange={this.onChange}
+                                                              placeholder={equalValueStr}
                                                               />}</td>
         </tr>
       )
@@ -685,8 +702,7 @@ class Billing extends React.Component {
   }
 
   calcDifference = () => {
-    return null;
-    // customTypes.format(this.totalValue, "reaisPrefix")
+    return customTypes.format(this.state.difference, 'currency');
   }
 
   render() {
@@ -731,13 +747,13 @@ class Billing extends React.Component {
                       {this.renderBody()}
                     </tbody>
                     <tfoot>
-                      <tr>
+                      <tr style={this.state.equalDivision ? {display: 'none'} : {display: 'inherit'}}>
                         <td colSpan="4" style={{fontStyle: "italic"}}>Restante:</td>
                         <td>{this.calcDifference()}</td>
                       </tr>
                       <tr>
                         <th colSpan="4"><b>Valor Total do Contrato:</b></th>
-                        <th>{customTypes.format(this.totalValue, "reaisPrefix")}</th>
+                        <th>{customTypes.format(this.totalValue, "currency")}</th>
                       </tr>
                     </tfoot>
                   </table>

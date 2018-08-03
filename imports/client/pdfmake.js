@@ -80,15 +80,15 @@ export default function createPdf(state, seller, representatives) {
         allValuesOneMonth.push(result);
         result = result * duration;
         allValues.push(result);
-        return {text: customTypes.format(result, 'reaisPrefix'), alignment: 'right'};
+        return {text: customTypes.format(result, 'currency'), alignment: 'right'};
       }
       const calcTotal = (values) => {
         var result = values.reduce((acc, current) => acc + current);
-        return {text: customTypes.format(result, 'reaisPrefix'), bold: true, alignment: 'right'};
+        return {text: customTypes.format(result, 'currency'), bold: true, alignment: 'right'};
       }
       var header = [ ['Item', 'Descrição', {text: 'Valor Unit. Mensal', alignment: 'left'}, {text: 'Qtd.', alignment: 'center'}, {text: 'Meses', alignment: 'center'}, {text: 'Valor Total', alignment: 'right'}] ];
       var body = state.contractInfo.products.map((product) => {
-        return [ product._id, product.name, customTypes.format(product.price, 'reaisPrefix'), {text: product.quantity, alignment: 'center'}, {text: state.contractInfo.duration, alignment: 'center'}, calcValue(product.quantity, state.contractInfo.duration, product.price)]
+        return [ product._id, product.name, customTypes.format(product.price, 'currency'), {text: product.quantity, alignment: 'center'}, {text: state.contractInfo.duration, alignment: 'center'}, calcValue(product.quantity, state.contractInfo.duration, product.price)]
       });
       var footer = [
         [ {text: 'Valor Mensal de Prorrogação:', colSpan: 5, alignment: 'right', bold: true}, '', '', '', '', calcTotal(allValuesOneMonth)],
@@ -109,15 +109,15 @@ export default function createPdf(state, seller, representatives) {
       const calcValue = (quantity, price) => {
         var result = quantity * price;
         allValues.push(result);
-        return {text: customTypes.format(result, 'reaisPrefix'), alignment: 'right'};
+        return {text: customTypes.format(result, 'currency'), alignment: 'right'};
       }
       const calcTotal = () => {
         var result = allValues.reduce((acc, current) => acc + current);
-        return {text: customTypes.format(result, 'reaisPrefix'), bold: true, alignment: 'right'};
+        return {text: customTypes.format(result, 'currency'), bold: true, alignment: 'right'};
       }
       var header = [ ['Item', 'Descrição', {text: 'Valor Unitário', alignment: 'left'}, {text: 'Qtd.', alignment: 'center'}, {text: 'Valor Total', alignment: 'right'}] ];
       var body = state.contractInfo.services.map((service) => {
-        return [ service._id, service.name, customTypes.format(service.price, 'reaisPrefix'), {text: service.quantity, alignment: 'center'}, calcValue(service.quantity, service.price)];
+        return [ service._id, service.name, customTypes.format(service.price, 'currency'), {text: service.quantity, alignment: 'center'}, calcValue(service.quantity, service.price)];
       });
       var footer = [
         [ {text: 'Valor Total do Pacote de Serviços:', colSpan: 4, alignment: 'right', bold: true}, '', '', '', calcTotal()]
@@ -169,7 +169,7 @@ export default function createPdf(state, seller, representatives) {
     const renderBody = () => {
       var header = [ ['Item', 'Descrição', {text:'Valor Unitário de Indenização', alignment: 'right'}] ];
       var body = state.contractInfo.products.map((product) => {
-        return [ product._id, product.name, {text: customTypes.format(product.restitution, 'reaisPrefix'), alignment: 'right'} ]
+        return [ product._id, product.name, {text: customTypes.format(product.restitution, 'currency'), alignment: 'right'} ]
       })
       return header.concat(body);
     }
