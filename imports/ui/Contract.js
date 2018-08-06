@@ -671,7 +671,7 @@ class Billing extends React.Component {
   onChange = (name, value, id) => {
     this.inputValues[name] = value;
     var total = this.inputValues.reduce((acc, current) => acc + current);
-    var difference = this.totalValue - total;
+    var difference = total - this.totalValue;
     this.setState({
       difference,
       valid: !difference
@@ -748,7 +748,7 @@ class Billing extends React.Component {
                     </tbody>
                     <tfoot>
                       <tr style={this.state.equalDivision ? {display: 'none'} : {display: 'inherit'}}>
-                        <td colSpan="4" style={{fontStyle: "italic"}}>Restante:</td>
+                        <td colSpan="4" style={{fontStyle: "italic"}}>Diferença:</td>
                         <td>{this.calcDifference()}</td>
                       </tr>
                       <tr>

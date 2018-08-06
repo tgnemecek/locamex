@@ -2,7 +2,12 @@ import { Meteor } from 'meteor/meteor';
 
 export default class customTypes {
 
-  static format = (value, type) => {
+  static format = (value, type, options) => {
+
+    if (!options) options = {
+      allowNegative: true,
+      fromInput: false
+    };
 
     let realOptions = {
       minimumFractionDigits: 2,
@@ -10,7 +15,32 @@ export default class customTypes {
       currency: 'BRL'
     }
 
-    if (value) {
+    allowNegative = (value) => {
+      var originalValue = value;
+      debugger;
+      if (options.fromInput) {
+        value = value.replace(/\D+/g, '').replace('R$', '').replace(/^0+/g, '').trim();
+        if (Number(value) == 0) {
+          return 'R$ ' + originalValue.replace(/[^0*\.*,*]/g, '').replace(/,0*/g, '').trim() + ',00';
+        } else value = Number(value) /100;
+      } else value = Number(value);
+      return value.toLocaleString('pt-br', realOptions);
+    }
+
+    // allowNegative = (value) => {
+    //   debugger;
+    //   if (options.allowNegative) {
+    //     value = value.replace(/[^\d-,]+/g, '').replace(/\d-+/g, '').replace(',', '.').trim();
+    //   } else {
+    //     value = value.replace(/\D+/g, '').replace('R$', '').replace(/^0+/g, '').trim();
+    //   }
+    //   value = customTypes.round(Number(value), 2);
+    //   if (options.fromInput) {
+    //     return value /100;
+    //   } else return value;
+    // }
+
+    if (value !== undefined) {
       value = value.toString();
       switch (type.toUpperCase()) {
         case 'NUMBER':
@@ -89,16 +119,16 @@ export default class customTypes {
           }
           break;
         case 'CURRENCY':
-          value = customTypes.round(Number(value), 2);
-          value = Number(value).toLocaleString('pt-br', realOptions);
+        debugger;
+          value = allowNegative(value);
           break;
-        case 'CURRENCYINPUT':
-          value = value.replace(/\D+/g, '');
-          value = value.replace('R$', '').replace(/^0+/g, '').trim();
-          value = Number(value / 100).toLocaleString('pt-br', realOptions);
-          break;
+        // case 'CURRENCYINPUT':
+        //   value = allowNegative(value);
+        //   value = value.toLocaleString('pt-br', realOptions);
+        //   break;
         case 'NUMBERFROMCURRENCY':
-          value = Number(value.replace('R$', '').replace(',', '.').trim());
+          value = value.replace(/[^\d-,]+/g, '').replace(/\d-+/g, '').replace(',', '.').trim();
+          value = Number(value);
         default:
           value = value;
       }

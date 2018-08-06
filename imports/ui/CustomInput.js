@@ -78,10 +78,15 @@ export default class CustomInput extends React.Component {
     let displayValue = inputValue;
     let exportValue = inputValue;
 
-    if (inputValue) {
+    let options = {
+      allowNegative: false,
+      fromInput: true
+    };
+
+    if (inputValue !== undefined) {
       switch (this.props.type) {
         case 'currency':
-          displayValue = customTypes.format(inputValue, 'currencyInput');
+          displayValue = customTypes.format(inputValue, this.props.type, options);
           exportValue = customTypes.format(displayValue, 'numberFromCurrency');
           break;
         case 'cpf':
