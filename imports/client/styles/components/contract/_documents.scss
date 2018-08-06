@@ -1,0 +1,21 @@
+.documents {
+  position: relative;
+  background-color: $boxed-view-bg;
+  padding: 2.4rem;
+  text-align: center;
+  width: 500px;
+  h3 {
+    margin-bottom: $space;
+  }
+  .documents__body > div {
+    margin-bottom: $space;
+  }
+  label {
+    cursor: pointer;
+  }
+  .documents__footer {
+  margin-top: 10px;
+  width: 100%;
+  button {width: 100%;}
+  }
+}

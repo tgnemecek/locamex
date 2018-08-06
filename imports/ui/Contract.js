@@ -12,6 +12,7 @@ import { Services } from '../api/services';
 import CustomInput from './CustomInput';
 import ConfirmationMessage from './ConfirmationMessage';
 import Calendar from './Calendar';
+import ProductSelection from './ProductSelection';
 
 export default class Contract extends React.Component {
 
@@ -66,6 +67,7 @@ export default class Contract extends React.Component {
       productsDatabase: [],
       servicesDatabase: [],
 
+      productSelectionOpen: false,
       calendarOpen: false,
       observationsOpen: false,
       documentsOpen: false,
@@ -173,6 +175,11 @@ export default class Contract extends React.Component {
   handleChangeAddress = (name, value) => {
     this.state.deliveryAddress[name] = value;
     this.forceUpdate();
+  }
+
+  toggleProductSelection = () => {
+    var productSelectionOpen = !this.state.productSelectionOpen;
+    this.setState({ productSelectionOpen });
   }
 
   render () {
@@ -288,7 +295,8 @@ export default class Contract extends React.Component {
           <div className="contract__body--middle">
             <div className="contract__list">
               <label>Serviços:</label>
-              <ContractList database="services"/>
+              <ContractList database="services" onClick={this.toggleProductSelection}/>
+              {this.state.productSelectionOpen ? <ProductSelection database="services"/> : null}
             </div>
             <div className="contract__list">
               <label>Containers:</label>
@@ -369,8 +377,8 @@ class ContractList extends React.Component {
   render() {
     if (this.state.added) {
       return (
-        <div className="contract__list-container">
-          <table className="table-main table-contract">
+        <div className="contract__list-container" onClick={this.props.onClick}>
+          <table className="table table--contract">
             <tbody>
               <tr>
                 <th>Código</th>
@@ -418,18 +426,18 @@ class Observations extends React.Component {
           contentLabel="Observações"
           appElement={document.body}
           onRequestClose={this.props.closeObservations}
-          className="contract__box-view"
+          className="observations"
           overlayClassName="boxed-view boxed-view--modal"
           >
             <div>
               <button onClick={this.props.closeObservations} className="button--close-box">✖</button>
-              <div className="contract__box-view--header">
+              <div className="observations__header">
                 <h3>Observações:</h3>
               </div>
-              <div className="contract__box-view--body">
+              <div className="observations__body">
                 <textarea value={this.state.observations} onChange={this.onChange}/>
               </div>
-              <div className="contract__box-view--footer">
+              <div className="observations__footer">
                 <button type="button" className="button button--primary" onClick={this.saveEdits}>OK</button>
               </div>
             </div>
@@ -505,44 +513,6 @@ class Documents extends React.Component {
         print.clientInfo = clients[i];
       }
     }
-    // var print = {
-    //   // Company Information
-    //   // clientName: '',
-    //   // clientType: '',
-    //   // cpfCnpj: '',
-    //   // registry: '',
-    //   // typeOfregistry: '', // MU or ES
-    //   // clientAddress: '',
-    //
-    //   // Contract General Information
-    //   // Contract Address
-    //
-    //   phone: '',
-    //   email: '',
-    //   representative: [//Name, CPF, RG
-    //     {},{}
-    //   ],
-    //   products: [
-    //     {}, {}
-    //   ],
-    //   services: [
-    //     {}, {}
-    //   ],
-    //   startingDate: '',
-    //   endingDate: '',
-    //   period: '',
-    //   billing: {
-    //     totalCharges: '',
-    //     startingChargeDate: '',
-    //     charges: [{
-    //       number: '',
-    //       description: '',
-    //       value: ''
-    //     }]
-    //   },
-    //   witnessNumber: 2
-    // }
-    // this.props.setRepresentatives();
     var seller = {
       contact: 'Nome do Vendedor',
       phone: '(11) 94514-8263',
@@ -568,15 +538,15 @@ class Documents extends React.Component {
           contentLabel="Emitir Documentos"
           appElement={document.body}
           onRequestClose={this.props.closeDocuments}
-          className="contract__box-view contract__box-view--documents"
+          className="documents"
           overlayClassName="boxed-view boxed-view--modal"
           >
             <div>
               <button onClick={this.props.closeDocuments} className="button--close-box">✖</button>
-              <div className="contract__box-view--header">
+              <div className="documents__header">
                 <h3>Emitir Documentos:</h3>
               </div>
-              <div className="contract__box-view--body">
+              <div className="documents__body">
                 <div>
                   <select>
                     <option value="proposal-long">Proposta Longo Prazo</option>
@@ -602,7 +572,7 @@ class Documents extends React.Component {
                   </label>
                 </div>
               </div>
-              <div className="contract__box-view--footer">
+              <div className="documents__footer">
                 <button type="button" className="button button--primary" onClick={this.generate}>Gerar</button>
               </div>
             </div>
@@ -618,7 +588,9 @@ class Billing extends React.Component {
       charges: [],
       equalDivision: true,
       difference: 0,
-      valid: false
+      valid: false,
+      calendarOpen: false,
+      startDate: new Date()
     }
     this.totalValue = this.props.contractState.products.reduce((acc, current) => {
       return {
@@ -652,7 +624,6 @@ class Billing extends React.Component {
     if (value > charges.length) {
       for (var i = 0; i < difference; i++) {
         newCharges.push({
-          startDate: '',
           description: `Cobrança #${i +  charges.length + 1} referente ao Valor Total do Contrato`,
           value: ''
         })
@@ -678,20 +649,30 @@ class Billing extends React.Component {
     });
   }
 
+  updateDescription = (e) => {
+    var charges = this.state.charges;
+    charges[e.target.name].description = e.target.value;
+    this.setState({ charges });
+  }
+
   renderBody = () => {
     var equalValue = customTypes.round(this.totalValue / this.state.charges.length, 2);
     var equalValueStr;
     var rest = customTypes.round(this.totalValue - (equalValue * this.state.charges.length), 2);
     return this.state.charges.map((charge, i, array) => {
+      var moment1 = moment(this.state.startDate).add((30 * i + i), 'days');
+      var moment2 = moment(this.state.startDate).add((30 * i + 30 + i), 'days');
       if (i == 0) {
-        equalValueStr = customTypes.format(equalValue + rest, "currency")
-      } else equalValueStr = customTypes.format(equalValue, "currency");
+        equalValueStr = customTypes.format(equalValue + rest, "currency");
+      } else {
+        equalValueStr = customTypes.format(equalValue, "currency");
+      }
       return (
         <tr key={i}>
           <td>{(i + 1) + '/' + array.length}</td>
-          <td>{charge.startDate}</td>
-          <td>{charge.startDate}</td>
-          <td>{charge.description}</td>
+          <td>{moment1.format("DD-MM-YY") + ' a ' +  moment2.format("DD-MM-YY")}</td>
+          <td>{moment2.format("DD-MM-YY")}</td>
+          <td><textarea name={i} value={charge.description} onChange={this.updateDescription}/></td>
           <td>{this.state.equalDivision ? equalValueStr : <CustomInput name={i} type="currency"
                                                               onChange={this.onChange}
                                                               placeholder={equalValueStr}
@@ -702,7 +683,20 @@ class Billing extends React.Component {
   }
 
   calcDifference = () => {
-    return customTypes.format(this.state.difference, 'currency');
+    var value = customTypes.format(this.state.difference, 'currency');
+    var className = this.state.difference != 0 ? "difference--danger" : "difference--zero";
+    return <span className={className}>{value}</span>
+  }
+
+  toggleCalendar = (e) => {
+    e ? e.preventDefault() : null;
+    var calendarOpen = !this.state.calendarOpen;
+    this.setState({ calendarOpen });
+  }
+
+  changeDate = (startDate) => {
+    this.setState({ startDate });
+    this.toggleCalendar();
   }
 
   render() {
@@ -712,28 +706,36 @@ class Billing extends React.Component {
           contentLabel="Emitir Documentos"
           appElement={document.body}
           onRequestClose={this.props.closeBilling}
-          className="contract__box-view contract__box-view--billing"
+          className="billing"
           overlayClassName="boxed-view boxed-view--modal"
           >
             <div>
               <button onClick={this.props.closeBilling} className="button--close-box">✖</button>
-              <div className="contract__box-view--header">
+              <div className="billing__header">
                 <h3>Tabela de Cobrança:</h3>
               </div>
-              <div className="contract__box-view--body">
-                <div>
+              <div className="billing__body">
+                <div className="billing__item">
                   <label>Número de Cobranças:</label>
                   <CustomInput
                     type="number"
                     value={this.state.charges.length}
                     onChange={this.updateTable}/>
                 </div>
+                <div className="billing__item">
+                  <label>Início da Cobrança:</label>
+                  <input readOnly value={moment(this.state.startDate).format("DD-MMMM-YYYY")}
+                    onClick={this.toggleCalendar} style={{cursor: "pointer"}}/>
+                  {this.state.calendarOpen ? <Calendar
+                                                closeCalendar={this.toggleCalendar}
+                                                changeDate={this.changeDate}/> : null}
+                </div>
                 <div>
                   <label>Parcelas iguais:</label>
                   <input type="checkbox" checked={this.state.equalDivision} onChange={this.divisionChange}/>
                 </div>
                 <div>
-                  <table className="table-main table-billing">
+                  <table className="table table--billing">
                     <thead>
                       <tr>
                         <th>Número</th>
@@ -759,7 +761,7 @@ class Billing extends React.Component {
                   </table>
                 </div>
               </div>
-              <div className="contract__box-view--footer">
+              <div className="billing__footer">
                 <button type="button" className="button button--primary" onClick={this.saveEdits}>Salvar</button>
               </div>
             </div>

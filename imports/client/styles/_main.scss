@@ -6,11 +6,11 @@
 @import './components/page-content';
 @import './components/boxed-view';
 
-
 @import './components/form';
 @import './components/button';
 @import './components/checkbox';
 @import './components/item';
+@import './components/table';
 @import './components/confirmation-message';
 @import './components/search-bar';
 @import './components/calendar';
@@ -20,12 +20,14 @@
 @import './components/edit-user-types';
 @import './components/edit-services';
 @import './components/edit-clients';
-@import './components/contract';
+
+@import './components/contract/contract-main';
+@import './components/contract/product-selection';
+@import './components/contract/billing';
+@import './components/contract/documents';
+@import './components/contract/observations';
+
+@import './components/clients';
 
 @import './components/add-services';
 @import './components/doc';
-
-@import './components/tables/table-clients';
-@import './components/tables/table-main';
-@import './components/tables/table-contract';
-@import './components/tables/table-billing';

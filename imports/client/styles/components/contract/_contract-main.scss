@@ -102,15 +102,6 @@
   }
 }
 
-.contract__item--calendar {
-  display: inline-flex;
-  justify-content: space-between;
-  width: 100%;
-  div {
-    flex-basis: 150px;
-    margin: 0;
-  }
-}
 //BODY-MIDDLE
 .contract__body--middle {
   height: 500px;
@@ -120,6 +111,7 @@
 
 .contract__list-container {
   margin: 10px 0;
+  cursor: pointer;
   input {
     text-align: right;
   }
@@ -142,39 +134,37 @@
   }
 }
 
-//OTHER
-.contract__box-view {
-  position: relative;
-  background-color: $boxed-view-bg;
-  padding: 2.4rem;
-  text-align: center;
-  width: 500px;
-  h3 {
-    margin-bottom: $space;
-  }
+.table--contract th:nth-child(1),
+.table--contract td:nth-child(1) {
+  width: 20px;
 }
 
-.contract__box-view--documents {
-  .contract__box-view--body > div {
-    margin-bottom: $space;
-  }
-  label {
-    cursor: pointer;
-  }
+.table--contract th:nth-child(2),
+.table--contract td:nth-child(2) {
 }
 
-.contract__box-view--billing {
-  width: 800px !important;
-  .contract__box-view--body > div {
-    margin-bottom: $space;
-  }
-  label {
-    cursor: pointer;
-  }
+.table--contract th:nth-child(3),
+.table--contract td:nth-child(3) {
+  text-align: center !important;
+  width: 80px;
 }
 
-.contract__box-view--footer {
-  margin-top: 10px;
-  width: 100%;
-  button {width: 100%;}
+.table--contract th:nth-child(4),
+.table--contract td:nth-child(4) {
+  text-align: center !important;
+  width: 1px;
+}
+
+
+.table--contract {
+  font-size: ($base-font-size * 0.85);
+  th, td {
+    padding: 1px 5px;
+  }
+  input {
+    font-size: ($base-font-size * 0.85);
+    height: 1px;
+    width: 50px;
+    padding: 7px
+  }
 }

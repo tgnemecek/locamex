@@ -64,10 +64,10 @@ export default class List extends React.Component {
   }
 
   setClassName = () => {
-    let className = 'table-main ';
+    let className = 'table ';
     switch (this.props.type) {
       case 'clients':
-        className += 'table-clients'
+        className += 'table--clients'
         break;
     }
     return className;

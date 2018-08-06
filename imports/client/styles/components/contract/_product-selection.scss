@@ -1,0 +1,27 @@
+.product-selection {
+  background-color: $boxed-view-bg;
+  position: relative;
+  height: 800px;
+  width: 1000px;
+  padding: 2.4rem;
+  text-align: center;
+  .product-selection__body {
+    display: flex;
+    justify-content: space-between;
+    > div {
+      height: 100%;
+      border: 1px solid black;
+    }
+    .product-selection__database {
+      flex-grow: .5;
+    }
+    .product-selection__contract {
+      flex-grow: 1;
+    }
+  }
+  .product-selection__footer {
+    margin-top: 10px;
+    width: 100%;
+    button {width: 100%;}
+  }
+}

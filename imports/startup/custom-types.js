@@ -17,7 +17,7 @@ export default class customTypes {
 
     allowNegative = (value) => {
       var originalValue = value;
-      debugger;
+
       if (options.fromInput) {
         value = value.replace(/\D+/g, '').replace('R$', '').replace(/^0+/g, '').trim();
         if (Number(value) == 0) {
@@ -28,7 +28,7 @@ export default class customTypes {
     }
 
     // allowNegative = (value) => {
-    //   debugger;
+    //
     //   if (options.allowNegative) {
     //     value = value.replace(/[^\d-,]+/g, '').replace(/\d-+/g, '').replace(',', '.').trim();
     //   } else {
@@ -119,7 +119,7 @@ export default class customTypes {
           }
           break;
         case 'CURRENCY':
-        debugger;
+
           value = allowNegative(value);
           break;
         // case 'CURRENCYINPUT':
