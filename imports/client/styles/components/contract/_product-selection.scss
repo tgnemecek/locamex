@@ -1,27 +1,116 @@
 .product-selection {
   background-color: $boxed-view-bg;
   position: relative;
-  height: 800px;
   width: 1000px;
   padding: 2.4rem;
   text-align: center;
   .product-selection__body {
     display: flex;
     justify-content: space-between;
-    > div {
-      height: 100%;
-      border: 1px solid black;
-    }
     .product-selection__database {
-      flex-grow: .5;
+      flex-grow: .8;
+      flex-basis: 1px;
+      margin-right: $space;
     }
     .product-selection__contract {
       flex-grow: 1;
+      flex-basis: 1px;
+      margin: 56px 0 0 $space;
+      label {margin-bottom: 10px;}
     }
   }
   .product-selection__footer {
     margin-top: 10px;
     width: 100%;
     button {width: 100%;}
+  }
+}
+
+.table--product-selection--database {
+  display: block;
+  height: 500px;
+  overflow-y: auto;
+  font-size: $base-font-size;
+  th:nth-child(1),
+  td:nth-child(1) {
+    text-align: center !important;
+    min-width: 60px;
+  }
+  th:nth-child(2),
+  td:nth-child(2) {
+    text-align: left !important;
+    width: 100%;
+  }
+  th:nth-child(3),
+  td:nth-child(3) {
+    text-align: center;
+    min-width: 90px;
+  }
+  th:last-child,
+  td:last-child {
+    text-align: center !important;
+    min-width: 20px !important;
+    button {
+      padding: ($space /4);
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+  }
+  th, td {
+    padding: 5px 5px;
+  }
+  input {
+    font-size: $base-font-size;
+    width: 100%;
+    padding: 7px;
+    text-align: right;
+  }
+}
+
+.table--product-selection--contract {
+  margin-top: ($space /2);
+  font-size: $base-font-size;
+  th:nth-child(1),
+  td:nth-child(1) {
+    text-align: center !important;
+    min-width: 60px;
+    padding: 5px 5px;
+  }
+  th:nth-child(2),
+  td:nth-child(2) {
+    text-align: left !important;
+    width: 100%;
+    padding: 5px 5px;
+  }
+  th:nth-child(3),
+  td:nth-child(3) {
+    text-align: center !important;
+    min-width: 120px;
+    input {width: 100%;}
+  }
+  th:nth-child(4),
+  td:nth-child(4) {
+    text-align: center !important;
+    width: 40px;
+    input {width: 40px;}
+  }
+  th:nth-child(5),
+  td:nth-child(5) {
+    text-align: center !important;
+    width: 40px;
+    padding: 0;
+    button {
+      padding: ($space /4);
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+  }
+  input {
+    font-size: $base-font-size;
+    padding: 7px;
+    height: 20px;
+    text-align: right;
   }
 }

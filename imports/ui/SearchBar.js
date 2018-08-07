@@ -76,12 +76,12 @@ export default class SearchBar extends React.Component {
   render() {
     return (
       <form className="search-bar">
-        <div className="search-bar__block">
+        {this.props.options ? <div className="search-bar__block">
           <select value={this.state.option} onChange={this.onSelect}>
             <option value="all">Todos</option>
             {this.renderOptions()}
           </select>
-        </div>
+        </div> : null}
         <div className="search-bar__block search-bar__block--main">
           <label>Pesquisa:</label>
           <input value={this.state.value} onChange={this.onChange} type="text"/>

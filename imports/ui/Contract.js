@@ -7,7 +7,6 @@ import customTypes from '../startup/custom-types';
 import pdfmake from '../client/pdfmake';
 
 import { Clients } from '../api/clients';
-import { Services } from '../api/services';
 
 import CustomInput from './CustomInput';
 import ConfirmationMessage from './ConfirmationMessage';
@@ -67,7 +66,9 @@ export default class Contract extends React.Component {
       productsDatabase: [],
       servicesDatabase: [],
 
-      productSelectionOpen: false,
+      containerSelectionOpen: false,
+      accessoriesSelectionOpen: false,
+      servicesSelectionOpen: false,
       calendarOpen: false,
       observationsOpen: false,
       documentsOpen: false,
@@ -177,9 +178,37 @@ export default class Contract extends React.Component {
     this.forceUpdate();
   }
 
-  toggleProductSelection = () => {
-    var productSelectionOpen = !this.state.productSelectionOpen;
-    this.setState({ productSelectionOpen });
+  toggleProductSelection = (database) => {
+    if (this.state.containerSelectionOpen || this.state.accessoriesSelectionOpen || this.state.servicesSelectionOpen) {
+      this.setState({ containerSelectionOpen: false });
+      this.setState({ accessoriesSelectionOpen: false });
+      this.setState({ servicesSelectionOpen: false });
+    } else switch (database) {
+      case 'containers':
+        this.setState({ containerSelectionOpen: true });
+        break;
+      case 'accessories':
+        this.setState({ accessoriesSelectionOpen: true });
+        break;
+      case 'services':
+        this.setState({ servicesSelectionOpen: true });
+        break;
+    }
+  }
+
+  updateTable = (addedItems, database) => {
+    switch (database) {
+      case 'services':
+        this.setState({ services: addedItems });
+        break;
+      case 'accessories':
+        this.setState({ accessories: addedItems });
+        break;
+      case 'containers':
+        this.setState({ containers: addedItems });
+        break;
+    }
+
   }
 
   render () {
@@ -294,17 +323,34 @@ export default class Contract extends React.Component {
           </div>
           <div className="contract__body--middle">
             <div className="contract__list">
-              <label>Serviços:</label>
-              <ContractList database="services" onClick={this.toggleProductSelection}/>
-              {this.state.productSelectionOpen ? <ProductSelection database="services"/> : null}
+              <label onClick={this.toggleProductSelection}>Containers:</label>
+              <ContractList items={this.state.services} database="containers" onClick={this.toggleProductSelection}/>
+              {this.state.containerSelectionOpen ? <ProductSelection
+                                                    database="containers"
+                                                    addedItems={this.state.containers}
+                                                    saveEdits={this.updateTable}
+                                                    closeProductSelection={this.toggleProductSelection}
+                                                    /> : null}
             </div>
             <div className="contract__list">
-              <label>Containers:</label>
-              <ContractList database="containers"/>
+              <label onClick={this.toggleProductSelection}>Acessórios:</label>
+              <ContractList items={this.state.services} database="accessories" onClick={this.toggleProductSelection}/>
+              {this.state.accessoriesSelectionOpen ? <ProductSelection
+                                                    database="accessories"
+                                                    addedItems={this.state.accessories}
+                                                    saveEdits={this.updateTable}
+                                                    closeProductSelection={this.toggleProductSelection}
+                                                    /> : null}
             </div>
             <div className="contract__list">
-              <label>Acessórios:</label>
-              <ContractList database="accessories"/>
+              <label onClick={this.toggleProductSelection}>Serviços:</label>
+              <ContractList items={this.state.services} database="services" onClick={this.toggleProductSelection}/>
+              {this.state.servicesSelectionOpen ? <ProductSelection
+                                                    database="services"
+                                                    addedItems={this.state.services}
+                                                    saveEdits={this.updateTable}
+                                                    closeProductSelection={this.toggleProductSelection}
+                                                    /> : null}
             </div>
           </div>
           <div className="contract__body--bottom">
@@ -321,70 +367,36 @@ export default class Contract extends React.Component {
 }
 
 class ContractList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      database: [],
-      added: []
-    }
-  }
 
-  componentDidMount() {
-    var publication = '';
-    var database = [];
-
-    this.servicesTracker = Tracker.autorun(() => {
-      switch(this.props.database) {
-        case "services":
-          publication = 'servicesPub';
-          database = Services.find().fetch();
-          break;
-        case "containers":
-          // publication = 'containersPub';
-          // database = Containers.find().fetch();
-          break;
-        case "accessories":
-          // publication = 'accessoriesPub';
-          // database = Accessories.find().fetch();
-          break;
-      }
-      Meteor.subscribe('servicesPub');
-      this.setState({ database });
-    })
-  }
-
-  addNew = () => {
-    alert('added');
-  }
-
-  quantity = () => {
-    return <input type="number" defaultValue="1"/>
+  onClick = () => {
+    this.props.onClick(this.props.database);
   }
 
   row = () => {
-    return this.state.database.map((item, i) => {
+    return this.props.items.map((item, i) => {
       return (
         <tr key={i}>
           <td>{item._id}</td>
           <td>{item.description}</td>
           <td>{customTypes.format(item.price, "currency")}</td>
-          <td>{this.quantity()}</td>
+          <td>{item.quantity}</td>
         </tr>
       )
     })
   }
 
   render() {
-    if (this.state.added) {
+    if (this.props.items.length > 0) {
       return (
         <div className="contract__list-container" onClick={this.props.onClick}>
+          <div className="contract__list__overlay"><div>✎</div></div>
           <table className="table table--contract">
             <tbody>
               <tr>
                 <th>Código</th>
                 <th>Descrição</th>
                 <th>Valor</th>
-                <th>Quantidade</th>
+                <th>Qtd.</th>
               </tr>
               {this.row()}
             </tbody>
@@ -394,8 +406,14 @@ class ContractList extends React.Component {
       )
     } else {
       return (
-        <div className="contract__list-container" onClick={this.addNew}>
-          <p><strong>Lista Vazia. </strong>Clique para adicionar o primeiro item.</p>
+        <div className="contract__list-container" onClick={this.onClick}>
+          <div className="contract__list__overlay"><div>+</div></div>
+          <div>
+            <strong>Lista Vazia.</strong>
+          </div>
+          <div>
+            Clique aqui para adicionar o primeiro item.
+          </div>
         </div>
       )
     }
@@ -548,28 +566,23 @@ class Documents extends React.Component {
               </div>
               <div className="documents__body">
                 <div>
+                  <label>Documento:</label>
                   <select>
-                    <option value="proposal-long">Proposta Longo Prazo</option>
-                    <option value="proposal-short">Proposta Curto Prazo</option>
-                    <option value="contract-short">Contrato Longo Prazo</option>
-                    <option value="contract-long">Contrato Curto Prazo</option>
+                    <option value="proposal-long">Contrato</option>
                     <option value="invoice-sending">Nota Fiscal de Remessa</option>
                   </select>
                 </div>
                 <div>
+                  <label>Representante Legal:</label>
                   <select onChange={this.representativesOnChange}>
-                    <option value={{_id: 0, contactId: 123}}></option>
+                    <option value={{_id: 0, contactId: 123}}>Nomeeee Sobrenome</option>
                   </select>
-                  <label className="radio-button-container">
-                    <input type="radio" name="format" value="word"/>
-                    <span className="checkmark"></span>
-                    Word
-                  </label>
-                  <label className="radio-button-container">
-                    <input type="radio" name="format" value="pdf"/>
-                    <span className="checkmark"></span>
-                    PDF
-                  </label>
+                </div>
+                <div>
+                  <label>Segundo Representante: (opcional)</label>
+                  <select onChange={this.representativesOnChange}>
+                    <option value={{_id: 0, contactId: 123}}>Nomeeee Sobrenome</option>
+                  </select>
                 </div>
               </div>
               <div className="documents__footer">

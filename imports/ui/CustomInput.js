@@ -89,9 +89,10 @@ export default class CustomInput extends React.Component {
           displayValue = customTypes.format(inputValue, this.props.type, options);
           exportValue = customTypes.format(displayValue, 'numberFromCurrency');
           break;
+        case 'number':
+          if (this.props.max && (Number(inputValue) > this.props.max)) inputValue = this.props.max;
         case 'cpf':
         case 'cnpj':
-        case 'number':
         case 'phone':
         case 'zip':
           displayValue = customTypes.format(inputValue, this.props.type);

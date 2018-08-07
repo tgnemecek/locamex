@@ -2,118 +2,111 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import ReactModal from 'react-modal';
 
+import customTypes from '../startup/custom-types';
+import SearchBar from './SearchBar';
+import CustomInput from './CustomInput';
+
 import { Services } from '../api/services';
 
 export default class ProductSelection extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      fullDatabase: [],
+      filteredDatabase: [],
+      pub: '',
+      dbName: '',
+      addedItems: this.props.addedItems ? JSON.parse(JSON.stringify(this.props.addedItems)) : []
     }
     switch (this.props.database) {
       case 'services':
         this.title = "Seleção de Serviços";
+        this.state.pub = 'servicesPub';
+        this.state.dbName = Services;
         break;
     }
   }
-  //
-  // representativesOnChange = (e) => {
-  //   var representatives = e.target.value;
-  //   this.setState({ representatives });
-  // }
-  //
-  // divisionChange = (e) => {
-  //   var equalDivision = e.target.checked;
-  //   this.setState({ equalDivision });
-  // }
-  //
-  // inputFormat = (name, value, id, valid) => {
-  //   var charges = this.state.charges;
-  //   charges[name].price = value;
-  //   this.setState({ charges });
-  // }
-  //
-  // updateTable = (name, value) => {
-  //   value = Number(value);
-  //   var charges = JSON.parse(JSON.stringify(this.state.charges));
-  //   var newCharges = [];
-  //   var difference = Math.abs(charges.length - value);
-  //   if (value > charges.length) {
-  //     for (var i = 0; i < difference; i++) {
-  //       newCharges.push({
-  //         description: `Cobrança #${i +  charges.length + 1} referente ao Valor Total do Contrato`,
-  //         value: ''
-  //       })
-  //     }
-  //     charges = charges.concat(newCharges);
-  //     this.setState({ charges });
-  //   }
-  //   if (value < charges.length) {
-  //     for (var i = 0; i < value; i++) {
-  //       newCharges.push(charges[i]);
-  //     }
-  //     this.setState({ charges: newCharges });
-  //   }
-  // }
-  //
-  // onChange = (name, value, id) => {
-  //   this.inputValues[name] = value;
-  //   var total = this.inputValues.reduce((acc, current) => acc + current);
-  //   var difference = total - this.totalValue;
-  //   this.setState({
-  //     difference,
-  //     valid: !difference
-  //   });
-  // }
-  //
-  // updateDescription = (e) => {
-  //   var charges = this.state.charges;
-  //   charges[e.target.name].description = e.target.value;
-  //   this.setState({ charges });
-  // }
-  //
-  // renderBody = () => {
-  //   var equalValue = customTypes.round(this.totalValue / this.state.charges.length, 2);
-  //   var equalValueStr;
-  //   var rest = customTypes.round(this.totalValue - (equalValue * this.state.charges.length), 2);
-  //   return this.state.charges.map((charge, i, array) => {
-  //     var moment1 = moment(this.state.startDate).add((30 * i + i), 'days');
-  //     var moment2 = moment(this.state.startDate).add((30 * i + 30 + i), 'days');
-  //     if (i == 0) {
-  //       equalValueStr = customTypes.format(equalValue + rest, "currency");
-  //     } else {
-  //       equalValueStr = customTypes.format(equalValue, "currency");
-  //     }
-  //     return (
-  //       <tr key={i}>
-  //         <td>{(i + 1) + '/' + array.length}</td>
-  //         <td>{moment1.format("DD-MM-YY") + ' a ' +  moment2.format("DD-MM-YY")}</td>
-  //         <td>{moment2.format("DD-MM-YY")}</td>
-  //         <td><textarea name={i} value={charge.description} onChange={this.updateDescription}/></td>
-  //         <td>{this.state.equalDivision ? equalValueStr : <CustomInput name={i} type="currency"
-  //                                                             onChange={this.onChange}
-  //                                                             placeholder={equalValueStr}
-  //                                                             />}</td>
-  //       </tr>
-  //     )
-  //   })
-  // }
-  //
-  // calcDifference = () => {
-  //   var value = customTypes.format(this.state.difference, 'currency');
-  //   var className = this.state.difference != 0 ? "difference--danger" : "difference--zero";
-  //   return <span className={className}>{value}</span>
-  // }
-  //
-  // toggleCalendar = (e) => {
-  //   e ? e.preventDefault() : null;
-  //   var calendarOpen = !this.state.calendarOpen;
-  //   this.setState({ calendarOpen });
-  // }
-  //
-  // changeDate = (startDate) => {
-  //   this.setState({ startDate });
-  //   this.toggleCalendar();
-  // }
+
+  componentDidMount() {
+    this.clientsTracker = Tracker.autorun(() => {
+      Meteor.subscribe(this.state.pub);
+      var fullDatabase = this.state.dbName.find().fetch();
+      this.setState({ fullDatabase, filteredDatabase: fullDatabase });
+    })
+  }
+
+  renderDatabase = () => {
+    return this.state.filteredDatabase.map((item, i, array) => {
+      return (
+        <tr key={i} className="product-selection__db-item">
+          <td>{item._id}</td>
+          <td>{item.description}</td>
+          {this.props.database == 'services' ? null : <td>{item.available}/{item.total}</td>}
+          <td><button value={i} onClick={this.addItem}>►</button></td>
+        </tr>
+      )
+    })
+  }
+
+  addItem = (e) => {
+    var addedItems = this.state.addedItems;
+    var value = e.target.value;
+    for (var i = 0; i < addedItems.length; i++) {
+      if (addedItems[i]._id == this.state.fullDatabase[value]._id) {
+        return;
+      }
+    }
+    addedItems.push(this.state.fullDatabase[value]);
+    this.setState({ addedItems });
+  }
+
+  removeItem = (e) => {
+    var addedItems = this.state.addedItems;
+    addedItems.splice(this.state.fullDatabase[e.target.value], 1);
+    this.setState({ addedItems });
+  }
+
+  changePrice = (name, value) => {
+    var addedItems = this.state.addedItems;
+    addedItems[name].price = value;
+    this.setState({ addedItems });
+  }
+
+  changeQuantity = (name, value) => {
+    var addedItems = this.state.addedItems;
+    addedItems[name].quantity = value;
+    this.setState({ addedItems });
+  }
+
+  renderAddedItems = () => {
+    return this.state.addedItems.map((item, i, array) => {
+      return (
+        <tr key={i} className="product-selection__db-item">
+          <td>{item._id}</td>
+          <td>{item.description}</td>
+          <td><CustomInput type="currency" name={i} value={item.price * 100} onChange={this.changePrice}/></td>
+          <td><CustomInput type="number" name={i} value={item.quantity ? item.quantity : 1} max={item.available} onChange={this.changeQuantity}/></td>
+          <td><button value={i} onClick={this.removeItem}>✖</button></td>
+        </tr>
+      )
+    })
+  }
+
+  searchReturn = (filteredDatabase) => {
+    if (filteredDatabase) {
+      this.setState({ filteredDatabase });
+    } else this.setState({ filteredDatabase: this.state.fullDatabase });
+  }
+
+  saveEdits = () => {
+    var addedItems = this.state.addedItems;
+    var newArray = [];
+    addedItems.forEach((item) => {
+      if (item.quantity > 0) newArray.push(item);
+    })
+    this.props.saveEdits(newArray, this.props.database);
+    this.props.closeProductSelection();
+  }
 
   render() {
       return (
@@ -132,31 +125,37 @@ export default class ProductSelection extends React.Component {
               </div>
               <div className="product-selection__body">
                 <div className="product-selection__database">
-                  <div>
-                    <label>Banco de Dados:</label>
-                    <input/>
-                  </div>
-                  <div>
-                    <table>
-
-                    </table>
-                  </div>
-                </div>
-                <div className="product-selection__middle">
-                  <div><button>⇨</button></div>
-                  <div><button>⇦</button></div>
+                  <SearchBar
+                    database={this.state.fullDatabase}
+                    options={this.searchOptions}
+                    searchReturn={this.searchReturn}/>
+                  <table className="table table--product-selection--database">
+                    <thead>
+                      <tr>
+                        <th>Código</th>
+                        <th>Descrição</th>
+                        {this.props.database == 'services' ? null : <th>Disp.</th>}
+                        <th style={{visibility: "hidden"}}></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {this.renderDatabase()}
+                    </tbody>
+                  </table>
                 </div>
                 <div className="product-selection__contract">
-                  <table className="table table--product-selection">
+                  <label>Itens Adicionados no Contrato:</label>
+                  <table className="table table--product-selection--contract">
                     <thead>
                       <tr>
                         <th>Código</th>
                         <th>Descrição</th>
                         <th>Valor</th>
-                        <th>Quantidade</th>
+                        <th>Qtd.</th>
                       </tr>
                     </thead>
                     <tbody>
+                      {this.renderAddedItems()}
                     </tbody>
                   </table>
                 </div>
