@@ -13,6 +13,7 @@ if(Meteor.isServer) {
   ContainersFixed.insert({
     _id: "0000",
     description: "Loca 300 Black",
+    type: "modular",
     price: 600,
     modules: [], //_ids of the modules that it uses
     history: [],

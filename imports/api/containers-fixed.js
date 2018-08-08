@@ -13,6 +13,7 @@ if(Meteor.isServer) {
   ContainersFixed.insert({
     _id: "0000",
     description: "Loca 300",
+    type: "fixed",
     price: 600,
     status: "available", //available, maintenance, rented, inactive
     place: 0003, //_id of place

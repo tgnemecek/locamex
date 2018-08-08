@@ -24,13 +24,26 @@ export default class ProductSelection extends React.Component {
         this.state.pub = 'servicesPub';
         this.state.dbName = Services;
         break;
+      case 'containers':
+        this.title = "Seleção de Containers";
+        this.state.pub = ['containersFixedPub', 'containersModularPub'];
+        this.state.dbName = [ContainersFixed, ContainersModular];
+        break;
     }
   }
 
   componentDidMount() {
     this.clientsTracker = Tracker.autorun(() => {
-      Meteor.subscribe(this.state.pub);
-      var fullDatabase = this.state.dbName.find().fetch();
+      var fullDatabase = [];
+      if (this.props.database == 'containers') {
+        for (var i = 0; i < this.state.pub.length; i++) {
+          Meteor.subscribe(this.state.pub[i]);
+          fullDatabase = fullDatabase.concat(this.state.dbName[i].find().fetch());
+        }
+      } else {
+        Meteor.subscribe(this.state.pub);
+        fullDatabase = this.state.dbName.find().fetch();
+      }
       this.setState({ fullDatabase, filteredDatabase: fullDatabase });
     })
   }
