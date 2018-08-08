@@ -323,7 +323,7 @@ export default class Contract extends React.Component {
           </div>
           <div className="contract__body--middle">
             <div className="contract__list">
-              <label onClick={this.toggleProductSelection}>Containers:</label>
+              <label onClick={this.toggleProductSelection}><strong>Containers:</strong></label>
               <ContractList items={this.state.services} database="containers" onClick={this.toggleProductSelection}/>
               {this.state.containerSelectionOpen ? <ProductSelection
                                                     database="containers"
@@ -333,7 +333,7 @@ export default class Contract extends React.Component {
                                                     /> : null}
             </div>
             <div className="contract__list">
-              <label onClick={this.toggleProductSelection}>Acessórios:</label>
+              <label onClick={this.toggleProductSelection}><strong>Acessórios:</strong></label>
               <ContractList items={this.state.services} database="accessories" onClick={this.toggleProductSelection}/>
               {this.state.accessoriesSelectionOpen ? <ProductSelection
                                                     database="accessories"
@@ -343,7 +343,7 @@ export default class Contract extends React.Component {
                                                     /> : null}
             </div>
             <div className="contract__list">
-              <label onClick={this.toggleProductSelection}>Serviços:</label>
+              <label onClick={this.toggleProductSelection}><strong>Serviços:</strong></label>
               <ContractList items={this.state.services} database="services" onClick={this.toggleProductSelection}/>
               {this.state.servicesSelectionOpen ? <ProductSelection
                                                     database="services"
@@ -388,7 +388,7 @@ class ContractList extends React.Component {
   render() {
     if (this.props.items.length > 0) {
       return (
-        <div className="contract__list-container" onClick={this.props.onClick}>
+        <div className="contract__list-container" onClick={this.onClick}>
           <div className="contract__list__overlay"><div>✎</div></div>
           <table className="table table--contract">
             <tbody>
@@ -409,7 +409,7 @@ class ContractList extends React.Component {
         <div className="contract__list-container" onClick={this.onClick}>
           <div className="contract__list__overlay"><div>+</div></div>
           <div>
-            <strong>Lista Vazia.</strong>
+            Lista Vazia.
           </div>
           <div>
             Clique aqui para adicionar o primeiro item.
