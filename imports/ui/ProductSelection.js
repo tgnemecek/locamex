@@ -6,6 +6,7 @@ import customTypes from '../startup/custom-types';
 import SearchBar from './SearchBar';
 import CustomInput from './CustomInput';
 
+import { Containers } from '../api/containers';
 import { Services } from '../api/services';
 
 export default class ProductSelection extends React.Component {
@@ -16,7 +17,9 @@ export default class ProductSelection extends React.Component {
       filteredDatabase: [],
       pub: '',
       dbName: '',
-      addedItems: this.props.addedItems ? JSON.parse(JSON.stringify(this.props.addedItems)) : []
+      addedItems: this.props.addedItems ? JSON.parse(JSON.stringify(this.props.addedItems)) : [],
+      modularScreenOpen: false,
+      modularItemId: ''
     }
     switch (this.props.database) {
       case 'services':
@@ -26,24 +29,25 @@ export default class ProductSelection extends React.Component {
         break;
       case 'containers':
         this.title = "Seleção de Containers";
-        this.state.pub = ['containersFixedPub', 'containersModularPub'];
-        this.state.dbName = [ContainersFixed, ContainersModular];
+        this.state.pub = 'containersPub', 'containersModularPub';
+        this.state.dbName = Containers;
         break;
     }
   }
 
   componentDidMount() {
     this.clientsTracker = Tracker.autorun(() => {
-      var fullDatabase = [];
-      if (this.props.database == 'containers') {
-        for (var i = 0; i < this.state.pub.length; i++) {
-          Meteor.subscribe(this.state.pub[i]);
-          fullDatabase = fullDatabase.concat(this.state.dbName[i].find().fetch());
+      Meteor.subscribe(this.state.pub);
+      var fullDatabase = this.state.dbName.find().fetch();
+      fullDatabase.forEach((item, i) => {
+        switch (item.status) {
+          case 'inactive':
+          case 'maintenance':
+          case 'rented':
+            fullDatabase.splice(i, 1);
+            break;
         }
-      } else {
-        Meteor.subscribe(this.state.pub);
-        fullDatabase = this.state.dbName.find().fetch();
-      }
+      })
       this.setState({ fullDatabase, filteredDatabase: fullDatabase });
     })
   }
@@ -54,7 +58,7 @@ export default class ProductSelection extends React.Component {
         <tr key={i} className="product-selection__db-item">
           <td>{item._id}</td>
           <td>{item.description}</td>
-          {this.props.database == 'services' ? null : <td>{item.available}/{item.total}</td>}
+          {this.props.database != 'accessories' ? null : <td>{item.available}/{item.total}</td>}
           <td><button value={i} onClick={this.addItem}>►</button></td>
         </tr>
       )
@@ -65,6 +69,10 @@ export default class ProductSelection extends React.Component {
     var addedItems = this.state.addedItems;
     var value = e.target.value;
     for (var i = 0; i < addedItems.length; i++) {
+      if (this.state.fullDatabase[value].type == 'modular') {
+        this.setState({ modularScreenOpen: true, modularItemId: value });
+        return;
+      }
       if (addedItems[i]._id == this.state.fullDatabase[value]._id) {
         return;
       }
@@ -147,7 +155,7 @@ export default class ProductSelection extends React.Component {
                       <tr>
                         <th>Código</th>
                         <th>Descrição</th>
-                        {this.props.database == 'services' ? null : <th>Disp.</th>}
+                        {this.props.database != 'accessories' ? null : <th>Disp.</th>}
                         <th style={{visibility: "hidden"}}></th>
                       </tr>
                     </thead>
@@ -180,4 +188,8 @@ export default class ProductSelection extends React.Component {
         </ReactModal>
       )
   }
+}
+
+class ModularScreen extends React.Component {
+
 }

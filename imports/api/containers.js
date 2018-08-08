@@ -1,38 +1,69 @@
 import { Mongo } from 'meteor/mongo';
+import { Meteor } from 'meteor/meteor';
 
-export const ContainersModular = new Mongo.Collection('containersModular');
+export const Containers = new Mongo.Collection('containers');
 
 if(Meteor.isServer) {
 
-  Meteor.publish('containersModularPub', () => {
-    return ContainersModular.find();
+  Meteor.publish('containersPub', () => {
+    return Containers.find();
   })
 
-  ContainersModular.remove({});
+  Containers.remove({});
 
-  ContainersFixed.insert({
+  Containers.insert({
     _id: "0000",
-    description: "Loca 300 Black",
-    type: "modular",
+    description: "Loca 300",
+    type: "fixed",
     price: 600,
-    modules: [], //_ids of the modules that it uses
-    history: [],
-    visible: true
+    status: "available", //available, maintenance, rented, inactive
+    restitution: 50000,
+    place: 0003, //_id of place
+    images: [],
+    observations: "Porta invertida",
+    history: []
   });
-  ContainersFixed.insert({
+  Containers.insert({
     _id: "0001",
-    description: "Loca 600 Black",
-    price: 600,
-    modules: [], //_ids of the modules that it uses
-    history: [],
-    visible: true
+    description: "Loca 600",
+    type: "fixed",
+    price: 1200,
+    status: "rented", //available, maintenance, rented, inactive
+    restitution: 50000,
+    place: 0002, //_id of place
+    images: [],
+    observations: "Porta invertida",
+    history: []
+  });
+  Containers.insert({
+    _id: "0002",
+    description: "Loca 600",
+    type: "fixed",
+    price: 1200,
+    status: "available", //available, maintenance, rented, inactive
+    restitution: 50000,
+    place: 0002, //_id of place
+    images: [],
+    observations: "Porta invertida",
+    history: []
+  });
+  Containers.insert({
+    _id: "0003",
+    description: "Loca 600 D Black",
+    type: "modular",
+    status: "available",
+    price: 1800,
+    restitution: 50000,
+    assembled: 0,
+    modules: [],
+    history: []
   });
 }
 
   Meteor.methods({
-    'ContainersModular.insert'(state) {
+    'Containers.insert'(state) {
 
-      const _id = ContainersModular.find().count().toString().padStart(4, '0');
+      const _id = Containers.find().count().toString().padStart(4, '0');
 
       let type = state.formType;
       let observations = state.observations;
@@ -49,7 +80,7 @@ if(Meteor.isServer) {
         contacts[i] = JSON.parse(JSON.stringify(contact));
       })
 
-      ContainersModular.insert({
+      Containers.insert({
         _id,
         clientName,
         type,
@@ -62,9 +93,9 @@ if(Meteor.isServer) {
       });
     },
 
-    'ContainersModular.hideContact'(_id, contactId) {
+    'Containers.hideContact'(_id, contactId) {
 
-      let contacts = ContainersModular.find({ _id }).fetch()[0].contacts;
+      let contacts = Containers.find({ _id }).fetch()[0].contacts;
 
       let contactToUpdate = contacts.find((element) => {
         return element._id === contactId;
@@ -72,12 +103,12 @@ if(Meteor.isServer) {
 
       contactToUpdate.visible = false;
 
-      ContainersModular.update({ _id }, { $set: { contacts } });
+      Containers.update({ _id }, { $set: { contacts } });
     },
 
-    'ContainersModular.update'(_id, state) {
+    'Containers.update'(_id, state) {
 
-      var contacts = ContainersModular.find({_id}).fetch()[0].contacts;
+      var contacts = Containers.find({_id}).fetch()[0].contacts;
       var newContacts = [];
 
       for (var i = 0; i < state.contactInformation.length; i++) {
@@ -98,7 +129,7 @@ if(Meteor.isServer) {
         contacts.push(newContacts[i]);
       }
 
-      ContainersModular.update({ _id }, { $set: {
+      Containers.update({ _id }, { $set: {
         clientName: state.formType == 'company' ? state.clientName : state.contactInformation[0].contactName,
         cnpj: state.cnpj,
         officialName: state.officialName,

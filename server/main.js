@@ -5,8 +5,7 @@ import '../imports/api/categories';
 import '../imports/api/pages';
 
 import '../imports/api/services';
-import '../imports/api/containers-fixed';
-import '../imports/api/containers-modular';
+import '../imports/api/containers';
 import '../imports/api/modules';
 
 import '../imports/api/clients';

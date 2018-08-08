@@ -10,7 +10,7 @@ if(Meteor.isServer) {
 
   Modules.remove({});
 
-  ContainersFixed.insert({
+  Modules.insert({
     _id: "0000",
     description: "Loca 300 Black",
     price: 600,
@@ -18,7 +18,7 @@ if(Meteor.isServer) {
     history: [],
     visible: true
   });
-  ContainersFixed.insert({
+  Modules.insert({
     _id: "0001",
     description: "Loca 600 Black",
     price: 600,
