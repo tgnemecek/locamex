@@ -8,6 +8,7 @@ import CustomInput from './CustomInput';
 
 import { Containers } from '../api/containers';
 import { Services } from '../api/services';
+import { Modules } from '../api/modules';
 
 export default class ProductSelection extends React.Component {
   constructor(props) {
@@ -19,7 +20,7 @@ export default class ProductSelection extends React.Component {
       dbName: '',
       addedItems: this.props.addedItems ? JSON.parse(JSON.stringify(this.props.addedItems)) : [],
       modularScreenOpen: false,
-      modularItemId: ''
+      moduleObj: ''
     }
     switch (this.props.database) {
       case 'services':
@@ -68,13 +69,11 @@ export default class ProductSelection extends React.Component {
   addItem = (e) => {
     var addedItems = this.state.addedItems;
     var value = e.target.value;
-    for (var i = 0; i < addedItems.length; i++) {
-      if (this.state.fullDatabase[value].type == 'modular') {
-        this.setState({ modularScreenOpen: true, modularItemId: value });
-        return;
-      }
-      if (addedItems[i]._id == this.state.fullDatabase[value]._id) {
-        return;
+    if (this.state.fullDatabase[value].type == 'modular') {
+      this.setState({ modularScreenOpen: true, moduleObj: this.state.fullDatabase[value] });
+    } else {
+      for (var i = 0; i < addedItems.length; i++) {
+        if (addedItems[i]._id == this.state.fullDatabase[value]._id) return;
       }
     }
     addedItems.push(this.state.fullDatabase[value]);
@@ -145,6 +144,7 @@ export default class ProductSelection extends React.Component {
                 <h3>{this.title}</h3>
               </div>
               <div className="product-selection__body">
+                {this.state.modularScreenOpen ? <ModularScreen container={this.state.moduleObj}/> : null}
                 <div className="product-selection__database">
                   <SearchBar
                     database={this.state.fullDatabase}
@@ -191,5 +191,66 @@ export default class ProductSelection extends React.Component {
 }
 
 class ModularScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      database: []
+    }
+  }
 
+  componentDidMount() {
+    this.clientsTracker = Tracker.autorun(() => {
+      Meteor.subscribe('modulesPub');
+      var preDatabase = Modules.find().fetch();
+      var database = [];
+      preDatabase.forEach((item) => {
+        if (this.props.container.allowedModules.includes(item._id)) {
+          database.push(item);
+        }
+      })
+      this.setState({ database });
+    })
+  }
+
+  renderBody = () => {
+    return this.state.database.map((module, i) => {
+      return (
+        <tr key={i}>
+          <td>{module._id}</td>
+          <td>{module.description}</td>
+          <td><CustomInput type="number" max={module.quantity}/></td>
+          <td>{module.quantity}</td>
+        </tr>
+      )
+    })
+  }
+
+  render() {
+    return(
+      <div className="boxed-view boxed-view--modal">
+        <div className="boxed-view__box">
+          <h3>Montagem de Container Modular:</h3>
+          <div>
+            <table className="table table--modular-screen">
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Componentes</th>
+                  <th>Qtd.</th>
+                  <th>Disp.</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.renderBody()}
+              </tbody>
+            </table>
+          </div>
+          <div className="product-selection__footer">
+            <button type="button" className="button button--secondary" onClick={this.saveEdits}>Voltar</button>
+            <button type="button" className="button button--primary" onClick={this.saveEdits}>Adicionar</button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 }

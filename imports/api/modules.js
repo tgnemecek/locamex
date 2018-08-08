@@ -12,18 +12,23 @@ if(Meteor.isServer) {
 
   Modules.insert({
     _id: "0000",
-    description: "Loca 300 Black",
-    price: 600,
-    modules: [], //_ids of the modules that it uses
-    history: [],
+    description: "Parede Branca",
+    quantity: 10,
+    available: 5,
     visible: true
   });
   Modules.insert({
     _id: "0001",
-    description: "Loca 600 Black",
-    price: 600,
-    modules: [], //_ids of the modules that it uses
-    history: [],
+    description: "Coluna Preta",
+    quantity: 12,
+    available: 10,
+    visible: true
+  });
+  Modules.insert({
+    _id: "0002",
+    description: "Coluna Galvanizada",
+    quantity: 132,
+    available: 100,
     visible: true
   });
 }
