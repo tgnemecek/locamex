@@ -35,6 +35,10 @@ a {
   color: black;
 }
 
+button {
+  cursor: pointer;
+}
+
 legend {
   font-size: $large-font-size;
   padding: 0 $space;

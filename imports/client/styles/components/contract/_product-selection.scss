@@ -93,7 +93,10 @@
   td:nth-child(4) {
     text-align: center !important;
     width: 40px;
-    input {width: 40px;}
+    input {
+      text-align: center;
+      width: 40px;
+    }
   }
   th:nth-child(5),
   td:nth-child(5) {

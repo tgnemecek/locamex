@@ -30,36 +30,10 @@ export default class Contract extends React.Component {
       deliveryAddress: this.props.deliveryAddress,
       billing: this.props.billing,
 
-      products: [{ //HARD-CODED
-        _id: '0000',
-        name: 'Container LOCA 610 RSTC',
-        price: 1500,
-        quantity: 2,
-        restitution: 30000
-      }, {
-        _id: '0055',
-        name: 'Container LOCA 300',
-        price: 500,
-        quantity: 3,
-        restitution: 20000
-      }],
-      services: [{
-        _id: '0010',
-        name: 'Movimentação',
-        price: 3000,
-        quantity: 2
-      }, {
-        _id: '0016',
-        name: 'Acoplamento',
-        price: 1000,
-        quantity: 2
-      }, {
-        _id: '0099',
-        name: 'Munck',
-        price: 900,
-        quantity: 1
-      }],
+      containers: [],
+      accessories: [],
       services: [],
+
       representatives: '',
 
       clientsDatabase: [],
@@ -324,7 +298,7 @@ export default class Contract extends React.Component {
           <div className="contract__body--middle">
             <div className="contract__list">
               <label onClick={this.toggleProductSelection}><strong>Containers:</strong></label>
-              <ContractList items={this.state.services} database="containers" onClick={this.toggleProductSelection}/>
+              <ContractList items={this.state.containers} database="containers" onClick={this.toggleProductSelection}/>
               {this.state.containerSelectionOpen ? <ProductSelection
                                                     database="containers"
                                                     addedItems={this.state.containers}
@@ -334,7 +308,7 @@ export default class Contract extends React.Component {
             </div>
             <div className="contract__list">
               <label onClick={this.toggleProductSelection}><strong>Acessórios:</strong></label>
-              <ContractList items={this.state.services} database="accessories" onClick={this.toggleProductSelection}/>
+              <ContractList items={this.state.accessories} database="accessories" onClick={this.toggleProductSelection}/>
               {this.state.accessoriesSelectionOpen ? <ProductSelection
                                                     database="accessories"
                                                     addedItems={this.state.accessories}
@@ -368,6 +342,19 @@ export default class Contract extends React.Component {
 
 class ContractList extends React.Component {
 
+  renderModular = (item) => {
+    var str = "(";
+    debugger;
+    item.allowedModules.forEach((module, i, array) => {
+      if (module.selected) {
+        if (i < (array.length - 1)) {
+          str += module.description + ": " + module.selected + ". ";
+        } else str += module.description + ": " + module.selected;
+      }
+    });
+    return str + ")";
+  }
+
   onClick = () => {
     this.props.onClick(this.props.database);
   }
@@ -377,7 +364,7 @@ class ContractList extends React.Component {
       return (
         <tr key={i}>
           <td>{item._id}</td>
-          <td>{item.description}</td>
+          <td>{item.description} {item.type == 'modular' ? this.renderModular(item) : null}</td>
           <td>{customTypes.format(item.price, "currency")}</td>
           <td>{item.quantity}</td>
         </tr>
