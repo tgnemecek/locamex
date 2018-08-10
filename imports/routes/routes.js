@@ -10,6 +10,9 @@ import AddService from '../ui/AddService';
 
 import ContractPage from '../ui/pages/ContractPage';
 import ListPage from '../ui/pages/ListPage';
+
+import TestPage from '../ui/TestPage';
+
 // import ListUsers from '../ui/pages/ListUsers';
 // import ListUserTypes from '../ui/pages/ListUserTypes';
 // import ListClients from '../ui/pages/ListClients';
@@ -54,6 +57,7 @@ export const routes = (
     <Route path="/listusers" component={ListUsers}/>
     <Route path="/listusertypes" component={ListUserTypes}/> */}
     <Route path="/listclients" component={ListClients}/>
+    <Route path="/test" component={TestPage}/>
     <Route path="*" component={NotFound}/>
   </Router>
 );

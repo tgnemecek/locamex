@@ -77,25 +77,25 @@ export default class ProductSelection extends React.Component {
     this.setState({ addedItems });
   }
 
-  // toggleModularScreen = (e) => {
-  //   var modularScreenOpen = !this.state.modularScreenOpen;
-  //   var index = e.target.value;
-  //   var addedItems = this.state.addedItems;
-  //   if (this.state.modularScreenOpen) {
-  //     this.setState({ modularScreenOpen, moduleObj: '' })
-  //   } else {
-  //     var moduleObj = this.state.fullDatabase[index];
-  //     for (var i = 0; i < addedItems.length; i++) {
-  //       if (addedItems[i].type == 'modular') {
-  //         for (var j = 0; j < addedItems[i].allowedModules.length; j++) {
-  //           if (this.state.moduleDatabase)
-  //           addedItems[i].allowedModules[j]. //FINISH THIS. THE PROBLEM IS THAT THE AVAILABLE # OF MODULES HAVE TO UPDATE AFTER EACH ADD/EDIT
-  //         }
-  //       }
-  //     }
-  //     this.setState({ modularScreenOpen, moduleObj });
-  //   }
-  // }
+  toggleModularScreen = (e) => {
+    var modularScreenOpen = !this.state.modularScreenOpen;
+    var index = e.target.value;
+    var addedItems = this.state.addedItems;
+    if (this.state.modularScreenOpen) {
+      this.setState({ modularScreenOpen, moduleObj: '' })
+    } else {
+      var moduleObj = this.state.fullDatabase[index];
+      for (var i = 0; i < addedItems.length; i++) {
+        if (addedItems[i].type == 'modular') {
+          for (var j = 0; j < addedItems[i].allowedModules.length; j++) {
+            if (this.state.moduleDatabase) {}
+            // addedItems[i].allowedModules[j]. //FINISH THIS. THE PROBLEM IS THAT THE AVAILABLE # OF MODULES HAVE TO UPDATE AFTER EACH ADD/EDIT
+          }
+        }
+      }
+      this.setState({ modularScreenOpen, moduleObj });
+    }
+  }
 
   removeItem = (e) => {
     var addedItems = this.state.addedItems;
@@ -168,12 +168,11 @@ export default class ProductSelection extends React.Component {
         break;
       }
     }
-      if (addedItems[i]._id == container._id) {
-        addedItems.splice(i, 1, container);
-        alreadyIncluded = true;
-        break;
-      }
-    }
+      // if (addedItems[i]._id == container._id) {
+      //   addedItems.splice(i, 1, container);
+      //   alreadyIncluded = true;
+      //   break;
+      // }
     if (!alreadyIncluded) addedItems.push(container);
     this.setState({ addedItems });
     this.toggleModularScreen(obj);
