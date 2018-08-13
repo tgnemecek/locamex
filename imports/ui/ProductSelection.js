@@ -56,25 +56,39 @@ export default class ProductSelection extends React.Component {
     })
   }
 
+  modifyModuleQuantity = (_id, quantity) => {
+    var moduleDatabase = this.state.moduleDatabase;
+    for (var i = 0; i < moduleDatabase.length; i++) {
+      if (moduleDatabase[i]._id == _id) {
+        moduleDatabase[i].quantity += quantity;
+      }
+    }
+  }
+
   renderDatabase = () => {
     return this.state.filteredDatabase.map((item, i, array) => {
       item.dbIndex = i;
-      return (
-        <tr key={i} className="product-selection__db-item">
-          <td>{item._id}</td>
-          <td>{item.description}</td>
-          {this.props.database != 'accessories' ? null : <td>{item.available}/{item.total}</td>}
-          <td><button value={i} onClick={item.type !== 'modular' ? this.addItem : this.toggleModularScreen}>►</button></td>
-        </tr>
-      )
+      if (!item.added) {
+        return (
+          <tr key={i} className="product-selection__db-item">
+            <td>{item._id}</td>
+            <td>{item.description}</td>
+            {this.props.database != 'accessories' ? null : <td>{item.available}/{item.total}</td>}
+            <td><button value={i} onClick={item.type !== 'modular' ? this.addItem : this.toggleModularScreen}>►</button></td>
+          </tr>
+        )
+      }
     })
   }
 
   addItem = (e) => {
     var addedItems = this.state.addedItems;
     var value = e.target.value;
-    addedItems.push(this.state.fullDatabase[value]);
-    this.setState({ addedItems });
+    var item = this.state.fullDatabase[value];
+    var filteredDatabase = this.state.filteredDatabase;
+    item.added = true;
+    addedItems.push(item);
+    this.setState({ addedItems, filteredDatabase });
   }
 
   toggleModularScreen = (e) => {
@@ -89,7 +103,7 @@ export default class ProductSelection extends React.Component {
         if (addedItems[i].type == 'modular') {
           for (var j = 0; j < addedItems[i].allowedModules.length; j++) {
             if (this.state.moduleDatabase) {}
-            // addedItems[i].allowedModules[j]. //FINISH THIS. THE PROBLEM IS THAT THE AVAILABLE # OF MODULES HAVE TO UPDATE AFTER EACH ADD/EDIT
+            // addedItems[i].allowedModules[j].
           }
         }
       }
@@ -99,7 +113,10 @@ export default class ProductSelection extends React.Component {
 
   removeItem = (e) => {
     var addedItems = this.state.addedItems;
-    addedItems.splice(this.state.fullDatabase[e.target.value], 1);
+    var item = this.state.fullDatabase[e.target.value];
+    var filteredDatabase = this.state.filteredDatabase;
+    filteredDatabase[item.dbIndex].added = false;
+    addedItems.splice(item, 1);
     this.setState({ addedItems });
   }
 

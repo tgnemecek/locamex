@@ -152,6 +152,13 @@ export default class Contract extends React.Component {
     this.forceUpdate();
   }
 
+  totalValue = () => {
+    var containers = this.state.containers;
+    var services = this.state.services;
+    var accessories = this.state.accessories;
+    return containers.concat(services, accessories);
+  }
+
   toggleProductSelection = (database) => {
     if (this.state.containerSelectionOpen || this.state.accessoriesSelectionOpen || this.state.servicesSelectionOpen) {
       this.setState({ containerSelectionOpen: false });
@@ -210,6 +217,7 @@ export default class Contract extends React.Component {
             {this.state.billingOpen ? <Billing
                                               closeBilling={this.toggleBilling}
                                               contractState={this.state}
+                                              totalValue={this.totalValue()}
                                               /> : null}
             <button>✖</button>
           </div>
@@ -592,11 +600,11 @@ class Billing extends React.Component {
       calendarOpen: false,
       startDate: new Date()
     }
-    this.totalValue = this.props.contractState.products.reduce((acc, current) => {
+    this.totalValue = this.props.totalValue.length ? this.props.totalValue.reduce((acc, current) => {
       return {
         price: acc.price + current.price
       }
-    }).price;
+    }).price : 0;
     this.inputValues = [];
   }
 
