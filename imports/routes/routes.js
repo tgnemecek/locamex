@@ -2,16 +2,17 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { Router, Route, browserHistory } from 'react-router';
 
-import Login from '../ui/Login';
-import Signup from '../ui/Signup';
-import Dashboard from '../ui/Dashboard';
-import NotFound from '../ui/NotFound';
-import AddService from '../ui/AddService';
+import Test from '../scenes/Test/index';
+import NotFound from '../scenes/NotFound/index';
+import Login from '../scenes/Login/index';
+import Contract from '../scenes/Contract/index';
 
-import ContractPage from '../ui/pages/ContractPage';
-import ListPage from '../ui/pages/ListPage';
+// import Signup from '../ui/Signup';
+// import Dashboard from '../ui/Dashboard';
+// import AddService from '../ui/AddService';
+//
 
-import TestPage from '../ui/TestPage';
+// import ListPage from '../ui/pages/ListPage';
 
 // import ListUsers from '../ui/pages/ListUsers';
 // import ListUserTypes from '../ui/pages/ListUserTypes';
@@ -49,15 +50,15 @@ const ListClients = (props) => { return <ListPage type="clients"/> };
 
 export const routes = (
   <Router history={browserHistory}>
-    <Route path="/" component={Login} onEnter={onEnterPublicPage}/>
-    <Route path="/signup" component={Signup} onEnter={onEnterPublicPage}/>
-    <Route path="/dashboard" component={Dashboard} onEnter={onEnterPrivatePage}/>
-    <Route path="/contract/:contractId" component={ContractPage}/>
+    {/* <Route path="/signup" component={Signup} onEnter={onEnterPublicPage}/>
+    <Route path="/dashboard" component={Dashboard} onEnter={onEnterPrivatePage}/> */}
     {/* <Route path="/listservices" component={ListServices}/>
     <Route path="/listusers" component={ListUsers}/>
     <Route path="/listusertypes" component={ListUserTypes}/> */}
-    <Route path="/listclients" component={ListClients}/>
-    <Route path="/test" component={TestPage}/>
+    {/* <Route path="/listclients" component={ListClients}/> */}
+    <Route path="/test" component={Test}/>
+    <Route path="/" component={Login} onEnter={onEnterPublicPage}/>
+    <Route path="/contract/:contractId" component={Contract}/>
     <Route path="*" component={NotFound}/>
   </Router>
 );

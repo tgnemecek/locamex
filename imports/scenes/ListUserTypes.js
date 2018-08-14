@@ -2,7 +2,7 @@
 // import React from 'react';
 // import { Meteor } from 'meteor/meteor';
 //
-// import customTypes from '../startup/custom-types';
+// import customTypes from '/imports/startup/custom-types';
 // import PrivateHeader from './PrivateHeader';
 // import { UserTypes } from '../api/user-types';
 // import { Pages } from '../api/pages';

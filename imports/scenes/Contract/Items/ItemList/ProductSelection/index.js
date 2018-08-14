@@ -2,13 +2,13 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import ReactModal from 'react-modal';
 
-import customTypes from '../startup/custom-types';
-import SearchBar from './SearchBar';
-import CustomInput from './CustomInput';
+import customTypes from '/imports/startup/custom-types';
+import SearchBar from '/imports/components/SearchBar/index';
+import CustomInput from '/imports/components/CustomInput/index';
 
-import { Containers } from '../api/containers';
-import { Services } from '../api/services';
-import { Modules } from '../api/modules';
+import { Containers } from '/imports/api/containers';
+import { Services } from '/imports/api/services';
+import { Modules } from '/imports/api/modules';
 
 export default class ProductSelection extends React.Component {
   constructor(props) {
@@ -197,67 +197,70 @@ export default class ProductSelection extends React.Component {
 
   render() {
       return (
-        <ReactModal
-          isOpen={true}
-          contentLabel="Emitir Documentos"
-          appElement={document.body}
-          onRequestClose={this.props.closeProductSelection}
-          className="product-selection"
-          overlayClassName="boxed-view boxed-view--modal"
-          >
-            <div>
-              <button onClick={this.props.closeProductSelection} className="button--close-box">✖</button>
-              <div className="product-selection__header">
-                <h3>{this.title}</h3>
-              </div>
-              <div className="product-selection__body">
-                {this.state.modularScreenOpen ? <ModularScreen
-                                                  closeModularScreen={this.toggleModularScreen}
-                                                  moduleDatabase={this.state.moduleDatabase}
-                                                  container={this.state.moduleObj}
-                                                  saveEdits={this.addModular}
-                                                  /> : null}
-                <div className="product-selection__database">
-                  <SearchBar
-                    database={this.state.fullDatabase}
-                    options={this.searchOptions}
-                    searchReturn={this.searchReturn}/>
-                  <table className="table table--product-selection--database">
-                    <thead>
-                      <tr>
-                        <th>Código</th>
-                        <th>Descrição</th>
-                        {this.props.database != 'accessories' ? null : <th>Disp.</th>}
-                        <th style={{visibility: "hidden"}}></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {this.renderDatabase()}
-                    </tbody>
-                  </table>
-                </div>
-                <div className="product-selection__contract">
-                  <label>Itens Adicionados no Contrato:</label>
-                  <table className="table table--product-selection--contract">
-                    <thead>
-                      <tr>
-                        <th>Código</th>
-                        <th>Descrição</th>
-                        <th>Valor</th>
-                        <th>Qtd.</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {this.renderAddedItems()}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-              <div className="product-selection__footer">
-                <button type="button" className="button button--primary" onClick={this.saveEdits}>Salvar</button>
-              </div>
-            </div>
-        </ReactModal>
+        <div>
+          AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        </div>
+        // <ReactModal
+        //   isOpen={true}
+        //   contentLabel="Emitir Documentos"
+        //   appElement={document.body}
+        //   onRequestClose={this.props.closeProductSelection}
+        //   className="product-selection"
+        //   overlayClassName="boxed-view boxed-view--modal"
+        //   >
+        //     <div>
+        //       <button onClick={this.props.closeProductSelection} className="button--close-box">✖</button>
+        //       <div className="product-selection__header">
+        //         <h3>{this.title}</h3>
+        //       </div>
+        //       <div className="product-selection__body">
+        //         {this.state.modularScreenOpen ? <ModularScreen
+        //                                           closeModularScreen={this.toggleModularScreen}
+        //                                           moduleDatabase={this.state.moduleDatabase}
+        //                                           container={this.state.moduleObj}
+        //                                           saveEdits={this.addModular}
+        //                                           /> : null}
+        //         <div className="product-selection__database">
+        //           <SearchBar
+        //             database={this.state.fullDatabase}
+        //             options={this.searchOptions}
+        //             searchReturn={this.searchReturn}/>
+        //           <table className="table table--product-selection--database">
+        //             <thead>
+        //               <tr>
+        //                 <th>Código</th>
+        //                 <th>Descrição</th>
+        //                 {this.props.database != 'accessories' ? null : <th>Disp.</th>}
+        //                 <th style={{visibility: "hidden"}}></th>
+        //               </tr>
+        //             </thead>
+        //             <tbody>
+        //               {this.renderDatabase()}
+        //             </tbody>
+        //           </table>
+        //         </div>
+        //         <div className="product-selection__contract">
+        //           <label>Itens Adicionados no Contrato:</label>
+        //           <table className="table table--product-selection--contract">
+        //             <thead>
+        //               <tr>
+        //                 <th>Código</th>
+        //                 <th>Descrição</th>
+        //                 <th>Valor</th>
+        //                 <th>Qtd.</th>
+        //               </tr>
+        //             </thead>
+        //             <tbody>
+        //               {this.renderAddedItems()}
+        //             </tbody>
+        //           </table>
+        //         </div>
+        //       </div>
+        //       <div className="product-selection__footer">
+        //         <button type="button" className="button button--primary" onClick={this.saveEdits}>Salvar</button>
+        //       </div>
+        //     </div>
+        // </ReactModal>
       )
   }
 }

@@ -142,6 +142,12 @@ export default class customTypes {
     return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
   }
 
+  static deepCopy = (input) => {
+    if (Array.isArray(input) || typeof(input) == 'object') {
+      return JSON.parse(JSON.stringify(input));
+    } else throw new Error('invalid-type. ' + typeof(input) + ' is not accepted' );
+  }
+
   static getRef = (object, i) => {
     //This is used to get a specific Ref when there's more than one DOM element associated to a single Ref
     //If i is undefined, it returns the whole array or the first element if the array has length == 1

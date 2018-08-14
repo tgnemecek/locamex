@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 
-import customTypes from '../startup/custom-types';
+import customTypes from '/imports/startup/custom-types';
 
 export default class SearchBar extends React.Component {
   constructor(props) {

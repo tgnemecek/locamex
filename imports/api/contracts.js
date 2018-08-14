@@ -30,7 +30,9 @@ if(Meteor.isServer) {
       district: "Brooklin Paulista",
       zip: 04621010
     },
-    products: [{_id: "0000", quantity: 1}, {_id: "0001", quantity: 1}]
+    containers: [{_id: "0000", quantity: 1}, {_id: "0001", quantity: 1}],
+    accessories: [],
+    services: []
   });
 }
 

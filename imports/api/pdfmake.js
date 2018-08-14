@@ -1,7 +1,7 @@
 var pdfmake = require('pdfmake/build/pdfmake');
 var vfs_fonts = require('pdfmake/build/vfs_fonts');
 
-import customTypes from '../startup/custom-types';
+import customTypes from '/imports/startup/custom-types';
 import moment from 'moment';
 
 export default function createPdf(state, seller, representatives) {

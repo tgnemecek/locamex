@@ -3,7 +3,7 @@ import ReactModal from 'react-modal';
 import "babel-polyfill";
 
 import { Services } from '../api/services';
-import customTypes from '../startup/custom-types';
+import customTypes from '/imports/startup/custom-types';
 
 export default class AddService extends React.Component {
 

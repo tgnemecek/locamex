@@ -2,7 +2,7 @@ import ReactModal from 'react-modal';
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 
-import customTypes from '../startup/custom-types';
+import customTypes from '/imports/startup/custom-types';
 
 import CustomInput from './CustomInput';
 import ConfirmationMessage from './ConfirmationMessage';
