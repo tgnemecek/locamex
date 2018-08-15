@@ -91,7 +91,7 @@ if(Meteor.isServer) {
       let contacts = [];
 
       state.contactInformation.forEach((contact, i) => {
-        contacts[i] = JSON.parse(JSON.stringify(contact));
+        contacts[i] = customTypes.deepCopy(contact);
       })
 
       Clients.insert({

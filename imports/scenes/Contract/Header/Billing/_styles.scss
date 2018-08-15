@@ -1,13 +1,5 @@
 .billing {
-  background-color: $boxed-view-bg;
-  position: relative;
-  width: 900px;
-  padding: 2.4rem;
-  text-align: center;
-  h3 {
-    margin-bottom: $space;
-  }
-  .billing__body > div {
+  > div {
     margin-bottom: $space;
   }
   .billing__item {
@@ -24,11 +16,6 @@
   }
   label {
     cursor: pointer;
-  }
-  .billing__footer {
-    margin-top: 10px;
-    width: 100%;
-    button {width: 100%;}
   }
 }
 

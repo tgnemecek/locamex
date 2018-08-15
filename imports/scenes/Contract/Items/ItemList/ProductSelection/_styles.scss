@@ -1,0 +1,8 @@
+@import './AddedItemsSide/styles';
+@import './DatabaseSide/styles';
+@import './ModularScreen/styles';
+
+.product-selection {
+  display: flex;
+  justify-content: space-between;
+}

@@ -33,8 +33,8 @@ export default class Information extends React.Component {
     })
   }
 
-  handleChangeAddress = (name, value) => {
-    this.state.deliveryAddress[name] = value;
+  handleChangeAddress = (e) => {
+    this.state.deliveryAddress[e.target.name] = e.target.value;
     this.forceUpdate();
   }
 

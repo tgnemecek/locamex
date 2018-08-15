@@ -7,7 +7,7 @@ export default class SearchBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      option: 'all',
+      options: this.props.hiddenOption ? this.props.hiddenOption : 'all',
       value: ''
     }
   }
@@ -17,12 +17,12 @@ export default class SearchBar extends React.Component {
   }
 
   onSelect = (e) => {
-    this.setState({option: e.target.value});
+    this.setState({options: e.target.value});
   }
 
   renderOptions = () => {
-    return this.props.options.map((option, i) => {
-      return <option key={i} value={option.value}>{option.title}</option>
+    return this.props.options.map((options, i) => {
+      return <options key={i} value={options.value}>{options.title}</options>
     })
   }
 
@@ -35,11 +35,25 @@ export default class SearchBar extends React.Component {
     }
 
     var value = makeEqual(this.state.value);
-    let database = this.props.database;
-    let result = [];
+    var database = this.props.database;
+    var options = this.state.options;
+    var result = [];
 
     function makeEqual(str) {
       return customTypes.removeSpecialChars(str, /[\.\/\-\(\) ]/g).toUpperCase();
+    }
+
+    function compareOption(key) {
+      var res = false;
+      if (options == 'all') return true;
+      if (typeof(options) == 'string') {
+        res = options == key ? true : false;
+      } else if (Array.isArray(options)) {
+        for (var i = 0; i < options.length; i++) {
+          if (options[i] == key) return true;
+        }
+      }
+      return res;
     }
 
     function compare(keyValue) {
@@ -50,7 +64,10 @@ export default class SearchBar extends React.Component {
       for (let key of Object.keys(object)) {
         if (Array.isArray(object[key])) {
           return searchInsideArray(object[key]);
-        } else if (compare(object[key])) return true;
+        } else {
+          if (!compareOption(key)) continue;
+          if (compare(object[key])) return true;
+        }
       }
       return false;
     }
@@ -77,8 +94,8 @@ export default class SearchBar extends React.Component {
     return (
       <form className="search-bar">
         {this.props.options ? <div className="search-bar__block">
-          <select value={this.state.option} onChange={this.onSelect}>
-            <option value="all">Todos</option>
+          <select value={this.state.options} onChange={this.onSelect}>
+            <options value="all">Todos</options>
             {this.renderOptions()}
           </select>
         </div> : null}

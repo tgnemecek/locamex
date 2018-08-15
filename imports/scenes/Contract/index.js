@@ -43,22 +43,24 @@ export default class Contract extends React.Component {
       return (
         <div>
           <PrivateHeader title="Contrato"/>
-          <form className="contract">
-            <Header contract={this.state.contract}/>
-            <div className="contract__body">
-              <Information contract={this.state.contract}/>
-              <Items contract={this.state.contract}/>
-              <div className="contract__body--bottom">
-                <FooterButtons buttons={[
-                  {text: "Salvar Edições", className: "button--secondary", onClick: console.log('a')},
-                  {text: "Ativar Contrato", className: "button--primary", onClick: console.log('b')},
-                ]}/>
-                <div>
-                  <p>Contrato criado dia 12/12/2018</p>
+            <div className="page-content">
+              <div className="contract">
+                <Header contract={this.state.contract}/>
+                <div className="contract__body">
+                  <Information contract={this.state.contract}/>
+                  <Items contract={this.state.contract}/>
+                  <div className="contract__body--bottom">
+                    <FooterButtons buttons={[
+                      {text: "Salvar Edições", className: "button--secondary", onClick: () => {}},
+                      {text: "Ativar Contrato", className: "button--primary", onClick: () => {}},
+                    ]}/>
+                    <div>
+                      <p>Contrato criado dia 12/12/2018</p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </form>
         </div>
       )
     } else return null;

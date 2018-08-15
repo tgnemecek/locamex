@@ -1,6 +1,6 @@
 import React  from 'react';
-import ReactModal from 'react-modal';
 import moment from 'moment';
+import Box from '/imports/components/Box/index';
 
 export default class Calendar extends React.Component {
 
@@ -84,16 +84,8 @@ export default class Calendar extends React.Component {
 
   render() {
       return (
-        <ReactModal
-          isOpen={true}
-          contentLabel="Calendário"
-          appElement={document.body}
-          onRequestClose={this.props.closeCalendar}
-          className="calendar__box"
-          overlayClassName="boxed-view boxed-view--modal"
-          >
+        <Box closeBox={this.props.closeCalendar}>
             <div>
-              <button onClick={this.props.closeCalendar} className="button--close-box">✖</button>
               <div className="calendar__header">
                 <button value={-1} onClick={this.changeMonth}>◄</button>
                 <h3>{moment().month(this.state.monthIndex).format('MMMM') + "/" + this.state.yearIndex}</h3>
@@ -117,7 +109,7 @@ export default class Calendar extends React.Component {
                 <button type="button" className="button button--primary" onClick={this.saveEdits}>OK</button>
               </div>
             </div>
-        </ReactModal>
+        </Box>
       )
   }
 }

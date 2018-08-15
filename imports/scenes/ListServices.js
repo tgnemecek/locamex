@@ -3,7 +3,7 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 
 import { Clients } from '../../api/clients';
-
+import customTypes from '/imports/startup/custom-types';
 import PrivateHeader from '../PrivateHeader';
 import SearchBar from '../SearchBar';
 import List from '../List';
@@ -47,7 +47,7 @@ export default class ListServices extends React.Component {
   }
 
   sortItems = (value, order) => {
-    var sortedDatabase = JSON.parse(JSON.stringify(this.state.filteredDatabase));
+    var sortedDatabase = customTypes.deepCopy(this.state.filteredDatabase);
 
     sortedDatabase.sort((a, b) => {
       if (a[value] < b[value]) return order ? -1 : 1;

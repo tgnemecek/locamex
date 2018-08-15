@@ -1,5 +1,7 @@
 import React from 'react';
-import ReactModal from 'react-modal';
+
+import Box from '/imports/components/Box/index';
+import FooterButtons from '/imports/components/FooterButtons/index';
 
 export default class Observations extends React.Component {
   constructor(props) {
@@ -21,27 +23,17 @@ export default class Observations extends React.Component {
 
   render() {
       return (
-        <ReactModal
-          isOpen={true}
-          contentLabel="Observações"
-          appElement={document.body}
-          onRequestClose={this.props.toggleWindow}
-          className="observations"
-          overlayClassName="boxed-view boxed-view--modal"
-          >
+        <Box
+          title="Observações"
+          closeBox={this.props.toggleWindow}
+          width="400px">
             <div>
-              <button onClick={this.props.toggleWindow} className="button--close-box">✖</button>
-              <div className="observations__header">
-                <h3>Observações:</h3>
-              </div>
               <div className="observations__body">
                 <textarea value={this.state.observations} onChange={this.onChange}/>
               </div>
-              <div className="observations__footer">
-                <button type="button" className="button button--primary" onClick={this.saveEdits}>OK</button>
-              </div>
+              <FooterButtons buttons={[{text: "Salvar Edições", onClick: () => this.saveEdits()}]}/>
             </div>
-        </ReactModal>
+        </Box>
       )
   }
 }

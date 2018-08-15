@@ -1,4 +1,5 @@
 import { Mongo } from 'meteor/mongo';
+import customTypes from '/imports/startup/custom-types';
 
 export const Contracts = new Mongo.Collection('contracts');
 
@@ -30,7 +31,7 @@ if(Meteor.isServer) {
       district: "Brooklin Paulista",
       zip: 04621010
     },
-    containers: [{_id: "0000", quantity: 1}, {_id: "0001", quantity: 1}],
+    containers: [],
     accessories: [],
     services: []
   });
@@ -54,7 +55,7 @@ if(Meteor.isServer) {
       let contacts = [];
 
       state.contactInformation.forEach((contact, i) => {
-        contacts[i] = JSON.parse(JSON.stringify(contact));
+        contacts[i] = customTypes.deepCopy(contact);
       })
 
       Contracts.insert({

@@ -4,6 +4,9 @@ import moment from 'moment';
 
 import customTypes from '/imports/startup/custom-types';
 import CustomInput from '/imports/components/CustomInput/index';
+import Calendar from '/imports/components/Calendar/index';
+import Box from '/imports/components/Box/index';
+import FooterButtons from '/imports/components/FooterButtons/index';
 
 export default class Billing extends React.Component {
   constructor(props) {
@@ -23,7 +26,7 @@ export default class Billing extends React.Component {
   }
 
   countPrices = (arr) => {
-    if (!arr) return 0;
+    if (arr.length == 0) return 0;
     return this.props.contract[arr].reduce((acc, current) => {
       return {
         price: acc.price + current.price
@@ -41,15 +44,9 @@ export default class Billing extends React.Component {
     this.setState({ equalDivision });
   }
 
-  inputFormat = (name, value, id, valid) => {
-    var charges = this.state.charges;
-    charges[name].price = value;
-    this.setState({ charges });
-  }
-
-  updateTable = (name, value) => {
-    value = Number(value);
-    var charges = JSON.parse(JSON.stringify(this.state.charges));
+  updateTable = (e) => {
+    var value = Number(e.target.value);
+    var charges = customTypes.deepCopy(this.state.charges);
     var newCharges = [];
     var difference = Math.abs(charges.length - value);
     if (value > charges.length) {
@@ -70,8 +67,8 @@ export default class Billing extends React.Component {
     }
   }
 
-  onChange = (name, value, id) => {
-    this.inputValues[name] = value;
+  onChange = (e) => {
+    this.inputValues[e.target.name] = e.target.value;
     var total = this.inputValues.reduce((acc, current) => acc + current);
     var difference = total - this.totalValue;
     this.setState({
@@ -132,20 +129,11 @@ export default class Billing extends React.Component {
 
   render() {
       return (
-        <ReactModal
-          isOpen={true}
-          contentLabel="Emitir Documentos"
-          appElement={document.body}
-          onRequestClose={this.props.toggleWindow}
-          className="billing"
-          overlayClassName="boxed-view boxed-view--modal"
-          >
-            <div>
-              <button onClick={this.props.toggleWindow} className="button--close-box">✖</button>
-              <div className="billing__header">
-                <h3>Tabela de Cobrança:</h3>
-              </div>
-              <div className="billing__body">
+        <Box
+          title="Tabela de Cobrança:"
+          width="1000px"
+          closeBox={this.props.toggleWindow}>
+              <div className="billing">
                 <div className="billing__item">
                   <label>Número de Cobranças:</label>
                   <CustomInput
@@ -192,11 +180,8 @@ export default class Billing extends React.Component {
                   </table>
                 </div>
               </div>
-              <div className="billing__footer">
-                <button type="button" className="button button--primary" onClick={this.saveEdits}>Salvar</button>
-              </div>
-            </div>
-        </ReactModal>
+              <FooterButtons buttons={[{text: "Salvar", onClick: () => this.saveEdits()}]}/>
+        </Box>
       )
   }
 }

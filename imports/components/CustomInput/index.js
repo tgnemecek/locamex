@@ -108,11 +108,19 @@ export default class CustomInput extends React.Component {
     }
     start = start + (displayValue.length - inputValue.length);
     end = end + (displayValue.length - inputValue.length);
+    var e = {
+      target: {
+        value: this.validateInput(exportValue),
+        name: this.props.name,
+        id: this.props.id,
+        valid: this.state.valid
+      }
+    };
     this.setState({
       displayValue,
       exportValue
     }, () => {
-      this.props.onChange(this.props.name, this.validateInput(exportValue), this.props.id, this.state.valid);
+      this.props.onChange(e);
       obj ? obj.setSelectionRange(start, end) : null;
     });
   }

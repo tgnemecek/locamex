@@ -1,5 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import { Meteor } from 'meteor/meteor';
+import customTypes from '/imports/startup/custom-types';
 
 export const Containers = new Mongo.Collection('containers');
 
@@ -15,6 +16,7 @@ if(Meteor.isServer) {
     _id: "0000",
     description: "Loca 300",
     type: "fixed",
+    available: 1,
     price: 600,
     status: "available", //available, maintenance, rented, inactive
     restitution: 50000,
@@ -77,7 +79,7 @@ if(Meteor.isServer) {
       let contacts = [];
 
       state.contactInformation.forEach((contact, i) => {
-        contacts[i] = JSON.parse(JSON.stringify(contact));
+        contacts[i] = customTypes.deepCopy(contact);
       })
 
       Containers.insert({

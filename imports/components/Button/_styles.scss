@@ -1,7 +1,3 @@
-.button__main-div {
-  margin-top: ($space /2);
-}
-
 .button {
   background-color: $button-bg;
   border: none;
@@ -10,20 +6,6 @@
   line-height: 1.2;
   padding: $input-spacing;
   text-transform: uppercase;
-}
-
-.button__column1of2 {
-  display: inline-block;
-  margin-top: ($space /2);
-  padding-right: ($space /2);
-  width: 50%;
-}
-
-.button__column2of2 {
-  display: inline-block;
-  margin-top: ($space /2);
-  padding-left: ($space /2);
-  width: 50%;
 }
 
 .button--header {
@@ -63,10 +45,6 @@
   padding: .3rem .8rem;
 }
 
-.button--primary {
-  border: 1px solid $brand-primary;
-}
-
 .button--secondary {
   background: $button-secondary-bg;
   border: 1px solid $button-secondary-border-color;
@@ -76,6 +54,13 @@
 .button--danger {
   background: $button-danger-bg;
   color: $button-danger-color;
+}
+
+.button--table-x {
+  padding: ($space /4);
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .button--link-text {

@@ -122,7 +122,6 @@ export default function createPdf(state, seller, representatives) {
       var footer = [
         [ {text: 'Valor Total do Pacote de Serviços:', colSpan: 4, alignment: 'right', bold: true}, '', '', '', calcTotal()]
       ];
-      console.log(allValues);
       return header.concat(body, footer);
     }
     return {table: {

@@ -50,8 +50,21 @@ export default class Items extends React.Component {
           <label onClick={this.toggleProductSelection}><strong>Containers:</strong></label>
           <ItemList
             contract={this.props.contract}
-            addedItems={this.props.contract.containers}
             database="containers"
+            onClick={this.toggleProductSelection}/>
+        </div>
+        <div className="contract__list">
+          <label onClick={this.toggleProductSelection}><strong>Acessórios:</strong></label>
+          <ItemList
+            contract={this.props.contract}
+            database="accessories"
+            onClick={this.toggleProductSelection}/>
+        </div>
+        <div className="contract__list">
+          <label onClick={this.toggleProductSelection}><strong>Serviços:</strong></label>
+          <ItemList
+            contract={this.props.contract}
+            database="services"
             onClick={this.toggleProductSelection}/>
         </div>
         {/* <div className="contract__list">

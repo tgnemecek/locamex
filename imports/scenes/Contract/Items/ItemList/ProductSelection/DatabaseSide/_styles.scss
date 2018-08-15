@@ -1,0 +1,47 @@
+.product-selection__database {
+  flex-grow: .8;
+  flex-basis: 1px;
+  margin-right: $space;
+}
+
+.table--product-selection--database {
+  display: block;
+  height: 500px;
+  overflow-y: auto;
+  font-size: $base-font-size;
+  th:nth-child(1),
+  td:nth-child(1) {
+    text-align: center !important;
+    min-width: 60px;
+  }
+  th:nth-child(2),
+  td:nth-child(2) {
+    text-align: left !important;
+    width: 100%;
+  }
+  th:nth-child(3),
+  td:nth-child(3) {
+    text-align: center;
+    min-width: 90px;
+  }
+  th:last-child,
+  td:last-child {
+    text-align: center !important;
+    min-width: 20px !important;
+    button {
+      padding: ($space /4);
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+  }
+  th, td {
+    padding: 5px 5px;
+  }
+  input {
+    font-size: $base-font-size;
+    width: 100%;
+    padding: 7px;
+    text-align: right;
+  }
+}
