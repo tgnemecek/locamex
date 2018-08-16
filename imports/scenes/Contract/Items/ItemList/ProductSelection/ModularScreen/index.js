@@ -16,12 +16,24 @@ export default class ModularScreen extends React.Component {
   }
 
   componentDidMount() {
-    var preDatabase = this.props.moduleDatabase;
+    var preDatabase = customTypes.deepCopy(this.props.moduleDatabase);
     var database = [];
-    this.props.container.allowedModules.forEach((module, i) => {
+    var container = this.props.container;
+    calculateModulesInitialValues = (_id) => {
+      var container = this.props.container;
+      var modules = container.modules;
+      for (var i = 0; i < modules.length; i++) {
+        if (modules[i]._id == _id) {
+          return modules[i].selected;
+        }
+      }
+    }
+    container.allowedModules.forEach((module, i) => {
       for (var j = 0; j < preDatabase.length; j++) {
-        if (preDatabase[j]._id == module._id) {
-          preDatabase[j].selected = module.selected;
+        if (preDatabase[j]._id == module) {
+          if (this.props.modularScreenType == 2) {
+            preDatabase[j].selected = calculateModulesInitialValues(preDatabase[j]._id);
+          } else preDatabase[j].selected = preDatabase[j].available > 0 ? 1 : 0;
           database.push(preDatabase[j]);
           break;
         }
@@ -30,12 +42,13 @@ export default class ModularScreen extends React.Component {
     this.setState({ database });
   }
 
-  changeQuantity = (name, quantity) => {
+  changeQuantity = (e) => {
+    var quantity = e.target.value;
     this.setState({ quantity });
   }
 
   calculateMax = () => {
-    var database = customTypes.deepCopy(this.state.database);
+    var database = this.state.database;
     var minorDivisible = 999;
     var division;
     for (var i = 0; i < database.length; i++) {
@@ -47,31 +60,40 @@ export default class ModularScreen extends React.Component {
   }
 
   onChange = (e) => {
-    this.state.database[e.target.name].selected = e.target.value;
+    var i = Number(e.target.name);
+    var value = Number(e.target.value);
     var quantity = 1;
-    this.setState({ quantity });
-    this.forceUpdate();
+    var database = customTypes.deepCopy(this.state.database);
+    database[i].selected = value;
+    this.setState({ database, quantity });
   }
 
-  addModular = () => {
-    var exportArray = [];
-    var container = this.props.container;
-    this.state.database.forEach((item) => {
-      if (item.selected != 0 && item.selected != undefined) {
-        exportArray.push(item);
-      }
+  saveEdits = () => {
+    var database = customTypes.deepCopy(this.state.database);
+    database.forEach((module) => {
+      if (module.selected) {
+        module.selected = module.selected * this.state.quantity;
+      } else module.selected = 0;
     })
-    this.props.saveEdits(container, exportArray);
+    this.props.addModular(database);
+  }
+
+  removeItem = () => {
+    this.props.toggleModularScreen();
   }
 
   renderBody = () => {
     return this.state.database.map((module, i) => {
-      function aaa() { return 1 };
       return (
         <tr key={i}>
           <td>{module._id}</td>
           <td>{module.description}</td>
-          <td><CustomInput type="number" max={module.available} name={i} value={module.selected} onChange={this.onChange}/></td>
+          <td><CustomInput
+                type="number"
+                max={module.available}
+                name={i}
+                value={this.state.database[i].selected}
+                onChange={this.onChange}/></td>
           <td>{module.available}</td>
         </tr>
       )
@@ -82,10 +104,10 @@ export default class ModularScreen extends React.Component {
     return(
       <Box
         title="Montagem de Container Modular:"
-        closeBox={this.props.closeModularScreen}>
+        closeBox={this.props.toggleModularScreen}>
         <div>
           <label>Quantidade:</label>
-          <CustomInput type="number" max={this.calculateMax()} value={this.state.quantity} onChange={this.changeQuantity}/>
+          <CustomInput type="number" min={1} max={this.calculateMax()} value={this.state.quantity} onChange={this.changeQuantity}/>
         </div>
         <table className="table table--modular-screen">
           <thead>
@@ -101,8 +123,8 @@ export default class ModularScreen extends React.Component {
           </tbody>
         </table>
         <FooterButtons buttons={[
-          {text: "Cancelar", className: "button--secondary", onClick: () => this.props.closeModularScreen()},
-          {text: "Salvar", onClick: () => this.props.addModular()}
+          {text: "Remover", className: "button--danger", onClick: () => this.props.removeItem()},
+          {text: "Salvar", onClick: () => this.saveEdits()}
         ]}/>
       </Box>
     )

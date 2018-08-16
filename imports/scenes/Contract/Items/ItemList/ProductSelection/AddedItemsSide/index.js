@@ -21,15 +21,21 @@ export default class AddedItemsSide extends React.Component {
           <td>{item._id}</td>
           <td>{item.description}</td>
           <td><CustomInput type="currency" name={i} value={item.price * 100} onChange={this.props.changePrice}/></td>
-          {this.props.database != 'containers' ? <td>{item.type !== 'modular' ? <CustomInput
-                                            type="number"
-                                            name={i}
-                                            value={item.quantity}
-                                            max={item.available}
-                                            onChange={this.props.changeQuantity}/>
-                                       : <button value={item._id} onClick={this.toggleModularScreen}>✎</button>}
-          </td>: null}
-          <td><button value={item._id} className="button--table-x" onClick={this.props.removeItem}>✖</button></td>
+          {this.props.database != 'containers' ?
+            <td>
+              <CustomInput
+                type="number"
+                name={i}
+                value={item.quantity}
+                max={item.available}
+                onChange={this.props.changeQuantity}/>
+            </td> : null
+          }
+          <td>{item.type !== 'modular' ?
+            <button value={item._id} className="button--table-x" onClick={this.props.removeItem}>✖</button>
+            :
+            <button name="addedItems" value={i} className="button--table-edit" onClick={this.props.toggleModularScreen}>✎</button>
+            }</td>
         </tr>
       )
     })

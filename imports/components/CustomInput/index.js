@@ -73,7 +73,7 @@ export default class CustomInput extends React.Component {
   formatValue = (inputValue, obj) => {
     let start = obj ? obj.selectionStart : 0;
     let end = obj ? obj.selectionEnd : 0;
-
+    if (inputValue == undefined) throw new Error('input undefined from ' + this.props.name);
     inputValue = inputValue.toString();
     let displayValue = inputValue;
     let exportValue = inputValue;
@@ -91,6 +91,7 @@ export default class CustomInput extends React.Component {
           break;
         case 'number':
           if (this.props.max && (Number(inputValue) > this.props.max)) inputValue = this.props.max;
+          if (this.props.min && (Number(inputValue) < this.props.min)) inputValue = this.props.min;
         case 'cpf':
         case 'cnpj':
         case 'phone':

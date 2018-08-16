@@ -63,6 +63,13 @@
   cursor: pointer;
 }
 
+.button--table-edit {
+  padding: ($space /4);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
 .button--link-text {
   background: none;
   padding: 0;

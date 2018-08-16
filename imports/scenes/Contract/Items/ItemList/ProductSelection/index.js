@@ -26,7 +26,7 @@ export default class ProductSelection extends React.Component {
       addedItems: this.props.addedItems ? customTypes.deepCopy(this.props.addedItems) : [],
       moduleDatabase: [],
       modularScreenOpen: false,
-      moduleObj: ''
+      modularContainer: ''
     }
     switch (this.props.database) {
       case 'services':
@@ -75,38 +75,36 @@ export default class ProductSelection extends React.Component {
   }
 
   addItem = (e) => {
-    var _id = e.target.value;
-    var filteredDatabase = this.state.filteredDatabase;
-    var addedItems = this.state.addedItems;
-
-    for (var i = 0; i < filteredDatabase.length; i++) {
-      if (filteredDatabase[i]._id == _id) {
-        filteredDatabase[i].added = true;
-        filteredDatabase[i].quantity = 1;
-        addedItems.push(filteredDatabase[i]);
-      }
-    }
+    var index = e.target.value;
+    var filteredDatabase = customTypes.deepCopy(this.state.filteredDatabase);
+    var addedItems = customTypes.deepCopy(this.state.addedItems);
+    filteredDatabase[index].added = true;
+    filteredDatabase[index].quantity = 1;
+    addedItems.push(filteredDatabase[index]);
     this.setState({ addedItems, filteredDatabase });
   }
 
   toggleModularScreen = (e) => {
-    var modularScreenOpen = !this.state.modularScreenOpen;
-    var index = e.target.value;
-    var addedItems = this.state.addedItems;
-    if (this.state.modularScreenOpen) {
-      this.setState({ modularScreenOpen, moduleObj: '' })
-    } else {
-      var moduleObj = this.state.fullDatabase[index];
-      for (var i = 0; i < addedItems.length; i++) {
-        if (addedItems[i].type == 'modular') {
-          for (var j = 0; j < addedItems[i].allowedModules.length; j++) {
-            if (this.state.moduleDatabase) {}
-            // addedItems[i].allowedModules[j].
-          }
-        }
-      }
-      this.setState({ modularScreenOpen, moduleObj });
+    var modularScreenOpen = 0;
+    var modularContainer = '';
+    if (!e) {
+      this.setState({ modularScreenOpen, modularContainer });
+      return;
     }
+    var index = e.target.value;
+    var requestFrom = e.target.name;
+    var filteredDatabase = this.state.filteredDatabase;
+    var addedItems = this.state.addedItems;
+    if (this.state.modularScreenOpen == 0) {
+      if (requestFrom == "database") {
+        modularScreenOpen = 1;
+        modularContainer = filteredDatabase[index];
+      } else if (requestFrom == "addedItems") {
+        modularScreenOpen = 2;
+        modularContainer = addedItems[index];
+      }
+    }
+    this.setState({ modularScreenOpen, modularContainer });
   }
 
   removeItem = (e) => {
@@ -150,36 +148,44 @@ export default class ProductSelection extends React.Component {
     var addedItems = this.state.addedItems;
     var newArray = [];
     addedItems.forEach((item) => {
-      if (item.quantity > 0 || item.type == 'modular') newArray.push(item); // REMOVE MODULAR REQUIREMENT, IN THE MOD.SCREEN, INSERT QUANTITY INPUT
+      if (item.quantity > 0 || item.type == 'modular') newArray.push(item);
     })
     this.props.saveEdits(newArray);
     this.props.closeProductSelection();
   }
 
-  addModular = (container, modulesArray) => {
-    var addedItems = this.state.addedItems;
-    var obj = {target: {value: ''}};
-    var alreadyIncluded = false;
-    var moduleDatabase = this.state.moduleDatabase;
-    container.allowedModules.forEach((module, i) => {
-      module.selected = modulesArray[i].selected;
-      module.description = modulesArray[i].description;
-    });
-    for (var i = 0; i < addedItems.length; i++) {
-      if (addedItems[i]._id == container._id) {
-        addedItems.splice(i, 1, container);
-        alreadyIncluded = true;
-        break;
+  addModular = (modulesArray) => {
+    var container = this.state.modularContainer;
+    var moduleDatabase = customTypes.deepCopy(this.state.moduleDatabase);
+    var addedItems = customTypes.deepCopy(this.state.addedItems);
+    this.toggleModularScreen();
+    for (var i = 0; i < modulesArray.length; i++) {
+      for (var j = 0; j < moduleDatabase.length; j++) {
+        if (moduleDatabase[j]._id == modulesArray[i]._id) {
+          moduleDatabase[j].available -= modulesArray[i].selected;
+          break;
+        }
       }
     }
-      // if (addedItems[i]._id == container._id) {
-      //   addedItems.splice(i, 1, container);
-      //   alreadyIncluded = true;
-      //   break;
-      // }
-    if (!alreadyIncluded) addedItems.push(container);
-    this.setState({ addedItems });
-    this.toggleModularScreen(obj);
+    container.modules = modulesArray;
+    addedItems.push(container);
+    this.setState({ moduleDatabase, addedItems });
+  }
+
+  removeModular = (index) => {
+    var addedItems = customTypes.deepCopy(this.state.addedItems);
+    var moduleDatabase = customTypes.deepCopy(this.state.moduleDatabase);
+    var modulesArray = addedItems[index].modules;
+    for (var i = 0; i < modulesArray.length; i++) {
+      for (var j = 0; j < moduleDatabase.length; j++) {
+        if (moduleDatabase[j]._id == modulesArray[i]._id) {
+          moduleDatabase[j].available += modulesArray[i].selected;
+          break;
+        }
+      }
+    }
+    addedItems.splice(index, 1);
+    this.setState({ moduleDatabase, addedItems });
   }
 
   render() {
@@ -201,13 +207,15 @@ export default class ProductSelection extends React.Component {
                 changeQuantity={this.changeQuantity}
                 addedItems={this.state.addedItems}
                 removeItem={this.removeItem}
-                />
-              {this.state.modularScreenOpen ? <ModularScreen
-                                                closeModularScreen={this.toggleModularScreen}
-                                                moduleDatabase={this.state.moduleDatabase}
-                                                container={this.state.moduleObj}
-                                                saveEdits={this.addModular}
-                                                /> : null}
+                toggleModularScreen={this.toggleModularScreen}/>
+              {this.state.modularScreenOpen > 0 ?
+                <ModularScreen
+                  modularScreenType={this.state.modularScreenOpen}
+                  toggleModularScreen={this.toggleModularScreen}
+                  moduleDatabase={this.state.moduleDatabase}
+                  container={this.state.modularContainer}
+                  addModular={this.addModular}/>
+              : null}
             </div>
             <FooterButtons buttons={[
               {text: "Voltar", className: "button--secondary", onClick: () => this.props.closeProductSelection()},
