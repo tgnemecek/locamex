@@ -7,6 +7,7 @@ import '../imports/api/pages';
 import '../imports/api/services';
 import '../imports/api/containers';
 import '../imports/api/modules';
+import '../imports/api/packs';
 
 import '../imports/api/clients';
 import '../imports/api/contracts';

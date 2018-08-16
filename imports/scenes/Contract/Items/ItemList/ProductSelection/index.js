@@ -25,7 +25,7 @@ export default class ProductSelection extends React.Component {
       dbName: '',
       addedItems: this.props.addedItems ? customTypes.deepCopy(this.props.addedItems) : [],
       moduleDatabase: [],
-      modularScreenOpen: false,
+      modularScreenOpen: 0,
       modularContainer: ''
     }
     switch (this.props.database) {
@@ -158,18 +158,27 @@ export default class ProductSelection extends React.Component {
     var container = this.state.modularContainer;
     var moduleDatabase = customTypes.deepCopy(this.state.moduleDatabase);
     var addedItems = customTypes.deepCopy(this.state.addedItems);
-    this.toggleModularScreen();
-    for (var i = 0; i < modulesArray.length; i++) {
-      for (var j = 0; j < moduleDatabase.length; j++) {
-        if (moduleDatabase[j]._id == modulesArray[i]._id) {
-          moduleDatabase[j].available -= modulesArray[i].selected;
-          break;
+    if (this.state.modularScreenOpen == 1) {
+      for (var i = 0; i < modulesArray.length; i++) {
+        for (var j = 0; j < moduleDatabase.length; j++) {
+          if (moduleDatabase[j]._id == modulesArray[i]._id) {
+            moduleDatabase[j].available -= modulesArray[i].selected;
+            break;
+          }
         }
       }
+      container.modules = modulesArray;
+      addedItems.push(container);
+      this.setState({ moduleDatabase, addedItems });
+    } else if (this.state.modularScreenOpen == 2) {
+      for (var i = 0; i < addedItems.length; i++) {
+        if (addedItems[i]._id == container[i]._id) {
+      }
+      container.modules = modulesArray;
+      addedItems.push(container);
+      this.setState({ moduleDatabase, addedItems });
     }
-    container.modules = modulesArray;
-    addedItems.push(container);
-    this.setState({ moduleDatabase, addedItems });
+    this.toggleModularScreen();
   }
 
   removeModular = (index) => {
@@ -210,11 +219,12 @@ export default class ProductSelection extends React.Component {
                 toggleModularScreen={this.toggleModularScreen}/>
               {this.state.modularScreenOpen > 0 ?
                 <ModularScreen
-                  modularScreenType={this.state.modularScreenOpen}
-                  toggleModularScreen={this.toggleModularScreen}
-                  moduleDatabase={this.state.moduleDatabase}
-                  container={this.state.modularContainer}
-                  addModular={this.addModular}/>
+                  // modularScreenType={this.state.modularScreenOpen}
+                  // toggleModularScreen={this.toggleModularScreen}
+                  // moduleDatabase={this.state.moduleDatabase}
+                  // container={this.state.modularContainer}
+                  // addModular={this.addModular}
+                />
               : null}
             </div>
             <FooterButtons buttons={[
