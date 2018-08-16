@@ -39,7 +39,7 @@ export default class ListServices extends React.Component {
   };
 
   componentDidMount() {
-    this.clientsTracker = Tracker.autorun(() => {
+    this.Tracker = Tracker.autorun(() => {
       Meteor.subscribe('servicesPub');
       var fullDatabase = Services.find().fetch();
       this.setState({ fullDatabase, filteredDatabase: fullDatabase });

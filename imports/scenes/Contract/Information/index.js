@@ -20,7 +20,7 @@ export default class Information extends React.Component {
   }
 
   componentDidMount() {
-    this.clientsTracker = Tracker.autorun(() => {
+    this.Tracker = Tracker.autorun(() => {
       Meteor.subscribe('clientsPub');
       var clientsDatabase = Clients.find().fetch();
       this.setState({ clientsDatabase });

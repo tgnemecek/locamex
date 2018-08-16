@@ -43,7 +43,7 @@ export default class ProductSelection extends React.Component {
   }
 
   componentDidMount() {
-    this.clientsTracker = Tracker.autorun(() => {
+    this.Tracker = Tracker.autorun(() => {
       Meteor.subscribe(this.state.pub);
       Meteor.subscribe('modulesPub');
       var fullDatabase = this.state.dbName.find().fetch();
@@ -137,7 +137,6 @@ export default class ProductSelection extends React.Component {
     this.setState({ addedItems });
   }
 
-
   searchReturn = (filteredDatabase) => {
     if (filteredDatabase) {
       this.setState({ filteredDatabase });
@@ -154,30 +153,45 @@ export default class ProductSelection extends React.Component {
     this.props.closeProductSelection();
   }
 
-  addModular = (modulesArray) => {
-    var container = this.state.modularContainer;
-    var moduleDatabase = customTypes.deepCopy(this.state.moduleDatabase);
+  addModular = (pack) => {
     var addedItems = customTypes.deepCopy(this.state.addedItems);
-    if (this.state.modularScreenOpen == 1) {
-      for (var i = 0; i < modulesArray.length; i++) {
-        for (var j = 0; j < moduleDatabase.length; j++) {
-          if (moduleDatabase[j]._id == modulesArray[i]._id) {
-            moduleDatabase[j].available -= modulesArray[i].selected;
-            break;
-          }
+    var moduleDatabase = customTypes.deepCopy(this.state.moduleDatabase);
+    var usedModules = pack.modules;
+    addedItems.push(pack);
+    for (var i = 0; i < usedModules.length; i++) {
+      for (var j = 0; j < moduleDatabase.length; j++) {
+        if (moduleDatabase[j]._id == usedModules[i]._id) {
+          moduleDatabase[j].available -= usedModules[i].selected;
+          break;
         }
       }
-      container.modules = modulesArray;
-      addedItems.push(container);
-      this.setState({ moduleDatabase, addedItems });
-    } else if (this.state.modularScreenOpen == 2) {
-      for (var i = 0; i < addedItems.length; i++) {
-        if (addedItems[i]._id == container[i]._id) {
-      }
-      container.modules = modulesArray;
-      addedItems.push(container);
-      this.setState({ moduleDatabase, addedItems });
     }
+    this.setState({ addedItems, moduleDatabase });
+    this.toggleModularScreen();
+  }
+
+  editModular = (pack) => {
+    var addedItems = customTypes.deepCopy(this.state.addedItems);
+    var moduleDatabase = customTypes.deepCopy(this.state.moduleDatabase);
+    var oldModules;
+    for (var i = 0; i < addedItems.length; i++) {
+      if (addedItems[i]._id == pack._id && addedItems[i].type == 'modular') {
+        oldModules = customTypes.deepCopy(addedItems[i].modules);
+        addedItems[i] = {...pack};
+        break;
+      }
+    }
+    var usedModules = pack.modules;
+    for (var i = 0; i < usedModules.length; i++) {
+      if (usedModules[i].selected == oldModules[i].selected) continue;
+      for (var j = 0; j < moduleDatabase.length; j++) {
+        if (moduleDatabase[j]._id == usedModules[i]._id) {
+          moduleDatabase[j].available += (modulesArray[i].selected - oldModules[i].selected);
+          break;
+        }
+      }
+    }
+    this.setState({ addedItems, moduleDatabase });
     this.toggleModularScreen();
   }
 
@@ -198,40 +212,41 @@ export default class ProductSelection extends React.Component {
   }
 
   render() {
-      return (
-        <Box
-          title={this.title}
-          closeBox={this.props.closeProductSelection}
-          width="1000px">
-            <div className="product-selection">
-              <DatabaseSide
-                database={this.state.filteredDatabase}
-                addItem={this.addItem}
-                fullDatabase={this.state.fullDatabase}
-                searchReturn={this.searchReturn}
-                toggleModularScreen={this.toggleModularScreen}/>
-              <AddedItemsSide
-                database={this.props.database}
-                changePrice={this.changePrice}
-                changeQuantity={this.changeQuantity}
-                addedItems={this.state.addedItems}
-                removeItem={this.removeItem}
-                toggleModularScreen={this.toggleModularScreen}/>
-              {this.state.modularScreenOpen > 0 ?
-                <ModularScreen
-                  // modularScreenType={this.state.modularScreenOpen}
-                  // toggleModularScreen={this.toggleModularScreen}
-                  // moduleDatabase={this.state.moduleDatabase}
-                  // container={this.state.modularContainer}
-                  // addModular={this.addModular}
-                />
-              : null}
-            </div>
-            <FooterButtons buttons={[
-              {text: "Voltar", className: "button--secondary", onClick: () => this.props.closeProductSelection()},
-              {text: "Salvar", onClick: () => this.saveEdits()}
-            ]}/>
-        </Box>
-      )
+    return (
+      <Box
+        title={this.title}
+        closeBox={this.props.closeProductSelection}
+        width="1000px">
+          <div className="product-selection">
+            <DatabaseSide
+              database={this.state.filteredDatabase}
+              addItem={this.addItem}
+              fullDatabase={this.state.fullDatabase}
+              searchReturn={this.searchReturn}
+              toggleModularScreen={this.toggleModularScreen}/>
+            <AddedItemsSide
+              database={this.props.database}
+              changePrice={this.changePrice}
+              changeQuantity={this.changeQuantity}
+              addedItems={this.state.addedItems}
+              removeItem={this.removeItem}
+              toggleModularScreen={this.toggleModularScreen}/>
+            {this.state.modularScreenOpen > 0 ?
+              <ModularScreen
+                modularScreenType={this.state.modularScreenOpen}
+                pack={this.state.modularContainer}
+                moduleDatabase={this.state.moduleDatabase}
+                addModular={this.addModular}
+                editModular={this.editModular}
+                toggleModularScreen={this.toggleModularScreen}
+              />
+            : null}
+          </div>
+          <FooterButtons buttons={[
+            {text: "Voltar", className: "button--secondary", onClick: () => this.props.closeProductSelection()},
+            {text: "Salvar", onClick: () => this.saveEdits()}
+          ]}/>
+      </Box>
+    )
   }
 }

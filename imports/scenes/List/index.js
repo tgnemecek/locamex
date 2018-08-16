@@ -52,7 +52,7 @@ export default class ListPage extends React.Component {
   }
 
   componentDidMount() {
-    this.clientsTracker = Tracker.autorun(() => {
+    this.Tracker = Tracker.autorun(() => {
       Meteor.subscribe('clientsPub');
       var fullDatabase = Clients.find().fetch();
       this.setState({ fullDatabase, filteredDatabase: fullDatabase });
