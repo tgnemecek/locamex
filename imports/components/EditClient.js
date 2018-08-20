@@ -447,7 +447,7 @@ export default class EditClient extends React.Component {
 
   render () {
     return (
-      <ReactModal
+      <Box
         isOpen={true}
         className="boxed-view"
         contentLabel="Editar Serviço"

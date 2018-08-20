@@ -164,7 +164,7 @@
 //   editUserTypeScreen(open, _id, description, permissions, createNew) {
 //     if (open) {
 //       return(
-//         <ReactModal
+//         <Box
 //           isOpen={true}
 //           className="boxed-view"
 //           contentLabel="Editar Serviço"

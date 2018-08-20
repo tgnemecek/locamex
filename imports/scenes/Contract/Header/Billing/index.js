@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactModal from 'react-modal';
 import moment from 'moment';
 
 import customTypes from '/imports/startup/custom-types';

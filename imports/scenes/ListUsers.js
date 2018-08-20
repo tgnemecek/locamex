@@ -200,7 +200,7 @@
 //   editUserScreen(open, _id, userName, userTypeId, userEmail, createNew) {
 //     if (open) {
 //       return(
-//         <ReactModal
+//         <Box
 //           isOpen={true}
 //           className="boxed-view"
 //           contentLabel="Editar Serviço"

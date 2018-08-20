@@ -1,7 +1,7 @@
-import ReactModal from 'react-modal';
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 
+import Box from '/imports/components/Box/index';
 import { Clients } from '../../api/clients';
 import customTypes from '/imports/startup/custom-types';
 import PrivateHeader from '../PrivateHeader';

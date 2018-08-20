@@ -14,7 +14,7 @@ export default class CustomInput extends React.Component {
   };
 
   componentDidMount() {
-    if (this.props.value) {
+    if (this.props.value !== undefined) {
       this.formatValue(this.props.value);
     }
   }
@@ -71,6 +71,7 @@ export default class CustomInput extends React.Component {
   }
 
   formatValue = (inputValue, obj) => {
+    debugger;
     let start = obj ? obj.selectionStart : 0;
     let end = obj ? obj.selectionEnd : 0;
     if (inputValue == undefined) throw new Error('input undefined from ' + this.props.name);

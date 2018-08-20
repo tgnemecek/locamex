@@ -57,7 +57,7 @@ if(Meteor.isServer) {
     price: 1800,
     restitution: 50000,
     assembled: 0,
-    allowedModules: ["0000", "0001"],
+    modules: ["0000", "0001"],
     history: []
   });
 }

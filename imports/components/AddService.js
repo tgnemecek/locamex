@@ -70,7 +70,7 @@ export default class AddService extends React.Component {
 
   render() {
      return (
-       <ReactModal
+       <Box
          isOpen={this.state.isOpen}
          className="boxed-view"
          contentLabel="Adicionar Serviço ao Contrato"

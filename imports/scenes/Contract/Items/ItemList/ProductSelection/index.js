@@ -157,6 +157,15 @@ export default class ProductSelection extends React.Component {
     var addedItems = customTypes.deepCopy(this.state.addedItems);
     var moduleDatabase = customTypes.deepCopy(this.state.moduleDatabase);
     var usedModules = pack.modules;
+    var modulesAddedCount = 0;
+    var _id = '';
+    for (var i = 0; i < addedItems.length; i++) {
+      if (addedItems[i].type == 'modular') {
+        modulesAddedCount++;
+      }
+    }
+    _id = "T" + (modulesAddedCount.toString().padStart(3, '0'));
+    pack._id = _id;
     addedItems.push(pack);
     for (var i = 0; i < usedModules.length; i++) {
       for (var j = 0; j < moduleDatabase.length; j++) {
@@ -186,7 +195,8 @@ export default class ProductSelection extends React.Component {
       if (usedModules[i].selected == oldModules[i].selected) continue;
       for (var j = 0; j < moduleDatabase.length; j++) {
         if (moduleDatabase[j]._id == usedModules[i]._id) {
-          moduleDatabase[j].available += (modulesArray[i].selected - oldModules[i].selected);
+          moduleDatabase[j].available += oldModules[i].selected;
+          moduleDatabase[j].available -= usedModules[i].selected;
           break;
         }
       }
@@ -211,12 +221,19 @@ export default class ProductSelection extends React.Component {
     this.setState({ moduleDatabase, addedItems });
   }
 
+  temp = () => {
+    return this.state.moduleDatabase.map((module, i) => {
+      return <p key={i}>{module.description}: {module.available}</p>
+    })
+  }
+
   render() {
     return (
       <Box
         title={this.title}
         closeBox={this.props.closeProductSelection}
         width="1000px">
+        {this.temp()}
           <div className="product-selection">
             <DatabaseSide
               database={this.state.filteredDatabase}

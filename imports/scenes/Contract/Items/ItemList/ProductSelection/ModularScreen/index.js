@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { Packs } from '/imports/api/packs';
-
 import customTypes from '/imports/startup/custom-types';
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
@@ -11,57 +9,51 @@ export default class ModularScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      pack: this.props.pack,
-      multiplier: 1
+      pack: this.props.pack
     }
   }
 
   componentDidMount() {
     var pack = {};
     var moduleDatabase = this.props.moduleDatabase;
-    var database = [];
-    var _id;
-    this.Tracker = Tracker.autorun(() => {
-      Meteor.subscribe('packsPub');
-      _id = Packs.find().count().toString().padStart(4, '0'); //not good. it cant know if you've added any other items to add up
-    })
     if (this.props.modularScreenType == 1) { //Add New
       pack = {
-        _id,
         type: "modular",
         description: this.props.pack.description,
         containerId: this.props.pack._id,
         price: this.props.pack.price,
-        modules: [],
         quantity: 1
       };
-      pack.modules = this.props.pack.allowedModules.map((allowedModule, i) => {
+      pack.modules = this.props.pack.modules.map((module, i) => {
         var selected;
         var available;
         var description;
         for (var i = 0; i < moduleDatabase.length; i++) {
-          if (moduleDatabase[i]._id == allowedModule) {
+          if (moduleDatabase[i]._id == module) {
             available = moduleDatabase[i].available;
-            selected = available > 0 ? 1 : 0;
+            if (!selected) selected = available > 0 ? 1 : 0;
             description = moduleDatabase[i].description;
-            database.push(moduleDatabase[i]);
           }
         }
-        return {_id: allowedModule, available, selected, description}
-      })
-    } else pack = { ...this.props.pack }
-    this.setState({ pack, database });
-  }
-
-  onChange = (e) => {
-    var value = Number(e.target.value);
-    var index = e.target.name;
-    var multiplier = 1;
-    var pack = {
-      ...this.state.pack,
+        return {_id: module, available, selected, description}
+      });
+    } else if (this.props.modularScreenType == 2) { //Edit
+      pack = {...this.props.pack};
+      pack.modules = this.props.pack.modules.map((module, i) => {
+        var selected;
+        var available;
+        var description;
+        for (var i = 0; i < moduleDatabase.length; i++) {
+          if (moduleDatabase[i]._id == module._id) {
+            selected = module.selected;
+            available = Number(moduleDatabase[i].available) + module.selected;
+            description = moduleDatabase[i].description;
+            return {_id: module._id, available, selected, description};
+          }
+        }
+      });
     }
-    pack.modules[index].selected = value;
-    this.setState({ pack, multiplier });
+    this.setState({ pack });
   }
 
   renderBody = () => {
@@ -83,9 +75,24 @@ export default class ModularScreen extends React.Component {
     })
   }
 
-  changeMultiplier = (e) => {
-    var multiplier = e.target.value;
-    this.setState({ multiplier });
+  changeQuantity = (e) => {
+    var quantity = e.target.value;
+    var pack = {...this.state.pack, quantity}
+    this.setState({ pack });
+  }
+
+  onChange = (e) => {
+    var value = Number(e.target.value);
+    var index = e.target.name;
+    var max = this.calculateMax();
+    var quantity = Number(this.state.pack.quantity);
+    if (quantity > max) quantity = max;
+    var pack = {
+      ...this.state.pack,
+      quantity
+    }
+    pack.modules[index].selected = value;
+    this.setState({ pack });
   }
 
   calculateMax = () => {
@@ -109,18 +116,6 @@ export default class ModularScreen extends React.Component {
     }
   }
 
-  // saveEdits = () => {
-  //   var multiplier = this.state.multiplier;
-  //   var pack = {
-  //     ...this.state.pack
-  //   }
-  //   pack.modules = pack.modules.map((module) => {
-  //     var selected = Number(module.selected) * Number(multiplier);
-  //     return {...module, selected};
-  //   })
-  //   this.props.addModular(pack);
-  // }
-
   render() {
     return(
       <Box
@@ -129,7 +124,7 @@ export default class ModularScreen extends React.Component {
         <div>
           <h4>Montando: {this.props.pack.description}</h4>
           <label>Quantidade:</label>
-          <CustomInput type="number" min={1} max={this.calculateMax()} value={this.state.multiplier} onChange={this.changeMultiplier}/>
+          <CustomInput type="number" min={1} max={this.calculateMax()} value={this.state.pack.quantity} onChange={this.changeQuantity}/>
         </div>
         <table className="table table--modular-screen">
           <thead>
