@@ -18,15 +18,15 @@ export default class CustomInput extends React.Component {
       this.formatValue(this.props.value);
     }
   }
-
-  componentDidUpdate(prevProps) {
-    if (this.props.value !== prevProps.value) {
-      this.formatValue(this.props.value);
-    }
-    if (this.props.forceInvalid !== prevProps.forceInvalid) {
-      this.redBorder(this.props.forceInvalid);
-    }
-  }
+// This was commented because it was generating errors (double update), may have broken other functionality
+  // componentDidUpdate(prevProps) {
+  //   if (this.props.value !== prevProps.value) {
+  //     this.formatValue(this.props.value);
+  //   }
+  //   if (this.props.forceInvalid !== prevProps.forceInvalid) {
+  //     this.redBorder(this.props.forceInvalid);
+  //   }
+  // }
 
   redBorder = (bool) => {
     const style = {
@@ -71,28 +71,31 @@ export default class CustomInput extends React.Component {
   }
 
   formatValue = (inputValue, obj) => {
-    debugger;
     let start = obj ? obj.selectionStart : 0;
     let end = obj ? obj.selectionEnd : 0;
-    if (inputValue == undefined) throw new Error('input undefined from ' + this.props.name);
-    inputValue = inputValue.toString();
-    let displayValue = inputValue;
-    let exportValue = inputValue;
-
+    var displayValue;
+    var exportValue;
+    if (inputValue == undefined) return;
     let options = {
       allowNegative: false,
       fromInput: true
     };
 
     if (inputValue !== undefined) {
+      inputValue = inputValue.toString();
+      displayValue = inputValue;
+      exportValue = inputValue;
+
       switch (this.props.type) {
         case 'currency':
-          displayValue = customTypes.format(inputValue, this.props.type, options);
+          if (inputValue == "") {
+            displayValue = inputValue;
+          } else displayValue = customTypes.format(inputValue, this.props.type, options);
           exportValue = customTypes.format(displayValue, 'numberFromCurrency');
           break;
         case 'number':
-          if (this.props.max && (Number(inputValue) > this.props.max)) inputValue = this.props.max;
-          if (this.props.min && (Number(inputValue) < this.props.min)) inputValue = this.props.min;
+          if (this.props.max !== undefined && (Number(inputValue) > this.props.max)) inputValue = this.props.max;
+          if (this.props.min !== undefined && (Number(inputValue) < this.props.min)) inputValue = this.props.min;
         case 'cpf':
         case 'cnpj':
         case 'phone':
@@ -103,13 +106,13 @@ export default class CustomInput extends React.Component {
         default:
           exportValue = displayValue;
       }
+      if (this.props.upperCase && this.props.type == "text") {
+        displayValue = displayValue.toUpperCase();
+        exportValue = exportValue.toUpperCase();
+      }
+      start = start + (displayValue.length - inputValue.length);
+      end = end + (displayValue.length - inputValue.length);
     }
-    if (this.props.upperCase && this.props.type == "text") {
-      displayValue = displayValue.toUpperCase();
-      exportValue = exportValue.toUpperCase();
-    }
-    start = start + (displayValue.length - inputValue.length);
-    end = end + (displayValue.length - inputValue.length);
     var e = {
       target: {
         value: this.validateInput(exportValue),

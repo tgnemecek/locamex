@@ -11,26 +11,40 @@ export default class Billing extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      charges: [],
-      equalDivision: true,
+      charges: this.props.contract.billing,
+      totalValue: 0,
+      equalDivision: false,
       difference: 0,
       valid: false,
       calendarOpen: false,
       startDate: new Date()
     }
-    this.totalValue = this.countPrices(this.props.contract.containers) +
-                      this.countPrices(this.props.contract.accessories) +
-                      this.countPrices(this.props.contract.services);
-    this.inputValues = [];
   }
 
-  countPrices = (arr) => {
-    if (arr.length == 0) return 0;
-    return this.props.contract[arr].reduce((acc, current) => {
+  componentDidMount() {
+    var containers = this.props.contract.containers ? this.props.contract.containers : [];
+    var accessories = this.props.contract.accessories ? this.props.contract.accessories : [];
+    var services = this.props.contract.services ? this.props.contract.services : [];
+    var all = this.props.contract.containers.concat(this.props.contract.accessories, this.props.contract.services);
+    var charges = customTypes.deepCopy(this.state.charges);
+    var equalDivision;
+    if (all.length == 0) return 0;
+    var totalValue = all.reduce((acc, current) => {
       return {
-        price: acc.price + current.price
+          price: acc.price + current.price
+        }
+      }).price;
+    for (var i = 0; i < charges.length; i++) {
+      if ((i+1) == charges.length) {
+        equalDivision = true;
+        break;
       }
-    }).price;
+      if (charges[i].value !== charges[i+1].value) {
+        equalDivision = false;
+      }
+      charges[i].value = charges[i].value * 100;
+    }
+    this.setState({ totalValue, equalDivision, charges });
   }
 
   representativesOnChange = (e) => {
@@ -48,11 +62,15 @@ export default class Billing extends React.Component {
     var charges = customTypes.deepCopy(this.state.charges);
     var newCharges = [];
     var difference = Math.abs(charges.length - value);
+    var moment1 = moment(this.state.startDate).add((30 * i + i), 'days');
+    var moment2 = moment(this.state.startDate).add((30 * i + 30 + i), 'days');
     if (value > charges.length) {
       for (var i = 0; i < difference; i++) {
         newCharges.push({
           description: `Cobrança #${i +  charges.length + 1} referente ao Valor Total do Contrato`,
-          value: ''
+          value: '',
+          startDate: moment1,
+          endDate: moment2
         })
       }
       charges = charges.concat(newCharges);
@@ -67,10 +85,17 @@ export default class Billing extends React.Component {
   }
 
   onChange = (e) => {
-    this.inputValues[e.target.name] = e.target.value;
-    var total = this.inputValues.reduce((acc, current) => acc + current);
-    var difference = total - this.totalValue;
+    var value = e.target.value;
+    var charges = this.state.charges;
+    charges[e.target.name].value = value;
+    var total = charges.reduce((acc, current) => {
+      return {
+          value: acc.value + Number(current.value)
+        }
+      }).value;
+    var difference = total - this.state.totalValue;
     this.setState({
+      charges,
       difference,
       valid: !difference
     });
@@ -83,12 +108,10 @@ export default class Billing extends React.Component {
   }
 
   renderBody = () => {
-    var equalValue = customTypes.round(this.totalValue / this.state.charges.length, 2);
+    var equalValue = customTypes.round(this.state.totalValue / this.state.charges.length, 2);
     var equalValueStr;
-    var rest = customTypes.round(this.totalValue - (equalValue * this.state.charges.length), 2);
+    var rest = customTypes.round(this.state.totalValue - (equalValue * this.state.charges.length), 2);
     return this.state.charges.map((charge, i, array) => {
-      var moment1 = moment(this.state.startDate).add((30 * i + i), 'days');
-      var moment2 = moment(this.state.startDate).add((30 * i + 30 + i), 'days');
       if (i == 0) {
         equalValueStr = customTypes.format(equalValue + rest, "currency");
       } else {
@@ -97,11 +120,12 @@ export default class Billing extends React.Component {
       return (
         <tr key={i}>
           <td>{(i + 1) + '/' + array.length}</td>
-          <td>{moment1.format("DD-MM-YY") + ' a ' +  moment2.format("DD-MM-YY")}</td>
-          <td>{moment2.format("DD-MM-YY")}</td>
+          <td>{moment(charge.startDate).format("DD-MM-YY") + ' a ' +  moment(charge.endDate).format("DD-MM-YY")}</td>
+          <td>{moment(charge.endDate).format("DD-MM-YY")}</td>
           <td><textarea name={i} value={charge.description} onChange={this.updateDescription}/></td>
           <td>{this.state.equalDivision ? equalValueStr : <CustomInput name={i} type="currency"
                                                               onChange={this.onChange}
+                                                              value={charge.value}
                                                               placeholder={equalValueStr}
                                                               />}</td>
         </tr>
@@ -173,13 +197,13 @@ export default class Billing extends React.Component {
                       </tr>
                       <tr>
                         <th colSpan="4"><b>Valor Total do Contrato:</b></th>
-                        <th>{customTypes.format(this.totalValue, "currency")}</th>
+                        <th>{customTypes.format(this.state.totalValue, "currency")}</th>
                       </tr>
                     </tfoot>
                   </table>
                 </div>
               </div>
-              <FooterButtons buttons={[{text: "Salvar", onClick: () => this.saveEdits()}]}/>
+              <FooterButtons buttons={[{text: "Salvar", onClick: () => this.props.updateContract(this.state.charges, "billing")}]}/>
         </Box>
       )
   }

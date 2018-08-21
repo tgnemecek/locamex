@@ -26,7 +26,8 @@ export default class ProductSelection extends React.Component {
       addedItems: this.props.addedItems ? customTypes.deepCopy(this.props.addedItems) : [],
       moduleDatabase: [],
       modularScreenOpen: 0,
-      modularContainer: ''
+      modularContainer: '',
+      modularCount: 0
     }
     switch (this.props.database) {
       case 'services':
@@ -61,8 +62,35 @@ export default class ProductSelection extends React.Component {
         fullDatabase,
         filteredDatabase: fullDatabase,
         moduleDatabase
-      });
+      }, () => { this.initialCalculations() });
     })
+  }
+
+  initialCalculations = () => {
+    var modularCount = 0;
+    var addedItems = customTypes.deepCopy(this.state.addedItems);
+    var moduleDatabase = customTypes.deepCopy(this.state.moduleDatabase);
+    var filteredDatabase = customTypes.deepCopy(this.state.filteredDatabase);
+    addedItems.forEach((pack) => {
+      if (pack.type == 'modular') {
+        var usedModules = pack.modules;
+        modularCount++;
+        for (var i = 0; i < usedModules.length; i++) {
+          for (var j = 0; j < moduleDatabase.length; j++) {
+            if (moduleDatabase[j]._id == usedModules[i]._id) {
+              moduleDatabase[j].available -= usedModules[i].selected * pack.quantity;
+              break;
+            }
+          }
+        }
+      }
+      for (var j = 0; j < filteredDatabase.length; j++) {
+        if (pack._id == filteredDatabase[j]._id) {
+          filteredDatabase[j].added = true;
+        }
+      }
+    })
+    this.setState({ addedItems, moduleDatabase, modularCount, filteredDatabase });
   }
 
   modifyModuleQuantity = (_id, quantity) => {
@@ -157,25 +185,20 @@ export default class ProductSelection extends React.Component {
     var addedItems = customTypes.deepCopy(this.state.addedItems);
     var moduleDatabase = customTypes.deepCopy(this.state.moduleDatabase);
     var usedModules = pack.modules;
-    var modulesAddedCount = 0;
-    var _id = '';
-    for (var i = 0; i < addedItems.length; i++) {
-      if (addedItems[i].type == 'modular') {
-        modulesAddedCount++;
-      }
-    }
-    _id = "T" + (modulesAddedCount.toString().padStart(3, '0'));
+    var modularCount = this.state.modularCount;
+    var _id = "G" + (modularCount.toString().padStart(3, '0'));
+    modularCount++;
     pack._id = _id;
     addedItems.push(pack);
     for (var i = 0; i < usedModules.length; i++) {
       for (var j = 0; j < moduleDatabase.length; j++) {
         if (moduleDatabase[j]._id == usedModules[i]._id) {
-          moduleDatabase[j].available -= usedModules[i].selected;
+          moduleDatabase[j].available -= usedModules[i].selected * pack.quantity;
           break;
         }
       }
     }
-    this.setState({ addedItems, moduleDatabase });
+    this.setState({ addedItems, moduleDatabase, modularCount });
     this.toggleModularScreen();
   }
 
@@ -183,20 +206,21 @@ export default class ProductSelection extends React.Component {
     var addedItems = customTypes.deepCopy(this.state.addedItems);
     var moduleDatabase = customTypes.deepCopy(this.state.moduleDatabase);
     var oldModules;
+    var oldQuantity;
     for (var i = 0; i < addedItems.length; i++) {
       if (addedItems[i]._id == pack._id && addedItems[i].type == 'modular') {
         oldModules = customTypes.deepCopy(addedItems[i].modules);
+        oldQuantity = addedItems[i].quantity;
         addedItems[i] = {...pack};
         break;
       }
     }
     var usedModules = pack.modules;
     for (var i = 0; i < usedModules.length; i++) {
-      if (usedModules[i].selected == oldModules[i].selected) continue;
       for (var j = 0; j < moduleDatabase.length; j++) {
         if (moduleDatabase[j]._id == usedModules[i]._id) {
-          moduleDatabase[j].available += oldModules[i].selected;
-          moduleDatabase[j].available -= usedModules[i].selected;
+          moduleDatabase[j].available += oldModules[i].selected * oldQuantity;
+          moduleDatabase[j].available -= usedModules[i].selected * pack.quantity;
           break;
         }
       }
@@ -205,25 +229,32 @@ export default class ProductSelection extends React.Component {
     this.toggleModularScreen();
   }
 
-  removeModular = (index) => {
+  removeModular = (pack) => {
     var addedItems = customTypes.deepCopy(this.state.addedItems);
     var moduleDatabase = customTypes.deepCopy(this.state.moduleDatabase);
-    var modulesArray = addedItems[index].modules;
-    for (var i = 0; i < modulesArray.length; i++) {
+    var oldModules;
+    for (var i = 0; i < addedItems.length; i++) {
+      if (addedItems[i]._id == pack._id && addedItems[i].type == 'modular') {
+        oldModules = customTypes.deepCopy(addedItems[i].modules);
+        addedItems.splice(i, 1);
+        break;
+      }
+    }
+    for (var i = 0; i < oldModules.length; i++) {
       for (var j = 0; j < moduleDatabase.length; j++) {
-        if (moduleDatabase[j]._id == modulesArray[i]._id) {
-          moduleDatabase[j].available += modulesArray[i].selected;
+        if (moduleDatabase[j]._id == oldModules[i]._id) {
+          moduleDatabase[j].available += oldModules[i].selected;
           break;
         }
       }
     }
-    addedItems.splice(index, 1);
-    this.setState({ moduleDatabase, addedItems });
+    this.setState({ addedItems, moduleDatabase });
+    this.toggleModularScreen();
   }
 
   temp = () => {
-    return this.state.moduleDatabase.map((module, i) => {
-      return <p key={i}>{module.description}: {module.available}</p>
+    return this.state.moduleDatabase.map((m, i) => {
+      return <p key={i}>{m.description}: {m.available}</p>
     })
   }
 
@@ -255,6 +286,7 @@ export default class ProductSelection extends React.Component {
                 moduleDatabase={this.state.moduleDatabase}
                 addModular={this.addModular}
                 editModular={this.editModular}
+                removeModular={this.removeModular}
                 toggleModularScreen={this.toggleModularScreen}
               />
             : null}

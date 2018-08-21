@@ -36,11 +36,18 @@ export default class Items extends React.Component {
     }
   }
 
-  totalItems = () => {
+  totalValue = () => {
     var containers = this.props.contract.containers;
     var services = this.props.contract.services;
     var accessories = this.props.contract.accessories;
-    return containers.concat(services, accessories);
+    var all = containers.concat(services, accessories);
+    if (all.length == 0) return 0;
+    return all.reduce((acc, current) => {
+      var quantity = current.quantity ? current.quantity : 1;
+      return {
+        price: acc.price + (current.price * quantity)
+      }
+    }).price;
   }
 
   render() {
@@ -49,6 +56,7 @@ export default class Items extends React.Component {
         <div className="contract__list">
           <label onClick={this.toggleProductSelection}><strong>Containers:</strong></label>
           <ItemList
+            updateContract={this.props.updateContract}
             contract={this.props.contract}
             database="containers"
             onClick={this.toggleProductSelection}/>
@@ -56,6 +64,7 @@ export default class Items extends React.Component {
         <div className="contract__list">
           <label onClick={this.toggleProductSelection}><strong>Acessórios:</strong></label>
           <ItemList
+            updateContract={this.props.updateContract}
             contract={this.props.contract}
             database="accessories"
             onClick={this.toggleProductSelection}/>
@@ -63,32 +72,13 @@ export default class Items extends React.Component {
         <div className="contract__list">
           <label onClick={this.toggleProductSelection}><strong>Serviços:</strong></label>
           <ItemList
+            updateContract={this.props.updateContract}
             contract={this.props.contract}
             database="services"
             onClick={this.toggleProductSelection}/>
         </div>
-        {/* <div className="contract__list">
-          <label onClick={this.toggleProductSelection}><strong>Acessórios:</strong></label>
-          <ItemList addedItems={this.props.contract.accessories} database="accessories" onClick={this.toggleProductSelection}/>
-          {this.state.accessoriesSelectionOpen ? <ProductSelection
-                                                database="accessories"
-                                                addedItems={this.props.contract.accessories}
-                                                saveEdits={this.updateTable}
-                                                closeProductSelection={this.toggleProductSelection}
-                                                /> : null}
-        </div>
-        <div className="contract__list">
-          <label onClick={this.toggleProductSelection}><strong>Serviços:</strong></label>
-          <ItemList addedItems={this.props.contract.services} database="services" onClick={this.toggleProductSelection}/>
-          {this.state.servicesSelectionOpen ? <ProductSelection
-                                                database="services"
-                                                addedItems={this.props.contract.services}
-                                                saveEdits={this.updateTable}
-                                                closeProductSelection={this.toggleProductSelection}
-                                                /> : null}
-        </div> */}
         <div>
-          {customTypes.format(this.totalItems(), 'currency')}
+          {customTypes.format(this.totalValue(), 'currency')}
         </div>
       </div>
     )

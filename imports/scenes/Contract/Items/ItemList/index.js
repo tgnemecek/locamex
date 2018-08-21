@@ -14,7 +14,7 @@ export default class ItemList extends React.Component {
 
   renderModular = (item) => {
     var str = "(";
-    item.allowedModules.forEach((module, i, array) => {
+    item.modules.forEach((module, i, array) => {
       if (module.selected) {
         if (i < (array.length - 1)) {
           str += module.description + ": " + module.selected + ". ";
@@ -30,7 +30,7 @@ export default class ItemList extends React.Component {
   }
 
   updateTable = (addedItems) => {
-    this.setState({ addedItems });
+    this.setState({ addedItems }, () => { this.props.updateContract(addedItems, this.props.database) });
   }
 
   row = () => {
@@ -51,7 +51,7 @@ export default class ItemList extends React.Component {
       <div className="contract__list-container" onClick={this.toggleWindow}>
         {this.state.windowOpen ? <ProductSelection
                                     database={this.props.database}
-                                    addedItems={this.props.contract.containers}
+                                    addedItems={this.state.addedItems}
                                     saveEdits={this.updateTable}
                                     closeProductSelection={this.toggleWindow}/> : null}
         {this.state.addedItems.length > 0 ?

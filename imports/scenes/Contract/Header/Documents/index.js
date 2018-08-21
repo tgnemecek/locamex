@@ -75,7 +75,7 @@ export default class Documents extends React.Component {
         }]
       },
       clientInfo: {},
-      billingInfo: {},
+      billingInfo: this.props.contract.billing,
     }
     for (var i = 0; i < clients.length; i++) {
       if (clients[i]._id == this.props.contract.clientId) {

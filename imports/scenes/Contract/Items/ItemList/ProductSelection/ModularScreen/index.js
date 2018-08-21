@@ -46,7 +46,7 @@ export default class ModularScreen extends React.Component {
         for (var i = 0; i < moduleDatabase.length; i++) {
           if (moduleDatabase[i]._id == module._id) {
             selected = module.selected;
-            available = Number(moduleDatabase[i].available) + module.selected;
+            available = Number(moduleDatabase[i].available) + (module.selected * pack.quantity);
             description = moduleDatabase[i].description;
             return {_id: module._id, available, selected, description};
           }
@@ -119,7 +119,7 @@ export default class ModularScreen extends React.Component {
   render() {
     return(
       <Box
-        title="Montagem de Container Modular:"
+        title="Montagem de Container Modular"
         closeBox={this.props.toggleModularScreen}>
         <div>
           <h4>Montando: {this.props.pack.description}</h4>
@@ -140,7 +140,7 @@ export default class ModularScreen extends React.Component {
           </tbody>
         </table>
         <FooterButtons buttons={[
-          {text: "Remover", className: "button--danger", onClick: () => this.props.removeItem()},
+          {text: "Remover", className: "button--danger", onClick: () => this.props.removeModular(this.state.pack)},
           {text: "Salvar", onClick: () => this.saveEdits()}
         ]}/>
       </Box>

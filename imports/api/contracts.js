@@ -20,7 +20,7 @@ if(Meteor.isServer) {
     creationDate: 123123123,
     startDate: new Date(),
     duration: 6,
-    billing: '',
+    billing: [],
     observations: 'Exposição nova',
     deliveryAddress: {
       state: "SP",

@@ -144,15 +144,25 @@ export default function createPdf(state, seller, representatives) {
     }, style: 'table'}
   }
   const tableBilling = () => {
+    function renderBody(charges) {
+      var header = [ ['Número', 'Período', 'Vencimento', 'Descrição da Cobrança', 'Valor'] ];
+      var body = charges.map((charge, i, array) => {
+        var index = i + "/" + array.length;
+        var period = moment(charge.startDate).format("DD-MM-YY") + ' a ' +  moment(charge.endDate).format("DD-MM-YY");
+        var endDate = moment(charge.endDate).format("DD-MM-YY");
+        var description = charge.description;
+        var value = charge.value;
+        return [index, period, endDate, description, value];
+      });
+      var footer = [ [{text: 'Valor Total do Contrato:', colSpan: 4, alignment: 'right', bold: true}, '', '', '', displayValue('rent')] ];
+      console.log(header.concat(body, footer));
+      return header.concat(body, footer);
+    }
     return {table: {
       headerRows: 1,
       widths: ['auto', 'auto', 'auto', '*', 'auto'],
       heights: globals.cellheight,
-      body: [
-          [ 'Número', 'Período', 'Vencimento', 'Descrição da Cobrança', 'Valor' ],
-          [ '1/1', '01/01/2017 a 30/01/2017', '30/01/2017', 'Cobrança integral do valor (texto livre)', 'R$ 10.000,00' ],
-          [ {text: 'Valor Total do Contrato:', colSpan: 4, alignment: 'right', bold: true}, '', '', '', displayValue('rent') ]
-        ]
+      body: renderBody(state.billingInfo)
     }, style: 'table'}
   }
   const tableAddress = () => {

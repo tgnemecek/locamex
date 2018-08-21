@@ -38,6 +38,12 @@ export default class Contract extends React.Component {
     }
   }
 
+  updateContract = (value, what) => {
+    var contract = {...this.state.contract};
+    contract[what] = value;
+    this.setState({ contract });
+  }
+
   render () {
     if (this.state.ready) {
       return (
@@ -45,10 +51,19 @@ export default class Contract extends React.Component {
           <PrivateHeader title="Contrato"/>
             <div className="page-content">
               <div className="contract">
-                <Header contract={this.state.contract}/>
+                <Header
+                  contract={this.state.contract}
+                  updateContract={this.updateContract}
+                />
                 <div className="contract__body">
-                  <Information contract={this.state.contract}/>
-                  <Items contract={this.state.contract}/>
+                  <Information
+                    contract={this.state.contract}
+                    updateContract={this.updateContract}
+                  />
+                  <Items
+                    contract={this.state.contract}
+                    updateContract={this.updateContract}
+                  />
                   <div className="contract__body--bottom">
                     <FooterButtons buttons={[
                       {text: "Salvar Edições", className: "button--secondary", onClick: () => {}},
