@@ -1,6 +1,6 @@
 import React from 'react';
 
-import customTypes from '/imports/startup/custom-types';
+import tools from '/imports/startup/tools/index';
 
 import ItemList from './ItemList/index';
 
@@ -78,7 +78,7 @@ export default class Items extends React.Component {
             onClick={this.toggleProductSelection}/>
         </div>
         <div>
-          {customTypes.format(this.totalValue(), 'currency')}
+          {tools.format(this.totalValue(), 'currency')}
         </div>
       </div>
     )

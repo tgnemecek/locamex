@@ -3,7 +3,7 @@ import { Meteor } from 'meteor/meteor';
 
 import Box from '/imports/components/Box/index';
 import { Clients } from '../../api/clients';
-import customTypes from '/imports/startup/custom-types';
+import tools from '/imports/startup/tools/index';
 import PrivateHeader from '../PrivateHeader';
 import SearchBar from '../SearchBar';
 import List from '../List';
@@ -60,7 +60,7 @@ export default class ListPage extends React.Component {
   }
 
   sortItems = (value, order) => {
-    var sortedDatabase = customTypes.deepCopy(this.state.filteredDatabase);
+    var sortedDatabase = tools.deepCopy(this.state.filteredDatabase);
 
     sortedDatabase.sort((a, b) => {
       if (a[value] < b[value]) return order ? -1 : 1;

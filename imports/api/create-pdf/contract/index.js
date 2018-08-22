@@ -1,10 +1,10 @@
 var pdfmake = require('pdfmake/build/pdfmake');
 var vfs_fonts = require('pdfmake/build/vfs_fonts');
 
-import customTypes from '/imports/startup/custom-types';
+import tools from '/imports/startup/tools/index';
 import moment from 'moment';
 
-export default function createPdf(state, seller, representatives) {
+export default function createPdf(contract, client, seller, representatives) {
   const globals = {
     fontFamily: "Arial",
     h1Size: 11,
@@ -13,20 +13,21 @@ export default function createPdf(state, seller, representatives) {
     marginBottom: 10,
     cellheight: 1
   }
-  const cpfCnpjLabel = state.clientInfo.type == 'company' ? 'CNPJ': 'CPF';
-  const registryLabel = state.clientInfo.registryMU ? 'Inscrição Municipal': 'Inscrição Estadual';
+  const products = contract.containers.concat(contract.accessories);
+  const cpfCnpjLabel = client.type == 'company' ? 'CNPJ': 'CPF';
+  const registryLabel = client.registryMU ? 'Inscrição Municipal': 'Inscrição Estadual';
   const showCpfCnpj = () => {
-    if (state.clientInfo.type == 'company') {
-      return customTypes.format(state.clientInfo.cnpj, 'cnpj');
-    } else return customTypes.format(state.clientInfo.contacts[0].contactCPF, 'cpf');
+    if (client.type == 'company') {
+      return tools.format(client.cnpj, 'cnpj');
+    } else return tools.format(client.contacts[0].contactCPF, 'cpf');
   }
   const showRegistry = () => {
-    if (state.clientInfo.registryMU) {
-      return state.clientInfo.registryMU;
-    } else return state.clientInfo.registryES;
+    if (client.registryMU) {
+      return client.registryMU;
+    } else return client.registryES;
   }
   const showAddress = () => {
-    return state.clientInfo.address.street + ' ' + state.clientInfo.address.number;
+    return client.address.street + ' ' + client.address.number;
   }
   const displayValue = (type) => {
     var valueStyle = {bold: true, alignment: 'right'};
@@ -51,18 +52,18 @@ export default function createPdf(state, seller, representatives) {
       widths: ['auto', '*', 'auto', 'auto', 40, 'auto'],
       heights: globals.cellheight,
       body: [
-          [ 'Razão Social', {text: state.clientInfo.officialName, colSpan: 5}, '', '', '', '' ],
+          [ 'Razão Social', {text: client.officialName, colSpan: 5}, '', '', '', '' ],
           [ cpfCnpjLabel, showCpfCnpj(), {text: registryLabel, colSpan: 2}, '', {text: showRegistry(), colSpan: 2}, '' ],
-          [ 'Endereço', {text: showAddress(), colSpan: 3}, '', '', 'CEP', customTypes.format(state.clientInfo.address.zip, 'zip') ],
-          [ 'Cidade', state.clientInfo.address.city, 'UF', state.clientInfo.address.state, 'Bairro', state.clientInfo.address.district ],
-          [ 'Contato', seller.contact, 'Telefone', customTypes.format(seller.phone, 'phone'), 'Email', seller.email ]
+          [ 'Endereço', {text: showAddress(), colSpan: 3}, '', '', 'CEP', tools.format(client.address.zip, 'zip') ],
+          [ 'Cidade', client.address.city, 'UF', client.address.state, 'Bairro', client.address.district ],
+          [ 'Contato', seller.contact, 'Telefone', tools.format(seller.phone, 'phone'), 'Email', seller.email ]
         ]
     }, style: 'table'};
   }
   const tableRepresentative = () => {
     const renderBody = () => {
       return representatives.map((rep) => {
-        return [ 'Nome', rep.name, 'CPF', customTypes.format(rep.cpf, 'cpf'), 'RG', customTypes.format(rep.rg, 'rg') ]
+        return [ 'Nome', rep.name, 'CPF', tools.format(rep.cpf, 'cpf'), 'RG', tools.format(rep.rg, 'rg') ]
       });
     }
     return {table: {
@@ -80,16 +81,17 @@ export default function createPdf(state, seller, representatives) {
         allValuesOneMonth.push(result);
         result = result * duration;
         allValues.push(result);
-        return {text: customTypes.format(result, 'currency'), alignment: 'right'};
+        return {text: tools.format(result, 'currency'), alignment: 'right'};
       }
       const calcTotal = (values) => {
-        var result = values.reduce((acc, current) => acc + current);
-        return {text: customTypes.format(result, 'currency'), bold: true, alignment: 'right'};
+        var result = values.length ? values.reduce((acc, current) => acc + current) : 0;
+        return {text: tools.format(result, 'currency'), bold: true, alignment: 'right'};
       }
       var header = [ ['Item', 'Descrição', {text: 'Valor Unit. Mensal', alignment: 'left'}, {text: 'Qtd.', alignment: 'center'}, {text: 'Meses', alignment: 'center'}, {text: 'Valor Total', alignment: 'right'}] ];
-      var body = state.contractInfo.products.map((product) => {
-        return [ product._id, product.name, customTypes.format(product.price, 'currency'), {text: product.quantity, alignment: 'center'}, {text: state.contractInfo.duration, alignment: 'center'}, calcValue(product.quantity, state.contractInfo.duration, product.price)]
-      });
+      var body = products ? products.map((product) => {
+        return [product._id, product.description, tools.format(product.price, 'currency'), {text: product.quantity.toString(), alignment: 'center'}, {text: contract.duration.toString(), alignment: 'center'}, calcValue(product.quantity, contract.duration, product.price)];
+      }) : [[ {text: '', colSpan: 6}, '', '', '', '', '' ]];
+      console.log(body);
       var footer = [
         [ {text: 'Valor Mensal de Prorrogação:', colSpan: 5, alignment: 'right', bold: true}, '', '', '', '', calcTotal(allValuesOneMonth)],
         [ {text: 'Valor Total da Locação:', colSpan: 5, alignment: 'right', bold: true}, '', '', '', '', calcTotal(allValues)]
@@ -109,15 +111,15 @@ export default function createPdf(state, seller, representatives) {
       const calcValue = (quantity, price) => {
         var result = quantity * price;
         allValues.push(result);
-        return {text: customTypes.format(result, 'currency'), alignment: 'right'};
+        return {text: tools.format(result, 'currency'), alignment: 'right'};
       }
       const calcTotal = () => {
-        var result = allValues.reduce((acc, current) => acc + current);
-        return {text: customTypes.format(result, 'currency'), bold: true, alignment: 'right'};
+        var result = allValues.length ? allValues.reduce((acc, current) => acc + current): 0;
+        return {text: tools.format(result, 'currency'), bold: true, alignment: 'right'};
       }
       var header = [ ['Item', 'Descrição', {text: 'Valor Unitário', alignment: 'left'}, {text: 'Qtd.', alignment: 'center'}, {text: 'Valor Total', alignment: 'right'}] ];
-      var body = state.contractInfo.services.map((service) => {
-        return [ service._id, service.name, customTypes.format(service.price, 'currency'), {text: service.quantity, alignment: 'center'}, calcValue(service.quantity, service.price)];
+      var body = contract.services.map((service) => {
+        return [ service._id, service.name, tools.format(service.price, 'currency'), {text: service.quantity, alignment: 'center'}, calcValue(service.quantity, service.price)];
       });
       var footer = [
         [ {text: 'Valor Total do Pacote de Serviços:', colSpan: 4, alignment: 'right', bold: true}, '', '', '', calcTotal()]
@@ -133,13 +135,13 @@ export default function createPdf(state, seller, representatives) {
   }
   const tableDuration = () => {
     const calcEndDate = () => {
-      return {text: moment(state.contractInfo.startDate).add(state.contractInfo.duration, 'M').format("DD-MMMM-YYYY"), alignment: 'center'};
+      return {text: moment(contract.startDate).add(contract.duration, 'M').format("DD-MMMM-YYYY"), alignment: 'center'};
     }
     return {table: {
       widths: ['auto', '*', 'auto', '*', 'auto', 'auto'],
       heights: globals.cellheight,
       body: [
-          [ 'Início em', {text: moment(state.contractInfo.startDate).format("DD-MMMM-YYYY"), alignment: 'center'}, 'Término em', calcEndDate(), 'Prazo mínimo de Locação', {text: state.contractInfo.duration + ' meses', alignment: 'center'} ]
+          [ 'Início em', {text: moment(contract.startDate).format("DD-MMMM-YYYY"), alignment: 'center'}, 'Término em', calcEndDate(), 'Prazo mínimo de Locação', {text: contract.duration + ' meses', alignment: 'center'} ]
         ]
     }, style: 'table'}
   }
@@ -147,22 +149,21 @@ export default function createPdf(state, seller, representatives) {
     function renderBody(charges) {
       var header = [ ['Número', 'Período', 'Vencimento', 'Descrição da Cobrança', 'Valor'] ];
       var body = charges.map((charge, i, array) => {
-        var index = i + "/" + array.length;
+        var index = (i + 1) + "/" + array.length;
         var period = moment(charge.startDate).format("DD-MM-YY") + ' a ' +  moment(charge.endDate).format("DD-MM-YY");
         var endDate = moment(charge.endDate).format("DD-MM-YY");
         var description = charge.description;
-        var value = charge.value;
+        var value = tools.format(charge.value, 'currency');
         return [index, period, endDate, description, value];
       });
       var footer = [ [{text: 'Valor Total do Contrato:', colSpan: 4, alignment: 'right', bold: true}, '', '', '', displayValue('rent')] ];
-      console.log(header.concat(body, footer));
       return header.concat(body, footer);
     }
     return {table: {
       headerRows: 1,
       widths: ['auto', 'auto', 'auto', '*', 'auto'],
       heights: globals.cellheight,
-      body: renderBody(state.billingInfo)
+      body: renderBody(contract.billing)
     }, style: 'table'}
   }
   const tableAddress = () => {
@@ -170,16 +171,16 @@ export default function createPdf(state, seller, representatives) {
       widths: ['*'],
       heights: globals.cellheight,
       body: [
-          [ state.contractInfo.deliveryAddress.street + ', ' + state.contractInfo.deliveryAddress.number + ' - ' + state.contractInfo.deliveryAddress.city + ', ' + state.contractInfo.deliveryAddress.state ]
+          [ contract.deliveryAddress.street + ', ' + contract.deliveryAddress.number + ' - ' + contract.deliveryAddress.city + ', ' + contract.deliveryAddress.state ]
         ]
     }, style: 'table'}
   }
   const tableRestitution = () => {
     const renderBody = () => {
       var header = [ ['Item', 'Descrição', {text:'Valor Unitário de Indenização', alignment: 'right'}] ];
-      var body = state.contractInfo.products.map((product) => {
-        return [ product._id, product.name, {text: customTypes.format(product.restitution, 'currency'), alignment: 'right'} ]
-      })
+      var body = products ? products.map((product) => {
+        return [ product._id, product.description, {text: tools.format(product.restitution, 'currency'), alignment: 'right'} ]
+      }) : [[ {text: '', colSpan: 3}, '', '' ]];
       return header.concat(body);
     }
     return {table: {
@@ -216,7 +217,7 @@ export default function createPdf(state, seller, representatives) {
               {text: representatives[1].name, style: 'sig'}
             ]
           ]},
-          {text: state.clientInfo.officialName, style: 'sig'},
+          {text: client.officialName, style: 'sig'},
           {text: `LOCATÁRIA`, style: 'sig'}
         ];
       break;
@@ -257,12 +258,12 @@ export default function createPdf(state, seller, representatives) {
     pageSize: 'A4',
     pageMargins: [ 40, 60, 40, 30 ], //[left, top, right, bottom]
     info: {
-      title: `Contrato Locamex #${state.contractInfo._id}`,
+      title: `Contrato Locamex #${contract._id}`,
       author: `Locamex`,
       subject: `Contrato de Locação de Bens Móveis e Prestação de Serviços`
     },
     content: [
-    {text: `CONTRATO DE LOCAÇÃO DE BENS MÓVEIS E PRESTAÇÃO DE SERVIÇOS Nº ${state.contractInfo._id}`, style: 'h1'},
+    {text: `CONTRATO DE LOCAÇÃO DE BENS MÓVEIS E PRESTAÇÃO DE SERVIÇOS Nº ${contract._id}`, style: 'h1'},
     {text: `Pelo presente instrumento particular de locação, de um lado a pessoa jurídica LOCAMEX LOCAÇÕES E OBRAS EIRELI – EPP, CNPJ 05.411.043/0001-83, Inscrição Estadual 148.701.950.113 e Inscrição Municipal 3.186.381/7 com sede em Rua Monsenhor Antonio Pepe, nº 52 – Parque Jabaquara – São Paulo – SP – CEP  04357-080, representada neste ato por Jürgen Nemecek Junior, CPF 104.550.568-46, RG 10.937.140-9, órgão expedidor SSP, doravante denominada LOCADORA, e de outro lado a LOCATÁRIA abaixo qualificada:`, style: 'p'},
     tableInformation(),
     {text: `Representada neste ato por:`, style: 'p'},

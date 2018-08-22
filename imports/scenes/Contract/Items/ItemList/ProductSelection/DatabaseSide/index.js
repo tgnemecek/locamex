@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
 
-import customTypes from '/imports/startup/custom-types';
+import tools from '/imports/startup/tools/index';
 import SearchBar from '/imports/components/SearchBar/index';
 
 export default class DatabaseSide extends React.Component {

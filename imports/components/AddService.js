@@ -3,7 +3,7 @@ import ReactModal from 'react-modal';
 import "babel-polyfill";
 
 import { Services } from '../api/services';
-import customTypes from '/imports/startup/custom-types';
+import tools from '/imports/startup/tools/index';
 
 export default class AddService extends React.Component {
 
@@ -110,7 +110,7 @@ class LineService extends React.Component {
     let inputNumber = this.refs.inputNumber;
 
     this.state.price ? newPrice = this.state.price : newPrice = 0;
-    newPrice = customTypes.formatReais(newPrice, false);
+    newPrice = tools.formatReais(newPrice, false);
 
     this.setState({
       _id: e.target.key,
@@ -137,7 +137,7 @@ class LineService extends React.Component {
         </div>
         <div className="add-services__right-side">
           {this.state.price ?
-            <label className="add-services__label">Preço Base: {customTypes.formatReais(this.state.price, true)}</label> :
+            <label className="add-services__label">Preço Base: {tools.formatReais(this.state.price, true)}</label> :
             <label className="add-services__label">-</label>}
           <input type="number" className="add-services__input--small" ref="inputQuantity" placeholder="Qtd."/>
           <input type="number" className="add-services__input--medium" ref="inputNumber" placeholder="R$"/>

@@ -1,6 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import { Meteor } from 'meteor/meteor';
-import customTypes from '/imports/startup/custom-types';
+import tools from '/imports/startup/tools/index';
 
 export const Packs = new Mongo.Collection('packs');
 

@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
 
-import customTypes from '/imports/startup/custom-types';
+import tools from '/imports/startup/tools/index';
 import CustomInput from '/imports/components/CustomInput/index';
 
 

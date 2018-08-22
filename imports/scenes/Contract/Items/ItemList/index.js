@@ -1,6 +1,6 @@
 import React from 'react';
 
-import customTypes from '/imports/startup/custom-types';
+import tools from '/imports/startup/tools/index';
 import ProductSelection from './ProductSelection/index';
 
 export default class ItemList extends React.Component {
@@ -39,7 +39,7 @@ export default class ItemList extends React.Component {
         <tr key={i}>
           <td>{item._id}</td>
           <td>{item.description} {item.type == 'modular' ? this.renderModular(item) : null}</td>
-          <td>{customTypes.format(item.price, "currency")}</td>
+          <td>{tools.format(item.price, "currency")}</td>
           <td>{item.quantity}</td>
         </tr>
       )

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import customTypes from '/imports/startup/custom-types';
+import tools from '/imports/startup/tools/index';
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 import CustomInput from '/imports/components/CustomInput/index';

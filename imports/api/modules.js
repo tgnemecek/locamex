@@ -50,7 +50,7 @@ if(Meteor.isServer) {
       let contacts = [];
 
       state.contactInformation.forEach((contact, i) => {
-        contacts[i] = customTypes.deepCopy(contact);
+        contacts[i] = tools.deepCopy(contact);
       })
 
       Modules.insert({

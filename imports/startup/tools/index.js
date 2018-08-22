@@ -1,140 +1,123 @@
 import { Meteor } from 'meteor/meteor';
 
-export default class customTypes {
+export default class tools {
 
-  static format = (value, type, options) => {
-
-    if (!options) options = {
+  static format = (value, type, externalOptions) => {
+    if (value == undefined) return undefined;
+    var options = {
+      ...externalOptions,
       allowNegative: true,
-      fromInput: false
-    };
-
-    let realOptions = {
+      allowCommas: false
+    }
+    var realOptions = {
       minimumFractionDigits: 2,
       style: 'currency',
       currency: 'BRL'
     }
-
-    allowNegative = (value) => {
-      var originalValue = value;
-
-      if (options.fromInput) {
-        value = value.replace(/\D+/g, '').replace('R$', '').replace(/^0+/g, '').trim();
-        if (Number(value) == 0) {
-          return 'R$ ' + originalValue.replace(/[^0*\.*,*]/g, '').replace(/,0*/g, '').trim() + ',00';
-        } else value = Number(value) /100;
-      } else value = Number(value);
-      return value.toLocaleString('pt-br', realOptions);
-    }
-
     // allowNegative = (value) => {
-    //
-    //   if (options.allowNegative) {
-    //     value = value.replace(/[^\d-,]+/g, '').replace(/\d-+/g, '').replace(',', '.').trim();
-    //   } else {
-    //     value = value.replace(/\D+/g, '').replace('R$', '').replace(/^0+/g, '').trim();
-    //   }
-    //   value = customTypes.round(Number(value), 2);
+    //   var originalValue = value;
     //   if (options.fromInput) {
-    //     return value /100;
-    //   } else return value;
+    //     value = value.replace(/\D+/g, '').replace('R$', '').replace(/^0+/g, '').trim();
+    //     if (Number(value) == 0) {
+    //       return 'R$ ' + originalValue.replace(/[^0*\.*,*]/g, '').replace(/,0*/g, '').trim() + ',00';
+    //     } else value = Number(value) /100;
+    //   } else value = Number(value);
+    //   return value.toLocaleString('pt-br', realOptions);
     // }
 
-    if (value !== undefined) {
-      value = value.toString();
-      switch (type.toUpperCase()) {
-        case 'NUMBER':
-          return value.replace(/\D+/g, '');
-          break;
-        case 'ZIP':
-            value = value.replace(/\D+/g, '');
-            if (value.length > 5) {
-              value = value.substring(0, 5) + "-" + value.substring(5);
-            }
-            if (value.length > 8) {
-              value = value.substring(0, 9);
-            }
-            break;
-        case 'PHONE':
-          value = value.replace(/\D+/g, '');
-          if (value.length > 0) {
-            value = value.substring(0, 0) + "(" + value.substring(0);
-          }
-          if (value.length > 3) {
-            value = value.substring(0, 3) + ") " + value.substring(3);
-          }
-          if (value.length > 9) {
-            value = value.substring(0, 9) + "-" + value.substring(9);
-          }
-          if (value.length > 14) {
-            value = value.substring(0, 15);
-          }
-          break;
-        case 'CNPJ':
-          value = value.replace(/\D+/g, '');
-          if (value.length > 2) {
-            value = value.substring(0, 2) + "." + value.substring(2);
-          }
-          if (value.length > 6) {
-            value = value.substring(0, 6) + "." + value.substring(6);
-          }
-          if (value.length > 10) {
-            value = value.substring(0, 10) + "/" + value.substring(10);
-          }
-          if (value.length > 15) {
-            value = value.substring(0, 15) + "-" + value.substring(15);
-          }
-          if (value.length > 17) {
-            value = value.substring(0, 18);
-          }
-          break;
-        case 'CPF':
-          value = value.replace(/\D+/g, '');
-          if (value.length > 3) {
-            value = value.substring(0, 3) + "." + value.substring(3);
-          }
-          if (value.length > 7) {
-            value = value.substring(0, 7) + "." + value.substring(7);
-          }
-          if (value.length > 11) {
-            value = value.substring(0, 11) + "-" + value.substring(11);
-          }
-          if (value.length > 13) {
-            value = value.substring(0, 14);
-          }
-          break;
-        case 'RG':
-          value = value.replace(/\D+/g, '');
-          if (value.length > 2) {
-            value = value.substring(0, 2) + "." + value.substring(2);
-          }
-          if (value.length > 6) {
-            value = value.substring(0, 6) + "." + value.substring(6);
-          }
-          if (value.length > 10) {
-            value = value.substring(0, 10) + "-" + value.substring(10);
-          }
-          if (value.length > 12) {
-            value = value.substring(0, 13);
-          }
-          break;
-        case 'CURRENCY':
+    switch(type) {
 
-          value = allowNegative(value);
-          break;
-        // case 'CURRENCYINPUT':
-        //   value = allowNegative(value);
-        //   value = value.toLocaleString('pt-br', realOptions);
-        //   break;
-        case 'NUMBERFROMCURRENCY':
-          value = value.replace(/[^\d-,]+/g, '').replace(/\d-+/g, '').replace(',', '.').trim();
+      case 'number':
+        if (typeof(value) === 'string') {
+          value = value.replace(/\D+/g, '');
           value = Number(value);
-        default:
-          value = value;
-      }
-      return value;
+        }
+        return value;
+
+      case 'zip':
+        value = value.toString().replace(/\D+/g, '');
+        if (value.length > 5) {
+          value = value.substring(0, 5) + "-" + value.substring(5);
+        }
+        if (value.length > 8) {
+          value = value.substring(0, 9);
+        }
+        return value;
+
+      case 'phone':
+        value = value.toString().replace(/\D+/g, '');
+        if (value.length > 0) {
+          value = value.substring(0, 0) + "(" + value.substring(0);
+        }
+        if (value.length > 3) {
+          value = value.substring(0, 3) + ") " + value.substring(3);
+        }
+        if (value.length > 9) {
+          value = value.substring(0, 9) + "-" + value.substring(9);
+        }
+        if (value.length > 14) {
+          value = value.substring(0, 15);
+        }
+        return value;
+
+      case 'cnpj':
+        value = value.toString().replace(/\D+/g, '');
+        if (value.length > 2) {
+          value = value.substring(0, 2) + "." + value.substring(2);
+        }
+        if (value.length > 6) {
+          value = value.substring(0, 6) + "." + value.substring(6);
+        }
+        if (value.length > 10) {
+          value = value.substring(0, 10) + "/" + value.substring(10);
+        }
+        if (value.length > 15) {
+          value = value.substring(0, 15) + "-" + value.substring(15);
+        }
+        if (value.length > 17) {
+          value = value.substring(0, 18);
+        }
+        return value;
+
+      case 'cpf':
+        value = value.toString().replace(/\D+/g, '');
+        if (value.length > 3) {
+          value = value.substring(0, 3) + "." + value.substring(3);
+        }
+        if (value.length > 7) {
+          value = value.substring(0, 7) + "." + value.substring(7);
+        }
+        if (value.length > 11) {
+          value = value.substring(0, 11) + "-" + value.substring(11);
+        }
+        if (value.length > 13) {
+          value = value.substring(0, 14);
+        }
+        return value;
+
+      case 'rg':
+        value = value.toString().replace(/\D+/g, '');
+        if (value.length > 2) {
+          value = value.substring(0, 2) + "." + value.substring(2);
+        }
+        if (value.length > 6) {
+          value = value.substring(0, 6) + "." + value.substring(6);
+        }
+        if (value.length > 10) {
+          value = value.substring(0, 10) + "-" + value.substring(10);
+        }
+        if (value.length > 12) {
+          value = value.substring(0, 13);
+        }
+        return value;
+
+      case 'currency':
+        // value = allowNegative(value);
+        return Number(value).toLocaleString('pt-br', realOptions);
+
+      default:
+        return value;
     }
-    return null;
   }
 
   static round = (value, decimals) => {

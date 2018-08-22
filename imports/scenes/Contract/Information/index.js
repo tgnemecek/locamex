@@ -5,7 +5,7 @@ import { Clients } from '/imports/api/clients';
 
 import CustomInput from '/imports/components/CustomInput/index';
 import Calendar from '/imports/components/Calendar/index';
-import customTypes from '/imports/startup/custom-types';
+import tools from '/imports/startup/tools/index';
 
 export default class Information extends React.Component {
   constructor(props) {
@@ -51,18 +51,20 @@ export default class Information extends React.Component {
 
   setZip = (e) => {
     e.preventDefault();
-
     var value = e.target.value;
-    this.state.deliveryAddress.zip = value;
+    var deliveryAddress = {
+      ...this.state.deliveryAddress,
+      zip: value
+    }
     if (value.length == 8) {
-      var object = customTypes.checkCEP(value, (data) => {
+      var object = tools.checkCEP(value, (data) => {
         if (data) {
-          this.state.deliveryAddress.street = data.logradouro;
-          this.state.deliveryAddress.district = data.bairro;
-          this.state.deliveryAddress.city = data.localidade;
-          this.state.deliveryAddress.state = data.uf;
-          this.state.deliveryAddress.number = '';
-          this.state.deliveryAddress.additional = '';
+          deliveryAddress.street = data.logradouro;
+          deliveryAddress.district = data.bairro;
+          deliveryAddress.city = data.localidade;
+          deliveryAddress.state = data.uf;
+          deliveryAddress.number = '';
+          deliveryAddress.additional = '';
           this.setState({ invalidZip: false });
         } else {
           this.setState({ invalidZip: true });
@@ -73,7 +75,7 @@ export default class Information extends React.Component {
       if (value.length < 8) { this.setState({ invalidZip: true }) };
       if (value.length > 8) { this.setState({ invalidZip: true }) };
     }
-    this.forceUpdate();
+    this.setState({ deliveryAddress });
   }
 
   render() {
@@ -89,15 +91,17 @@ export default class Information extends React.Component {
             </div>
             <div className="contract__item-wrap">
               <div className="contract__item-wrap--margin-right">
-                <label>Endereço de Entrega:</label>
-                <CustomInput name="street"
+                <CustomInput
+                  title="Endereço de Entrega:"
+                  name="street"
                   type="text"
                   value={this.state.deliveryAddress.street}
                   onChange={this.handleChangeAddress}/>
               </div>
               <div className="contract__item-wrap--force-small">
-                <label>Número:</label>
-                <CustomInput name="number"
+                <CustomInput
+                  title="Número:"
+                  name="number"
                   type="number"
                   value={this.state.deliveryAddress.number}
                   onChange={this.handleChangeAddress}/>
@@ -114,8 +118,7 @@ export default class Information extends React.Component {
                                                 /> : null}
               </div>
               <div className="contract__item-wrap--margin-right">
-                <label>Duração:</label>
-                <input type="number"/>
+                <CustomInput title="Duração:" type="number"/>
               </div>
               <div>
                 <label style={{visibility: "hidden"}}>Período:</label>
@@ -129,21 +132,23 @@ export default class Information extends React.Component {
               <div className="contract__item-wrap--margin-right">
                 <label>Estado:</label>
                 <select name="state" value={this.state.deliveryAddress.state} onChange={this.handleChangeAddress}>
-                  {customTypes.states.map((item, i) => {
+                  {tools.states.map((item, i) => {
                     return <option key={i} value={item}>{item}</option>
                   })}
                 </select>
               </div>
               <div className="contract__item-wrap--margin-right">
-                <label>Complemento:</label>
-                <CustomInput name="additional"
+                <CustomInput
+                  title="Complemento:"
+                  name="additional"
                   type="text"
                   value={this.state.deliveryAddress.additional}
                   onChange={this.handleChangeAddress}/>
               </div>
               <div>
-                <label>CEP:</label>
-                <CustomInput name="zip"
+                <CustomInput
+                  title="CEP:"
+                  name="zip"
                   type="zip"
                   value={this.state.deliveryAddress.zip}
                   forceInvalid={this.state.invalidZip}

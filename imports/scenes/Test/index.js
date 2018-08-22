@@ -1,41 +1,29 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
-import customTypes from '/imports/startup/custom-types';
+import tools from '/imports/startup/tools/index';
+import CustomInput from '/imports/components/CustomInput/index';
+import { Clients } from '/imports/api/clients';
 
 export default class Test extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      array: [
-        {name: 'aaa', _id: '01'},
-        {name: 'bbb', _id: '02'},
-        {name: 'ccc', _id: '03'}
-
-      ]
+      value: []
     };
   }
 
   componentDidMount() {
-    var a = customTypes.deepCopy(this.state.array);
-    a[0].name = 'yooooooooooo';
-    console.log(a);
-    this.forceUpdate();
-  }
-
-  renderArray = () => {
-    return this.state.array.map((item, i) => {
-      return (
-        <div key={i}>
-          name: {item.name}, _id: {item._id}
-        </div>
-      )
+    this.contractsTracker = Tracker.autorun(() => {
+      Meteor.subscribe('clientsPub');
+      var value = Clients.find("0001").fetch();
+      this.setState({ value });
     })
   }
 
   render() {
     return (
       <div>
-        {this.renderArray()}
+        {this.state.value.map((a) => a.clientName)}
       </div>
     )
   }

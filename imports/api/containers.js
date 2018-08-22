@@ -1,6 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import { Meteor } from 'meteor/meteor';
-import customTypes from '/imports/startup/custom-types';
+import tools from '/imports/startup/tools/index';
 
 export const Containers = new Mongo.Collection('containers');
 
@@ -79,7 +79,7 @@ if(Meteor.isServer) {
       let contacts = [];
 
       state.contactInformation.forEach((contact, i) => {
-        contacts[i] = customTypes.deepCopy(contact);
+        contacts[i] = tools.deepCopy(contact);
       })
 
       Containers.insert({

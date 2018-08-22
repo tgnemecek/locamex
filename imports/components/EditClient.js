@@ -2,7 +2,7 @@ import ReactModal from 'react-modal';
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 
-import customTypes from '/imports/startup/custom-types';
+import tools from '/imports/startup/tools/index';
 
 import CustomInput from './CustomInput';
 import ConfirmationMessage from './ConfirmationMessage';
@@ -165,21 +165,21 @@ export default class EditClient extends React.Component {
         this.setState({ isError: true, formError });
       } else {
         if (requiredFieldsProposal[i].type == 'cpf') {
-          if (!customTypes.checkCPF(state)) {
+          if (!tools.checkCPF(state)) {
             errorCount++;
             formError.push(requiredFieldsProposal[i].title + " Inválido");
             this.setState({ isError: true, formError });
           }
         }
         if (requiredFieldsProposal[i].type == 'cnpj') {
-          if (!customTypes.checkCNPJ(state)) {
+          if (!tools.checkCNPJ(state)) {
             errorCount++;
             formError.push(requiredFieldsProposal[i].title + " Inválido");
             this.setState({ isError: true, formError });
           }
         }
         if (requiredFieldsProposal[i].type == 'email') {
-          if (!customTypes.checkEmail(state)) {
+          if (!tools.checkEmail(state)) {
             errorCount++;
             formError.push(requiredFieldsProposal[i].title + " Inválido");
             this.setState({ isError: true, formError });

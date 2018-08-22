@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 
-import customTypes from '/imports/startup/custom-types';
+import tools from '/imports/startup/tools/index';
 
 export default class SearchBar extends React.Component {
   constructor(props) {
@@ -40,7 +40,7 @@ export default class SearchBar extends React.Component {
     var result = [];
 
     function makeEqual(str) {
-      return customTypes.removeSpecialChars(str, /[\.\/\-\(\) ]/g).toUpperCase();
+      return tools.removeSpecialChars(str, /[\.\/\-\(\) ]/g).toUpperCase();
     }
 
     function compareOption(key) {

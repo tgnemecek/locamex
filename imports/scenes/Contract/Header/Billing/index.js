@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 
-import customTypes from '/imports/startup/custom-types';
+import tools from '/imports/startup/tools/index';
 import CustomInput from '/imports/components/CustomInput/index';
 import Calendar from '/imports/components/Calendar/index';
 import Box from '/imports/components/Box/index';
@@ -26,7 +26,7 @@ export default class Billing extends React.Component {
     var accessories = this.props.contract.accessories ? this.props.contract.accessories : [];
     var services = this.props.contract.services ? this.props.contract.services : [];
     var all = this.props.contract.containers.concat(this.props.contract.accessories, this.props.contract.services);
-    var charges = customTypes.deepCopy(this.state.charges);
+    var charges = tools.deepCopy(this.state.charges);
     var equalDivision;
     if (all.length == 0) return 0;
     var totalValue = all.reduce((acc, current) => {
@@ -42,7 +42,6 @@ export default class Billing extends React.Component {
       if (charges[i].value !== charges[i+1].value) {
         equalDivision = false;
       }
-      charges[i].value = charges[i].value * 100;
     }
     this.setState({ totalValue, equalDivision, charges });
   }
@@ -54,12 +53,24 @@ export default class Billing extends React.Component {
 
   divisionChange = (e) => {
     var equalDivision = e.target.checked;
+    if (equalDivision) this.setEqualValues();
     this.setState({ equalDivision });
+  }
+
+  setEqualValues = () => {
+    var charges = tools.deepCopy(this.state.charges);
+    var equalValue = tools.round(this.state.totalValue / this.state.charges.length, 2);
+    var rest = tools.round(this.state.totalValue - (equalValue * this.state.charges.length), 2);
+    charges.forEach((charge, i) => {
+      if (i == 0) charge.value = (equalValue + rest);
+      else charge.value = equalValue;
+    })
+    this.setState({ charges });
   }
 
   updateTable = (e) => {
     var value = Number(e.target.value);
-    var charges = customTypes.deepCopy(this.state.charges);
+    var charges = tools.deepCopy(this.state.charges);
     var newCharges = [];
     var difference = Math.abs(charges.length - value);
     var moment1 = moment(this.state.startDate).add((30 * i + i), 'days');
@@ -68,7 +79,7 @@ export default class Billing extends React.Component {
       for (var i = 0; i < difference; i++) {
         newCharges.push({
           description: `Cobrança #${i +  charges.length + 1} referente ao Valor Total do Contrato`,
-          value: '',
+          value: this.state.equalValue ? this.state.charges[0].value : '',
           startDate: moment1,
           endDate: moment2
         })
@@ -108,15 +119,8 @@ export default class Billing extends React.Component {
   }
 
   renderBody = () => {
-    var equalValue = customTypes.round(this.state.totalValue / this.state.charges.length, 2);
-    var equalValueStr;
-    var rest = customTypes.round(this.state.totalValue - (equalValue * this.state.charges.length), 2);
     return this.state.charges.map((charge, i, array) => {
-      if (i == 0) {
-        equalValueStr = customTypes.format(equalValue + rest, "currency");
-      } else {
-        equalValueStr = customTypes.format(equalValue, "currency");
-      }
+      var equalValueStr = tools.format(charge.value, "currency");
       return (
         <tr key={i}>
           <td>{(i + 1) + '/' + array.length}</td>
@@ -125,7 +129,7 @@ export default class Billing extends React.Component {
           <td><textarea name={i} value={charge.description} onChange={this.updateDescription}/></td>
           <td>{this.state.equalDivision ? equalValueStr : <CustomInput name={i} type="currency"
                                                               onChange={this.onChange}
-                                                              value={charge.value}
+                                                              value={charge.value * 100}
                                                               placeholder={equalValueStr}
                                                               />}</td>
         </tr>
@@ -134,7 +138,7 @@ export default class Billing extends React.Component {
   }
 
   calcDifference = () => {
-    var value = customTypes.format(this.state.difference, 'currency');
+    var value = tools.format(this.state.difference, 'currency');
     var className = this.state.difference != 0 ? "difference--danger" : "difference--zero";
     return <span className={className}>{value}</span>
   }
@@ -197,7 +201,7 @@ export default class Billing extends React.Component {
                       </tr>
                       <tr>
                         <th colSpan="4"><b>Valor Total do Contrato:</b></th>
-                        <th>{customTypes.format(this.state.totalValue, "currency")}</th>
+                        <th>{tools.format(this.state.totalValue, "currency")}</th>
                       </tr>
                     </tfoot>
                   </table>

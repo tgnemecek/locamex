@@ -1,5 +1,5 @@
 import { Mongo } from 'meteor/mongo';
-import customTypes from '/imports/startup/custom-types';
+import tools from '/imports/startup/tools/index';
 
 export const Accessories = new Mongo.Collection('accessories');
 
@@ -42,7 +42,7 @@ if(Meteor.isServer) {
   //     let contacts = [];
   //
   //     state.contactInformation.forEach((contact, i) => {
-  //       contacts[i] = customTypes.deepCopy(contact);
+  //       contacts[i] = tools.deepCopy(contact);
   //     })
   //
   //     Clients.insert({

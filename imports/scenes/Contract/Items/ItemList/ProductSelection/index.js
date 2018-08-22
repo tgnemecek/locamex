@@ -5,7 +5,7 @@ import { Containers } from '/imports/api/containers';
 import { Services } from '/imports/api/services';
 import { Modules } from '/imports/api/modules';
 
-import customTypes from '/imports/startup/custom-types';
+import tools from '/imports/startup/tools/index';
 
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
@@ -23,7 +23,7 @@ export default class ProductSelection extends React.Component {
       filteredDatabase: [],
       pub: '',
       dbName: '',
-      addedItems: this.props.addedItems ? customTypes.deepCopy(this.props.addedItems) : [],
+      addedItems: this.props.addedItems ? tools.deepCopy(this.props.addedItems) : [],
       moduleDatabase: [],
       modularScreenOpen: 0,
       modularContainer: '',
@@ -68,9 +68,9 @@ export default class ProductSelection extends React.Component {
 
   initialCalculations = () => {
     var modularCount = 0;
-    var addedItems = customTypes.deepCopy(this.state.addedItems);
-    var moduleDatabase = customTypes.deepCopy(this.state.moduleDatabase);
-    var filteredDatabase = customTypes.deepCopy(this.state.filteredDatabase);
+    var addedItems = tools.deepCopy(this.state.addedItems);
+    var moduleDatabase = tools.deepCopy(this.state.moduleDatabase);
+    var filteredDatabase = tools.deepCopy(this.state.filteredDatabase);
     addedItems.forEach((pack) => {
       if (pack.type == 'modular') {
         var usedModules = pack.modules;
@@ -104,8 +104,8 @@ export default class ProductSelection extends React.Component {
 
   addItem = (e) => {
     var index = e.target.value;
-    var filteredDatabase = customTypes.deepCopy(this.state.filteredDatabase);
-    var addedItems = customTypes.deepCopy(this.state.addedItems);
+    var filteredDatabase = tools.deepCopy(this.state.filteredDatabase);
+    var addedItems = tools.deepCopy(this.state.addedItems);
     filteredDatabase[index].added = true;
     filteredDatabase[index].quantity = 1;
     addedItems.push(filteredDatabase[index]);
@@ -182,8 +182,8 @@ export default class ProductSelection extends React.Component {
   }
 
   addModular = (pack) => {
-    var addedItems = customTypes.deepCopy(this.state.addedItems);
-    var moduleDatabase = customTypes.deepCopy(this.state.moduleDatabase);
+    var addedItems = tools.deepCopy(this.state.addedItems);
+    var moduleDatabase = tools.deepCopy(this.state.moduleDatabase);
     var usedModules = pack.modules;
     var modularCount = this.state.modularCount;
     var _id = "G" + (modularCount.toString().padStart(3, '0'));
@@ -203,13 +203,13 @@ export default class ProductSelection extends React.Component {
   }
 
   editModular = (pack) => {
-    var addedItems = customTypes.deepCopy(this.state.addedItems);
-    var moduleDatabase = customTypes.deepCopy(this.state.moduleDatabase);
+    var addedItems = tools.deepCopy(this.state.addedItems);
+    var moduleDatabase = tools.deepCopy(this.state.moduleDatabase);
     var oldModules;
     var oldQuantity;
     for (var i = 0; i < addedItems.length; i++) {
       if (addedItems[i]._id == pack._id && addedItems[i].type == 'modular') {
-        oldModules = customTypes.deepCopy(addedItems[i].modules);
+        oldModules = tools.deepCopy(addedItems[i].modules);
         oldQuantity = addedItems[i].quantity;
         addedItems[i] = {...pack};
         break;
@@ -230,12 +230,12 @@ export default class ProductSelection extends React.Component {
   }
 
   removeModular = (pack) => {
-    var addedItems = customTypes.deepCopy(this.state.addedItems);
-    var moduleDatabase = customTypes.deepCopy(this.state.moduleDatabase);
+    var addedItems = tools.deepCopy(this.state.addedItems);
+    var moduleDatabase = tools.deepCopy(this.state.moduleDatabase);
     var oldModules;
     for (var i = 0; i < addedItems.length; i++) {
       if (addedItems[i]._id == pack._id && addedItems[i].type == 'modular') {
-        oldModules = customTypes.deepCopy(addedItems[i].modules);
+        oldModules = tools.deepCopy(addedItems[i].modules);
         addedItems.splice(i, 1);
         break;
       }

@@ -4,7 +4,7 @@ import moment from 'moment';
 
 import { Contracts } from '/imports/api/contracts';
 
-import customTypes from '/imports/startup/custom-types';
+import tools from '/imports/startup/tools/index';
 
 import PrivateHeader from '/imports/components/PrivateHeader/index';
 import Header from './Header/index';
@@ -30,7 +30,7 @@ export default class Contract extends React.Component {
         Meteor.subscribe('contractsPub');
         var contract = Contracts.findOne({ _id: this.props.params.contractId });
         if (contract) {
-          contract = customTypes.deepCopy(contract);
+          contract = tools.deepCopy(contract);
           var _id = contract._id
           this.setState({ contract, _id, ready: true });
         } else this.setState({ ready: false });
