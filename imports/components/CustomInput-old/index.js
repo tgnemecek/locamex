@@ -3,7 +3,7 @@ import { Meteor } from 'meteor/meteor';
 
 import tools from '/imports/startup/tools/index';
 
-export default class CustomInput extends React.Component {
+export default class Input extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -60,7 +60,7 @@ export default class CustomInput extends React.Component {
         }
         break;
       case 'cpf':
-        if (!tools.checkCPF(value)){
+        if (!tools.checkCpf(value)){
           this.redBorder(true);
           return '';
         }
@@ -99,7 +99,7 @@ export default class CustomInput extends React.Component {
         case 'cpf':
         case 'cnpj':
         case 'phone':
-        case 'zip':
+        case 'cep':
           displayValue = tools.format(inputValue, this.props.type);
           exportValue = displayValue.replace(/\D+/g, '');
           break;

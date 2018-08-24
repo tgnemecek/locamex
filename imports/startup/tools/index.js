@@ -5,9 +5,10 @@ export default class tools {
   static format = (value, type, externalOptions) => {
     if (value == undefined) return undefined;
     var options = {
-      ...externalOptions,
-      allowNegative: true,
-      allowCommas: false
+      allowNegative: false,
+      allowImpossible: false,
+      allowFloat: false,
+      ...externalOptions
     }
     var realOptions = {
       minimumFractionDigits: 2,
@@ -30,11 +31,11 @@ export default class tools {
       case 'number':
         if (typeof(value) === 'string') {
           value = value.replace(/\D+/g, '');
-          value = Number(value);
+          if (!options.allowImpossible) value = Number(value);
         }
         return value;
 
-      case 'zip':
+      case 'cep':
         value = value.toString().replace(/\D+/g, '');
         if (value.length > 5) {
           value = value.substring(0, 5) + "-" + value.substring(5);
@@ -120,6 +121,27 @@ export default class tools {
     }
   }
 
+  static unformat = (value, type, externalOptions) => {
+    if (value == undefined) return undefined;
+    value = value.toString();
+    switch(type) {
+      case 'currency':
+      case 'rg':
+      case 'cpf':
+      case 'cnpj':
+      case 'phone':
+      case 'cep':
+        value = value.replace(/\D+/g, '');
+        return value;
+      case 'number':
+        value = value.replace(/\D+/g, '');
+        value = Number(value);
+        return value;
+      default:
+        return value;
+    }
+  }
+
   static round = (value, decimals) => {
     typeof(value) == 'string' ? value.replace(',', '.') : null;
     return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
@@ -153,7 +175,7 @@ export default class tools {
     return false;
   }
 
-  static checkCPF(arg) {
+  static checkCpf(arg) {
       var Soma = 0;
       var Resto;
 
@@ -230,17 +252,6 @@ export default class tools {
     // var re = /\S+@\S+/;
     var re = /^(?:[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/;
     return re.test(arg);
-  }
-
-  static checkCEP(arg, callback) {
-    fetch(`https://viacep.com.br/ws/${arg}/json/`)
-    .then(response => response.json() )
-    .then( data => {
-      callback(data);
-    })
-    .catch(err => {
-      callback();
-    })
   }
 
   static removeSpecialChars (str, extras) {

@@ -70,13 +70,6 @@
 .contract__body {
   padding: $space;
 }
-//BODY-TOP
-.contract__body--top {
-  display: inline-flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  width: 100%;
-}
 
 .contract__item-wrap {
   padding: 5px;
@@ -100,11 +93,6 @@
   }
   .contract__item-wrap--force-small {
     flex-grow: 0.49;
-  }
-  .contract__zip-button {
-    cursor: pointer;
-    margin-left: -20px;
-    margin-bottom: 7px;
   }
 }
 

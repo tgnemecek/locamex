@@ -44,8 +44,8 @@ export default class ListPage extends React.Component {
           title: "Email",
           value: "contactEmail"
         }, {
-          title: "CPF",
-          value: "contactCPF"
+          title: "Cpf",
+          value: "contactCpf"
         }, ]
         break;
     }

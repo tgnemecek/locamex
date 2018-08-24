@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 
 import tools from '/imports/startup/tools/index';
-import CustomInput from '/imports/components/CustomInput/index';
+import Input from '/imports/components/Input/index';
 
 
 export default class AddedItemsSide extends React.Component {
@@ -20,10 +20,10 @@ export default class AddedItemsSide extends React.Component {
         <tr key={i} className="product-selection__db-item">
           <td>{item._id}</td>
           <td>{item.description}</td>
-          <td><CustomInput type="currency" name={i} value={item.price * 100} onChange={this.props.changePrice}/></td>
+          <td><Input type="currency" name={i} value={item.price} onChange={this.props.changePrice}/></td>
           {this.props.database != 'containers' ?
             <td>
-              <CustomInput
+              <Input
                 type="number"
                 name={i}
                 value={item.quantity}

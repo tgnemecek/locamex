@@ -1,0 +1,11 @@
+.block__parent {
+  width: 100%;
+  margin: 0;
+}
+
+.block {
+  display: inline-block;
+  overflow: hidden;
+  padding: 5px;
+  vertical-align: top;
+}

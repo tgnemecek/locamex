@@ -2,7 +2,8 @@ import React from 'react';
 import moment from 'moment';
 
 import tools from '/imports/startup/tools/index';
-import CustomInput from '/imports/components/CustomInput/index';
+import Block from '/imports/components/Block/index';
+import Input from '/imports/components/Input/index';
 import Calendar from '/imports/components/Calendar/index';
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
@@ -11,39 +12,42 @@ export default class Billing extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      charges: this.props.contract.billing,
+      charges: this.props.contract.billing || [],
       totalValue: 0,
       equalDivision: false,
       difference: 0,
       valid: false,
       calendarOpen: false,
-      startDate: new Date()
+      startDate: this.props.contract.startDate,
+      messageBox: false
     }
-  }
-
-  componentDidMount() {
     var containers = this.props.contract.containers ? this.props.contract.containers : [];
     var accessories = this.props.contract.accessories ? this.props.contract.accessories : [];
     var services = this.props.contract.services ? this.props.contract.services : [];
     var all = this.props.contract.containers.concat(this.props.contract.accessories, this.props.contract.services);
     var charges = tools.deepCopy(this.state.charges);
-    var equalDivision;
-    if (all.length == 0) return 0;
-    var totalValue = all.reduce((acc, current) => {
-      return {
-          price: acc.price + current.price
+    var equalDivision = calcIfEqualDivision(charges);
+    var totalValue = calcTotalValue(all);
+    function calcTotalValue(arr) {
+      if (arr.length == 0) return 0;
+      return arr.reduce((acc, current) => {
+        return {
+            price: acc.price + current.price
+          }
+        }).price;
+    }
+    function calcIfEqualDivision(charges) {
+      if (!charges.length) return false;
+      for (var i = 0; i < charges.length; i++) {
+        if ((i+1) == charges.length) {
+          return true;
         }
-      }).price;
-    for (var i = 0; i < charges.length; i++) {
-      if ((i+1) == charges.length) {
-        equalDivision = true;
-        break;
-      }
-      if (charges[i].value !== charges[i+1].value) {
-        equalDivision = false;
+        if (charges[i].value !== charges[i+1].value) {
+          return false;
+        }
       }
     }
-    this.setState({ totalValue, equalDivision, charges });
+    this.state = {...this.state, totalValue, equalDivision, charges};
   }
 
   representativesOnChange = (e) => {
@@ -57,10 +61,10 @@ export default class Billing extends React.Component {
     this.setState({ equalDivision });
   }
 
-  setEqualValues = () => {
-    var charges = tools.deepCopy(this.state.charges);
-    var equalValue = tools.round(this.state.totalValue / this.state.charges.length, 2);
-    var rest = tools.round(this.state.totalValue - (equalValue * this.state.charges.length), 2);
+  setEqualValues = (charges) => {
+    var charges = charges || tools.deepCopy(this.state.charges);
+    var equalValue = tools.round(this.state.totalValue / charges.length, 2);
+    var rest = tools.round(this.state.totalValue - (equalValue * charges.length), 2);
     charges.forEach((charge, i) => {
       if (i == 0) charge.value = (equalValue + rest);
       else charge.value = equalValue;
@@ -79,19 +83,19 @@ export default class Billing extends React.Component {
       for (var i = 0; i < difference; i++) {
         newCharges.push({
           description: `Cobrança #${i +  charges.length + 1} referente ao Valor Total do Contrato`,
-          value: this.state.equalValue ? this.state.charges[0].value : '',
+          value: this.state.equalDivision ? this.state.charges[0].value : '',
           startDate: moment1,
           endDate: moment2
         })
       }
       charges = charges.concat(newCharges);
-      this.setState({ charges });
+      this.setEqualValues(charges);
     }
     if (value < charges.length) {
       for (var i = 0; i < value; i++) {
         newCharges.push(charges[i]);
       }
-      this.setState({ charges: newCharges });
+      this.setEqualValues(newCharges);
     }
   }
 
@@ -127,9 +131,9 @@ export default class Billing extends React.Component {
           <td>{moment(charge.startDate).format("DD-MM-YY") + ' a ' +  moment(charge.endDate).format("DD-MM-YY")}</td>
           <td>{moment(charge.endDate).format("DD-MM-YY")}</td>
           <td><textarea name={i} value={charge.description} onChange={this.updateDescription}/></td>
-          <td>{this.state.equalDivision ? equalValueStr : <CustomInput name={i} type="currency"
+          <td>{this.state.equalDivision ? equalValueStr : <Input name={i} type="currency"
                                                               onChange={this.onChange}
-                                                              value={charge.value * 100}
+                                                              value={charge.value}
                                                               placeholder={equalValueStr}
                                                               />}</td>
         </tr>
@@ -154,60 +158,76 @@ export default class Billing extends React.Component {
     this.toggleCalendar();
   }
 
+  saveEdits = () => {
+    if (this.state.difference !== 0) {
+      this.setState({ messageBox: true });
+    } else {
+      this.props.updateContract(this.state.charges, "billing");
+      this.props.toggleWindow();
+    }
+  }
+
   render() {
       return (
         <Box
           title="Tabela de Cobrança:"
           width="1000px"
           closeBox={this.props.toggleWindow}>
-              <div className="billing">
-                <div className="billing__item">
-                  <label>Número de Cobranças:</label>
-                  <CustomInput
-                    type="number"
-                    value={this.state.charges.length}
-                    onChange={this.updateTable}/>
-                </div>
-                <div className="billing__item">
-                  <label>Início da Cobrança:</label>
-                  <input readOnly value={moment(this.state.startDate).format("DD-MMMM-YYYY")}
-                    onClick={this.toggleCalendar} style={{cursor: "pointer"}}/>
-                  {this.state.calendarOpen ? <Calendar
-                                                closeCalendar={this.toggleCalendar}
-                                                changeDate={this.changeDate}/> : null}
-                </div>
-                <div>
-                  <label>Parcelas iguais:</label>
-                  <input type="checkbox" checked={this.state.equalDivision} onChange={this.divisionChange}/>
-                </div>
-                <div>
-                  <table className="table table--billing">
-                    <thead>
-                      <tr>
-                        <th>Número</th>
-                        <th>Período</th>
-                        <th>Vencimento</th>
-                        <th>Descrição da Cobrança</th>
-                        <th>Valor</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {this.renderBody()}
-                    </tbody>
-                    <tfoot>
-                      <tr style={this.state.equalDivision ? {display: 'none'} : {display: 'inherit'}}>
-                        <td colSpan="4" style={{fontStyle: "italic"}}>Diferença:</td>
-                        <td>{this.calcDifference()}</td>
-                      </tr>
-                      <tr>
-                        <th colSpan="4"><b>Valor Total do Contrato:</b></th>
-                        <th>{tools.format(this.state.totalValue, "currency")}</th>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
-              </div>
-              <FooterButtons buttons={[{text: "Salvar", onClick: () => this.props.updateContract(this.state.charges, "billing")}]}/>
+          {this.state.messageBox ?
+            <Box title="Aviso:">
+              <p>O valor resultante das parcelas não coincide com o Valor Total do Contrato.</p>
+              <FooterButtons buttons={[{text: "Voltar", onClick: () => this.setState({ messageBox: false })}]}/>
+            </Box>
+          : null}
+            <Block columns={2}>
+              <Input
+                title="Número de Cobranças:"
+                type="number"
+                value={this.state.charges.length}
+                onChange={this.updateTable}
+              />
+              <Input
+                title="Início da Cobrança:"
+                type="calendar"
+                calendarOpen={this.state.calendarOpen}
+                toggleCalendar={this.toggleCalendar}
+                onChange={this.changeDate}
+                value={this.state.startDate}
+              />
+              <Input
+                title="Cobranças iguais:"
+                type="checkbox"
+                calendarOpen={this.state.calendarOpen}
+                toggleCalendar={this.toggleCalendar}
+                onChange={this.divisionChange}
+                value={this.state.equalDivision}
+              />
+            </Block>
+            <table className="table table--billing">
+              <thead>
+                <tr>
+                  <th>Número</th>
+                  <th>Período</th>
+                  <th>Vencimento</th>
+                  <th>Descrição da Cobrança</th>
+                  <th>Valor</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.renderBody()}
+              </tbody>
+              <tfoot>
+                <tr style={this.state.equalDivision ? {display: 'none'} : {display: 'inherit'}}>
+                  <td colSpan="4" style={{fontStyle: "italic"}}>Diferença:</td>
+                  <td>{this.calcDifference()}</td>
+                </tr>
+                <tr>
+                  <th colSpan="4"><b>Valor Total do Contrato:</b></th>
+                  <th>{tools.format(this.state.totalValue, "currency")}</th>
+                </tr>
+              </tfoot>
+            </table>
+          <FooterButtons buttons={[{text: "Salvar", onClick: () => this.saveEdits()}]}/>
         </Box>
       )
   }

@@ -1,16 +1,17 @@
 import React  from 'react';
 import moment from 'moment';
 import Box from '/imports/components/Box/index';
+import FooterButtons from '/imports/components/FooterButtons/index';
 
 export default class Calendar extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      monthIndex: new Date().getMonth(),
-      yearIndex: new Date().getFullYear(),
+      monthIndex: new Date(this.props.value).getMonth() || new Date().getMonth(),
+      yearIndex: new Date(this.props.value).getFullYear() || new Date().getFullYear(),
       dayIndex: 1,
-      selectedDate: new Date()
+      selectedDate: new Date(this.props.value) || new Date()
     }
   }
 
@@ -80,35 +81,35 @@ export default class Calendar extends React.Component {
 
   saveEdits = () => {
     this.props.changeDate(this.state.selectedDate);
+    this.props.closeCalendar();
   }
 
   render() {
       return (
         <Box closeBox={this.props.closeCalendar}>
-            <div>
-              <div className="calendar__header">
-                <button value={-1} onClick={this.changeMonth}>◄</button>
-                <h3>{moment().month(this.state.monthIndex).format('MMMM') + "/" + this.state.yearIndex}</h3>
-                <button value={+1} onClick={this.changeMonth}>►</button>
-              </div>
-              <table className="calendar">
-                <tbody>
-                  <tr>
-                    <th>Dom</th>
-                    <th>Seg</th>
-                    <th>Ter</th>
-                    <th>Qua</th>
-                    <th>Qui</th>
-                    <th>Sex</th>
-                    <th>Sáb</th>
-                  </tr>
-                  {this.renderDays()}
-                </tbody>
-              </table>
-              <div className="calendar__lower-button-div">
-                <button type="button" className="button button--primary" onClick={this.saveEdits}>OK</button>
-              </div>
-            </div>
+          <div className="calendar__header">
+            <button value={-1} onClick={this.changeMonth}>◄</button>
+            <h3>{moment().month(this.state.monthIndex).format('MMMM') + "/" + this.state.yearIndex}</h3>
+            <button value={+1} onClick={this.changeMonth}>►</button>
+          </div>
+          <table className="calendar">
+            <tbody>
+              <tr>
+                <th>Dom</th>
+                <th>Seg</th>
+                <th>Ter</th>
+                <th>Qua</th>
+                <th>Qui</th>
+                <th>Sex</th>
+                <th>Sáb</th>
+              </tr>
+              {this.renderDays()}
+            </tbody>
+          </table>
+          <FooterButtons buttons={[
+            {text: "Voltar", className: "button--secondary", onClick: () => { this.props.closeCalendar() }},
+            {text: "OK", className: "button--primary", onClick: () => { this.saveEdits() }},
+          ]}/>
         </Box>
       )
   }

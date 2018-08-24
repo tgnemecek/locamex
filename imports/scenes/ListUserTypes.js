@@ -6,7 +6,7 @@
 // import PrivateHeader from './PrivateHeader';
 // import { UserTypes } from '../api/user-types';
 // import { Pages } from '../api/pages';
-// import ConfirmationMessage from './ConfirmationMessage';
+// import MessageBox from './MessageBox';
 //
 // export default class ListUserTypes extends React.Component {
 //
@@ -201,7 +201,7 @@
 //                 {createNew ? <button className="button button--primary">Criar</button> : <button className="button button--primary">Salvar</button>}
 //               </div>
 //             </form>
-//             {this.state.confirmationWindow ? <ConfirmationMessage
+//             {this.state.confirmationWindow ? <MessageBox
 //               title="Deseja excluir este tipo de usuário?"
 //               unmountMe={this.closeConfirmationWindow}
 //               confirmMe={this.closeWithRemoval}/> : null}

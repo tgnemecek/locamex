@@ -12,7 +12,7 @@ export default function validateInput (value, type) {
     case 'cnpj':
       return tools.checkCNPJ(value);
     case 'cpf':
-      return tools.checkCPF(value);
+      return tools.checkCpf(value);
     default:
       return true;
   }

@@ -14,12 +14,12 @@ export default function createPdf(contract, client, seller, representatives) {
     cellheight: 1
   }
   const products = contract.containers.concat(contract.accessories);
-  const cpfCnpjLabel = client.type == 'company' ? 'CNPJ': 'CPF';
+  const cpfCnpjLabel = client.type == 'company' ? 'CNPJ': 'Cpf';
   const registryLabel = client.registryMU ? 'Inscrição Municipal': 'Inscrição Estadual';
   const showCpfCnpj = () => {
     if (client.type == 'company') {
       return tools.format(client.cnpj, 'cnpj');
-    } else return tools.format(client.contacts[0].contactCPF, 'cpf');
+    } else return tools.format(client.contacts[0].contactCpf, 'cpf');
   }
   const showRegistry = () => {
     if (client.registryMU) {
@@ -54,7 +54,7 @@ export default function createPdf(contract, client, seller, representatives) {
       body: [
           [ 'Razão Social', {text: client.officialName, colSpan: 5}, '', '', '', '' ],
           [ cpfCnpjLabel, showCpfCnpj(), {text: registryLabel, colSpan: 2}, '', {text: showRegistry(), colSpan: 2}, '' ],
-          [ 'Endereço', {text: showAddress(), colSpan: 3}, '', '', 'CEP', tools.format(client.address.zip, 'zip') ],
+          [ 'Endereço', {text: showAddress(), colSpan: 3}, '', '', 'CEP', tools.format(client.address.cep, 'cep') ],
           [ 'Cidade', client.address.city, 'UF', client.address.state, 'Bairro', client.address.district ],
           [ 'Contato', seller.contact, 'Telefone', tools.format(seller.phone, 'phone'), 'Email', seller.email ]
         ]
@@ -63,7 +63,7 @@ export default function createPdf(contract, client, seller, representatives) {
   const tableRepresentative = () => {
     const renderBody = () => {
       return representatives.map((rep) => {
-        return [ 'Nome', rep.name, 'CPF', tools.format(rep.cpf, 'cpf'), 'RG', tools.format(rep.rg, 'rg') ]
+        return [ 'Nome', rep.name, 'Cpf', tools.format(rep.cpf, 'cpf'), 'RG', tools.format(rep.rg, 'rg') ]
       });
     }
     return {table: {
@@ -264,7 +264,7 @@ export default function createPdf(contract, client, seller, representatives) {
     },
     content: [
     {text: `CONTRATO DE LOCAÇÃO DE BENS MÓVEIS E PRESTAÇÃO DE SERVIÇOS Nº ${contract._id}`, style: 'h1'},
-    {text: `Pelo presente instrumento particular de locação, de um lado a pessoa jurídica LOCAMEX LOCAÇÕES E OBRAS EIRELI – EPP, CNPJ 05.411.043/0001-83, Inscrição Estadual 148.701.950.113 e Inscrição Municipal 3.186.381/7 com sede em Rua Monsenhor Antonio Pepe, nº 52 – Parque Jabaquara – São Paulo – SP – CEP  04357-080, representada neste ato por Jürgen Nemecek Junior, CPF 104.550.568-46, RG 10.937.140-9, órgão expedidor SSP, doravante denominada LOCADORA, e de outro lado a LOCATÁRIA abaixo qualificada:`, style: 'p'},
+    {text: `Pelo presente instrumento particular de locação, de um lado a pessoa jurídica LOCAMEX LOCAÇÕES E OBRAS EIRELI – EPP, CNPJ 05.411.043/0001-83, Inscrição Estadual 148.701.950.113 e Inscrição Municipal 3.186.381/7 com sede em Rua Monsenhor Antonio Pepe, nº 52 – Parque Jabaquara – São Paulo – SP – CEP  04357-080, representada neste ato por Jürgen Nemecek Junior, Cpf 104.550.568-46, RG 10.937.140-9, órgão expedidor SSP, doravante denominada LOCADORA, e de outro lado a LOCATÁRIA abaixo qualificada:`, style: 'p'},
     tableInformation(),
     {text: `Representada neste ato por:`, style: 'p'},
     tableRepresentative(),

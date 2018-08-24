@@ -3,7 +3,7 @@ import React from 'react';
 import tools from '/imports/startup/tools/index';
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
-import CustomInput from '/imports/components/CustomInput/index';
+import Input from '/imports/components/Input/index';
 
 export default class ModularScreen extends React.Component {
   constructor(props) {
@@ -11,9 +11,6 @@ export default class ModularScreen extends React.Component {
     this.state = {
       pack: this.props.pack
     }
-  }
-
-  componentDidMount() {
     var pack = {};
     var moduleDatabase = this.props.moduleDatabase;
     if (this.props.modularScreenType == 1) { //Add New
@@ -53,8 +50,9 @@ export default class ModularScreen extends React.Component {
         }
       });
     }
-    this.setState({ pack });
+    this.state.pack = pack;
   }
+
 
   renderBody = () => {
     if (!this.state.pack.modules) return null;
@@ -63,7 +61,7 @@ export default class ModularScreen extends React.Component {
         <tr key={i}>
           <td>{module._id}</td>
           <td>{module.description}</td>
-          <td><CustomInput
+          <td><Input
                 type="number"
                 max={module.available}
                 name={i}
@@ -124,7 +122,7 @@ export default class ModularScreen extends React.Component {
         <div>
           <h4>Montando: {this.props.pack.description}</h4>
           <label>Quantidade:</label>
-          <CustomInput type="number" min={1} max={this.calculateMax()} value={this.state.pack.quantity} onChange={this.changeQuantity}/>
+          <Input type="number" min={1} max={this.calculateMax()} value={this.state.pack.quantity} onChange={this.changeQuantity}/>
         </div>
         <table className="table table--modular-screen">
           <thead>

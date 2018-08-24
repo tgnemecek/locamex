@@ -4,8 +4,8 @@ import { Meteor } from 'meteor/meteor';
 
 import tools from '/imports/startup/tools/index';
 
-import CustomInput from './CustomInput';
-import ConfirmationMessage from './ConfirmationMessage';
+import Input from './Input';
+import MessageBox from './MessageBox';
 
 export default class EditClient extends React.Component {
 
@@ -33,7 +33,7 @@ export default class EditClient extends React.Component {
         _id: '',
         contactName: '',
         contactEmail: '',
-        contactCPF: '',
+        contactCpf: '',
         contactPhone1: '',
         contactPhone2: '',
         placeholder: true,
@@ -49,7 +49,7 @@ export default class EditClient extends React.Component {
           _id: this.props.contacts[i]._id,
           contactName: this.props.contacts[i].contactName,
           contactEmail: this.props.contacts[i].contactEmail,
-          contactCPF: this.props.contacts[i].contactCPF,
+          contactCpf: this.props.contacts[i].contactCpf,
           contactPhone1: this.props.contacts[i].contactPhone1,
           contactPhone2: this.props.contacts[i].contactPhone2,
           placeholder: false,
@@ -76,7 +76,7 @@ export default class EditClient extends React.Component {
   confirmationWindow = () => {
     let closeWindow = () => this.setState({ confirmationWindow: false });
     if (this.state.confirmationWindow) {
-      return <ConfirmationMessage
+      return <MessageBox
         title={this.state.confirmationMessage}
         unmountMe={closeWindow}
         confirmMe={this.saveEdits}/>
@@ -133,7 +133,7 @@ export default class EditClient extends React.Component {
         // {key: 'registryMU', title: 'Inscrição Municipal', type: 'text'},
         //Contact
         {key: 'contactName', title: 'Nome do Contato', type: 'text'},
-        {key: 'contactCPF', title: 'CPF do Contato', type: 'cpf'},
+        {key: 'contactCpf', title: 'Cpf do Contato', type: 'cpf'},
         {key: 'contactEmail', title: 'Email do Contato', type: 'email'},
         {key: 'contactPhone1', title: 'Telefone 1 do Contato', type: 'text'}
       ];
@@ -145,7 +145,7 @@ export default class EditClient extends React.Component {
       ];
       requiredFieldsContract = [
         {key: 'contactName', title: 'Nome do Contato', type: 'text'},
-        {key: 'contactCPF', title: 'CPF do Contato', type: 'cpf'},
+        {key: 'contactCpf', title: 'Cpf do Contato', type: 'cpf'},
         {key: 'contactEmail', title: 'Email do Contato', type: 'email'},
         {key: 'contactPhone1', title: 'Telefone 1 do Contato', type: 'text'}
       ];
@@ -165,7 +165,7 @@ export default class EditClient extends React.Component {
         this.setState({ isError: true, formError });
       } else {
         if (requiredFieldsProposal[i].type == 'cpf') {
-          if (!tools.checkCPF(state)) {
+          if (!tools.checkCpf(state)) {
             errorCount++;
             formError.push(requiredFieldsProposal[i].title + " Inválido");
             this.setState({ isError: true, formError });
@@ -282,7 +282,7 @@ export default class EditClient extends React.Component {
       _id: '',
       contactName: '',
       contactEmail: '',
-      contactCPF: '',
+      contactCpf: '',
       contactPhone1: '',
       contactPhone2: '',
       placeholder: true,
@@ -310,14 +310,14 @@ export default class EditClient extends React.Component {
         <div className="form__row">
           <div className="form__half-column-1of2">
             <label>Nome Fantasia:</label>
-            <CustomInput title="Nome Fantasia" name="clientName"
+            <Input title="Nome Fantasia" name="clientName"
               type="text"
               value={this.state.clientName}
               onChange={this.handleChange}/>
           </div>
           <div className="form__half-column-2of2">
             <label>CNPJ:</label>
-            <CustomInput title="CNPJ" name="cnpj"
+            <Input title="CNPJ" name="cnpj"
               type="cnpj"
               value={this.state.cnpj}
               disabled={true}
@@ -327,7 +327,7 @@ export default class EditClient extends React.Component {
         </div>
         <div className="form__row">
           <label>Razão Social:</label>
-          <CustomInput title="Razão Social" name="officialName"
+          <Input title="Razão Social" name="officialName"
             type="text"
             value={this.state.officialName}
             upperCase={true}
@@ -336,14 +336,14 @@ export default class EditClient extends React.Component {
         <div className="form__row">
           <div className="form__half-column-1of2">
             <label>Inscrição Estadual:</label>
-            <CustomInput title="Inscrição Estadual" name="registryES"
+            <Input title="Inscrição Estadual" name="registryES"
               type="text"
               value={this.state.registryES}
               onChange={this.handleChange}/>
           </div>
           <div className="form__half-column-2of2">
             <label>Inscrição Municipal:</label>
-            <CustomInput title="Inscrição Municipal" name="registryMU"
+            <Input title="Inscrição Municipal" name="registryMU"
               type="text"
               value={this.state.registryMU}
               onChange={this.handleChange}/>
@@ -363,23 +363,23 @@ export default class EditClient extends React.Component {
           {index !== 0 ? this.showDeleteRegistry() : null}
           <div className="form__row">
             <label>Nome Completo:</label>
-            <CustomInput title="Nome do Contato" name="contactName" id={index}
+            <Input title="Nome do Contato" name="contactName" id={index}
               type="text"
               value={this.state.contactInformation[index].contactName}
               onChange={this.handleChangeContact}/>
           </div>
           <div className="form__row">
             <div className="form__half-column-1of2">
-              <label>CPF:</label>
-              <CustomInput title="CPF do Contato" name="contactCPF" id={index}
+              <label>Cpf:</label>
+              <Input title="Cpf do Contato" name="contactCpf" id={index}
                 type="cpf"
                 disabled={index == 0 ? true : false}
-                value={this.state.contactInformation[index].contactCPF}
+                value={this.state.contactInformation[index].contactCpf}
                 onChange={this.handleChangeContact}/>
             </div>
             <div className="form__half-column-2of2">
               <label>Email:</label>
-              <CustomInput title="Email do Contato" name="contactEmail" id={index}
+              <Input title="Email do Contato" name="contactEmail" id={index}
                 type="email"
                 value={this.state.contactInformation[index].contactEmail}
                 onChange={this.handleChangeContact}/>
@@ -388,14 +388,14 @@ export default class EditClient extends React.Component {
           <div className="form__row">
             <div className="form__half-column-1of2">
               <label>Telefone 1:</label>
-              <CustomInput title="Telefone 1 do Contato" name="contactPhone1" id={index}
+              <Input title="Telefone 1 do Contato" name="contactPhone1" id={index}
                 type="phone"
                 value={this.state.contactInformation[index].contactPhone1}
                 onChange={this.handleChangeContact}/>
             </div>
             <div className="form__half-column-2of2">
               <label>Telefone 2:</label>
-              <CustomInput title="Telefone 2 do Contato" name="contactPhone2" id={index}
+              <Input title="Telefone 2 do Contato" name="contactPhone2" id={index}
                 type="phone"
                 value={this.state.contactInformation[index].contactPhone2}
                 onChange={this.handleChangeContact}/>

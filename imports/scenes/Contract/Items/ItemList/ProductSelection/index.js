@@ -9,7 +9,7 @@ import tools from '/imports/startup/tools/index';
 
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
-import CustomInput from '/imports/components/CustomInput/index';
+import Input from '/imports/components/Input/index';
 
 import DatabaseSide from './DatabaseSide/index';
 import AddedItemsSide from './AddedItemsSide/index';

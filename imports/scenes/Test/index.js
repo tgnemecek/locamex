@@ -1,30 +1,45 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import tools from '/imports/startup/tools/index';
-import CustomInput from '/imports/components/CustomInput/index';
+import Input from '/imports/components/Input/index';
+import Block from '/imports/components/Block/index';
 import { Clients } from '/imports/api/clients';
 
 export default class Test extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: []
-    };
+      value: 10
+    }
   }
 
-  componentDidMount() {
-    this.contractsTracker = Tracker.autorun(() => {
-      Meteor.subscribe('clientsPub');
-      var value = Clients.find("0001").fetch();
-      this.setState({ value });
-    })
+  handleInputChange = (e) => {
+    const value =  e.target.value;
+    this.setState({value});
   }
 
   render() {
     return (
-      <div>
-        {this.state.value.map((a) => a.clientName)}
-      </div>
-    )
+      <Block columns={3} options={[{block: 3, span: 2}, {block: 1, span: 2}]}>
+        <div style={{background: 'black'}}>
+          <label>aaaaaaaaaaaaaaaaaaaaaaa</label>
+        </div>
+        <div style={{background: 'blue'}}>
+          <label>aaaaaaaaaaaaaaaaaaaaaaa</label>
+        </div>
+        <div style={{background: 'black'}}>
+          <label>aaaaaaaaaaaaaaaaaaaaaaa</label>
+        </div>
+        <div style={{background: 'blue'}}>
+          <label>aaaaaaaaaaaaaaaaaaaaaaa</label>
+        </div>
+        <div style={{background: 'black'}}>
+          <label>aaaaaaaaaaaaaaaaaaaaaaa</label>
+        </div>
+        <div style={{background: 'blue'}}>
+          <label>aaaaaaaaaaaaaaaaaaaaaaa</label>
+        </div>
+      </Block>
+    );
   }
 }

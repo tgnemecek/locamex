@@ -43,7 +43,7 @@ export default class PrivateHeader extends React.Component {
     )
   }
 }
-
-PrivateHeader.propTypes = {
-  title: React.PropTypes.string.isRequired
-};
+//
+// PrivateHeader.propTypes = {
+//   title: React.PropTypes.string.isRequired
+// };

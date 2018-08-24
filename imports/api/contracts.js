@@ -29,7 +29,7 @@ if(Meteor.isServer) {
       number: 1212,
       additional: "Casa 4",
       district: "Brooklin Paulista",
-      zip: 04621010
+      cep: 04621010
     },
     containers: [],
     accessories: [],

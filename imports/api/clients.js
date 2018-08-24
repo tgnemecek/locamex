@@ -24,7 +24,7 @@ if(Meteor.isServer) {
       district: 'Vila Mariana',
       city: 'São Paulo',
       state: 'SP',
-      zip: '04015010'
+      cep: '04015010'
     },
     observations: '',
     contacts: [{
@@ -33,7 +33,7 @@ if(Meteor.isServer) {
       contactPhone1: 1195543122,
       contactPhone2: 1112341234,
       contactEmail: "joao.carlos@exemplo.com",
-      contactCPF: 70844246018,
+      contactCpf: 70844246018,
       visible: false
     }, {
       _id: "0001",
@@ -41,7 +41,7 @@ if(Meteor.isServer) {
       contactPhone1: 1254675333,
       contactPhone2: "",
       contactEmail: "cristina.clara@exemplo.com",
-      contactCPF: 68383721005,
+      contactCpf: 68383721005,
       visible: true
     }]
   });
@@ -59,7 +59,7 @@ if(Meteor.isServer) {
       district: 'Vila Mariana',
       city: 'São Paulo',
       state: 'SP',
-      zip: '04015010'
+      cep: '04015010'
     },
     observations: "AAA",
     contacts: [{
@@ -68,7 +68,7 @@ if(Meteor.isServer) {
       contactPhone1: 11960324996,
       contactPhone2: 11947348222,
       contactEmail: "joao.augusto@gmail.com",
-      contactCPF: 29577660002,
+      contactCpf: 29577660002,
       visible: true
     }]
   });

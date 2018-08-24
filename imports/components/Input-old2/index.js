@@ -2,22 +2,30 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 
 import tools from '/imports/startup/tools/index';
+import checkCep from '/imports/api/checkCep/index';
 import validateInput from './validateInput/index';
 
-export default class CustomInput extends React.Component {
+import Calendar from '/imports/components/Calendar/index';
+
+export default class Input extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      displayValue: this.props.value,
+      displayValue: tools.format(this.props.value, this.props.type),
       exportValue: this.props.value,
+
+      checkCepData: {},
+      calendarDate: '',
+
       style: {}
     }
-  }
-  componentDidMount() {
-    this.setState({
-      displayValue: tools.format(this.props.value, this.props.type),
-      exportValue: this.props.value
-     });
+    if (this.props.type == 'calendar' || this.props.readOnly) {
+      this.readOnly = true;
+      this.state.style = { cursor: "pointer" };
+    }
+    this.redBorder = {
+      borderColor: 'red'
+    }
   }
   componentDidUpdate(prevProps) {
     if (this.props !== prevProps) {
@@ -29,13 +37,25 @@ export default class CustomInput extends React.Component {
   }
   tintBorder = (value) => {
     var bool = validateInput(value, this.props.type);
-    const style = {
-      borderColor: 'red'
+    var redBorder = this.redBorder;
+    var styleRegular = {...this.state.style};
+    var styleRed = {...this.state.style, redBorder};
+    bool ? this.setState({ style: styleRegular }) : this.setState({ style: styleRed });
+  }
+  onClick = () => {
+    switch (this.props.type) {
+      case 'calendar':
+        this.props.toggleCalendar();
+        break;
     }
-    bool ? this.setState({ style }) : this.setState({ style: {} });
+  }
+  changeDate = (calendarDate) => {
+    this.setState({ calendarDate });
+    this.props.changeDate(calendarDate);
   }
   onChange = (e) => {
     if (e) {
+      debugger;
       var obj = e.target;
       var cursorStart = obj.selectionStart;
       var cursorEnd = obj.selectionEnd;
@@ -57,7 +77,7 @@ export default class CustomInput extends React.Component {
         exportValue = cleanCurrency(inputValue);
       } else {
         displayValue = tools.format(inputValue, this.props.type);
-        exportValue = displayValue;
+        exportValue = tools.unformat(inputValue, this.props.type);;
       }
       cursorStart = cursorStart + (displayValue.length - inputValue.length);
       cursorEnd = cursorEnd + (displayValue.length - inputValue.length);
@@ -79,6 +99,19 @@ export default class CustomInput extends React.Component {
       return Number(inputValue) / 100;
     }
   }
+  checkCep = () => {
+    var value = this.state.exportValue;
+    if (value.length == 8) {
+      checkCep(value, (checkCepData) => {
+        if (checkCepData) {
+          debugger;
+          this.setState({ style: {} });
+          this.props.cepButtonClick(checkCepData);
+        }
+        else this.setState({ style: this.redBorder });
+      })
+    } else if (value.length < 8 || value.length > 8) this.setState({ style: {} });
+  }
   render() {
     return (
       <div className="custom-input">
@@ -86,11 +119,17 @@ export default class CustomInput extends React.Component {
           <label>{this.props.title}</label>
         : null}
         <input
+          readOnly={this.readOnly}
           style={this.state.style}
           placeholder={this.props.placeholder}
           disabled={this.props.disabled}
           value={this.state.displayValue}
+          onClick={this.onClick}
           onChange={this.onChange}/>
+        {this.props.cepButtonClick ?
+          <button onClick={this.checkCep}>↺</button>
+        : null}
+        {this.props.calendarOpen ? <Calendar value={this.state.exportValue} closeCalendar={this.props.toggleCalendar} changeDate={this.changeDate}/> : null}
       </div>
     )
   }
