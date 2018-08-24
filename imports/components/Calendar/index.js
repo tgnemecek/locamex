@@ -88,11 +88,11 @@ export default class Calendar extends React.Component {
       return (
         <Box closeBox={this.props.closeCalendar}>
           <div className="calendar__header">
-            <button value={-1} onClick={this.changeMonth}>◄</button>
+            <button value={-1} className="calendar__arrow" onClick={this.changeMonth}>◄</button>
             <h3>{moment().month(this.state.monthIndex).format('MMMM') + "/" + this.state.yearIndex}</h3>
-            <button value={+1} onClick={this.changeMonth}>►</button>
+            <button value={+1} className="calendar__arrow" onClick={this.changeMonth}>►</button>
           </div>
-          <table className="calendar">
+          <table className="calendar__table">
             <tbody>
               <tr>
                 <th>Dom</th>

@@ -107,7 +107,7 @@ export default class EditClient extends React.Component {
   }
 
   checkFields = (e) => {
-    e.preventDefault();
+    e.stopPropagation();
 
     var requiredFieldsProposal = [];
     var requiredFieldsContract = [];
@@ -424,7 +424,7 @@ export default class EditClient extends React.Component {
   showDeleteRegistry = (e) => {
 
     var removeContact = (e) => {
-      e.preventDefault();
+      e.stopPropagation();
       var index = (Number(e.target.value) -1);
 
       this.setState((prevState) => {

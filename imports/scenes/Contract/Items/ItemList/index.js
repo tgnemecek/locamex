@@ -25,6 +25,7 @@ export default class ItemList extends React.Component {
   }
 
   toggleWindow = () => {
+    
     var windowOpen = !this.state.windowOpen;
     this.setState({ windowOpen });
   }
@@ -48,12 +49,13 @@ export default class ItemList extends React.Component {
 
   render() {
     return (
+      <>
+      {this.state.windowOpen ? <ProductSelection
+                                  database={this.props.database}
+                                  addedItems={this.state.addedItems}
+                                  saveEdits={this.updateTable}
+                                  closeProductSelection={this.toggleWindow}/> : null}
       <div className="contract__list-container" onClick={this.toggleWindow}>
-        {this.state.windowOpen ? <ProductSelection
-                                    database={this.props.database}
-                                    addedItems={this.state.addedItems}
-                                    saveEdits={this.updateTable}
-                                    closeProductSelection={this.toggleWindow}/> : null}
         {this.state.addedItems.length > 0 ?
           <div>
             <div className="contract__list__overlay">
@@ -83,6 +85,8 @@ export default class ItemList extends React.Component {
           </div>
         }
         </div>
+      </>
+
     )
   }
 }

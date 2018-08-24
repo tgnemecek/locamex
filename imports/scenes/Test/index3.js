@@ -1,11 +1,14 @@
 import React from 'react';
+import { Meteor } from 'meteor/meteor';
+import tools from '/imports/startup/tools/index';
+import Input from '/imports/components/Input/index';
+import Block from '/imports/components/Block/index';
+import { Clients } from '/imports/api/clients';
 
-export default class Block extends React.Component {
+export default class Test3 extends React.Component {
 
   renderBlocks = () => {
-    var options = this.props.options;
-    var className = "block";
-    if (!this.props.children) return null;
+    var options;
     return this.props.children.map((child, i, array) => {
       var style = {width: (1 / this.props.columns * 100) + "%"}
       if (options) {
@@ -15,13 +18,13 @@ export default class Block extends React.Component {
           }
         }
       }
-      return <div key={i} className={className} style={style}>{child}</div>
+      return <div key={i} className={this.className} style={style}>{child}</div>
     })
   }
 
-  render () {
+  render() {
     return (
-      <div className={"block__parent " + this.props.className}>
+      <div>
         {this.renderBlocks()}
       </div>
     )

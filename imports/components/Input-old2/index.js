@@ -55,7 +55,7 @@ export default class Input extends React.Component {
   }
   onChange = (e) => {
     if (e) {
-      debugger;
+      
       var obj = e.target;
       var cursorStart = obj.selectionStart;
       var cursorEnd = obj.selectionEnd;
@@ -104,7 +104,7 @@ export default class Input extends React.Component {
     if (value.length == 8) {
       checkCep(value, (checkCepData) => {
         if (checkCepData) {
-          debugger;
+          
           this.setState({ style: {} });
           this.props.cepButtonClick(checkCepData);
         }

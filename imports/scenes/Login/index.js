@@ -10,7 +10,7 @@ export default class Login extends React.Component {
     };
   }
   onSubmit(e) {
-    e.preventDefault();
+    e.stopPropagation();
 
     let email = this.refs.email.value.trim();
     let password = this.refs.password.value.trim();

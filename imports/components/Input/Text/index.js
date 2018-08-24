@@ -23,9 +23,7 @@ export default class Text extends React.Component {
     if (e) {
       var e = {
         target: {
-          value: exportValue,
-          name: this.props.name,
-          id: this.props.id
+          value: e.target.value
         }
       }
       this.props.onChange(e);

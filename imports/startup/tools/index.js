@@ -130,8 +130,11 @@ export default class tools {
       case 'cpf':
       case 'cnpj':
       case 'phone':
+        value = value.replace(/\D+/g, '');
+        return value;
       case 'cep':
         value = value.replace(/\D+/g, '');
+        if (value.length > 7) value = value.substring(0, 8);
         return value;
       case 'number':
         value = value.replace(/\D+/g, '');

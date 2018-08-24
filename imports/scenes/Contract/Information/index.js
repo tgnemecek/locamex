@@ -13,9 +13,9 @@ export default class Information extends React.Component {
     super(props);
     this.state = {
       clientsDatabase: [],
-      deliveryAddress: this.props.contract.deliveryAddress,
-      calendarOpen: false,
-      startDate: new Date()
+      calendarOpen: false
+      // deliveryAddress: this.props.contract.deliveryAddress,
+      // startDate: new Date()
     }
   }
 
@@ -38,23 +38,24 @@ export default class Information extends React.Component {
   }
 
   handleChangeAddress = (e) => {
-    this.state.deliveryAddress[e.target.name] = e.target.value;
-    this.forceUpdate();
+    var value = e.target.value;
+    var name = e.target.name;
+    var deliveryAddress = {...this.props.contract.deliveryAddress};
+    deliveryAddress[name] = value;
+    this.props.updateContract(deliveryAddress, "deliveryAddress");
   }
 
   toggleCalendar = (e) => {
-    e ? e.preventDefault() : null;
     var calendarOpen = !this.state.calendarOpen;
     this.setState({ calendarOpen });
   }
 
   changeDate = (startDate) => {
-    this.setState({ startDate });
-    this.toggleCalendar();
+    this.props.updateContract(startDate, "startDate");
   }
 
   cepButtonClick = (data) => {
-    var deliveryAddress = {...this.state.deliveryAddress};
+    var deliveryAddress = {...this.props.contract.deliveryAddress};
     if (data) {
       deliveryAddress.street = data.logradouro;
       deliveryAddress.district = data.bairro;
@@ -63,13 +64,13 @@ export default class Information extends React.Component {
       // deliveryAddress.number = '';
       // deliveryAddress.additional = '';
     }
-    this.setState({ deliveryAddress });
+    this.props.updateContract(deliveryAddress, "deliveryAddress");
   }
 
   render() {
       return (
           <Block
-            className="contract__body--top"
+            className="contract__information"
             columns={6}
             options={[{block: 0, span: 3}]}>
             <Input
@@ -82,23 +83,22 @@ export default class Information extends React.Component {
               title="Rua:"
               name="street"
               type="text"
-              value={this.state.deliveryAddress.street}
+              value={this.props.contract.deliveryAddress.street}
               onChange={this.handleChangeAddress}
             />
             <Input
               title="Cidade:"
               name="city"
               type="text"
-              value={this.state.deliveryAddress.city}
+              value={this.props.contract.deliveryAddress.city}
               onChange={this.handleChangeAddress}
             />
             <Input
               title="CEP:"
               name="cep"
               type="cep"
-              cepButtonClick={this.cepButtonClick}
-              value={this.state.deliveryAddress.cep}
-              forceInvalid={this.state.invalidZip}
+              buttonClick={this.cepButtonClick}
+              value={this.props.contract.deliveryAddress.cep}
               onChange={this.handleChangeAddress}
             />
             <Input
@@ -107,7 +107,7 @@ export default class Information extends React.Component {
               calendarOpen={this.state.calendarOpen}
               toggleCalendar={this.toggleCalendar}
               changeDate={this.changeDate}
-              value={this.state.startDate}
+              value={this.props.contract.startDate}
             />
             <Input title="Duração:" type="number"/>
             <Input
@@ -120,8 +120,9 @@ export default class Information extends React.Component {
             <Input
               title="Estado:"
               type="select"
+              name="state"
               onChange={this.handleChangeAddress}
-              value={this.state.deliveryAddress.state}>
+              value={this.props.contract.deliveryAddress.state}>
               {tools.states.map((item, i) => {
                 return <option key={i} value={item}>{item}</option>
               })}
@@ -130,14 +131,14 @@ export default class Information extends React.Component {
               title="Número:"
               name="number"
               type="number"
-              value={this.state.deliveryAddress.number}
+              value={this.props.contract.deliveryAddress.number}
               onChange={this.handleChangeAddress}
             />
             <Input
               title="Complemento:"
               name="additional"
               type="text"
-              value={this.state.deliveryAddress.additional}
+              value={this.props.contract.deliveryAddress.additional}
               onChange={this.handleChangeAddress}
             />
           </Block>

@@ -148,7 +148,7 @@ export default class Billing extends React.Component {
   }
 
   toggleCalendar = (e) => {
-    e ? e.preventDefault() : null;
+    e ? e.stopPropagation() : null;
     var calendarOpen = !this.state.calendarOpen;
     this.setState({ calendarOpen });
   }
@@ -179,7 +179,7 @@ export default class Billing extends React.Component {
               <FooterButtons buttons={[{text: "Voltar", onClick: () => this.setState({ messageBox: false })}]}/>
             </Box>
           : null}
-            <Block columns={2}>
+            <Block columns={3}>
               <Input
                 title="Número de Cobranças:"
                 type="number"

@@ -2,6 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { Router, Route, browserHistory } from 'react-router';
 
+import ErrorBoundary from '../components/ErrorBoundary/index';
+
 import Test from '../scenes/Test/index';
 import NotFound from '../scenes/NotFound/index';
 import Login from '../scenes/Login/index';
@@ -50,15 +52,17 @@ const ListClients = (props) => { return <ListPage type="clients"/> };
 
 export const routes = (
   <Router history={browserHistory}>
-    {/* <Route path="/signup" component={Signup} onEnter={onEnterPublicPage}/>
-    <Route path="/dashboard" component={Dashboard} onEnter={onEnterPrivatePage}/> */}
-    {/* <Route path="/listservices" component={ListServices}/>
-    <Route path="/listusers" component={ListUsers}/>
-    <Route path="/listusertypes" component={ListUserTypes}/> */}
-    {/* <Route path="/listclients" component={ListClients}/> */}
-    <Route path="/test" component={Test}/>
-    <Route path="/" component={Login} onEnter={onEnterPublicPage}/>
-    <Route path="/contract/:contractId" component={Contract}/>
-    <Route path="*" component={NotFound}/>
+    <ErrorBoundary>
+      {/* <Route path="/signup" component={Signup} onEnter={onEnterPublicPage}/>
+      <Route path="/dashboard" component={Dashboard} onEnter={onEnterPrivatePage}/> */}
+      {/* <Route path="/listservices" component={ListServices}/>
+      <Route path="/listusers" component={ListUsers}/>
+      <Route path="/listusertypes" component={ListUserTypes}/> */}
+      {/* <Route path="/listclients" component={ListClients}/> */}
+      <Route path="/test" component={Test}/>
+      <Route path="/" component={Login} onEnter={onEnterPublicPage}/>
+      <Route path="/contract/:contractId" component={Contract}/>
+      <Route path="*" component={NotFound}/>
+    </ErrorBoundary>
   </Router>
 );

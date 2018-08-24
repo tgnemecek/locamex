@@ -7,6 +7,7 @@ import { Modules } from '/imports/api/modules';
 
 import tools from '/imports/startup/tools/index';
 
+import Block from '/imports/components/Block/index';
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 import Input from '/imports/components/Input/index';
@@ -172,6 +173,7 @@ export default class ProductSelection extends React.Component {
   }
 
   saveEdits = () => {
+    
     var addedItems = this.state.addedItems;
     var newArray = [];
     addedItems.forEach((item) => {
@@ -252,20 +254,13 @@ export default class ProductSelection extends React.Component {
     this.toggleModularScreen();
   }
 
-  temp = () => {
-    return this.state.moduleDatabase.map((m, i) => {
-      return <p key={i}>{m.description}: {m.available}</p>
-    })
-  }
-
   render() {
     return (
       <Box
         title={this.title}
         closeBox={this.props.closeProductSelection}
         width="1000px">
-        {this.temp()}
-          <div className="product-selection">
+          <Block columns={2}>
             <DatabaseSide
               database={this.state.filteredDatabase}
               addItem={this.addItem}
@@ -279,18 +274,18 @@ export default class ProductSelection extends React.Component {
               addedItems={this.state.addedItems}
               removeItem={this.removeItem}
               toggleModularScreen={this.toggleModularScreen}/>
-            {this.state.modularScreenOpen > 0 ?
-              <ModularScreen
-                modularScreenType={this.state.modularScreenOpen}
-                pack={this.state.modularContainer}
-                moduleDatabase={this.state.moduleDatabase}
-                addModular={this.addModular}
-                editModular={this.editModular}
-                removeModular={this.removeModular}
-                toggleModularScreen={this.toggleModularScreen}
-              />
-            : null}
-          </div>
+          </Block>
+          {this.state.modularScreenOpen > 0 ?
+            <ModularScreen
+              modularScreenType={this.state.modularScreenOpen}
+              pack={this.state.modularContainer}
+              moduleDatabase={this.state.moduleDatabase}
+              addModular={this.addModular}
+              editModular={this.editModular}
+              removeModular={this.removeModular}
+              toggleModularScreen={this.toggleModularScreen}
+            />
+          : null}
           <FooterButtons buttons={[
             {text: "Voltar", className: "button--secondary", onClick: () => this.props.closeProductSelection()},
             {text: "Salvar", onClick: () => this.saveEdits()}

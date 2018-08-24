@@ -27,7 +27,7 @@ export default class SearchBar extends React.Component {
   }
 
   runSearch = (e) => {
-    e.preventDefault();
+    e.stopPropagation();
 
     if (!this.state.value) {
       this.props.searchReturn(false);

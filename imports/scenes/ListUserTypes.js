@@ -114,7 +114,7 @@
 //   }
 //
 //   saveEdits(e) {
-//     e.preventDefault();
+//     e.stopPropagation();
 //
 //     let description = this.refs.description.value.trim();
 //     let toggles = Array.from(document.getElementsByClassName('onoffswitch-checkbox'));
@@ -138,7 +138,7 @@
 //   }
 //
 //   createNewUserType(e) {
-//     e.preventDefault();
+//     e.stopPropagation();
 //
 //     let description = this.refs.description.value.trim();
 //     let toggles = Array.from(document.getElementsByClassName('onoffswitch-checkbox'));

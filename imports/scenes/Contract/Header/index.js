@@ -31,7 +31,7 @@ export default class Header extends React.Component {
 
   toggleWindow = (e) => {
     if (e) {
-      e.preventDefault();
+      e.stopPropagation();
       var windowOpen = e.target.value;
       this.setState({ windowOpen });
     } else this.setState({ windowOpen: false });

@@ -13,7 +13,7 @@ export default class Box extends React.Component {
     return (
       <ReactModal
         isOpen={true}
-        contentLabel="Box"
+        contentLabel={this.props.title || "Box"}
         appElement={document.body}
         onRequestClose={this.props.closeBox}
         style={style}

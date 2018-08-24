@@ -23,18 +23,12 @@ export default class Cep extends React.Component {
   }
   checkCep = () => {
     var value = this.state.exportValue;
+    if (value === undefined) return;
     if (value.length == 8) {
       checkCep(value, (checkCepData) => {
         if (checkCepData) {
           this.setState({ style: {} });
-          var e = {
-            target: {
-              value: checkCepData,
-              name: this.props.name,
-              id: this.props.id
-            }
-          }
-          this.props.onChange(e);
+          this.props.buttonClick(checkCepData);
         }
         else this.setState({ style: {borderColor: 'red'} });
       })
@@ -58,8 +52,6 @@ export default class Cep extends React.Component {
 
       cursorStart = cursorStart + (displayValue.length - inputValue.length);
       cursorEnd = cursorEnd + (displayValue.length - inputValue.length);
-
-      this.checkCep();
 
       var e = {
         target: {
@@ -85,7 +77,7 @@ export default class Cep extends React.Component {
           disabled={this.props.disabled}
 
           style={this.state.style}/>
-          <button onClick={this.checkCep}>↺</button>
+          <button className="custom-input--cep__button" onClick={this.checkCep}>↺</button>
       </>
     )
   }

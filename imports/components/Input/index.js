@@ -13,7 +13,12 @@ import Select from './Select/index';
 export default class Input extends React.Component {
   constructor(props) {
     super(props);
-    this.className = "custom-input " + "custom-input--"+ this.props.type;
+    this.className = "input " + "input--"+ this.props.type;
+  }
+  onChange = (e) => {
+    e.target.name = this.props.name;
+    e.target.id = this.props.id;
+    this.props.onChange(e);
   }
   render() {
     var ChosenComponent;
@@ -52,12 +57,13 @@ export default class Input extends React.Component {
         : null}
         <ChosenComponent
           value={this.props.value}
-          onChange={this.props.onChange}
+          onChange={this.onChange}
           type={this.props.type}
 
           readOnly={this.props.readOnly}
           placeholder={this.props.placeholder}
           disabled={this.props.disabled}
+          buttonClick={this.props.buttonClick}
           options={this.props.options}>
           {this.props.children}
         </ChosenComponent>

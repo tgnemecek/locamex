@@ -120,7 +120,7 @@
 //   }
 //
 //   saveEdits(e) {
-//     e.preventDefault();
+//     e.stopPropagation();
 //
 //     let newUserName = this.refs.userName.value.trim();
 //     let newUserTypeId = this.refs.userType.value.trim();
@@ -158,7 +158,7 @@
 //   }
 //
 //   createNewUser(e) {
-//     e.preventDefault();
+//     e.stopPropagation();
 //
 //     let userName = this.refs.userName.value.trim();
 //     let userTypeId = this.refs.userType.value.trim();

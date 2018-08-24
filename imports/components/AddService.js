@@ -57,7 +57,7 @@ export default class AddService extends React.Component {
   };
 
   onSubmit(e) {
-    e.preventDefault();
+    e.stopPropagation();
     aaa();
   };
 

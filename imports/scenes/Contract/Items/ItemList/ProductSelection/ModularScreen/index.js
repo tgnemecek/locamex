@@ -2,6 +2,7 @@ import React from 'react';
 
 import tools from '/imports/startup/tools/index';
 import Box from '/imports/components/Box/index';
+import Block from '/imports/components/Block/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 import Input from '/imports/components/Input/index';
 
@@ -119,11 +120,10 @@ export default class ModularScreen extends React.Component {
       <Box
         title="Montagem de Container Modular"
         closeBox={this.props.toggleModularScreen}>
-        <div>
-          <h4>Montando: {this.props.pack.description}</h4>
-          <label>Quantidade:</label>
-          <Input type="number" min={1} max={this.calculateMax()} value={this.state.pack.quantity} onChange={this.changeQuantity}/>
-        </div>
+        <Block columns={2}>
+          <Input title="Montando:" type="text" readOnly={true} value={this.props.pack.description}/>
+          <Input title="Quantidade:" type="number" min={1} max={this.calculateMax()} value={this.state.pack.quantity} onChange={this.changeQuantity}/>
+        </Block>
         <table className="table table--modular-screen">
           <thead>
             <tr>
