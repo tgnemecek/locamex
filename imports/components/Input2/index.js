@@ -11,15 +11,6 @@ import DatePicker from './DatePicker/index';
 import Select from './Select/index';
 
 export default class Input extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { value: this.props.value };
-  }
-  componentDidUpdate(prevProps) {
-    if (prevProps.value !== this.props.value) {
-      this.setState({ value: this.props.value });
-    }
-  }
   onChange = (exportValue) => {
     if (exportValue === undefined) throw new Error('exportValue is undefined in ' + this.props.name);
     var e = {
@@ -31,7 +22,6 @@ export default class Input extends React.Component {
       }
     }
     this.props.onChange(e);
-    this.setState({ value: exportValue });
   }
   render() {
     var ChosenComponent;
@@ -68,8 +58,8 @@ export default class Input extends React.Component {
         {this.props.title ?
           <label>{this.props.title}</label>
         : null}
-        <ChosenComponent
-          value={this.state.value}
+        <ChosenComponent key={this.props.value}
+          value={this.props.value}
           onChange={this.onChange}
           type={this.props.type}
           id={this.props.id}

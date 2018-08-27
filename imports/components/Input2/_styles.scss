@@ -1,0 +1,16 @@
+@import './Cep/styles';
+@import './Checkbox/styles';
+
+.input {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  label {
+    text-align: left;
+    padding-left: 10px;
+  }
+}
+
+.input input:read-only {
+  background: $grey;
+}

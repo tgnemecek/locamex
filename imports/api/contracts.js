@@ -20,8 +20,7 @@ if(Meteor.isServer) {
     dates: {
       creationDate: new Date(),
       startDate: new Date(),
-      duration: 6,
-      unit: 'months'
+      duration: 6
     },
     billing: [],
     observations: 'Exposição nova',

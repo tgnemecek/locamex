@@ -14,12 +14,12 @@ export default function createPdf(contract, client, seller, representatives) {
     cellheight: 1
   }
   const products = contract.containers.concat(contract.accessories);
-  const cpfCnpjLabel = client.type == 'company' ? 'CNPJ': 'Cpf';
+  const cpfCnpjLabel = client.type == 'company' ? 'CNPJ': 'CPF';
   const registryLabel = client.registryMU ? 'Inscrição Municipal': 'Inscrição Estadual';
   const showCpfCnpj = () => {
     if (client.type == 'company') {
-      return tools.format(client.cnpj, 'cnpj');
-    } else return tools.format(client.contacts[0].contactCpf, 'cpf');
+      return tools.format(client.registry, 'cnpj');
+    } else return tools.format(client.registry, 'cpf');
   }
   const showRegistry = () => {
     if (client.registryMU) {
@@ -62,8 +62,9 @@ export default function createPdf(contract, client, seller, representatives) {
   }
   const tableRepresentative = () => {
     const renderBody = () => {
+      console.log(representatives);
       return representatives.map((rep) => {
-        return [ 'Nome', rep.name, 'Cpf', tools.format(rep.cpf, 'cpf'), 'RG', tools.format(rep.rg, 'rg') ]
+        return [ 'Nome', rep.name, 'CPF', tools.format(rep.cpf, 'cpf'), 'RG', tools.format(rep.rg, 'rg') ]
       });
     }
     return {table: {
@@ -89,7 +90,7 @@ export default function createPdf(contract, client, seller, representatives) {
       }
       var header = [ ['Item', 'Descrição', {text: 'Valor Unit. Mensal', alignment: 'left'}, {text: 'Qtd.', alignment: 'center'}, {text: 'Meses', alignment: 'center'}, {text: 'Valor Total', alignment: 'right'}] ];
       var body = products ? products.map((product) => {
-        return [product._id, product.description, tools.format(product.price, 'currency'), {text: product.quantity.toString(), alignment: 'center'}, {text: contract.duration.toString(), alignment: 'center'}, calcValue(product.quantity, contract.duration, product.price)];
+        return [product._id, product.description, tools.format(product.price, 'currency'), {text: product.quantity.toString(), alignment: 'center'}, {text: contract.dates.duration.toString(), alignment: 'center'}, calcValue(product.quantity, contract.dates.duration, product.price)];
       }) : [[ {text: '', colSpan: 6}, '', '', '', '', '' ]];
       console.log(body);
       var footer = [
@@ -135,13 +136,13 @@ export default function createPdf(contract, client, seller, representatives) {
   }
   const tableDuration = () => {
     const calcEndDate = () => {
-      return {text: moment(contract.startDate).add(contract.duration, 'M').format("DD-MMMM-YYYY"), alignment: 'center'};
+      return {text: moment(contract.dates.startDate).add(contract.dates.duration, 'M').format("DD-MMMM-YYYY"), alignment: 'center'};
     }
     return {table: {
       widths: ['auto', '*', 'auto', '*', 'auto', 'auto'],
       heights: globals.cellheight,
       body: [
-          [ 'Início em', {text: moment(contract.startDate).format("DD-MMMM-YYYY"), alignment: 'center'}, 'Término em', calcEndDate(), 'Prazo mínimo de Locação', {text: contract.duration + ' meses', alignment: 'center'} ]
+          [ 'Início em', {text: moment(contract.dates.startDate).format("DD-MMMM-YYYY"), alignment: 'center'}, 'Término em', calcEndDate(), 'Prazo mínimo de Locação', {text: contract.dates.duration + ' meses', alignment: 'center'} ]
         ]
     }, style: 'table'}
   }

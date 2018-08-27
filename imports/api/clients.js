@@ -13,11 +13,11 @@ if(Meteor.isServer) {
   Clients.insert({
     _id: "0000",
     clientName: "Exemplo",
-    type: "company",
-    cnpj: 79288413000173,
     officialName: "Exemplo Empreendimentos",
-    registryES: 192837273,
-    registryMU: 364645445,
+    type: "company",
+    registry: "79288413000173",
+    registryES: "192837273",
+    registryMU: "364645445",
     address: {
       number: '100',
       street: 'Rua Joaquim Távora',
@@ -29,19 +29,21 @@ if(Meteor.isServer) {
     observations: '',
     contacts: [{
       "_id": "0000",
-      contactName: "João Carlos",
-      contactPhone1: 1195543122,
-      contactPhone2: 1112341234,
-      contactEmail: "joao.carlos@exemplo.com",
-      contactCpf: 70844246018,
+      name: "João Carlos",
+      phone1: "1195543122",
+      phone2: "1112341234",
+      email: "joao.carlos@exemplo.com",
+      cpf: "70844246018",
+      rg: "493769388",
       visible: false
     }, {
       _id: "0001",
-      contactName: "Cristina Clara",
-      contactPhone1: 1254675333,
-      contactPhone2: "",
-      contactEmail: "cristina.clara@exemplo.com",
-      contactCpf: 68383721005,
+      name: "Cristina Clara",
+      phone1: "1254675333",
+      phone2: "",
+      email: "cristina.clara@exemplo.com",
+      cpf: "68383721005",
+      rg: "493769388",
       visible: true
     }]
   });
@@ -49,10 +51,7 @@ if(Meteor.isServer) {
     _id: "0001",
     clientName: "João Augusto",
     type: "person",
-    cnpj: "",
-    officialName: "",
-    registryES: "",
-    registryMU: "",
+    registry: "29577660002",
     address: {
       number: '100',
       street: 'Rua Joaquim Távora',
@@ -61,14 +60,15 @@ if(Meteor.isServer) {
       state: 'SP',
       cep: '04015010'
     },
-    observations: "AAA",
+    observations: "",
     contacts: [{
-      "_id": "0000",
-      contactName: "João Augusto",
-      contactPhone1: 11960324996,
-      contactPhone2: 11947348222,
-      contactEmail: "joao.augusto@gmail.com",
-      contactCpf: 29577660002,
+      _id: "0000",
+      name: "João Augusto",
+      phone1: "11960324996",
+      phone2: "11947348222",
+      email: "joao.augusto@gmail.com",
+      cpf: "29577660002",
+      rg: "493769388",
       visible: true
     }]
   });
@@ -82,7 +82,7 @@ if(Meteor.isServer) {
       let type = state.formType;
       let observations = state.observations;
       //Conditional Fields. If its not a company, the fields are empty
-      let clientName = state.formType == 'company' ? state.clientName : state.contactInformation[0].contactName;
+      let clientName = state.formType == 'company' ? state.clientName : state.contactInformation[0].name;
       let cnpj = state.formType == 'company' ? state.cnpj : '';
       let officialName = state.formType == 'company' ? state.officialName : '';
       let registryES = state.formType == 'company' ? state.registryES : '';
@@ -144,7 +144,7 @@ if(Meteor.isServer) {
       }
 
       Clients.update({ _id }, { $set: {
-        clientName: state.formType == 'company' ? state.clientName : state.contactInformation[0].contactName,
+        clientName: state.formType == 'company' ? state.clientName : state.contactInformation[0].name,
         cnpj: state.cnpj,
         officialName: state.officialName,
         registryES: state.registryES,

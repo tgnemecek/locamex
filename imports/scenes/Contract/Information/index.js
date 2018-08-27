@@ -14,8 +14,6 @@ export default class Information extends React.Component {
     this.state = {
       clientsDatabase: [],
       calendarOpen: false
-      // deliveryAddress: this.props.contract.deliveryAddress,
-      // startDate: new Date()
     }
   }
 
@@ -49,8 +47,8 @@ export default class Information extends React.Component {
       this.props.updateContract(value, "clientId");
       return;
     }
-    var obj = {...this.props.contract.date};
     var extra = e.target.extra;
+    var obj = {...this.props.contract[extra]};
     obj[name] = value;
     this.props.updateContract(obj, extra);
   }
@@ -62,8 +60,8 @@ export default class Information extends React.Component {
       deliveryAddress.district = data.bairro;
       deliveryAddress.city = data.localidade;
       deliveryAddress.state = data.uf;
-      // deliveryAddress.number = '';
-      // deliveryAddress.additional = '';
+      deliveryAddress.number = '';
+      deliveryAddress.additional = '';
     }
     this.props.updateContract(deliveryAddress, "deliveryAddress");
   }
@@ -73,10 +71,11 @@ export default class Information extends React.Component {
           <Block
             className="contract__information"
             columns={6}
-            options={[{block: 0, span: 3}]}>
+            options={[{block: 0, span: 3}, {block: 1, span: 2}, {block: 3, span: 2}, {block: 6, span: 0.5}, {block: 7, span: 0.5}]}>
             <Input
               title="Cliente:"
               type="select"
+              name="client"
               onChange={this.handleChange}>
               {this.clientOptions()}
             </Input>
@@ -86,14 +85,6 @@ export default class Information extends React.Component {
               type="text"
               extra="deliveryAddress"
               value={this.props.contract.deliveryAddress.street}
-              onChange={this.handleChange}
-            />
-            <Input
-              title="Cidade:"
-              name="city"
-              type="text"
-              extra="deliveryAddress"
-              value={this.props.contract.deliveryAddress.city}
               onChange={this.handleChange}
             />
             <Input
@@ -116,19 +107,20 @@ export default class Information extends React.Component {
               value={this.props.contract.startDate}
             />
             <Input
-              title="Duração:"
+              title="Duração: (meses)"
               value={this.props.contract.dates.duration}
               onChange={this.handleChange}
+              name="duration"
               extra="dates"
               type="number"/>
             <Input
-              title="Unidade:"
-              type="select"
-              value={this.props.contract.dates.unit}
-              onChange={this.handleChange}>
-              <option value="months">Meses</option>
-              <option value="days">Dias</option>
-            </Input>
+              title="Cidade:"
+              name="city"
+              type="text"
+              extra="deliveryAddress"
+              value={this.props.contract.deliveryAddress.city}
+              onChange={this.handleChange}
+            />
             <Input
               title="Estado:"
               type="select"

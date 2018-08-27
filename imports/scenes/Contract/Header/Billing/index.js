@@ -198,8 +198,6 @@ export default class Billing extends React.Component {
                 title="Cobranças iguais:"
                 type="checkbox"
                 id="contract__billing__equalValue"
-                calendarOpen={this.state.calendarOpen}
-                toggleCalendar={this.toggleCalendar}
                 onChange={this.divisionChange}
                 value={this.state.equalDivision}
               />
