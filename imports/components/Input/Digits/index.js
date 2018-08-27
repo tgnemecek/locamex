@@ -7,9 +7,8 @@ export default class Digits extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      displayValue: tools.format(this.props.value, this.props.type, this.props.options),
-      exportValue: this.props.value,
-      style: {}
+      displayValue: 'aaaaaaaa',
+      exportValue: 'aaaaaaaaaa',
     }
   }
   componentDidUpdate(prevProps) {
@@ -39,15 +38,8 @@ export default class Digits extends React.Component {
       cursorStart = cursorStart + (displayValue.length - inputValue.length);
       cursorEnd = cursorEnd + (displayValue.length - inputValue.length);
 
-      var e = {
-        target: {
-          value: exportValue,
-          name: this.props.name,
-          id: this.props.id
-        }
-      }
       obj.setSelectionRange(cursorStart, cursorEnd);
-      this.props.onChange(e);
+      this.props.onChange(exportValue);
     }
   }
 
@@ -60,8 +52,6 @@ export default class Digits extends React.Component {
         readOnly={this.props.readOnly}
         placeholder={this.props.placeholder}
         disabled={this.props.disabled}
-
-        style={this.state.style}
         />
     )
   }

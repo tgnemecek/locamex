@@ -58,15 +58,8 @@ export default class Code extends React.Component {
 
       this.validateCode(displayValue, this.props.type);
 
-      var e = {
-        target: {
-          value: exportValue,
-          name: this.props.name,
-          id: this.props.id
-        }
-      }
       obj.setSelectionRange(cursorStart, cursorEnd);
-      this.props.onChange(e);
+      this.props.onChange(exportValue);
     }
   }
 

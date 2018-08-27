@@ -22,19 +22,7 @@ export default class DatePicker extends React.Component {
   changeDate = (exportValue) => {
     var displayValue = moment(exportValue).format("DD-MMMM-YYYY");
     this.setState({ displayValue, exportValue });
-  }
-
-  onClick = (e) => {
-    if (e) {
-      var e = {
-        target: {
-          value: exportValue,
-          name: this.props.name,
-          id: this.props.id
-        }
-      }
-      this.props.onChange(e);
-    }
+    this.props.onChange(exportValue);
   }
 
   render() {

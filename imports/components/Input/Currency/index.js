@@ -38,15 +38,8 @@ export default class Currency extends React.Component {
       cursorStart = cursorStart + (displayValue.length - inputValue.length);
       cursorEnd = cursorEnd + (displayValue.length - inputValue.length);
 
-      var e = {
-        target: {
-          value: exportValue,
-          name: this.props.name,
-          id: this.props.id
-        }
-      }
       obj.setSelectionRange(cursorStart, cursorEnd);
-      this.props.onChange(e);
+      this.props.onChange(exportValue);
     }
     function cleanCurrency(inputValue) {
       inputValue = inputValue.replace(/\D+/g, '');

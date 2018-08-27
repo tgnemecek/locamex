@@ -3,16 +3,11 @@
   justify-content: space-evenly;
   padding: 0;
   margin-top: 22px;
+  label { padding: 0 !important; }
 }
-
-.input--checkbox label {
-  padding: 0 !important;
-}
-
 .input--checkbox__box {
   display: none !important;
 }
-
 .input--checkbox__toggle {
   position: relative;
   display: block;
@@ -30,7 +25,7 @@
   width: 34px;
   height: 14px;
   display: block;
-  background: $grey;
+  background: #9A9999;
   border-radius: 8px;
   transition: background 0.2s ease;
 }
@@ -59,7 +54,6 @@
   opacity: 1;
   pointer-events: none;
 }
-
 .input--checkbox__box:checked + .input--checkbox__toggle:before {
   background: $brand-primary-light;
 }

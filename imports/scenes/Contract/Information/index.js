@@ -37,21 +37,22 @@ export default class Information extends React.Component {
     })
   }
 
-  handleChangeAddress = (e) => {
-    var value = e.target.value;
-    var name = e.target.name;
-    var deliveryAddress = {...this.props.contract.deliveryAddress};
-    deliveryAddress[name] = value;
-    this.props.updateContract(deliveryAddress, "deliveryAddress");
-  }
-
   toggleCalendar = (e) => {
     var calendarOpen = !this.state.calendarOpen;
     this.setState({ calendarOpen });
   }
 
-  changeDate = (startDate) => {
-    this.props.updateContract(startDate, "startDate");
+  handleChange = (e) => {
+    var value = e.target.value;
+    var name = e.target.name;
+    if (name == 'client') {
+      this.props.updateContract(value, "clientId");
+      return;
+    }
+    var obj = {...this.props.contract.date};
+    var extra = e.target.extra;
+    obj[name] = value;
+    this.props.updateContract(obj, extra);
   }
 
   cepButtonClick = (data) => {
@@ -76,44 +77,55 @@ export default class Information extends React.Component {
             <Input
               title="Cliente:"
               type="select"
-              onChange={this.selectClient}>
+              onChange={this.handleChange}>
               {this.clientOptions()}
             </Input>
             <Input
               title="Rua:"
               name="street"
               type="text"
+              extra="deliveryAddress"
               value={this.props.contract.deliveryAddress.street}
-              onChange={this.handleChangeAddress}
+              onChange={this.handleChange}
             />
             <Input
               title="Cidade:"
               name="city"
               type="text"
+              extra="deliveryAddress"
               value={this.props.contract.deliveryAddress.city}
-              onChange={this.handleChangeAddress}
+              onChange={this.handleChange}
             />
             <Input
               title="CEP:"
               name="cep"
               type="cep"
+              extra="deliveryAddress"
               buttonClick={this.cepButtonClick}
               value={this.props.contract.deliveryAddress.cep}
-              onChange={this.handleChangeAddress}
+              onChange={this.handleChange}
             />
             <Input
               title="Data da Entrega:"
               type="calendar"
+              name="startDate"
+              extra="dates"
               calendarOpen={this.state.calendarOpen}
               toggleCalendar={this.toggleCalendar}
-              changeDate={this.changeDate}
+              onChange={this.handleChange}
               value={this.props.contract.startDate}
             />
-            <Input title="Duração:" type="number"/>
+            <Input
+              title="Duração:"
+              value={this.props.contract.dates.duration}
+              onChange={this.handleChange}
+              extra="dates"
+              type="number"/>
             <Input
               title="Unidade:"
               type="select"
-              onChange={this.selectClient}>
+              value={this.props.contract.dates.unit}
+              onChange={this.handleChange}>
               <option value="months">Meses</option>
               <option value="days">Dias</option>
             </Input>
@@ -121,7 +133,8 @@ export default class Information extends React.Component {
               title="Estado:"
               type="select"
               name="state"
-              onChange={this.handleChangeAddress}
+              extra="deliveryAddress"
+              onChange={this.handleChange}
               value={this.props.contract.deliveryAddress.state}>
               {tools.states.map((item, i) => {
                 return <option key={i} value={item}>{item}</option>
@@ -131,15 +144,17 @@ export default class Information extends React.Component {
               title="Número:"
               name="number"
               type="number"
+              extra="deliveryAddress"
               value={this.props.contract.deliveryAddress.number}
-              onChange={this.handleChangeAddress}
+              onChange={this.handleChange}
             />
             <Input
               title="Complemento:"
               name="additional"
               type="text"
+              extra="deliveryAddress"
               value={this.props.contract.deliveryAddress.additional}
-              onChange={this.handleChangeAddress}
+              onChange={this.handleChange}
             />
           </Block>
       )

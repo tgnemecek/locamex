@@ -17,9 +17,12 @@ if(Meteor.isServer) {
     type: "rent", //rent-sell
     status: "active", //active-inactive-cancelled-finished
     createdBy: "Funcionário 1",
-    creationDate: 123123123,
-    startDate: new Date(),
-    duration: 6,
+    dates: {
+      creationDate: new Date(),
+      startDate: new Date(),
+      duration: 6,
+      unit: 'months'
+    },
     billing: [],
     observations: 'Exposição nova',
     deliveryAddress: {

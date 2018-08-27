@@ -15,9 +15,16 @@ export default class Input extends React.Component {
     super(props);
     this.className = "input " + "input--"+ this.props.type;
   }
-  onChange = (e) => {
-    e.target.name = this.props.name;
-    e.target.id = this.props.id;
+  onChange = (exportValue) => {
+    if (exportValue === undefined) throw new Error('exportValue is undefined in ' + this.props.name);
+    var e = {
+      target: {
+        value: exportValue,
+        name: this.props.name,
+        id: this.props.id,
+        extra: this.props.extra
+      }
+    }
     this.props.onChange(e);
   }
   render() {
@@ -59,6 +66,7 @@ export default class Input extends React.Component {
           value={this.props.value}
           onChange={this.onChange}
           type={this.props.type}
+          id={this.props.id}
 
           readOnly={this.props.readOnly}
           placeholder={this.props.placeholder}
