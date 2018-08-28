@@ -39,12 +39,12 @@ export default class Input extends React.Component {
       case 'currency':
         ChosenComponent = Currency;
         break;
-      case 'phone':
-      case 'cnpj':
-      case 'cpf':
       case 'cep':
         ChosenComponent = Cep;
         break;
+      case 'phone':
+      case 'cnpj':
+      case 'cpf':
       case 'email':
         ChosenComponent = Code;
         break;

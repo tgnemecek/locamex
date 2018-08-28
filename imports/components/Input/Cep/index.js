@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 
-import checkCep from '/imports/api/checkCep/index';
+import checkCep from '/imports/api/check-cep/index';
 import tools from '/imports/startup/tools/index';
 
 export default class Cep extends React.Component {

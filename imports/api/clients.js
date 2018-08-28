@@ -12,12 +12,13 @@ if(Meteor.isServer) {
 
   Clients.insert({
     _id: "0000",
-    clientName: "Exemplo",
+    description: "Exemplo",
     officialName: "Exemplo Empreendimentos",
     type: "company",
     registry: "79288413000173",
     registryES: "192837273",
     registryMU: "364645445",
+    visible: true,
     address: {
       number: '100',
       street: 'Rua Joaquim Távora',
@@ -49,9 +50,10 @@ if(Meteor.isServer) {
   });
   Clients.insert({
     _id: "0001",
-    clientName: "João Augusto",
+    description: "João Augusto",
     type: "person",
     registry: "29577660002",
+    visible: true,
     address: {
       number: '100',
       street: 'Rua Joaquim Távora',
@@ -82,7 +84,7 @@ if(Meteor.isServer) {
       let type = state.formType;
       let observations = state.observations;
       //Conditional Fields. If its not a company, the fields are empty
-      let clientName = state.formType == 'company' ? state.clientName : state.contactInformation[0].name;
+      let description = state.formType == 'company' ? state.description : state.contactInformation[0].name;
       let cnpj = state.formType == 'company' ? state.cnpj : '';
       let officialName = state.formType == 'company' ? state.officialName : '';
       let registryES = state.formType == 'company' ? state.registryES : '';
@@ -96,7 +98,7 @@ if(Meteor.isServer) {
 
       Clients.insert({
         _id,
-        clientName,
+        description,
         type,
         cnpj,
         officialName,
@@ -144,7 +146,7 @@ if(Meteor.isServer) {
       }
 
       Clients.update({ _id }, { $set: {
-        clientName: state.formType == 'company' ? state.clientName : state.contactInformation[0].name,
+        description: state.formType == 'company' ? state.description : state.contactInformation[0].name,
         cnpj: state.cnpj,
         officialName: state.officialName,
         registryES: state.registryES,

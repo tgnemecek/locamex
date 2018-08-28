@@ -4,7 +4,6 @@ export default class FooterButtons extends React.Component {
 
   renderButtons = () => {
     var style = {};
-    var className = "button ";
     var text;
 
     if (!this.props.buttons) return null;
@@ -13,7 +12,7 @@ export default class FooterButtons extends React.Component {
       if (i == 0) {
         style = {marginLeft: "0"}
       } else style = {marginLeft: "1%"}
-
+      var className = "button ";
       className += button.className;
       text = button.text;
       return <button

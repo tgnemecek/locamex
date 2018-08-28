@@ -4,7 +4,7 @@ import { Meteor } from 'meteor/meteor';
 import Box from '/imports/components/Box/index';
 import { Clients } from '../../api/clients';
 import tools from '/imports/startup/tools/index';
-import PrivateHeader from '../PrivateHeader';
+import AppHeader from '../AppHeader';
 import SearchBar from '../SearchBar';
 import List from '../List';
 
@@ -79,7 +79,7 @@ export default class ListPage extends React.Component {
   render() {
     return (
       <div>
-        <PrivateHeader title="Clientes"/>
+        <AppHeader title="Clientes"/>
         <div className="page-content">
           <SearchBar
             database={this.state.fullDatabase}

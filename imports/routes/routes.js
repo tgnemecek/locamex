@@ -3,11 +3,12 @@ import React from 'react';
 import { Router, Route, browserHistory } from 'react-router';
 
 import ErrorBoundary from '../components/ErrorBoundary/index';
-
+import AppHeader from '/imports/components/AppHeader/index';
+import NotFound from '../components/NotFound/index';
 import Test from '../scenes/Test/index';
-import NotFound from '../scenes/NotFound/index';
 import Login from '../scenes/Login/index';
 import Contract from '../scenes/Contract/index';
+import Database from '../scenes/Database/index';
 
 // import Signup from '../ui/Signup';
 // import Dashboard from '../ui/Dashboard';
@@ -62,6 +63,7 @@ export const routes = (
       <Route path="/test" component={Test}/>
       <Route path="/" component={Login} onEnter={onEnterPublicPage}/>
       <Route path="/contract/:contractId" component={Contract}/>
+      <Route path="/database/:database" component={Database}/>
       <Route path="*" component={NotFound}/>
     </ErrorBoundary>
   </Router>

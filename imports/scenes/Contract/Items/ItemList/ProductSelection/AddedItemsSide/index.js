@@ -34,7 +34,7 @@ export default class AddedItemsSide extends React.Component {
           <td>{item.type !== 'modular' ?
             <button value={item._id} className="button--table-x" onClick={this.props.removeItem}>✖</button>
             :
-            <button name="addedItems" value={i} className="button--table-edit" onClick={this.props.toggleModularScreen}>✎</button>
+            <button name="addedItems" value={i} className="product-selection__edit-button" onClick={this.props.toggleModularScreen}>✎</button>
             }</td>
         </tr>
       )

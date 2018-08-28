@@ -12,18 +12,18 @@ if (Meteor.isServer) {
   })
 }
 
-Accounts.validateNewUser((user) => {
-  const email = user.emails[0].address;
-
-  new SimpleSchema({
-    email: {
-      type: String,
-      regEx: SimpleSchema.RegEx.Email
-    }
-  }).validate({ email });
-
-  return true;
-});
+// Accounts.validateNewUser((user) => {
+//   const email = user.emails[0].address;
+//
+//   new SimpleSchema({
+//     email: {
+//       type: String,
+//       regEx: SimpleSchema.RegEx.Email
+//     }
+//   }).validate({ email });
+//
+//   return true;
+// });
 
 Meteor.methods({
   'users.insert'(username, email, userTypeId, password) {

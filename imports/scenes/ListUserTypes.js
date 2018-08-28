@@ -3,7 +3,7 @@
 // import { Meteor } from 'meteor/meteor';
 //
 // import tools from '/imports/startup/tools/index';
-// import PrivateHeader from './PrivateHeader';
+// import AppHeader from './AppHeader';
 // import { UserTypes } from '../api/user-types';
 // import { Pages } from '../api/pages';
 // import MessageBox from './MessageBox';
@@ -28,7 +28,7 @@
 //   render() {
 //     return (
 //       <div>
-//         <PrivateHeader title="Permissões de Usuários"/>
+//         <AppHeader title="Permissões de Usuários"/>
 //         <div className="page-content">
 //           <table className="list-view__table">
 //             <tbody className="list-view__tbody">

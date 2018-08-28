@@ -16,11 +16,11 @@ export default class MenuItem extends React.Component {
 
   render() {
     return(
-      <div className="dropdown">
-        <button className="button--header" onClick={this.openPages.bind(this)}>{this.props.categoryName}</button>
-        <div className="dropdown-content">
+      <div className="header__menu-item">
+        <button onClick={this.openPages.bind(this)}>{this.props.categoryName}</button>
+        <div className="header__menu-item--content">
           {this.props.categoryPages.map((category) => {
-            return <Link className="button button--link button--header-page" key={category.link} to={category.link}>{category.name}</Link>
+            return <Link className="button button--link" key={category.link} to={category.link}>{category.name}</Link>
             })}
         </div>
       </div>

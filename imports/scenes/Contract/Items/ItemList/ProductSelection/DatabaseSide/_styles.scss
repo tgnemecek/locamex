@@ -4,6 +4,13 @@
   margin-right: $space;
 }
 
+.product-selection__edit-button {
+  padding: ($space /4);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
 .table--product-selection--database {
   display: block;
   height: 500px;
@@ -28,12 +35,6 @@
   td:last-child {
     text-align: center !important;
     min-width: 20px !important;
-    button {
-      padding: ($space /4);
-      background: none;
-      border: none;
-      cursor: pointer;
-    }
   }
   th, td {
     padding: 5px 5px;

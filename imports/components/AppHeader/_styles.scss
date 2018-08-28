@@ -1,0 +1,16 @@
+@import './MenuItem/styles';
+.header {
+  background: $header-bg;
+  color: $header-color;
+  display: flex;
+  justify-content: space-between;
+  margin: 0 auto;
+  padding: 0 20%;
+}
+.header__title {
+  margin: $space;
+  width: 280px;
+}
+.header__logout {
+  text-align: right;
+}

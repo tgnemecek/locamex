@@ -1,11 +1,11 @@
 import React from 'react';
 
-import PrivateHeader from './PrivateHeader';
+import AppHeader from './AppHeader';
 
 export default () => {
   return(
     <div>
-      <PrivateHeader title="Dashboard"/>
+      <AppHeader title="Dashboard"/>
       <div className="page-content">
         Dashboard page content.
       </div>

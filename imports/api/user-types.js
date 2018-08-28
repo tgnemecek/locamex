@@ -13,11 +13,8 @@ if(Meteor.isServer) {
 }
 
 Meteor.methods({
-
   'userTypes.insert'(description, permissions) {
-
     const _id = UserTypes.find().count().toString().padStart(4, '0');
-
     UserTypes.insert({
       _id,
       description,
@@ -25,19 +22,14 @@ Meteor.methods({
       visible: true
     });
   },
-
   'userTypes.hide'(_id) {
-
      let conflicts = Meteor.users.find({ userTypeId: _id }).fetch();
-
      for (var i = 0; i < conflicts.length; i++) {
        Meteor.users.update({ _id: conflicts[i]._id }, { $set: {userTypeId: "0001"}});
      }
     UserTypes.update({ _id }, { $set: { visible: false } });
   },
-
   'userTypes.update'(_id, description, permissions) {
-
     UserTypes.update({ _id }, { $set: {
       description,
       permissions

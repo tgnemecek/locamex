@@ -6,7 +6,9 @@ import { Contracts } from '/imports/api/contracts';
 
 import tools from '/imports/startup/tools/index';
 
-import PrivateHeader from '/imports/components/PrivateHeader/index';
+import AppHeader from '/imports/components/AppHeader/index';
+import NotFound from '/imports/components/NotFound/index';
+import Loading from '/imports/components/Loading/index';
 import Header from './Header/index';
 import Information from './Information/index';
 import Items from './Items/index';
@@ -18,8 +20,7 @@ export default class Contract extends React.Component {
     super(props);
     this.state = {
       contract: {},
-      _id: '',
-      ready: false
+      ready: 0
     }
   }
 
@@ -30,10 +31,8 @@ export default class Contract extends React.Component {
         Meteor.subscribe('contractsPub');
         var contract = Contracts.findOne({ _id: this.props.params.contractId });
         if (contract) {
-          contract = tools.deepCopy(contract);
-          var _id = contract._id
-          this.setState({ contract, _id, ready: true });
-        } else this.setState({ ready: false });
+          this.setState({ contract, ready: 1 });
+        } else this.setState({ ready: -1 });
       })
     }
   }
@@ -45,10 +44,10 @@ export default class Contract extends React.Component {
   }
 
   render () {
-    if (this.state.ready) {
+    if (this.state.ready === 1) {
       return (
-        <div>
-          <PrivateHeader title="Contrato"/>
+        <>
+          <AppHeader title="Contrato"/>
             <div className="page-content">
               <div className="contract">
                 <Header
@@ -76,8 +75,26 @@ export default class Contract extends React.Component {
                 </div>
               </div>
             </div>
-        </div>
+        </>
       )
-    } else return null;
+    } else if (this.state.ready === 0) {
+      return (
+        <>
+        <AppHeader title="Contrato"/>
+          <div className="page-content">
+            <Loading fullPage={true}/>
+          </div>
+        </>
+      )
+    } else if (this.state.ready === -1) {
+      return (
+        <>
+        <AppHeader title="Contrato"/>
+          <div className="page-content">
+            <NotFound/>
+          </div>
+        </>
+      )
+    }
   }
 }

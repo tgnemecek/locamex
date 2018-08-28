@@ -28,6 +28,7 @@ export default class SearchBar extends React.Component {
 
   runSearch = (e) => {
     e.stopPropagation();
+    e.preventDefault();
 
     if (!this.state.value) {
       this.props.searchReturn(false);
@@ -86,9 +87,16 @@ export default class SearchBar extends React.Component {
         result.push(database[i]);
       }
     }
-    this.props.searchReturn(result);
+    this.filterVisible(result);
   }
 
+  filterVisible = (inputArray) => {
+    var exportArray = [];
+    inputArray.forEach((item) => {
+      if (item.visible) exportArray.push(item);
+    })
+    this.props.searchReturn(exportArray);
+  }
 
   render() {
     return (
@@ -104,7 +112,7 @@ export default class SearchBar extends React.Component {
           <input value={this.state.value} onChange={this.onChange} type="text"/>
         </div>
         <div className="search-bar__block">
-          <button className="button--pill button--search-bar" onClick={this.runSearch}>Buscar</button>
+          <button className="button--pill search-bar__button" onClick={this.runSearch}>Buscar</button>
         </div>
       </form>
     )

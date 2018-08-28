@@ -19,7 +19,7 @@ export default class Box extends React.Component {
         style={style}
         overlayClassName="box-overlay"
         className={className}>
-          {this.props.closeBox ? <button onClick={this.props.closeBox} className="button--close-box">✖</button> : null}
+          {this.props.closeBox ? <button onClick={this.props.closeBox} className="box__close-button">✖</button> : null}
           <div className="box__header">
             <h3>{this.props.title}</h3>
           </div>

@@ -17,6 +17,7 @@ export default class DatabaseSide extends React.Component {
             <td><button
               name="database"
               value={i}
+              className="product-selection__edit-button"
               onClick={item.type !== 'modular' ? this.props.addItem : this.props.toggleModularScreen}>
               ►
             </button></td>
