@@ -1,0 +1,24 @@
+.tab__parent {
+  border: 0 solid $grey;
+  border-width: 1px 1px 1px 1px;
+  background-color: $light-grey;
+  text-align: left;
+}
+
+.tab {
+  background-color: inherit;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  width: 93.7px;
+}
+
+.tab:hover {
+  background-color: #ddd;
+}
+
+.tab.active {
+  background-color: #ccc;
+}

@@ -34,30 +34,6 @@
   width: 100%;
 }
 
-.form__tab {
-  border: 0 solid $grey;
-  border-width: 1px 1px 0 1px;
-  background-color: $light-grey;
-  text-align: left;
-}
-
-.form__tab > button {
-  background-color: inherit;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 14px 16px;
-  transition: 0.3s;
-}
-
-.form__tab > button:hover {
-  background-color: #ddd;
-}
-
-.form__tab > button.active {
-  background-color: #ccc;
-}
-
 .error-message {
   color: $light-red;
 }

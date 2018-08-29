@@ -15,7 +15,7 @@ import { UserTypes } from '/imports/api/user-types';
 import { Users } from '/imports/api/users';
 
 import tools from '/imports/startup/tools/index';
-
+import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import AppHeader from '/imports/components/AppHeader/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import Table from './Table/index';
@@ -70,7 +70,10 @@ export default class Database extends React.Component {
   }
 
   toggleWindow = (item) => {
-    if (!this.state.item) this.setState({ item });
+    if (!this.state.item) {
+      if (item) this.setState({ item });
+      else this.setState({ item: {} });
+    }
     else this.setState({ item: false });
   }
 
@@ -88,7 +91,7 @@ export default class Database extends React.Component {
     }
     if (this.state.ready === 1) {
       return (
-        <>
+        <ErrorBoundary>
           <AppHeader title="Contrato"/>
             <div className="page-content">
               <SearchBar
@@ -109,25 +112,25 @@ export default class Database extends React.Component {
                 />
               : null}
             </div>
-        </>
+        </ErrorBoundary>
       )
     } else if (this.state.ready === 0) {
       return (
-        <>
+        <ErrorBoundary>
         <AppHeader title="Contrato"/>
           <div className="page-content">
             <Loading fullPage={true}/>
           </div>
-        </>
+        </ErrorBoundary>
       )
     } else if (this.state.ready === -1) {
       return (
-        <>
+        <ErrorBoundary>
         <AppHeader title="Contrato"/>
           <div className="page-content">
             <NotFound/>
           </div>
-        </>
+        </ErrorBoundary>
       )
     }
   }

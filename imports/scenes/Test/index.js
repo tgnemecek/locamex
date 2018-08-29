@@ -4,8 +4,6 @@ import tools from '/imports/startup/tools/index';
 import Input from '/imports/components/Input/index';
 import Block from '/imports/components/Block/index';
 import { Clients } from '/imports/api/clients';
-import Test2 from './index2';
-import Test3 from './index3';
 
 export default class Test extends React.Component {
   constructor(props) {
@@ -15,19 +13,19 @@ export default class Test extends React.Component {
     }
   }
 
+  onClick = () => {
+    this.setState({value: 20});
+  }
+
 
   render() {
+    var Rend = this.state.value == 10 ? Block : <div>AAAA</div>
     return (
       <>
-        <Block>
-          <Test2/>
-          <Test2/>
-        </Block>
-        <Test3>
-          <Test2/>
-          <Test2/>
-        </Test3>
+        <Rend/>
+        <button onClick={this.onClick}>click</button>
       </>
+
     )
   }
 }

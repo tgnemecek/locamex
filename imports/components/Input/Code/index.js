@@ -7,9 +7,22 @@ export default class Code extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      displayValue: tools.format(this.props.value, this.props.type),
-      exportValue: this.props.value,
       style: {}
+    }
+    this.cursor = 0;
+    this.ref = React.createRef();
+  }
+  componentDidUpdate = (prevProps) => {
+    if (this.props.value !== prevProps.value) {
+      var newCursor = this.cursor;
+      var substring1 = tools.format(this.props.value.substring(0, newCursor), this.props.type);
+      var substring2 = this.props.value.substring(0, newCursor);
+      var subtraction = substring1.length - substring2.length;
+      newCursor = newCursor + subtraction;
+      this.ref.current.setSelectionRange(newCursor, newCursor);
+      // if (subtraction < 0) {
+      //   this.ref.current.setSelectionRange(newCursor, newCursor);
+      // } else this.ref.current.setSelectionRange(this.cursor+1, this.cursor+1);
     }
   }
   validateCode = (value, type) => {
@@ -31,36 +44,28 @@ export default class Code extends React.Component {
   }
   onChange = (e) => {
     if (e) {
-      var obj = e.target;
-      var cursorStart = obj.selectionStart;
-      var cursorEnd = obj.selectionEnd;
+      this.cursor = e.target.selectionStart;
       var inputValue = e.target.value;
-      var displayValue;
       var exportValue;
-      var maxLength = 9999;
-      if (inputValue.length > maxLength) {
-        var toCut = inputValue.length - maxLength;
-        inputValue = inputValue.slice(0, (0 - toCut));
-      }
-      displayValue = tools.format(inputValue, this.props.type);
+      var displayValue = tools.format(inputValue, this.props.type);
+
       exportValue = tools.unformat(inputValue, this.props.type);
 
-      cursorStart = cursorStart + (displayValue.length - inputValue.length);
-      cursorEnd = cursorEnd + (displayValue.length - inputValue.length);
+      var cursorStart = cursorStart + (displayValue.length - inputValue.length);
 
       this.validateCode(displayValue, this.props.type);
 
-      obj.setSelectionRange(cursorStart, cursorEnd);
+      // e.target.setSelectionRange(cursorStart, cursorStart);
       this.props.onChange(exportValue);
-      this.setState({ displayValue, exportValue });
     }
   }
 
   render() {
     return (
       <input
-        value={this.state.displayValue}
+        value={tools.format(this.props.value, this.props.type)}
         onChange={this.onChange}
+        ref={this.ref}
 
         readOnly={this.props.readOnly}
         placeholder={this.props.placeholder}

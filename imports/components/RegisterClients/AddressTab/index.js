@@ -1,50 +1,72 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
-
 import tools from '/imports/startup/tools/index';
-
+import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 
-export default class ContactTab extends React.Component {
+export default class AddressTab extends React.Component {
+  onChange = (e) => {
+    var address = {
+      ...this.props.item.address,
+      [e.target.name]: e.target.value
+    };
+    var exportObj = {target: {
+      value: address,
+      name: 'address'
+    }}
+    this.props.onChange(exportObj);
+  }
+  cepButtonClick = (data) => {
+    if (!data.cep) return;
+    var address = {
+      ...this.props.item.address,
+      street: data.logradouro,
+      city: data.localidade,
+      state: data.uf,
+      number: '',
+      additional: ''
+    };
+    var exportObj = {target: {
+      value: address,
+      name: 'address'
+    }}
+    this.props.onChange(exportObj);
+  }
   render() {
     return (
-      <>
+      <ErrorBoundary>
         <Block
-          className="contract__information"
-          columns={6}>
+          columns={3}
+          options={[{block: 0, span: 2}, {block: 3, span: 0.5}, {block: 4, span: 0.5}]}>
           <Input
             title="Rua:"
             name="street"
             type="text"
-            extra="deliveryAddress"
-            value={this.props.contract.deliveryAddress.street}
-            onChange={this.handleChange}
+            value={this.props.item.address.street}
+            onChange={this.onChange}
           />
           <Input
             title="CEP:"
             name="cep"
             type="cep"
-            extra="deliveryAddress"
             buttonClick={this.cepButtonClick}
-            value={this.props.contract.deliveryAddress.cep}
-            onChange={this.handleChange}
+            value={this.props.item.address.cep}
+            onChange={this.onChange}
           />
-          <Input
+          {/* <Input
             title="Cidade:"
             name="city"
             type="text"
-            extra="deliveryAddress"
-            value={this.props.contract.deliveryAddress.city}
-            onChange={this.handleChange}
+            value={this.props.item.address.city}
+            onChange={this.onChange}
           />
           <Input
             title="Estado:"
             type="select"
             name="state"
-            extra="deliveryAddress"
-            onChange={this.handleChange}
-            value={this.props.contract.deliveryAddress.state}>
+            onChange={this.onChange}
+            value={this.props.item.address.state}>
             {tools.states.map((item, i) => {
               return <option key={i} value={item}>{item}</option>
             })}
@@ -53,21 +75,18 @@ export default class ContactTab extends React.Component {
             title="Número:"
             name="number"
             type="number"
-            extra="deliveryAddress"
-            value={this.props.contract.deliveryAddress.number}
-            onChange={this.handleChange}
+            value={this.props.item.address.number}
+            onChange={this.onChange}
           />
           <Input
             title="Complemento:"
             name="additional"
             type="text"
-            extra="deliveryAddress"
-            value={this.props.contract.deliveryAddress.additional}
-            onChange={this.handleChange}
-          />
+            value={this.props.item.address.additional}
+            onChange={this.onChange}
+          /> */}
         </Block>
-          : null}
-      </>
+      </ErrorBoundary>
     )
   }
 }

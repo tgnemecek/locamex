@@ -9,6 +9,7 @@ import Digits from './Digits/index';
 import Text from './Text/index';
 import DatePicker from './DatePicker/index';
 import Select from './Select/index';
+import TextArea from './TextArea/index';
 
 export default class Input extends React.Component {
   constructor(props) {
@@ -59,6 +60,9 @@ export default class Input extends React.Component {
         break;
       case 'checkbox':
         ChosenComponent = Checkbox;
+        break;
+      case 'textarea':
+        ChosenComponent = TextArea;
         break;
       default:
         ChosenComponent = Text;

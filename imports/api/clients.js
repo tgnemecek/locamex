@@ -22,7 +22,6 @@ if(Meteor.isServer) {
     address: {
       number: '100',
       street: 'Rua Joaquim Távora',
-      district: 'Vila Mariana',
       city: 'São Paulo',
       state: 'SP',
       cep: '04015010'
@@ -57,7 +56,6 @@ if(Meteor.isServer) {
     address: {
       number: '100',
       street: 'Rua Joaquim Távora',
-      district: 'Vila Mariana',
       city: 'São Paulo',
       state: 'SP',
       cep: '04015010'
@@ -78,34 +76,18 @@ if(Meteor.isServer) {
 
   Meteor.methods({
     'clients.insert'(state) {
-
       const _id = Clients.find().count().toString().padStart(4, '0');
-
-      let type = state.formType;
-      let observations = state.observations;
-      //Conditional Fields. If its not a company, the fields are empty
-      let description = state.formType == 'company' ? state.description : state.contactInformation[0].name;
-      let cnpj = state.formType == 'company' ? state.cnpj : '';
-      let officialName = state.formType == 'company' ? state.officialName : '';
-      let registryES = state.formType == 'company' ? state.registryES : '';
-      let registryMU = state.formType == 'company' ? state.registryMU : '';
-
-      let contacts = [];
-
-      state.contactInformation.forEach((contact, i) => {
-        contacts[i] = tools.deepCopy(contact);
-      })
-
       Clients.insert({
         _id,
-        description,
-        type,
-        cnpj,
-        officialName,
-        registryES,
-        registryMU,
-        observations,
-        contacts
+        description: state.description,
+        type: state.description,
+        registry: state.registry,
+        officialName: state.officialName,
+        registryES: state.registryES,
+        registryMU: state.registryMU,
+        observations: state.observations,
+        contacts: state.contacts,
+        visible: true
       });
     },
 
@@ -122,36 +104,15 @@ if(Meteor.isServer) {
       Clients.update({ _id }, { $set: { contacts } });
     },
 
-    'clients.update'(_id, state) {
-
-      var contacts = Clients.find({_id}).fetch()[0].contacts;
-      var newContacts = [];
-
-      for (var i = 0; i < state.contactInformation.length; i++) {
-        if (state.contactInformation[i]._id == '') {
-          newContacts.push(state.contactInformation[i]);
-          continue;
-        }
-        for (var j = 0; j < contacts.length; j++) {
-          if (state.contactInformation[i]._id == contacts[j]._id) {
-            contacts[j] = state.contactInformation[i];
-            continue;
-          }
-        }
-      }
-
-      for (var i = 0; i < newContacts.length; i++) {
-        newContacts[i]._id = contacts.length.toString().padStart(4, '0');
-        contacts.push(newContacts[i]);
-      }
-
-      Clients.update({ _id }, { $set: {
-        description: state.formType == 'company' ? state.description : state.contactInformation[0].name,
-        cnpj: state.cnpj,
+    'clients.update'(state) {
+      Clients.update({ _id: state._id }, { $set: {
+        description: state.description,
+        registry: state.registry,
         officialName: state.officialName,
         registryES: state.registryES,
         registryMU: state.registryMU,
-        contacts,
+        contacts: state.contacts,
+        address: state.address,
         observations: state.observations
         } });
     }

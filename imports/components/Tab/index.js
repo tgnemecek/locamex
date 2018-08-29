@@ -2,8 +2,16 @@ import React from 'react';
 
 export default class Tab extends React.Component {
   renderTabs = () => {
-    return this.props.children.map((tab, i) => {
-      return <button key={i} className="tab" value={i} onClick={this.props.onClick}>{tab}</button>
+    const onClick = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      var value = e.target.value;
+      this.props.changeTab(value);
+    }
+    return this.props.tabArray.map((tab, i) => {
+      var className = "tab";
+      if (this.props.tab == tab.value) className = "tab active"
+      return <button key={i} className={className} value={tab.value} onClick={onClick}>{tab.title}</button>
     })
   }
   render() {

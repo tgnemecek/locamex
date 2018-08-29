@@ -2,7 +2,6 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { Router, Route, browserHistory } from 'react-router';
 
-import ErrorBoundary from '../components/ErrorBoundary/index';
 import AppHeader from '/imports/components/AppHeader/index';
 import NotFound from '../components/NotFound/index';
 import Test from '../scenes/Test/index';
@@ -53,7 +52,6 @@ const ListClients = (props) => { return <ListPage type="clients"/> };
 
 export const routes = (
   <Router history={browserHistory}>
-    <ErrorBoundary>
       {/* <Route path="/signup" component={Signup} onEnter={onEnterPublicPage}/>
       <Route path="/dashboard" component={Dashboard} onEnter={onEnterPrivatePage}/> */}
       {/* <Route path="/listservices" component={ListServices}/>
@@ -65,6 +63,5 @@ export const routes = (
       <Route path="/contract/:contractId" component={Contract}/>
       <Route path="/database/:database" component={Database}/>
       <Route path="*" component={NotFound}/>
-    </ErrorBoundary>
   </Router>
 );

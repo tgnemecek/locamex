@@ -12,6 +12,7 @@ import Input from '/imports/components/Input/index';
 import MainTab from './MainTab/index';
 import AddressTab from './AddressTab/index';
 import ContactTab from './ContactTab/index';
+import ObservationsTab from './ObservationsTab/index';
 
 export default class RegisterClients extends React.Component {
   constructor(props) {
@@ -19,13 +20,29 @@ export default class RegisterClients extends React.Component {
     this.state = {
       _id: this.props.item._id || '',
       description: this.props.item.description || '',
-      price: this.props.item.price || '',
+      officialName: this.props.item.officialName || '',
+      type: this.props.item.type || '',
+      registry: this.props.item.registry || '',
+      registryES: this.props.item.registryES || '',
+      registryMU: this.props.item.registryMU || '',
+      address: this.props.item.address || {
+        number: '',
+        street: '',
+        city: '',
+        state: '',
+        cep: ''
+      },
+      observations: this.props.item.observations || '',
+      contacts: this.props.item.contacts || [],
+
       confirmationWindow: false,
-      tab: 0
+      tab: 'main'
     }
   }
   onChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
+    var key = e.target.name;
+    var value = e.target.value;
+    this.setState({ [key]: value });
   }
   toggleConfirmationWindow = () => {
     var confirmationWindow = !this.state.confirmationWindow;
@@ -36,30 +53,72 @@ export default class RegisterClients extends React.Component {
     this.props.toggleWindow();
   }
   saveEdits = () => {
+    var contacts = [];
+    for (var i = 0; i < this.state.contacts.length; i++) {
+      if (this.state.contacts[i].name) contacts.push(this.state.contacts[i]);
+    }
+    contacts.forEach((contact, i) => {
+      contact._id = i.toString().padStart(4, '0');
+    })
+    var state = {...this.state, contacts};
     if (this.props.item._id) {
-      Meteor.call('services.update', this.state._id, this.state.description, this.state.price);
-    } else Meteor.call('services.insert', this.state.description, this.state.price);
+      Meteor.call('clients.update', state);
+    } else Meteor.call('clients.insert', state);
     this.props.toggleWindow();
   }
-  changeTab = () => {
-
+  changeTab = (tab) => {
+    if (tab === '+') {
+      this.addNewTab();
+      tab = this.state.contacts.length + 2;
+    }
+    this.setState({ tab });
+  }
+  renderTabs = () => {
+    var arr1 = [
+      {value: 'main', title: 'Principal'},
+      {value: 'address', title: 'Endereço'}
+    ];
+    var arr2 = this.state.contacts.map((contact, i) => {
+      return {value: (i+2), title: `Contato ${i + 1}`}
+    })
+    var arr3 = [
+      {value: 'observations', title: 'OBS'},
+      {value: '+', title: '+'}
+    ];
+    return arr1.concat(arr2, arr3);
+  }
+  addNewTab = () => {
+    var contacts = tools.deepCopy(this.state.contacts);
+    contacts.push({
+      _id: '',
+      name: '',
+      phone1: '',
+      phone2: '',
+      email: '',
+      cpf: '',
+      rg: '',
+      visible: true
+    });
+    this.setState({ contacts });
   }
   render() {
-    var CurrentTab;
-    if (this.state.tab === 0) CurrentTab = MainTab;
-    if (this.state.tab === 1) CurrentTab = AddressTab;
-    if (this.state.tab > 1) CurrentTab = ContactTab;
     return (
       <Box
-        title={this.props.item._id ? "Editar Registro" : "Criar Novo Registro"}
+        title={this.props.item._id ? "Editar Cliente" : "Criar Novo Cliente"}
         closeBox={this.props.toggleWindow}
         width="800px">
         <Tab
-          onClick={this.changeTab}>
-          <span>Principal</span>
-          <span>Contato 1</span>
-        </Tab>
-        <CurrentTab onChange={this.onChange} itemState={this.state}/>
+          tab={this.state.tab}
+          addNewTab={this.addNewTab}
+          changeTab={this.changeTab}
+          tabArray={this.renderTabs()}
+        />
+        {this.state.tab === 'main' ? <MainTab onChange={this.onChange} item={this.state}/> : null}
+        {this.state.tab === 'address' ? <AddressTab onChange={this.onChange} item={this.state}/> : null}
+        {Number(this.state.tab) > 1 ?
+          <ContactTab key={this.state.tab} onChange={this.onChange} item={this.state}/>
+        : null}
+        {this.state.tab === 'observations' ? <ObservationsTab onChange={this.onChange} item={this.state}/> : null}
           {this.state.confirmationWindow ?
             <Box
               title="Aviso:"
@@ -71,8 +130,8 @@ export default class RegisterClients extends React.Component {
               ]}/>
             </Box>
           : null}
-          {this.props.item._id ?
-            <button className="button button--danger" style={{width: "100%"}} onClick={this.toggleConfirmationWindow}>Excluir Registro</button>
+          {this.state.tab > 1 ?
+            <button className="button button--danger" style={{width: "100%"}} onClick={this.toggleConfirmationWindow}>Excluir Contato</button>
           : null}
           <FooterButtons buttons={[
             {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},

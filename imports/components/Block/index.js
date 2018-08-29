@@ -6,6 +6,10 @@ export default class Block extends React.Component {
     var options = this.props.options;
     var className = "block";
     if (!this.props.children) return null;
+    if (!Array.isArray(this.props.children)) {
+      var style = {width: "100%"};
+      return <div className={className} style={style}>{this.props.children}</div>;
+    }
     return this.props.children.map((child, i, array) => {
       var style = {width: (1 / this.props.columns * 100) + "%"}
       if (options) {

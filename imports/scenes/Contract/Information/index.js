@@ -54,15 +54,16 @@ export default class Information extends React.Component {
   }
 
   cepButtonClick = (data) => {
-    var deliveryAddress = {...this.props.contract.deliveryAddress};
-    if (data) {
-      deliveryAddress.street = data.logradouro;
-      deliveryAddress.district = data.bairro;
-      deliveryAddress.city = data.localidade;
-      deliveryAddress.state = data.uf;
-      deliveryAddress.number = '';
-      deliveryAddress.additional = '';
-    }
+    if (!data.cep) return;
+    var deliveryAddress = {
+      ...this.props.contract.deliveryAddress,
+      street: data.logradouro,
+      district: data.bairro,
+      city: data.localidade,
+      state: data.uf,
+      number: 999,
+      additional: ''
+    };
     this.props.updateContract(deliveryAddress, "deliveryAddress");
   }
 

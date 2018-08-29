@@ -16,6 +16,9 @@ export default class Table extends React.Component {
     return <td className="column-3"><button className="database__table__button" onClick={toggleWindow}>✎</button></td>
   }
   renderHeader = () => {
+    const toggleWindow = () => {
+      this.props.toggleWindow();
+    }
     switch (this.props.type) {
       case 'clients':
         return (
@@ -23,7 +26,7 @@ export default class Table extends React.Component {
             <th className="column-0">Código</th>
             <th className="column-1">Nome Fantasia</th>
             <th className="column-2">Tipo</th>
-            <th className="column-3"><button value={{}} onClick={this.props.toggleWindow} className="database__table__button">+</button></th>
+            <th className="column-3"><button onClick={toggleWindow} className="database__table__button">+</button></th>
           </tr>
         )
       case 'services':
@@ -32,7 +35,7 @@ export default class Table extends React.Component {
             <th className="column-0">Código</th>
             <th className="column-1">Descrição</th>
             <th className="column-2">Valor</th>
-            <th className="column-3"><button value={{}} onClick={this.props.toggleWindow} className="database__table__button">+</button></th>
+            <th className="column-3"><button onClick={toggleWindow} className="database__table__button">+</button></th>
           </tr>
         )
       default:
