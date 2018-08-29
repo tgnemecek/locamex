@@ -7,7 +7,9 @@ import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 import Input from '/imports/components/Input/index';
 
-export default class RegisterServices extends React.Component {
+import Transaction from './Transaction/index';
+
+export default class RegisterAccessories extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,7 +40,7 @@ export default class RegisterServices extends React.Component {
     return (
       <ErrorBoundary>
         <Box
-          title={this.props.item._id ? "Editar Registro" : "Criar Novo Registro"}
+          title={this.props.item._id ? "Editar Acessório" : "Criar Novo Acessório"}
           closeBox={this.props.toggleWindow}
           width="800px">
             <Block columns={6} options={[{block: 1, span: 4}]}>
@@ -65,6 +67,8 @@ export default class RegisterServices extends React.Component {
                 onChange={this.onChange}
               />
             </Block>
+            <h4>Movimentação:</h4>
+            <Transaction item={this.state} onChange={this.onChange}/>
             {this.state.confirmationWindow ?
               <Box
                 title="Aviso:"

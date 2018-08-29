@@ -12,7 +12,7 @@ export default class Cep extends React.Component {
     }
   }
   checkCep = () => {
-    var value = this.state.exportValue;
+    var value = tools.unformat(this.props.value, this.props.type);
     if (value === undefined) return;
     if (value.length == 8) {
       checkCep(value, (checkCepData) => {
@@ -27,7 +27,7 @@ export default class Cep extends React.Component {
   onChange = (e) => {
     if (e) {
       var inputValue = e.target.value;
-      var exportValue =  tools.unformat(inputValue, this.props.type);
+      var exportValue = tools.unformat(inputValue, this.props.type);
       this.props.onChange(exportValue);
     }
   }
@@ -36,7 +36,7 @@ export default class Cep extends React.Component {
     return (
       <>
         <input
-          value={this.props.value}
+          value={tools.format(this.props.value, this.props.type)}
           onChange={this.onChange}
 
           readOnly={this.props.readOnly}

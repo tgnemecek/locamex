@@ -1,8 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
-
+import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import tools from '/imports/startup/tools/index';
-
 import Block from '/imports/components/Block/index';
 import Box from '/imports/components/Box/index';
 import Tab from '/imports/components/Tab/index';
@@ -103,41 +102,43 @@ export default class RegisterClients extends React.Component {
   }
   render() {
     return (
-      <Box
-        title={this.props.item._id ? "Editar Cliente" : "Criar Novo Cliente"}
-        closeBox={this.props.toggleWindow}
-        width="800px">
-        <Tab
-          tab={this.state.tab}
-          addNewTab={this.addNewTab}
-          changeTab={this.changeTab}
-          tabArray={this.renderTabs()}
-        />
-        {this.state.tab === 'main' ? <MainTab onChange={this.onChange} item={this.state}/> : null}
-        {this.state.tab === 'address' ? <AddressTab onChange={this.onChange} item={this.state}/> : null}
-        {Number(this.state.tab) > 1 ?
-          <ContactTab key={this.state.tab} onChange={this.onChange} item={this.state}/>
-        : null}
-        {this.state.tab === 'observations' ? <ObservationsTab onChange={this.onChange} item={this.state}/> : null}
-          {this.state.confirmationWindow ?
-            <Box
-              title="Aviso:"
-              closeBox={this.toggleConfirmationWindow}>
-              <p>Deseja mesmo excluir este item do banco de dados?</p>
-              <FooterButtons buttons={[
-                {text: "Não", className: "button--secondary", onClick: () => this.toggleConfirmationWindow()},
-                {text: "Sim", className: "button--danger", onClick: () => this.removeItem()}
-              ]}/>
-            </Box>
+      <ErrorBoundary>
+        <Box
+          title={this.props.item._id ? "Editar Cliente" : "Criar Novo Cliente"}
+          closeBox={this.props.toggleWindow}
+          width="800px">
+          <Tab
+            tab={this.state.tab}
+            addNewTab={this.addNewTab}
+            changeTab={this.changeTab}
+            tabArray={this.renderTabs()}
+          />
+          {this.state.tab === 'main' ? <MainTab onChange={this.onChange} item={this.state}/> : null}
+          {this.state.tab === 'address' ? <AddressTab onChange={this.onChange} item={this.state}/> : null}
+          {Number(this.state.tab) > 1 ?
+            <ContactTab key={this.state.tab} onChange={this.onChange} item={this.state}/>
           : null}
-          {this.state.tab > 1 ?
-            <button className="button button--danger" style={{width: "100%"}} onClick={this.toggleConfirmationWindow}>Excluir Contato</button>
-          : null}
-          <FooterButtons buttons={[
-            {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
-            {text: "Salvar", onClick: () => this.saveEdits()}
-          ]}/>
-      </Box>
+          {this.state.tab === 'observations' ? <ObservationsTab onChange={this.onChange} item={this.state}/> : null}
+            {this.state.confirmationWindow ?
+              <Box
+                title="Aviso:"
+                closeBox={this.toggleConfirmationWindow}>
+                <p>Deseja mesmo excluir este item do banco de dados?</p>
+                <FooterButtons buttons={[
+                  {text: "Não", className: "button--secondary", onClick: () => this.toggleConfirmationWindow()},
+                  {text: "Sim", className: "button--danger", onClick: () => this.removeItem()}
+                ]}/>
+              </Box>
+            : null}
+            {this.state.tab > 1 ?
+              <button className="button button--danger" style={{width: "100%"}} onClick={this.toggleConfirmationWindow}>Excluir Contato</button>
+            : null}
+            <FooterButtons buttons={[
+              {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
+              {text: "Salvar", onClick: () => this.saveEdits()}
+            ]}/>
+        </Box>
+      </ErrorBoundary>
     )
   }
 }

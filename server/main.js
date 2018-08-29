@@ -4,6 +4,7 @@ import { WebApp } from 'meteor/webapp';
 import '../imports/api/categories';
 import '../imports/api/pages';
 
+import '../imports/api/accessories';
 import '../imports/api/services';
 import '../imports/api/containers';
 import '../imports/api/modules';

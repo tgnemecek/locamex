@@ -21,6 +21,7 @@ import SearchBar from '/imports/components/SearchBar/index';
 import Table from './Table/index';
 import RegisterClients from '/imports/components/RegisterClients/index';
 import RegisterServices from '/imports/components/RegisterServices/index';
+import RegisterAccessories from '/imports/components/RegisterAccessories/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
@@ -36,15 +37,17 @@ export default class Database extends React.Component {
       item: false
     }
     switch (this.props.params.database) {
+      case 'accessories':
+          this.Db = Accessories;
+          this.pub = 'accessoriesPub';
+        break;
       case 'clients':
           this.Db = Clients;
           this.pub = 'clientsPub';
-          this.Window = RegisterClients;
         break;
       case 'services':
           this.Db = Services;
           this.pub = 'servicesPub';
-          this.Window = RegisterServices;
         break;
       default:
     }
@@ -80,6 +83,9 @@ export default class Database extends React.Component {
   render () {
     var ChosenComponent;
     switch (this.props.params.database) {
+      case 'accessories':
+        ChosenComponent = RegisterAccessories;
+        break;
       case 'clients':
         ChosenComponent = RegisterClients;
         break;

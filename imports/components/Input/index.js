@@ -70,11 +70,13 @@ export default class Input extends React.Component {
     return (
       <div className={"input " + "input--"+ this.props.type}>
         {this.props.title ?
-          <label>{this.props.title}</label>
+          <label style={this.props.labelStyle}>{this.props.title}</label>
         : null}
         <ChosenComponent
           value={this.state.value}
           onChange={this.onChange}
+
+          style={this.props.style}
           type={this.props.type}
           id={this.props.id}
 

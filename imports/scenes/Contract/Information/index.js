@@ -61,7 +61,7 @@ export default class Information extends React.Component {
       district: data.bairro,
       city: data.localidade,
       state: data.uf,
-      number: 999,
+      number: '',
       additional: ''
     };
     this.props.updateContract(deliveryAddress, "deliveryAddress");
