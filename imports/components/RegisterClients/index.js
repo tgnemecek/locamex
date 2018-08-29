@@ -29,7 +29,8 @@ export default class RegisterClients extends React.Component {
         street: '',
         city: '',
         state: '',
-        cep: ''
+        cep: '',
+        additional: ''
       },
       observations: this.props.item.observations || '',
       contacts: this.props.item.contacts || [],
@@ -81,8 +82,8 @@ export default class RegisterClients extends React.Component {
       return {value: (i+2), title: `Contato ${i + 1}`}
     })
     var arr3 = [
-      {value: 'observations', title: 'OBS'},
-      {value: '+', title: '+'}
+      {value: '+', title: '+'},
+      {value: 'observations', title: 'OBS'}
     ];
     return arr1.concat(arr2, arr3);
   }

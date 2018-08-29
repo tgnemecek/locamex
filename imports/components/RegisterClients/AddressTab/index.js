@@ -54,7 +54,7 @@ export default class AddressTab extends React.Component {
             value={this.props.item.address.cep}
             onChange={this.onChange}
           />
-          {/* <Input
+          <Input
             title="Cidade:"
             name="city"
             type="text"
@@ -84,7 +84,7 @@ export default class AddressTab extends React.Component {
             type="text"
             value={this.props.item.address.additional}
             onChange={this.onChange}
-          /> */}
+          />
         </Block>
       </ErrorBoundary>
     )

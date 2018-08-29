@@ -1,20 +1,23 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
+import tools from '/imports/startup/tools/index';
 
 export default class SortButton extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      regularOrder: true
-    }
-  }
-
   onClick = (e) => {
-    this.props.sortItems(e.target.value, this.state.regularOrder);
-    this.setState({ regularOrder: !this.state.regularOrder });
+    var order = e.target.value;
+    var database = tools.deepCopy(this.props.database);
+    var attribute = this.props.attribute;
+    if (typeof(database[0][attribute] === 'number')) {
+      database.sort(function(a, b){return a - b});
+    } else database.sort();
+    // if (order) database.reverse(); //This can be added later for two-buttons functionality
+    this.props.returnSort(database);
   }
-
   render () {
-    return <button onClick={this.onClick} value={this.props.itemValue} className="button--sort">⬍</button>
+    return (
+      <div className="sort-button">
+        <button onClick={this.onClick} value={true}>⬘</button>
+      </div>
+    )
   }
 }

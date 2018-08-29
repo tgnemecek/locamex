@@ -15,19 +15,18 @@ import { UserTypes } from '/imports/api/user-types/index';
 import { Users } from '/imports/api/users/index';
 
 import tools from '/imports/startup/tools/index';
-import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import AppHeader from '/imports/components/AppHeader/index';
 import SearchBar from '/imports/components/SearchBar/index';
-import Table from './Table/index';
-import RegisterClients from '/imports/components/RegisterClients/index';
-import RegisterServices from '/imports/components/RegisterServices/index';
-import RegisterAccessories from '/imports/components/RegisterAccessories/index';
+
+import AccessoriesTable from './AccessoriesTable/index';
+import ClientsTable from './ClientsTable/index';
+import ServicesTable from './ServicesTable/index';
+
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
 export default class Database extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -66,6 +65,10 @@ export default class Database extends React.Component {
     })
   }
 
+  returnSort = (filteredDatabase) => {
+    this.setState({ filteredDatabase });
+  }
+
   searchReturn = (filteredDatabase) => {
     if (filteredDatabase) {
       this.setState({ filteredDatabase });
@@ -81,23 +84,13 @@ export default class Database extends React.Component {
   }
 
   render () {
-    var ChosenComponent;
-    switch (this.props.params.database) {
-      case 'accessories':
-        ChosenComponent = RegisterAccessories;
-        break;
-      case 'clients':
-        ChosenComponent = RegisterClients;
-        break;
-      case 'services':
-        ChosenComponent = RegisterServices;
-        break;
-      default:
-        ChosenComponent = NotFound;
-    }
+    var Table;
+    if (this.props.params.database === 'accessories') Table = AccessoriesTable;
+    if (this.props.params.database === 'clients') Table = ClientsTable;
+    if (this.props.params.database === 'services') Table = ServicesTable;
     if (this.state.ready === 1) {
       return (
-        <ErrorBoundary>
+        <>
           <AppHeader title="Contrato"/>
             <div className="page-content">
               <SearchBar
@@ -106,37 +99,32 @@ export default class Database extends React.Component {
                 searchReturn={this.searchReturn}
               />
               <Table
+                item={this.state.item}
                 database={this.state.filteredDatabase}
                 type={this.props.params.database}
+                returnSort={this.returnSort}
                 toggleWindow={this.toggleWindow}
               />
-              {this.state.item ?
-                <ChosenComponent
-                  item={this.state.item}
-                  type={this.props.params.database}
-                  toggleWindow={this.toggleWindow}
-                />
-              : null}
             </div>
-        </ErrorBoundary>
+        </>
       )
     } else if (this.state.ready === 0) {
       return (
-        <ErrorBoundary>
+        <>
         <AppHeader title="Contrato"/>
           <div className="page-content">
             <Loading fullPage={true}/>
           </div>
-        </ErrorBoundary>
+        </>
       )
     } else if (this.state.ready === -1) {
       return (
-        <ErrorBoundary>
+        <>
         <AppHeader title="Contrato"/>
           <div className="page-content">
             <NotFound/>
           </div>
-        </ErrorBoundary>
+        </>
       )
     }
   }

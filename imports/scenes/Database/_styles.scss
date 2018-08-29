@@ -1,1 +1,40 @@
 @import './Table/styles';
+
+.database__table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.database__table th,
+.database__table td {
+  border: 1px solid $dark-grey;
+  padding: ($space /4) ($space /2) ($space /4) ($space /2);
+  text-align: left;
+}
+
+.database__table tr:nth-child(even) {
+  background-color: $grey;
+}
+
+.database__table__sort-div {
+  display: inline-flex;
+  flex-direction: column;
+  height: 100%;
+  margin-right: 5px;
+}
+
+.database__table__button {
+  height: 23px;
+  width: 23px;
+  padding: ($space /4);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.database__table {
+  .small-column {
+    text-align: center;
+    width: 1px;
+  }
+}

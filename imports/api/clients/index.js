@@ -24,7 +24,8 @@ if(Meteor.isServer) {
       street: 'Rua Joaquim Távora',
       city: 'São Paulo',
       state: 'SP',
-      cep: '04015010'
+      cep: '04015010',
+      additional: ''
     },
     observations: '',
     contacts: [{
@@ -58,7 +59,8 @@ if(Meteor.isServer) {
       street: 'Rua Joaquim Távora',
       city: 'São Paulo',
       state: 'SP',
-      cep: '04015010'
+      cep: '04015010',
+      additional: ''
     },
     observations: "",
     contacts: [{

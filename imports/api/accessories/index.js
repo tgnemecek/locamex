@@ -23,4 +23,17 @@ if(Meteor.isServer) {
       observations: '',
       visible: true
     })
+    Accessories.insert({
+      _id: "0001",
+      description: "Cadeira Tipo B",
+      category: "0000",
+      place: "0001",
+      available: 100,
+      rented: 50,
+      maintenance: 10,
+      price: 100,
+      restitution: 600,
+      observations: '',
+      visible: true
+    })
   }
