@@ -2,8 +2,8 @@ import React from 'react';
 import { Accounts } from 'meteor/accounts-base';
 import { Link } from 'react-router';
 
-import { Categories } from '/imports/api/categories';
-import { UserTypes } from '/imports/api/user-types';
+import { PageGroup } from '/imports/api/page-groups/index';
+import { UserTypes } from '/imports/api/user-types/index';
 
 import MenuItem from './MenuItem/index'
 
@@ -12,15 +12,15 @@ export default class AppHeader extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      categories: []
+      pageGroup: []
     }
   };
 
   componentDidMount() {
     this.categoriesTracker = Tracker.autorun(() => {
       Meteor.subscribe('categoriesPub');
-      const categories = Categories.find({}).fetch();
-      this.setState({ categories });
+      const pageGroup = PageGroup.find({}).fetch();
+      this.setState({ pageGroup });
     })
   }
 
@@ -28,12 +28,12 @@ export default class AppHeader extends React.Component {
     return(
       <div className="header">
         <h1 className="header__title">{this.props.title}</h1>
-        {this.state.categories.map((category) => {
+        {this.state.pageGroup.map((pageGroup) => {
           return <MenuItem
-            key={category._id}
-            categoryId={category._id}
-            categoryName={category.name}
-            categoryPages={category.pages}
+            key={pageGroup._id}
+            categoryId={pageGroup._id}
+            categoryName={pageGroup.name}
+            categoryPages={pageGroup.pages}
           />
           })}
         <button className="button button--link-text header__logout" onClick={() => Accounts.logout()}>Sair</button>

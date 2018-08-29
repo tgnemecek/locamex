@@ -4,19 +4,16 @@ import tools from '/imports/startup/tools/index';
 export const Accessories = new Mongo.Collection('accessories');
 
 if(Meteor.isServer) {
-
     if (Meteor.isServer) {
       Meteor.publish('accessoriesPub', () => {
         return Accessories.find();
       })
     }
-
     Accessories.remove({});
-
     Accessories.insert({
       _id: "0000",
       description: "Cadeira Tipo A",
-      category: "Cadeira",
+      category: "0000",
       place: "0001",
       available: 100,
       rented: 50,

@@ -1,22 +1,21 @@
 import { Meteor } from 'meteor/meteor';
 import { WebApp } from 'meteor/webapp';
 
-import '../imports/api/categories';
-import '../imports/api/pages';
+import '../imports/api/accessories/index';
+import '../imports/api/categories/index';
+import '../imports/api/clients/index';
+import '../imports/api/containers/index';
+import '../imports/api/contracts/index';
+import '../imports/api/modules/index';
+import '../imports/api/packs/index';
+import '../imports/api/page-groups/index';
+import '../imports/api/pages/index';
+import '../imports/api/places/index';
+import '../imports/api/services/index';
+import '../imports/api/user-types/index';
+import '../imports/api/users/index';
 
-import '../imports/api/accessories';
-import '../imports/api/services';
-import '../imports/api/containers';
-import '../imports/api/modules';
-import '../imports/api/packs';
-
-import '../imports/api/clients';
-import '../imports/api/contracts';
-
-import '../imports/api/users';
-import '../imports/api/user-types';
-
-import '../imports/startup/simple-schema-configuration';
+import '../imports/startup/simple-schema-configuration/index';
 
 Meteor.startup(() => {
 });

@@ -1,9 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
 
-import { Containers } from '/imports/api/containers';
-import { Services } from '/imports/api/services';
-import { Modules } from '/imports/api/modules';
+import { Containers } from '/imports/api/containers/index';
+import { Services } from '/imports/api/services/index';
+import { Modules } from '/imports/api/modules/index';
 
 import tools from '/imports/startup/tools/index';
 
@@ -173,7 +173,7 @@ export default class ProductSelection extends React.Component {
   }
 
   saveEdits = () => {
-    
+
     var addedItems = this.state.addedItems;
     var newArray = [];
     addedItems.forEach((item) => {

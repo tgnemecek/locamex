@@ -1,17 +1,16 @@
 import { Mongo } from 'meteor/mongo';
 
-export const Categories = new Mongo.Collection('categories');
+export const PageGroup = new Mongo.Collection('pageGroup');
 
 if(Meteor.isServer) {
 
     if (Meteor.isServer) {
-      Meteor.publish('categoriesPub', () => {
-        return Categories.find();
+      Meteor.publish('pageGroupPub', () => {
+        return PageGroup.find();
       })
     }
-    Categories.remove({});
-
-    Categories.insert({
+    PageGroup.remove({});
+    PageGroup.insert({
       name: "Administrativo",
       pages: [{
         name: "Usuários",
@@ -24,23 +23,23 @@ if(Meteor.isServer) {
         link: "/listservices"
       }]
     });
-    Categories.insert({
+    PageGroup.insert({
       name: "Contratos",
       pages: []
     });
-    Categories.insert({
+    PageGroup.insert({
       name: "Clientes",
       pages: []
     });
-    Categories.insert({
+    PageGroup.insert({
       name: "Produtos",
       pages: []
     });
-    Categories.insert({
+    PageGroup.insert({
       name: "Financeiro",
       pages: []
     });
-    Categories.insert({
+    PageGroup.insert({
       name: "Manutenção",
       pages: []
     });

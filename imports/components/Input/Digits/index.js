@@ -12,6 +12,10 @@ export default class Digits extends React.Component {
       var inputValue = e.target.value;
       var exportValue;
       var maxLength = 9999;
+
+      if (Number(inputValue) > this.props.max) inputValue = this.props.max.toString();
+      if (Number(inputValue) < this.props.min) inputValue = this.props.min.toString();
+
       if (inputValue.length > maxLength) {
         var toCut = inputValue.length - maxLength;
         inputValue = inputValue.slice(0, (0 - toCut));
@@ -21,7 +25,7 @@ export default class Digits extends React.Component {
       // cursorStart = cursorStart - (exportValue.toString().length - inputValue.length);
       // cursorEnd = cursorEnd - (exportValue.toString().length - inputValue.length);
 
-      
+
       this.props.onChange(exportValue);
       obj.setSelectionRange(cursorStart, cursorEnd);
     }

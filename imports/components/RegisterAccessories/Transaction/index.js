@@ -8,31 +8,31 @@ import FooterButtons from '/imports/components/FooterButtons/index';
 import Input from '/imports/components/Input/index';
 
 export default class Transaction extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      _id: this.props.item._id || '',
-      description: this.props.item.description || '',
-      price: this.props.item.price || '',
-      confirmationWindow: false
+  displayQuantities = (key) => {
+    if (key === 'origin') {
+      key = this.props.item.origin;
+    } else if (key === 'destination') key = this.props.item.destination;
+    if (key === '-') return '-';
+    return this.props.item[key];
+  }
+  calcMax = () => {
+    if (this.props.item.origin === '-') return 999;
+    return this.props.item[this.props.item.origin];
+  }
+
+  onChangeEntryDestination = (e) => {
+    var value = e.target.value;
+    var key = e.target.name;
+    var quantity = this.props.item[value];
+    if (key == 'origin' && this.props.item.transaction > quantity) {
+      this.props.onChange({target: {name: "transaction", value: quantity}});
     }
+    this.props.onChange(e);
   }
-  onChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
-  }
-  toggleConfirmationWindow = () => {
-    var confirmationWindow = !this.state.confirmationWindow;
-    this.setState({ confirmationWindow });
-  }
-  removeItem = () => {
-    Meteor.call('services.hide', this.state._id);
-    this.props.toggleWindow();
-  }
-  saveEdits = () => {
-    if (this.props.item._id) {
-      Meteor.call('services.update', this.state._id, this.state.description, this.state.price);
-    } else Meteor.call('services.insert', this.state.description, this.state.price);
-    this.props.toggleWindow();
+
+  onChangeTransaction = (e) => {
+    var value = e.target.value;
+    this.props.onChange({target: {name: "transaction", value}});
   }
   render() {
     return (
@@ -41,49 +41,50 @@ export default class Transaction extends React.Component {
           title="Origem:"
           type="select"
           name="origin"
-          value={this.state._id}
-          onChange={this.onChange}>
-            <option>Entrada (Compra)</option>
-            <option>Disponíveis</option>
-            <option>Manutenção</option>
+          value={this.props.item.origin}
+          onChange={this.onChangeEntryDestination}>
+            <option value="-">Entrada (Compra)</option>
+            <option value="available">Disponíveis</option>
+            <option value="maintenance">Manutenção</option>
         </Input>
         <Input
           title="Origem:"
           labelStyle={{visibility: "hidden"}}
-          type="number"
+          type="text"
           name="quantity-origin"
           disabled={true}
           style={{textAlign: "center"}}
-          value={this.state.description}
+          value={this.displayQuantities("origin")}
           onChange={this.onChange}/>
         <div>
           <div>>></div>
           <Input
             type="number"
+            max={this.calcMax()}
             name="quantity-transaction"
             style={{textAlign: "center"}}
-            value={this.state.description}
-            onChange={this.onChange}/>
+            value={this.props.item.transaction}
+            onChange={this.onChangeTransaction}/>
           <div>>></div>
         </div>
         <Input
           title="Destino:"
           labelStyle={{visibility: "hidden"}}
-          type="number"
+          type="text"
           name="quantity-destination"
           disabled={true}
           style={{textAlign: "center"}}
-          value={this.state.description}
+          value={this.displayQuantities("destination")}
           onChange={this.onChange}/>
         <Input
           title="Destino:"
           type="select"
           name="destination"
-          value={this.state.description}
-          onChange={this.onChange}>
-            <option>Saída (Desmanche)</option>
-            <option>Disponíveis</option>
-            <option>Manutenção</option>
+          value={this.props.item.destination}
+          onChange={this.onChangeEntryDestination}>
+            <option value="-">Saída (Desmanche)</option>
+            <option value="available">Disponíveis</option>
+            <option value="maintenance">Manutenção</option>
         </Input>
       </Block>
     )

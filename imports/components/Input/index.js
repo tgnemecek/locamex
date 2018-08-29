@@ -84,6 +84,8 @@ export default class Input extends React.Component {
           placeholder={this.props.placeholder}
           disabled={this.props.disabled}
           buttonClick={this.props.buttonClick}
+          min={this.props.min}
+          max={this.props.max}
           options={this.props.options}>
           {this.props.children}
         </ChosenComponent>

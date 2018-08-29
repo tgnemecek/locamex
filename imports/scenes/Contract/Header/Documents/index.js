@@ -1,7 +1,7 @@
 import React from 'react';
 
 import createPdf from '/imports/api/create-pdf/contract/index';
-import { Clients } from '/imports/api/clients';
+import { Clients } from '/imports/api/clients/index';
 
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
@@ -19,7 +19,7 @@ export default class Documents extends React.Component {
   }
 
   componentDidMount() {
-    this.contractsTracker = Tracker.autorun(() => {
+    this.tracker = Tracker.autorun(() => {
       Meteor.subscribe('clientsPub');
       var client = Clients.findOne(this.props.contract.clientId);
       this.setState({ client });

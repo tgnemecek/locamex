@@ -1,7 +1,7 @@
 import React from 'react';
 import moment from 'moment';
 
-import { Clients } from '/imports/api/clients';
+import { Clients } from '/imports/api/clients/index';
 
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';

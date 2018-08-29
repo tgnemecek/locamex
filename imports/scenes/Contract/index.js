@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import moment from 'moment';
 
-import { Contracts } from '/imports/api/contracts';
+import { Contracts } from '/imports/api/contracts/index';
 
 import tools from '/imports/startup/tools/index';
 
@@ -27,7 +27,7 @@ export default class Contract extends React.Component {
   componentDidMount() {
     if (this.props.params.contractId == 'create-new') {
     } else {
-      this.contractsTracker = Tracker.autorun(() => {
+      this.tracker = Tracker.autorun(() => {
         Meteor.subscribe('contractsPub');
         var contract = Contracts.findOne({ _id: this.props.params.contractId });
         if (contract) {

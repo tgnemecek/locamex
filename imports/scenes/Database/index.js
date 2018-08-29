@@ -2,17 +2,17 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import moment from 'moment';
 
-import { Accessories } from '/imports/api/accessories';
-import { Categories } from '/imports/api/categories';
-import { Clients } from '/imports/api/clients';
-import { Containers } from '/imports/api/containers';
-import { Contracts } from '/imports/api/contracts';
-import { Modules } from '/imports/api/modules';
-import { Packs } from '/imports/api/packs';
-import { Pages } from '/imports/api/pages';
-import { Services } from '/imports/api/services';
-import { UserTypes } from '/imports/api/user-types';
-import { Users } from '/imports/api/users';
+import { Accessories } from '/imports/api/accessories/index';
+import { Categories } from '/imports/api/categories/index';
+import { Clients } from '/imports/api/clients/index';
+import { Containers } from '/imports/api/containers/index';
+import { Contracts } from '/imports/api/contracts/index';
+import { Modules } from '/imports/api/modules/index';
+import { Packs } from '/imports/api/packs/index';
+import { Pages } from '/imports/api/pages/index';
+import { Services } from '/imports/api/services/index';
+import { UserTypes } from '/imports/api/user-types/index';
+import { Users } from '/imports/api/users/index';
 
 import tools from '/imports/startup/tools/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
@@ -56,7 +56,7 @@ export default class Database extends React.Component {
   componentDidMount() {
     var fullDatabase;
     var filteredDatabase;
-    this.contractsTracker = Tracker.autorun(() => {
+    this.tracker = Tracker.autorun(() => {
       Meteor.subscribe(this.pub);
       fullDatabase = this.Db.find({ visible: true }).fetch();
       filteredDatabase = fullDatabase;
