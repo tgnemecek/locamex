@@ -20,6 +20,7 @@ import SearchBar from '/imports/components/SearchBar/index';
 
 import AccessoriesTable from './AccessoriesTable/index';
 import ClientsTable from './ClientsTable/index';
+import ContainersTable from './ContainersTable/index';
 import ServicesTable from './ServicesTable/index';
 
 import Loading from '/imports/components/Loading/index';
@@ -36,6 +37,10 @@ export default class Database extends React.Component {
       item: false
     }
     switch (this.props.params.database) {
+      case 'containers':
+          this.Db = Containers;
+          this.pub = 'containersPub';
+        break;
       case 'accessories':
           this.Db = Accessories;
           this.pub = 'accessoriesPub';
@@ -56,9 +61,11 @@ export default class Database extends React.Component {
     var fullDatabase;
     var filteredDatabase;
     this.tracker = Tracker.autorun(() => {
-      Meteor.subscribe(this.pub);
-      fullDatabase = this.Db.find({ visible: true }).fetch();
-      filteredDatabase = fullDatabase;
+      if (this.Db) {
+        Meteor.subscribe(this.pub);
+        fullDatabase = this.Db.find({ visible: true }).fetch();
+        filteredDatabase = fullDatabase;
+      }
       if (fullDatabase) {
         this.setState({ fullDatabase, filteredDatabase, ready: 1 });
       } else this.setState({ ready: -1 });
@@ -86,6 +93,7 @@ export default class Database extends React.Component {
   render () {
     var Table;
     if (this.props.params.database === 'accessories') Table = AccessoriesTable;
+    if (this.props.params.database === 'containers') Table = ContainersTable;
     if (this.props.params.database === 'clients') Table = ClientsTable;
     if (this.props.params.database === 'services') Table = ServicesTable;
     if (this.state.ready === 1) {

@@ -14,7 +14,7 @@ if(Meteor.isServer) {
 
 Meteor.methods({
   'userTypes.insert'(description, permissions) {
-    const _id = UserTypes.find().count().toString().padStart(4, '0');
+    const _id = tools.generateId(UserTypes);
     UserTypes.insert({
       _id,
       description,

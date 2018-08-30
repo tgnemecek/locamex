@@ -156,6 +156,10 @@ export default class tools {
     } else throw new Error('invalid-type. ' + typeof(input) + ' is not accepted' );
   }
 
+  static generateId = (Database) => {
+    return Database.find().count().toString().padStart(4, '0');
+  }
+
   static getRef = (object, i) => {
     //This is used to get a specific Ref when there's more than one DOM element associated to a single Ref
     //If i is undefined, it returns the whole array or the first element if the array has length == 1

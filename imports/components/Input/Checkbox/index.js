@@ -21,7 +21,7 @@ export default class Checkbox extends React.Component {
         <input
           type="checkbox"
           id={this.props.id}
-          className="input--checkbox__box"
+          className="input--checkbox__box "
           checked={this.state.value}
           onChange={this.onChange}
           />

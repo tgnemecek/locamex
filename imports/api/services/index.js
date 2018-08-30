@@ -11,7 +11,7 @@ if (Meteor.isServer) {
 
 Meteor.methods({
   'services.insert'(description, price) {
-    const _id = Services.find().count().toString().padStart(4, '0');
+    const _id = tools.generateId(Services);
     Services.insert({
       _id,
       description,

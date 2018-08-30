@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
-import SimpleSchema from 'simpl-schema';
 import { Accounts } from 'meteor/accounts-base';
+import SimpleSchema from 'simpl-schema';
+import tools from '/imports/startup/tools/index';
 
 var passwordMinLength = 6;
 var userNameMinLength = 3;

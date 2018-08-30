@@ -31,12 +31,47 @@ if(Meteor.isServer) {
     available: 100,
     visible: true
   });
+  Modules.insert({
+    _id: "0003",
+    description: "Coluna Azul",
+    quantity: 132,
+    available: 100,
+    visible: true
+  });
+  Modules.insert({
+    _id: "0004",
+    description: "Piso Preto",
+    quantity: 132,
+    available: 100,
+    visible: true
+  });
+  Modules.insert({
+    _id: "0005",
+    description: "Piso Branco",
+    quantity: 132,
+    available: 100,
+    visible: true
+  });
+  Modules.insert({
+    _id: "0006",
+    description: "Teto Preto",
+    quantity: 132,
+    available: 100,
+    visible: true
+  });
+  Modules.insert({
+    _id: "0007",
+    description: "Teto Azul",
+    quantity: 132,
+    available: 100,
+    visible: true
+  });
 }
 
   Meteor.methods({
     'Modules.insert'(state) {
 
-      const _id = Modules.find().count().toString().padStart(4, '0');
+      const _id = tools.generateId(Modules);
 
       let type = state.formType;
       let observations = state.observations;

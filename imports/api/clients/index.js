@@ -2,14 +2,11 @@ import { Mongo } from 'meteor/mongo';
 
 export const Clients = new Mongo.Collection('clients');
 
-if(Meteor.isServer) {
-
+if (Meteor.isServer) {
   Meteor.publish('clientsPub', () => {
     return Clients.find();
   })
-
   Clients.remove({});
-
   Clients.insert({
     _id: "0000",
     description: "Exemplo",
@@ -76,46 +73,46 @@ if(Meteor.isServer) {
   });
 }
 
-  Meteor.methods({
-    'clients.insert'(state) {
-      const _id = Clients.find().count().toString().padStart(4, '0');
-      Clients.insert({
-        _id,
-        description: state.description,
-        type: state.description,
-        registry: state.registry,
-        officialName: state.officialName,
-        registryES: state.registryES,
-        registryMU: state.registryMU,
-        observations: state.observations,
-        contacts: state.contacts,
-        visible: true
-      });
-    },
+Meteor.methods({
+  'clients.insert'(state) {
+    const _id = tools.generateId(Clients);
+    Clients.insert({
+      _id,
+      description: state.description,
+      type: state.description,
+      registry: state.registry,
+      officialName: state.officialName,
+      registryES: state.registryES,
+      registryMU: state.registryMU,
+      observations: state.observations,
+      contacts: state.contacts,
+      visible: true
+    });
+  },
 
-    'clients.hideContact'(_id, contactId) {
+  'clients.hideContact'(_id, contactId) {
 
-      let contacts = Clients.find({ _id }).fetch()[0].contacts;
+    let contacts = Clients.find({ _id }).fetch()[0].contacts;
 
-      let contactToUpdate = contacts.find((element) => {
-        return element._id === contactId;
-      })
+    let contactToUpdate = contacts.find((element) => {
+      return element._id === contactId;
+    })
 
-      contactToUpdate.visible = false;
+    contactToUpdate.visible = false;
 
-      Clients.update({ _id }, { $set: { contacts } });
-    },
+    Clients.update({ _id }, { $set: { contacts } });
+  },
 
-    'clients.update'(state) {
-      Clients.update({ _id: state._id }, { $set: {
-        description: state.description,
-        registry: state.registry,
-        officialName: state.officialName,
-        registryES: state.registryES,
-        registryMU: state.registryMU,
-        contacts: state.contacts,
-        address: state.address,
-        observations: state.observations
-        } });
-    }
-  })
+  'clients.update'(state) {
+    Clients.update({ _id: state._id }, { $set: {
+      description: state.description,
+      registry: state.registry,
+      officialName: state.officialName,
+      registryES: state.registryES,
+      registryMU: state.registryMU,
+      contacts: state.contacts,
+      address: state.address,
+      observations: state.observations
+      } });
+  }
+})

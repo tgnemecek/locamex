@@ -20,10 +20,10 @@ if(Meteor.isServer) {
     price: 600,
     status: "available", //available, maintenance, rented, inactive
     restitution: 50000,
-    place: 0003, //_id of place
+    place: "0000",
     images: [],
     observations: "Porta invertida",
-    history: []
+    visible: true
   });
   Containers.insert({
     _id: "0001",
@@ -32,10 +32,10 @@ if(Meteor.isServer) {
     price: 1200,
     status: "rented", //available, maintenance, rented, inactive
     restitution: 50000,
-    place: 0002, //_id of place
+    place: "0001",
     images: [],
     observations: "Porta invertida",
-    history: []
+    visible: true
   });
   Containers.insert({
     _id: "0002",
@@ -44,28 +44,27 @@ if(Meteor.isServer) {
     price: 1200,
     status: "available", //available, maintenance, rented, inactive
     restitution: 50000,
-    place: 0002, //_id of place
+    place: "0002",
     images: [],
     observations: "Porta invertida",
-    history: []
+    visible: true
   });
   Containers.insert({
     _id: "0003",
     description: "Loca 600 D Black",
     type: "modular",
-    status: "available",
     price: 1800,
     restitution: 50000,
     assembled: 0,
     modules: ["0000", "0001"],
-    history: []
+    visible: true
   });
 }
 
   Meteor.methods({
     'Containers.insert'(state) {
 
-      const _id = Containers.find().count().toString().padStart(4, '0');
+      const _id = tools.generateId(Containers);
 
       let type = state.formType;
       let observations = state.observations;

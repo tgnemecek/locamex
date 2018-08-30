@@ -1,5 +1,3 @@
-@import './Table/styles';
-
 .database__table {
   border-collapse: collapse;
   width: 100%;
@@ -36,5 +34,6 @@
   .small-column {
     text-align: center;
     width: 1px;
+    white-space: nowrap;
   }
 }

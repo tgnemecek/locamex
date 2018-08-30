@@ -12,7 +12,17 @@ if(Meteor.isServer) {
     Places.remove({});
     Places.insert({
       _id: "0000",
-      description: "Anônio Pepe",
+      description: "Antônio Pepe",
+      visible: true
+    })
+    Places.insert({
+      _id: "0001",
+      description: "Pátio 2",
+      visible: true
+    })
+    Places.insert({
+      _id: "0002",
+      description: "Outro Pátio",
       visible: true
     })
   }

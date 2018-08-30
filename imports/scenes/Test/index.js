@@ -14,16 +14,16 @@ export default class Test extends React.Component {
   }
 
   onClick = () => {
-    this.setState({value: 20});
+    {//Transaction
+      this.setState({ value: 999999 });
+    }
   }
 
 
   render() {
-    var Rend = this.state.value == 10 ? Block : <div>AAAA</div>
     return (
       <>
-        <Rend/>
-        <button onClick={this.onClick}>click</button>
+        <button onClick={this.onClick}>{this.state.value}</button>
       </>
 
     )

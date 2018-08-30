@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
-import { Categories } from '/imports/api/categories/index';
+import { Modules } from '/imports/api/modules/index';
 import { Places } from '/imports/api/places/index';
 import tools from '/imports/startup/tools/index';
 
@@ -9,27 +9,24 @@ import Block from '/imports/components/Block/index';
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 import Input from '/imports/components/Input/index';
-import Transaction from './Transaction/index';
+import Fixed from './Fixed/index';
+import Modular from './Modular/index';
 
-export default class RegisterAccessories extends React.Component {
+export default class RegisterContainers extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       _id: this.props.item._id || '',
       description: this.props.item.description || '',
       price: this.props.item.price || '',
-      category: this.props.item.category || '',
+      type: this.props.item.type || '',
       place: this.props.item.place || '',
-      available: this.props.item.available || '',
-      maintenance: this.props.item.maintenance || '',
+      status: this.props.item.status || '',
+      modules: this.props.item.modules || '',
       restitution: this.props.item.restitution || '',
       observations: this.props.item.observations || '',
 
-      origin: '-',
-      transaction: 0,
-      destination: '-',
-
-      categoriesDatabase: [],
+      modulesDatabase: [],
       placesDatabase: [],
 
       confirmationWindow: false
@@ -37,11 +34,11 @@ export default class RegisterAccessories extends React.Component {
   }
   componentDidMount = () => {
     this.tracker = Tracker.autorun(() => {
-      Meteor.subscribe('categoriesPub');
+      Meteor.subscribe('modulesPub');
       Meteor.subscribe('placesPub');
-      var categoriesDatabase = Categories.find({ visible: true }).fetch();
+      var modulesDatabase = Modules.find({ visible: true }).fetch();
       var placesDatabase = Places.find({ visible: true }).fetch();
-      this.setState({ categoriesDatabase, placesDatabase });
+      this.setState({ modulesDatabase, placesDatabase });
     })
   }
   renderOptions = (database) => {
@@ -85,17 +82,14 @@ export default class RegisterAccessories extends React.Component {
     return (
       <ErrorBoundary>
         <Box
-          title={this.props.item._id ? "Editar Acessório" : "Criar Novo Acessório"}
+          title={this.props.item._id ? "Editar Container" : "Criar Novo Container"}
           closeBox={this.props.toggleWindow}
           width="800px">
             <Block columns={6} options={[
-              {block: 1, span: 4},
-              {block: 3, span: 2},
-              {block: 4, span: 3}]}>
+              {block: 1, span: 3}]}>
               <Input
                 title="Código:"
                 type="text"
-                disabled={true}
                 name="_id"
                 value={this.state._id}
                 onChange={this.onChange}
@@ -115,22 +109,6 @@ export default class RegisterAccessories extends React.Component {
                 onChange={this.onChange}
               />
               <Input
-                title="Categoria:"
-                type="select"
-                name="category"
-                value={this.state.category}
-                onChange={this.onChange}>
-                  {this.renderOptions("categoriesDatabase")}
-              </Input>
-              <Input
-                title="Pátio:"
-                type="select"
-                name="place"
-                value={this.state.place}
-                onChange={this.onChange}>
-                  {this.renderOptions("placesDatabase")}
-              </Input>
-              <Input
                 title="Indenização:"
                 type="currency"
                 name="restitution"
@@ -138,8 +116,11 @@ export default class RegisterAccessories extends React.Component {
                 onChange={this.onChange}
               />
             </Block>
-            <h4 className="register-accessories__transaction__title">Movimentação de estoque:</h4>
-            <Transaction item={this.state} onChange={this.onChange}/>
+            {this.state.type === 'modular' ?
+              <Modular item={this.state} onChange={this.onChange} modulesDatabase={this.state.modulesDatabase}/>
+              :
+              <Fixed item={this.state} onChange={this.onChange} placesDatabase={this.state.placesDatabase}/>
+            }
             {this.state.confirmationWindow ?
               <Box
                 title="Aviso:"

@@ -1,7 +1,7 @@
 import React from 'react';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import tools from '/imports/startup/tools/index';
-import RegisterServices from '/imports/components/RegisterServices/index';
+import RegisterClients from '/imports/components/RegisterClients/index';
 
 export default class ClientsTable extends React.Component {
   renderHeader = () => {
@@ -44,7 +44,7 @@ export default class ClientsTable extends React.Component {
           </tbody>
         </table>
         {this.props.item ?
-          <RegisterServices
+          <RegisterClients
             item={this.props.item}
             toggleWindow={this.props.toggleWindow}
           />
