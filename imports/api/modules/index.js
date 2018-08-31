@@ -2,149 +2,102 @@ import { Mongo } from 'meteor/mongo';
 
 export const Modules = new Mongo.Collection('modules');
 
-if(Meteor.isServer) {
+if (Meteor.isServer) {
 
   Meteor.publish('modulesPub', () => {
     return Modules.find();
   })
 
   Modules.remove({});
-
   Modules.insert({
     _id: "0000",
     description: "Parede Branca",
-    quantity: 10,
-    available: 5,
+    available: 10,
+    rented: 5,
+    maintenance: 3,
     visible: true
   });
   Modules.insert({
     _id: "0001",
     description: "Coluna Preta",
-    quantity: 12,
-    available: 10,
+    available: 12,
+    rented: 10,
+    maintenance: 3,
     visible: true
   });
   Modules.insert({
     _id: "0002",
     description: "Coluna Galvanizada",
-    quantity: 132,
-    available: 100,
+    available: 132,
+    rented: 100,
+    maintenance: 3,
     visible: true
   });
   Modules.insert({
     _id: "0003",
     description: "Coluna Azul",
-    quantity: 132,
-    available: 100,
+    available: 132,
+    rented: 100,
+    maintenance: 7,
     visible: true
   });
   Modules.insert({
     _id: "0004",
     description: "Piso Preto",
-    quantity: 132,
-    available: 100,
+    available: 132,
+    rented: 100,
+    maintenance: 10,
     visible: true
   });
   Modules.insert({
     _id: "0005",
     description: "Piso Branco",
-    quantity: 132,
-    available: 100,
+    available: 132,
+    rented: 100,
+    maintenance: 35,
     visible: true
   });
   Modules.insert({
     _id: "0006",
     description: "Teto Preto",
-    quantity: 132,
-    available: 100,
+    available: 132,
+    rented: 100,
+    maintenance: 1,
     visible: true
   });
   Modules.insert({
     _id: "0007",
     description: "Teto Azul",
-    quantity: 132,
-    available: 100,
+    available: 132,
+    rented: 100,
+    maintenance: 0,
     visible: true
   });
 }
-
-  Meteor.methods({
-    'Modules.insert'(state) {
-
-      const _id = tools.generateId(Modules);
-
-      let type = state.formType;
-      let observations = state.observations;
-      //Conditional Fields. If its not a company, the fields are empty
-      let clientName = state.formType == 'company' ? state.clientName : state.contactInformation[0].contactName;
-      let cnpj = state.formType == 'company' ? state.cnpj : '';
-      let officialName = state.formType == 'company' ? state.officialName : '';
-      let registryES = state.formType == 'company' ? state.registryES : '';
-      let registryMU = state.formType == 'company' ? state.registryMU : '';
-
-      let contacts = [];
-
-      state.contactInformation.forEach((contact, i) => {
-        contacts[i] = tools.deepCopy(contact);
-      })
-
-      Modules.insert({
-        _id,
-        clientName,
-        type,
-        cnpj,
-        officialName,
-        registryES,
-        registryMU,
-        observations,
-        contacts
-      });
-    },
-
-    'Modules.hideContact'(_id, contactId) {
-
-      let contacts = Modules.find({ _id }).fetch()[0].contacts;
-
-      let contactToUpdate = contacts.find((element) => {
-        return element._id === contactId;
-      })
-
-      contactToUpdate.visible = false;
-
-      Modules.update({ _id }, { $set: { contacts } });
-    },
-
-    'Modules.update'(_id, state) {
-
-      var contacts = Modules.find({_id}).fetch()[0].contacts;
-      var newContacts = [];
-
-      for (var i = 0; i < state.contactInformation.length; i++) {
-        if (state.contactInformation[i]._id == '') {
-          newContacts.push(state.contactInformation[i]);
-          continue;
-        }
-        for (var j = 0; j < contacts.length; j++) {
-          if (state.contactInformation[i]._id == contacts[j]._id) {
-            contacts[j] = state.contactInformation[i];
-            continue;
-          }
-        }
-      }
-
-      for (var i = 0; i < newContacts.length; i++) {
-        newContacts[i]._id = contacts.length.toString().padStart(4, '0');
-        contacts.push(newContacts[i]);
-      }
-
-      Modules.update({ _id }, { $set: {
-        clientName: state.formType == 'company' ? state.clientName : state.contactInformation[0].contactName,
-        cnpj: state.cnpj,
-        officialName: state.officialName,
-        registryES: state.registryES,
-        registryMU: state.registryMU,
-        contacts,
-        observations: state.observations
-        } });
+Meteor.methods({
+  'modules.insert'(state) {
+    const _id = tools.generateId(Modules);
+    Modules.insert({
+      _id,
+      description: state.description,
+      available: state.available,
+      rented: state.rented,
+      maintenance: state.maintenance,
+      visible: true
+    });
+  },
+  'modules.hide'(_id) {
+    Modules.update({ _id }, { $set: {
+      visible: false
+      } });
+  },
+  'modules.update'(state) {
+    Modules.update({ _id: state._id }, { $set: {
+      description: state.description,
+      available: state.available,
+      rented: state.rented,
+      maintenance: state.maintenance,
+      visible: true
     }
-  })
+  })}
+})

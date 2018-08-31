@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 
 export default class FooterButtons extends React.Component {
 
@@ -15,12 +16,16 @@ export default class FooterButtons extends React.Component {
       var className = "button ";
       className += button.className;
       text = button.text;
-      return <button
-                key={i}
-                type="button"
-                style={style}
-                className={className}
-                onClick={button.onClick}>{text}</button>
+      if (button.type === 'link') {
+        return <Link className={className} to={button.onClick}>{text}</Link>
+      } else {
+        return <button
+                  key={i}
+                  type="button"
+                  style={style}
+                  className={className}
+                  onClick={button.onClick}>{text}</button>
+      }
     })
   }
 

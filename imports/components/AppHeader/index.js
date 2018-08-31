@@ -1,10 +1,7 @@
 import React from 'react';
 import { Accounts } from 'meteor/accounts-base';
 import { Link } from 'react-router';
-
-import { PageGroup } from '/imports/api/page-groups/index';
-import { UserTypes } from '/imports/api/user-types/index';
-
+import { Pages } from '/imports/api/pages/index';
 import MenuItem from './MenuItem/index'
 
 export default class AppHeader extends React.Component {
@@ -12,15 +9,19 @@ export default class AppHeader extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      pageGroup: []
+      pages: [],
+      users: []
     }
+    this.administrative = ["0000", "0002"];
   };
 
   componentDidMount() {
-    this.categoriesTracker = Tracker.autorun(() => {
-      Meteor.subscribe('categoriesPub');
-      const pageGroup = PageGroup.find({}).fetch();
-      this.setState({ pageGroup });
+    this.tracker = Tracker.autorun(() => {
+      Meteor.subscribe('pagesPub');
+      Meteor.subscribe('usersPub');
+      const pages = Pages.find().fetch();
+      const users = Meteor.users.find().fetch();
+      this.setState({ pages, users });
     })
   }
 
@@ -28,14 +29,12 @@ export default class AppHeader extends React.Component {
     return(
       <div className="header">
         <h1 className="header__title">{this.props.title}</h1>
-        {this.state.pageGroup.map((pageGroup) => {
-          return <MenuItem
-            key={pageGroup._id}
-            categoryId={pageGroup._id}
-            categoryName={pageGroup.name}
-            categoryPages={pageGroup.pages}
-          />
-          })}
+        <MenuItem name="Administrativo"
+          pagesDatabase={this.state.pages}
+          usersDatabase={this.state.users}
+          allowedPages={this.administrative}/>
+        {/* <MenuItem name="Cadastro" pages={this.state.pages}/>
+        <MenuItem name="Contratos" pages={this.state.pages}/> */}
         <button className="button button--link-text header__logout" onClick={() => Accounts.logout()}>Sair</button>
       </div>
     )

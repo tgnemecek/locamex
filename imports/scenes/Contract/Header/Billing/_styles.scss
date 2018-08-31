@@ -61,11 +61,13 @@
     th {
       font-weight: bold;
     }
-    th:nth-child(1), td:nth-child(1) {
+    th:nth-child(1),
+    td:nth-child(1) {
       text-align: right !important;
       width: 100%;
     }
-    th:nth-child(2), td:nth-child(2) {
+    th:nth-child(2),
+    td:nth-child(2) {
       text-align: right !important;
       min-width: 140px;
     }

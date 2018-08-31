@@ -78,7 +78,7 @@ export default class ContainersTable extends React.Component {
   render () {
     return (
       <ErrorBoundary>
-        <table className="database__table database__table--accessories">
+        <table className="table database__table database__table--accessories">
           <thead>
             {this.renderHeader()}
           </thead>

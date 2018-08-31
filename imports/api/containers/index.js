@@ -4,14 +4,11 @@ import tools from '/imports/startup/tools/index';
 
 export const Containers = new Mongo.Collection('containers');
 
-if(Meteor.isServer) {
-
+if (Meteor.isServer) {
   Meteor.publish('containersPub', () => {
     return Containers.find();
   })
-
   Containers.remove({});
-
   Containers.insert({
     _id: "0000",
     description: "Loca 300",
@@ -21,7 +18,6 @@ if(Meteor.isServer) {
     status: "available", //available, maintenance, rented, inactive
     restitution: 50000,
     place: "0000",
-    images: [],
     observations: "Porta invertida",
     visible: true
   });
@@ -33,7 +29,6 @@ if(Meteor.isServer) {
     status: "rented", //available, maintenance, rented, inactive
     restitution: 50000,
     place: "0001",
-    images: [],
     observations: "Porta invertida",
     visible: true
   });
@@ -45,7 +40,6 @@ if(Meteor.isServer) {
     status: "available", //available, maintenance, rented, inactive
     restitution: 50000,
     place: "0002",
-    images: [],
     observations: "Porta invertida",
     visible: true
   });
@@ -60,84 +54,61 @@ if(Meteor.isServer) {
     visible: true
   });
 }
-
-  Meteor.methods({
-    'Containers.insert'(state) {
-
-      const _id = tools.generateId(Containers);
-
-      let type = state.formType;
-      let observations = state.observations;
-      //Conditional Fields. If its not a company, the fields are empty
-      let clientName = state.formType == 'company' ? state.clientName : state.contactInformation[0].contactName;
-      let cnpj = state.formType == 'company' ? state.cnpj : '';
-      let officialName = state.formType == 'company' ? state.officialName : '';
-      let registryES = state.formType == 'company' ? state.registryES : '';
-      let registryMU = state.formType == 'company' ? state.registryMU : '';
-
-      let contacts = [];
-
-      state.contactInformation.forEach((contact, i) => {
-        contacts[i] = tools.deepCopy(contact);
-      })
-
+Meteor.methods({
+  'containers.insert'(state) {
+    const _id = tools.generateId(Containers);
+    if (state.type == 'fixed') {
       Containers.insert({
         _id,
-        clientName,
-        type,
-        cnpj,
-        officialName,
-        registryES,
-        registryMU,
-        observations,
-        contacts
+        description: state.description,
+        type: state.type,
+        place: state.place,
+        status: state.status,
+        price: state.price,
+        restitution: state.restitution,
+        observations: state.observations,
+        visible: true
       });
-    },
-
-    'Containers.hideContact'(_id, contactId) {
-
-      let contacts = Containers.find({ _id }).fetch()[0].contacts;
-
-      let contactToUpdate = contacts.find((element) => {
-        return element._id === contactId;
-      })
-
-      contactToUpdate.visible = false;
-
-      Containers.update({ _id }, { $set: { contacts } });
-    },
-
-    'Containers.update'(_id, state) {
-
-      var contacts = Containers.find({_id}).fetch()[0].contacts;
-      var newContacts = [];
-
-      for (var i = 0; i < state.contactInformation.length; i++) {
-        if (state.contactInformation[i]._id == '') {
-          newContacts.push(state.contactInformation[i]);
-          continue;
-        }
-        for (var j = 0; j < contacts.length; j++) {
-          if (state.contactInformation[i]._id == contacts[j]._id) {
-            contacts[j] = state.contactInformation[i];
-            continue;
-          }
-        }
-      }
-
-      for (var i = 0; i < newContacts.length; i++) {
-        newContacts[i]._id = contacts.length.toString().padStart(4, '0');
-        contacts.push(newContacts[i]);
-      }
-
-      Containers.update({ _id }, { $set: {
-        clientName: state.formType == 'company' ? state.clientName : state.contactInformation[0].contactName,
-        cnpj: state.cnpj,
-        officialName: state.officialName,
-        registryES: state.registryES,
-        registryMU: state.registryMU,
-        contacts,
-        observations: state.observations
-        } });
+    } else if (state.type == 'modular') {
+      Containers.insert({
+        _id,
+        description: state.description,
+        type: state.type,
+        assembled: state.assembled,
+        price: state.price,
+        restitution: state.restitution,
+        modules: state.modules,
+        visible: true
+      });
     }
-  })
+  },
+  'containers.hide'(_id) {
+    Containers.update({ _id }, { $set: {
+      visible: false
+      } });
+  },
+  'containers.update'(state) {
+    if (state.type == 'fixed') {
+      Containers.update({ _id: state._id }, { $set: {
+        description: state.description,
+        type: state.type,
+        place: state.place,
+        status: state.status,
+        price: state.price,
+        restitution: state.restitution,
+        observations: state.observations,
+        visible: true
+      }})
+    } else if (state.type == 'modular') {
+      Containers.update({ _id: state._id }, { $set: {
+        description: state.description,
+        type: state.type,
+        assembled: state.assembled,
+        price: state.price,
+        restitution: state.restitution,
+        modules: state.modules,
+        visible: true
+      }})
+    }
+  }
+})

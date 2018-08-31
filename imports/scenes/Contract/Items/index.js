@@ -36,23 +36,9 @@ export default class Items extends React.Component {
     }
   }
 
-  totalValue = () => {
-    var containers = this.props.contract.containers;
-    var services = this.props.contract.services;
-    var accessories = this.props.contract.accessories;
-    var all = containers.concat(services, accessories);
-    if (all.length == 0) return 0;
-    return all.reduce((acc, current) => {
-      var quantity = current.quantity ? current.quantity : 1;
-      return {
-        price: acc.price + (current.price * quantity)
-      }
-    }).price;
-  }
-
   render() {
     return(
-      <div className="contract__body--middle">
+      <div className="contract__items">
         <div className="contract__list">
           <label onClick={this.toggleProductSelection}><strong>Containers:</strong></label>
           <ItemList
@@ -76,9 +62,6 @@ export default class Items extends React.Component {
             contract={this.props.contract}
             database="services"
             onClick={this.toggleProductSelection}/>
-        </div>
-        <div>
-          {tools.format(this.totalValue(), 'currency')}
         </div>
       </div>
     )

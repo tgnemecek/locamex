@@ -1,9 +1,9 @@
 import React from 'react';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import tools from '/imports/startup/tools/index';
-import RegisterServices from '/imports/components/RegisterServices/index';
+import RegisterUsers from '/imports/components/RegisterUsers/index';
 
-export default class ServicesTable extends React.Component {
+export default class UsersTable extends React.Component {
   renderHeader = () => {
     const toggleWindow = () => {
       this.props.toggleWindow();
@@ -11,8 +11,8 @@ export default class ServicesTable extends React.Component {
     return (
       <tr>
         <th className="small-column">Código</th>
-        <th>Descrição</th>
-        <th className="small-column">Valor</th>
+        <th>Nome (Login):</th>
+        <th className="small-column">Email</th>
         <th className="small-column"><button onClick={toggleWindow} className="database__table__button">+</button></th>
       </tr>
     )
@@ -25,8 +25,8 @@ export default class ServicesTable extends React.Component {
       return (
         <tr key={i}>
           <td className="small-column">{item._id}</td>
-          <td>{item.description}</td>
-          <td className="small-column">{tools.format(item.price, 'currency')}</td>
+          <td>{item.username}</td>
+          <td className="small-column">{item.emails[0].address}</td>
           <td className="small-column"><button className="database__table__button" onClick={toggleWindow}>✎</button></td>
         </tr>
       )
@@ -44,7 +44,7 @@ export default class ServicesTable extends React.Component {
           </tbody>
         </table>
         {this.props.item ?
-          <RegisterServices
+          <RegisterUsers
             item={this.props.item}
             toggleWindow={this.props.toggleWindow}
           />

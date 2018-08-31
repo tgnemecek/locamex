@@ -25,7 +25,7 @@ export default class ItemList extends React.Component {
   }
 
   toggleWindow = () => {
-    
+
     var windowOpen = !this.state.windowOpen;
     this.setState({ windowOpen });
   }
@@ -38,10 +38,10 @@ export default class ItemList extends React.Component {
     return this.state.addedItems.map((item, i) => {
       return (
         <tr key={i}>
-          <td>{item._id}</td>
+          <td className="small-column">{item._id}</td>
           <td>{item.description} {item.type == 'modular' ? this.renderModular(item) : null}</td>
-          <td>{tools.format(item.price, "currency")}</td>
-          <td>{item.quantity}</td>
+          <td className="small-column">{tools.format(item.price, "currency")}</td>
+          <td className="small-column">{item.quantity}</td>
         </tr>
       )
     })
@@ -55,19 +55,19 @@ export default class ItemList extends React.Component {
                                   addedItems={this.state.addedItems}
                                   saveEdits={this.updateTable}
                                   closeProductSelection={this.toggleWindow}/> : null}
-      <div className="contract__list-container" onClick={this.toggleWindow}>
+      <div className="contract__item-list" onClick={this.toggleWindow}>
         {this.state.addedItems.length > 0 ?
           <div>
-            <div className="contract__list__overlay">
+            <div className="contract__item-list__overlay">
               <div>✎</div>
             </div>
-            <table className="table table--contract">
+            <table className="table contract__item-list__table">
               <tbody>
                 <tr>
-                  <th>Código</th>
+                  <th className="small-column">Código</th>
                   <th>Descrição</th>
-                  <th>Valor</th>
-                  <th>Qtd.</th>
+                  <th className="small-column">Valor</th>
+                  <th className="small-column">Qtd.</th>
                 </tr>
                 {this.row()}
               </tbody>
@@ -75,7 +75,7 @@ export default class ItemList extends React.Component {
           </div>
            :
           <div>
-             <div className="contract__list__overlay">
+             <div className="contract__item-list__overlay">
                <div>+</div>
              </div>
              <div>

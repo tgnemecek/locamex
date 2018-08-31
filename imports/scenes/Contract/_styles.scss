@@ -6,189 +6,23 @@
   border: 1px solid $dark-grey;
   background: $light-grey;
 }
-//HEADER
-.contract__header {
-  background: $grey;
-  height: 70px;
-  position: relative;
-}
 
-.contract__overtitle {
-  color: $dark-grey;
-  font-size: ($base-font-size * 0.85);
-  top: 0;
-  left: 2px;
-}
-
-.contract__top-buttons {
-  top: 0;
-  right: 0;
-  button {
-    cursor: pointer;
-    font-size: 2.1rem;
-    height: 25px;
-    width: 25px;
-    border: none;
-    background: white;
-    line-height: 1px;
-    margin-left: 5px;
-  }
-  .content-inside {
-    background: yellow;
-  }
-}
-
-.contract__header div {
-  position: absolute;
-  margin: 10px;
-}
-
-.contract__title {
-  bottom: 0;
-  left: 0;
-  line-height: 1px;
-}
-
-.contract__subtitle {
-  color: $dark-grey;
-  bottom: 0;
-  right: 0;
-}
-
-.contract--active {
-  color: $active;
-}
-
-.contract--inactive {
-  color: $inactive;
-}
-
-.contract--cancelled {
-  color: $cancelled;
-}
-
-//BODY
 .contract__body {
   padding: $space;
 }
 
-.contract__item-wrap {
-  padding: 5px;
-  width: 50%;
-  display: inline-flex;
-  justify-content: space-between;
-  > div {
-    flex-basis: 1px;
-    flex-grow: 1;
-  }
-  label {
-    display: block;
-    margin-left: 10px;
-  }
-  select, input {
-    width: 100%;
-    vertical-align: bottom;
-  }
-  .contract__item-wrap--margin-right {
-    margin-right: 5px;
-  }
-  .contract__item-wrap--force-small {
-    flex-grow: 0.49;
-  }
+.contract--disabled {
+  pointer-events: none;
 }
 
-//BODY-MIDDLE
-.contract__body--middle {
-  height: 500px;
-  margin-bottom: 10px;
-  overflow-y: auto;
+.contract__total-value {
+  text-align: center;
+  font-weight: bold;
 }
 
-.contract__list-container {
-  position: relative;
-  margin: 10px 0;
-  cursor: pointer;
-  input {
-    text-align: right;
-  }
-}
-
-.contract__list__overlay {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  width: 100%;
-  opacity: 0;
-  transition: .5s ease;
-  background-color: $brand-primary;
-  div {
-    color: white;
-    font-size: 30px;
-    line-height: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-    text-align: center;
-  }
-}
-.contract__list__overlay:hover {
-  opacity: .9;
-}
-
-//BODY-BOTTOM
-.contract__body--bottom {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  button {
-    width: calc(50% - 5px);
-  }
-  div {
-    color: $footer-text-color;
-    font-style: italic;
-    text-align: center;
-    width: 100%;
-    margin-top: 10px;
-  }
-}
-
-.table--contract th:nth-child(1),
-.table--contract td:nth-child(1) {
-  width: 20px;
-}
-
-.table--contract th:nth-child(2),
-.table--contract td:nth-child(2) {
-}
-
-.table--contract th:nth-child(3),
-.table--contract td:nth-child(3) {
-  text-align: center !important;
-  width: 80px;
-}
-
-.table--contract th:nth-child(4),
-.table--contract td:nth-child(4) {
-  text-align: center !important;
-  width: 1px;
-}
-
-
-.table--contract {
-  font-size: ($base-font-size * 0.85);
-  th, td {
-    padding: 1px 5px;
-  }
-  input {
-    font-size: ($base-font-size * 0.85);
-    height: 1px;
-    width: 50px;
-    padding: 7px
-  }
+.contract__footer-text {
+  text-align: center;
+  font-style: italic;
+  color: $dark-grey;
+  margin-top: $space;
 }

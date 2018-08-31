@@ -44,12 +44,6 @@ export const onAuthChange = (isAuthenticated) => {
   }
 };
 
-const ListServices = (props) => { return <ListPage type="services"/> };
-const ListUsers = (props) => { return <ListPage type="users"/> };
-const ListUserTypes = (props) => { return <ListPage type="user-types"/> };
-const ListClients = (props) => { return <ListPage type="clients"/> };
-
-
 export const routes = (
   <Router history={browserHistory}>
       {/* <Route path="/signup" component={Signup} onEnter={onEnterPublicPage}/>

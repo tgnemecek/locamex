@@ -27,11 +27,13 @@ export default class Observations extends React.Component {
           title="Observações"
           closeBox={this.props.toggleWindow}
           width="400px">
-            <div>
+            <div className={this.props.contract.status !== 'inactive' ? "contract--disabled" : null}>
               <div className="observations__body">
                 <textarea value={this.state.observations} onChange={this.onChange}/>
               </div>
-              <FooterButtons buttons={[{text: "Salvar Edições", onClick: () => this.saveEdits()}]}/>
+              {this.props.contract.status == 'inactive' ?
+                <FooterButtons buttons={[{text: "Salvar Edições", onClick: () => this.saveEdits()}]}/>
+              : null}
             </div>
         </Box>
       )

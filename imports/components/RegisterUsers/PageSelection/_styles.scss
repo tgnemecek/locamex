@@ -1,13 +1,13 @@
-.register-containers__module-block, .register-containers__fixed-block {
+.register-users__selection-block {
   margin-bottom: ($space /2);
 }
 
-.register-containers__transaction__title {
+.register-users__selection-block__title {
   border-top: 1px solid $grey;
   border-bottom: 1px solid $grey;
 }
 
-.register-containers__module__checkbox {
+.register-users__selection-block__checkbox {
   padding: 0 ($space * 3);
   justify-content: space-between !important;
 }

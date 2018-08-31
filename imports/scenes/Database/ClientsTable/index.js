@@ -35,7 +35,7 @@ export default class ClientsTable extends React.Component {
   render () {
     return (
       <ErrorBoundary>
-        <table className="database__table database__table--clients">
+        <table className="table database__table database__table--clients">
           <thead>
             {this.renderHeader()}
           </thead>

@@ -8,6 +8,7 @@ import Code from './Code/index';
 import Digits from './Digits/index';
 import Text from './Text/index';
 import DatePicker from './DatePicker/index';
+import Password from './Password/index';
 import Select from './Select/index';
 import TextArea from './TextArea/index';
 
@@ -63,6 +64,9 @@ export default class Input extends React.Component {
         break;
       case 'textarea':
         ChosenComponent = TextArea;
+        break;
+      case 'password':
+        ChosenComponent = Password;
         break;
       default:
         ChosenComponent = Text;

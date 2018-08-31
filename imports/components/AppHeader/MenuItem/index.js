@@ -8,20 +8,33 @@ export default class MenuItem extends React.Component {
     this.state = {
       isOpen: false
     }
-  };
+  }
 
-  openPages() {
-    this.setState({isOpen: true});
+  openPages = () => {
+    this.setState({ isOpen: true });
+  }
+
+  renderItems = () => {
+    var allowedPages = this.props.allowedPages;
+    var allPages = this.props.pagesDatabase;
+    var filteredPages = [];
+
+    for (var i = 0; i < allPages.length; i++) {
+      if (allowedPages.includes(allPages[i]._id)) {
+        filteredPages.push(allPages[i]);
+      }
+    }
+    return filteredPages.map((filteredPage, i) => {
+      return <Link className="button button--link" key={i} to={filteredPage.link}>{filteredPage.description}</Link>
+    })
   }
 
   render() {
     return(
       <div className="header__menu-item">
-        <button onClick={this.openPages.bind(this)}>{this.props.categoryName}</button>
+        <button onClick={this.openPages}>{this.props.name}</button>
         <div className="header__menu-item--content">
-          {this.props.categoryPages.map((category) => {
-            return <Link className="button button--link" key={category.link} to={category.link}>{category.name}</Link>
-            })}
+          {this.renderItems()}
         </div>
       </div>
     )

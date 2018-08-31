@@ -11,8 +11,6 @@ import { Modules } from '/imports/api/modules/index';
 import { Packs } from '/imports/api/packs/index';
 import { Pages } from '/imports/api/pages/index';
 import { Services } from '/imports/api/services/index';
-import { UserTypes } from '/imports/api/user-types/index';
-import { Users } from '/imports/api/users/index';
 
 import tools from '/imports/startup/tools/index';
 import AppHeader from '/imports/components/AppHeader/index';
@@ -21,7 +19,10 @@ import SearchBar from '/imports/components/SearchBar/index';
 import AccessoriesTable from './AccessoriesTable/index';
 import ClientsTable from './ClientsTable/index';
 import ContainersTable from './ContainersTable/index';
+import ContractsTable from './ContractsTable/index';
+import ModulesTable from './ModulesTable/index';
 import ServicesTable from './ServicesTable/index';
+import UsersTable from './UsersTable/index';
 
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
@@ -37,6 +38,18 @@ export default class Database extends React.Component {
       item: false
     }
     switch (this.props.params.database) {
+      case 'users':
+          this.Db = Meteor.users;
+          this.pub = 'usersPub';
+        break;
+      case 'contracts':
+          this.Db = Contracts;
+          this.pub = 'contractsPub';
+        break;
+      case 'modules':
+          this.Db = Modules;
+          this.pub = 'modulesPub';
+        break;
       case 'containers':
           this.Db = Containers;
           this.pub = 'containersPub';
@@ -66,10 +79,9 @@ export default class Database extends React.Component {
         fullDatabase = this.Db.find({ visible: true }).fetch();
         filteredDatabase = fullDatabase;
       }
-      if (fullDatabase) {
-        this.setState({ fullDatabase, filteredDatabase, ready: 1 });
-      } else this.setState({ ready: -1 });
+      if (fullDatabase) this.setState({ fullDatabase, filteredDatabase, ready: 1 });
     })
+    setTimeout(() => {if (!fullDatabase) this.setState({ ready: -1 })}, 3000);
   }
 
   returnSort = (filteredDatabase) => {
@@ -94,8 +106,11 @@ export default class Database extends React.Component {
     var Table;
     if (this.props.params.database === 'accessories') Table = AccessoriesTable;
     if (this.props.params.database === 'containers') Table = ContainersTable;
+    if (this.props.params.database === 'contracts') Table = ContractsTable;
     if (this.props.params.database === 'clients') Table = ClientsTable;
+    if (this.props.params.database === 'modules') Table = ModulesTable;
     if (this.props.params.database === 'services') Table = ServicesTable;
+    if (this.props.params.database === 'users') Table = UsersTable;
     if (this.state.ready === 1) {
       return (
         <>

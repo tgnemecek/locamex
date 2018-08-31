@@ -7,52 +7,52 @@ import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 import Input from '/imports/components/Input/index';
 
-export default function Modular (props) {
+export default function PageSelection (props) {
   var numberOfRows = 4;
   var onChange = (e) => {
     var value = e.target.value;
     var key = e.target.name;
-    var allowedModules = tools.deepCopy(props.item.modules);
+    var allowedpages = tools.deepCopy(props.item.pages);
     (() => {
       if (value === true) {
-        if (allowedModules.includes(key)) return
+        if (allowedpages.includes(key)) return
         else {
-          allowedModules.push(key);
+          allowedpages.push(key);
           return;
         }
       } else if (value === false) {
-        if (!allowedModules.includes(key)) return;
+        if (!allowedpages.includes(key)) return;
         else {
-          for (var i = 0; i < allowedModules.length; i++) {
-            if (allowedModules[i] == key) {
-              allowedModules.splice(i, 1);
+          for (var i = 0; i < allowedpages.length; i++) {
+            if (allowedpages[i] == key) {
+              allowedpages.splice(i, 1);
               break;
             }
           }
         }
       }
     })();
-    var exportValue = {target: {value: allowedModules, name: "modules"}};
+    var exportValue = {target: {value: allowedpages, name: "pages"}};
     props.onChange(exportValue);
   }
 
   var renderArray = () => {
-    return props.modulesDatabase.map((module, i) => {
+    return props.pagesDatabase.map((page, i) => {
       return <Input
               key={i}
               type="checkbox"
-              id={"module--" + i}
-              name={module._id}
-              className="register-containers__module__checkbox"
-              title={module.description}
-              value={props.item.modules.includes(module._id)}
+              id={"page--" + i}
+              name={page._id}
+              className="register-users__selection-block__checkbox"
+              title={page.description}
+              value={props.item.pages.includes(page._id)}
               onChange={onChange}/>
     })
   }
   return (
-    <div className="register-containers__module-block">
-      <h4 className="register-containers__transaction__title">Componentes Permitidos:</h4>
-      <Block columns={Math.floor(props.modulesDatabase.length / numberOfRows)}>
+    <div className="register-users__selection-block">
+      <h4 className="register-users__selection-block__title">Permissões do Usuário:</h4>
+      <Block columns={Math.floor(props.pagesDatabase.length / numberOfRows)}>
         {renderArray()}
       </Block>
     </div>

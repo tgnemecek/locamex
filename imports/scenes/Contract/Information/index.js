@@ -31,7 +31,7 @@ export default class Information extends React.Component {
 
   clientOptions = () => {
     return this.state.clientsDatabase.map((client, i) => {
-      return <option key={i} value={client._id}>{client.clientName}</option>
+      return <option key={i} value={client._id}>{client.description}</option>
     })
   }
 

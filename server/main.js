@@ -8,11 +8,9 @@ import '../imports/api/containers/index';
 import '../imports/api/contracts/index';
 import '../imports/api/modules/index';
 import '../imports/api/packs/index';
-import '../imports/api/page-groups/index';
 import '../imports/api/pages/index';
 import '../imports/api/places/index';
 import '../imports/api/services/index';
-import '../imports/api/user-types/index';
 import '../imports/api/users/index';
 
 import '../imports/startup/simple-schema-configuration/index';
