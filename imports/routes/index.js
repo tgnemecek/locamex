@@ -46,16 +46,17 @@ export const onAuthChange = (isAuthenticated) => {
 
 export const routes = (
   <Router history={browserHistory}>
-      {/* <Route path="/signup" component={Signup} onEnter={onEnterPublicPage}/>
-      <Route path="/dashboard" component={Dashboard} onEnter={onEnterPrivatePage}/> */}
-      {/* <Route path="/listservices" component={ListServices}/>
-      <Route path="/listusers" component={ListUsers}/>
-      <Route path="/listusertypes" component={ListUserTypes}/> */}
-      {/* <Route path="/listclients" component={ListClients}/> */}
-      <Route path="/test" component={Test}/>
-      <Route path="/" component={Login} onEnter={onEnterPublicPage}/>
-      <Route path="/contract/:contractId" component={Contract}/>
-      <Route path="/database/:database" component={Database}/>
-      <Route path="*" component={NotFound}/>
+    <div>NEW HEADER?????</div>
+    {/* <Route path="/signup" component={Signup} onEnter={onEnterPublicPage}/>
+    <Route path="/dashboard" component={Dashboard} onEnter={onEnterPrivatePage}/> */}
+    {/* <Route path="/listservices" component={ListServices}/>
+    <Route path="/listusers" component={ListUsers}/>
+    <Route path="/listusertypes" component={ListUserTypes}/> */}
+    {/* <Route path="/listclients" component={ListClients}/> */}
+    <Route path="/test" component={Test}/>
+    <Route path="/" component={Login} onEnter={onEnterPublicPage}/>
+    <Route path="/contract/:contractId" component={Contract}/>
+    <Route path="/database/:database" component={Database}/>
+    <Route path="*" component={NotFound}/>
   </Router>
 );

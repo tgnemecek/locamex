@@ -9,49 +9,50 @@ if (Meteor.isServer) {
   Pages.remove({});
   Pages.insert({
     _id: "0000",
-    description: "Database de Usuários",
+    description: "Usuários",
     link: "/database/users",
     visible: true
   });
   Pages.insert({
     _id: "0001",
-    description: "Lista de Tipos de Usuários",
+    description: "Serviços",
+    link: "/database/services",
     visible: true
   });
   Pages.insert({
     _id: "0002",
-    description: "Lista de Serviços",
+    description: "Clientes",
+    link: "/database/clients",
     visible: true
   });
   Pages.insert({
     _id: "0003",
-    description: "Lista de Serviços",
+    description: "Componentes",
+    link: "/database/modules",
     visible: true
   });
   Pages.insert({
     _id: "0004",
-    description: "Lista de Serviços",
+    description: "Containers",
+    link: "/database/containers",
     visible: true
   });
   Pages.insert({
     _id: "0005",
-    description: "Lista de Serviços",
+    description: "Acessórios",
+    link: "/database/accessories",
     visible: true
   });
   Pages.insert({
     _id: "0006",
-    description: "Lista de Serviços",
+    description: "Serviços",
+    link: "/database/services",
     visible: true
   });
-
   Pages.insert({
     _id: "0007",
-    description: "Lista de Serviços",
-    visible: true
-  });
-  Pages.insert({
-    _id: "0008",
-    description: "Lista de Serviços",
+    description: "Contratos",
+    link: "/database/contracts",
     visible: true
   });
 }

@@ -29,11 +29,11 @@ export default class Contract extends React.Component {
 
   componentDidMount() {
     var contract;
-    if (this.props.params.contractId == 'new') {
+    if (this.props.match.params.contractId == 'new') {
     } else {
       this.tracker = Tracker.autorun(() => {
         Meteor.subscribe('contractsPub');
-        contract = Contracts.findOne({ _id: this.props.params.contractId });
+        contract = Contracts.findOne({ _id: this.props.match.params.contractId });
         if (contract) this.setState({ contract, ready: 1 });
       })
     }
@@ -68,7 +68,7 @@ export default class Contract extends React.Component {
   }
 
   saveEdits = () => {
-    if (this.props.params.contractId == 'new') {
+    if (this.props.match.params.contractId == 'new') {
       Meteor.call('contracts.insert', this.state.contract);
     } else Meteor.call('contracts.update', this.state.contract);
   }

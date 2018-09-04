@@ -1,28 +1,41 @@
 import React from 'react';
-import ErrorBoundary from '/imports/components/ErrorBoundary/index';
+import { Accessories } from '/imports/api/accessories/index';
 import { Categories } from '/imports/api/categories/index';
+import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import tools from '/imports/startup/tools/index';
+import SearchBar from '/imports/components/SearchBar/index';
 import RegisterAccessories from '/imports/components/RegisterAccessories/index';
-import SortButton from '/imports/components/SortButton/index';
+import Loading from '/imports/components/Loading/index';
+import NotFound from '/imports/components/NotFound/index';
 
 export default class AccessoriesTable extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { categoriesDb: [] };
+    this.state = {
+      fullDatabase: [],
+      filteredDatabase: [],
+      categoriesDb: [],
+      ready: 0
+    }
   }
+
   componentDidMount() {
     this.tracker = Tracker.autorun(() => {
+      Meteor.subscribe('accessoriesPub');
       Meteor.subscribe('categoriesPub');
+      var fullDatabase = Accessories.find({ visible: true }).fetch();
+      var filteredDatabase = fullDatabase;
       var categoriesDb = Categories.find({ visible: true }).fetch();
-      this.setState({ categoriesDb });
+      if (fullDatabase) this.setState({ fullDatabase, filteredDatabase, categoriesDb, ready: 1 });
     })
   }
-  renderSortButton = (attribute) => {
-    return <SortButton
-              database={this.props.database}
-              attribute={attribute}
-              returnSort={this.props.returnSort}/>
+
+  searchReturn = (filteredDatabase) => {
+    if (filteredDatabase) {
+      this.setState({ filteredDatabase });
+    } else this.setState({ filteredDatabase: this.state.fullDatabase });
   }
+
   renderHeader = () => {
     const toggleWindow = () => {
       this.props.toggleWindow();
@@ -41,8 +54,9 @@ export default class AccessoriesTable extends React.Component {
       </tr>
     )
   }
+
   renderBody = () => {
-    return this.props.database.map((item, i) => {
+    return this.state.filteredDatabase.map((item, i) => {
       var category;
       const toggleWindow = () => {
         this.props.toggleWindow(item);
@@ -68,24 +82,36 @@ export default class AccessoriesTable extends React.Component {
       )
     })
   }
+
   render () {
-    return (
-      <ErrorBoundary>
-        <table className="table database__table database__table--accessories">
-          <thead>
-            {this.renderHeader()}
-          </thead>
-          <tbody>
-            {this.renderBody()}
-          </tbody>
-        </table>
-        {this.props.item ?
-          <RegisterAccessories
-            item={this.props.item}
-            toggleWindow={this.props.toggleWindow}
+    if (this.state.ready === 1) {
+      return (
+        <ErrorBoundary>
+          <SearchBar
+            database={this.state.fullDatabase}
+            options={this.searchOptions}
+            searchReturn={this.searchReturn}
           />
-        : null}
-      </ErrorBoundary>
-    )
+          <table className="table database__table database__table--accessories">
+            <thead>
+              {this.renderHeader()}
+            </thead>
+            <tbody>
+              {this.renderBody()}
+            </tbody>
+          </table>
+          {this.props.item ?
+            <RegisterAccessories
+              item={this.props.item}
+              toggleWindow={this.props.toggleWindow}
+            />
+          : null}
+        </ErrorBoundary>
+      )
+    } else if (this.state.ready === 0) {
+      return <Loading/>
+    } else if (this.state.ready === -1) {
+      return <NotFound/>
+    }
   }
 }

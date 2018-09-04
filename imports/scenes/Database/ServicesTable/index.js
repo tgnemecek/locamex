@@ -1,9 +1,40 @@
 import React from 'react';
-import ErrorBoundary from '/imports/components/ErrorBoundary/index';
+import { Services } from '/imports/api/services/index';
 import tools from '/imports/startup/tools/index';
+import ErrorBoundary from '/imports/components/ErrorBoundary/index';
+import SearchBar from '/imports/components/SearchBar/index';
 import RegisterServices from '/imports/components/RegisterServices/index';
+import Loading from '/imports/components/Loading/index';
+import NotFound from '/imports/components/NotFound/index';
 
 export default class ServicesTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      fullDatabase: [],
+      filteredDatabase: [],
+      ready: 0
+    }
+  }
+
+  componentDidMount() {
+    var fullDatabase;
+    var filteredDatabase;
+    this.tracker = Tracker.autorun(() => {
+      Meteor.subscribe('servicesPub');
+      fullDatabase = Services.find({ visible: true }).fetch();
+      filteredDatabase = fullDatabase;
+      if (fullDatabase) this.setState({ fullDatabase, filteredDatabase, ready: 1 });
+    })
+    setTimeout(() => {if (!fullDatabase) this.setState({ ready: -1 })}, 3000);
+  }
+
+  searchReturn = (filteredDatabase) => {
+    if (filteredDatabase) {
+      this.setState({ filteredDatabase });
+    } else this.setState({ filteredDatabase: this.state.fullDatabase });
+  }
+
   renderHeader = () => {
     const toggleWindow = () => {
       this.props.toggleWindow();
@@ -17,8 +48,9 @@ export default class ServicesTable extends React.Component {
       </tr>
     )
   }
+
   renderBody = () => {
-    return this.props.database.map((item, i) => {
+    return this.state.filteredDatabase.map((item, i) => {
       const toggleWindow = () => {
         this.props.toggleWindow(item);
       }
@@ -32,24 +64,36 @@ export default class ServicesTable extends React.Component {
       )
     })
   }
+
   render () {
-    return (
-      <ErrorBoundary>
-        <table className="table database__table database__table--clients">
-          <thead>
-            {this.renderHeader()}
-          </thead>
-          <tbody>
-            {this.renderBody()}
-          </tbody>
-        </table>
-        {this.props.item ?
-          <RegisterServices
-            item={this.props.item}
-            toggleWindow={this.props.toggleWindow}
+    if (this.state.ready === 1) {
+      return (
+        <ErrorBoundary>
+          <SearchBar
+            database={this.state.fullDatabase}
+            options={this.searchOptions}
+            searchReturn={this.searchReturn}
           />
-        : null}
-      </ErrorBoundary>
-    )
+          <table className="table database__table database__table--clients">
+            <thead>
+              {this.renderHeader()}
+            </thead>
+            <tbody>
+              {this.renderBody()}
+            </tbody>
+          </table>
+          {this.props.item ?
+            <RegisterServices
+              item={this.props.item}
+              toggleWindow={this.props.toggleWindow}
+            />
+          : null}
+        </ErrorBoundary>
+      )
+    } else if (this.state.ready === 0) {
+      return <Loading/>
+    } else if (this.state.ready === -1) {
+      return <NotFound/>
+    }
   }
 }

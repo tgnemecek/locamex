@@ -1,20 +1,37 @@
 import React from 'react';
-import ErrorBoundary from '/imports/components/ErrorBoundary/index';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 import { Clients } from '/imports/api/clients/index';
+import { Contracts } from '/imports/api/contracts/index';
+import ErrorBoundary from '/imports/components/ErrorBoundary/index';
+import SearchBar from '/imports/components/SearchBar/index';
 import tools from '/imports/startup/tools/index';
+import Loading from '/imports/components/Loading/index';
+import NotFound from '/imports/components/NotFound/index';
 
 export default class ContractsTable extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { clientsDb: [] };
+    this.state = {
+      fullDatabase: [],
+      filteredDatabase: [],
+      clientsDb: [],
+      ready: 0
+    }
   }
   componentDidMount() {
     this.tracker = Tracker.autorun(() => {
       Meteor.subscribe('clientsPub');
+      Meteor.subscribe('contractsPub');
       var clientsDb = Clients.find({ visible: true }).fetch();
-      this.setState({ clientsDb });
+      var fullDatabase = Contracts.find({ visible: true }).fetch();
+      var filteredDatabase = fullDatabase;
+      if (fullDatabase) this.setState({ fullDatabase, filteredDatabase, clientsDb, ready: 1 });
     })
+  }
+  searchReturn = (filteredDatabase) => {
+    if (filteredDatabase) {
+      this.setState({ filteredDatabase });
+    } else this.setState({ filteredDatabase: this.state.fullDatabase });
   }
   renderHeader = () => {
     const toggleWindow = () => {
@@ -23,7 +40,7 @@ export default class ContractsTable extends React.Component {
     return (
       <tr>
         <th className="small-column">Código</th>
-        <th>Nome Fantasia</th>
+        <th>Nome da Empresa</th>
         <th className="small-column">Status</th>
         <th className="small-column">Valor Total do Contrato</th>
         <th className="small-column">
@@ -34,7 +51,7 @@ export default class ContractsTable extends React.Component {
     )
   }
   renderBody = () => {
-    return this.props.database.map((item, i) => {
+    return this.state.filteredDatabase.map((item, i) => {
       var clientName;
       const toggleWindow = () => {
         this.props.toggleWindow(item);
@@ -79,17 +96,28 @@ export default class ContractsTable extends React.Component {
     })
   }
   render () {
-    return (
-      <ErrorBoundary>
-        <table className="table database__table">
-          <thead>
-            {this.renderHeader()}
-          </thead>
-          <tbody>
-            {this.renderBody()}
-          </tbody>
-        </table>
-      </ErrorBoundary>
-    )
+    if (this.state.ready === 1) {
+      return (
+        <ErrorBoundary>
+          <SearchBar
+            database={this.state.fullDatabase}
+            options={this.searchOptions}
+            searchReturn={this.searchReturn}
+          />
+          <table className="table database__table">
+            <thead>
+              {this.renderHeader()}
+            </thead>
+            <tbody>
+              {this.renderBody()}
+            </tbody>
+          </table>
+        </ErrorBoundary>
+      )
+    } else if (this.state.ready === 0) {
+      return <Loading/>
+    } else if (this.state.ready === -1) {
+      return <NotFound/>
+    }
   }
 }

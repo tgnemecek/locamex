@@ -1,29 +1,41 @@
 import React from 'react';
-import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import { Places } from '/imports/api/places/index';
+import { Containers } from '/imports/api/containers/index';
 import tools from '/imports/startup/tools/index';
+import ErrorBoundary from '/imports/components/ErrorBoundary/index';
+import SearchBar from '/imports/components/SearchBar/index';
 import RegisterContainers from '/imports/components/RegisterContainers/index';
-import SortButton from '/imports/components/SortButton/index';
+import Loading from '/imports/components/Loading/index';
+import NotFound from '/imports/components/NotFound/index';
 
 export default class ContainersTable extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { placesDatabase: [] };
+    this.state = {
+      fullDatabase: [],
+      filteredDatabase: [],
+      placesDatabase: [],
+      ready: 0
+    }
   }
+
   componentDidMount = () => {
     this.tracker = Tracker.autorun(() => {
       Meteor.subscribe('placesPub');
+      Meteor.subscribe('containersPub');
       var placesDatabase = Places.find({ visible: true }).fetch();
-      this.setState({ placesDatabase });
+      var fullDatabase = Containers.find({ visible: true }).fetch();
+      var filteredDatabase = fullDatabase;
+      if (fullDatabase) this.setState({ fullDatabase, filteredDatabase, placesDatabase, ready: 1 });
     })
   }
 
-  renderSortButton = (attribute) => {
-    return <SortButton
-              database={this.props.database}
-              attribute={attribute}
-              returnSort={this.props.returnSort}/>
+  searchReturn = (filteredDatabase) => {
+    if (filteredDatabase) {
+      this.setState({ filteredDatabase });
+    } else this.setState({ filteredDatabase: this.state.fullDatabase });
   }
+
   renderHeader = () => {
     const toggleWindow = () => {
       this.props.toggleWindow();
@@ -40,8 +52,9 @@ export default class ContainersTable extends React.Component {
       </tr>
     )
   }
+
   renderBody = () => {
-    return this.props.database.map((item, i) => {
+    return this.state.filteredDatabase.map((item, i) => {
       const toggleWindow = () => {
         this.props.toggleWindow(item);
       }
@@ -75,24 +88,36 @@ export default class ContainersTable extends React.Component {
       )
     })
   }
+  
   render () {
-    return (
-      <ErrorBoundary>
-        <table className="table database__table database__table--accessories">
-          <thead>
-            {this.renderHeader()}
-          </thead>
-          <tbody>
-            {this.renderBody()}
-          </tbody>
-        </table>
-        {this.props.item ?
-          <RegisterContainers
-            item={this.props.item}
-            toggleWindow={this.props.toggleWindow}
+    if (this.state.ready === 1) {
+      return (
+        <ErrorBoundary>
+          <SearchBar
+            database={this.state.fullDatabase}
+            options={this.searchOptions}
+            searchReturn={this.searchReturn}
           />
-        : null}
-      </ErrorBoundary>
-    )
+          <table className="table database__table database__table--accessories">
+            <thead>
+              {this.renderHeader()}
+            </thead>
+            <tbody>
+              {this.renderBody()}
+            </tbody>
+          </table>
+          {this.props.item ?
+            <RegisterContainers
+              item={this.props.item}
+              toggleWindow={this.props.toggleWindow}
+            />
+          : null}
+        </ErrorBoundary>
+      )
+    } else if (this.state.ready === 0) {
+      return <Loading/>
+    } else if (this.state.ready === -1) {
+      return <NotFound/>
+    }
   }
 }

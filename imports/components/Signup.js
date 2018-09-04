@@ -1,5 +1,5 @@
 // import React from 'react';
-// import { Link } from 'react-router';
+// import { Link } from 'react-router-dom';
 // import { Accounts } from 'meteor/accounts-base';
 // import { Tracker } from 'meteor/tracker';
 // import { UserTypes } from '../api/user-types';

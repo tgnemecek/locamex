@@ -1,7 +1,7 @@
 import React from 'react';
 
 export default function Loading (props) {
-  if (props.fullPage) {
+  if (props.fullPage !== false) {
     return (
       <div className="center__background">
         <div className="loading"></div>
