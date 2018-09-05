@@ -30,7 +30,7 @@ export default function createPdf(contract, client, mainContact, representatives
   const totalValueProducts = products.length ? products.reduce((acc, current) => {
     return acc + current.finalPrice;
   }, 0) : 0;
-  const totalValueServices = services.length ? products.reduce((acc, current) => {
+  const totalValueServices = services.length ? services.reduce((acc, current) => {
     return acc + current.finalPrice;
   }, 0) : 0;
   const totalValueProrogation = products.length ? products.reduce((acc, current) => {
@@ -138,8 +138,8 @@ export default function createPdf(contract, client, mainContact, representatives
       var header = [ ['Número', 'Período', 'Vencimento', 'Descrição da Cobrança', 'Valor'] ];
       var body = charges.map((charge, i, array) => {
         var index = (i + 1) + "/" + array.length;
-        var period = moment(charge.startDate).format("DD-MM-YY") + ' a ' +  moment(charge.endDate).format("DD-MM-YY");
-        var endDate = moment(charge.endDate).format("DD-MM-YY");
+        var period = moment(charge.startDate).format("DD/MM/YYYY") + ' a ' +  moment(charge.endDate).format("DD/MM/YYYY");
+        var endDate = moment(charge.endDate).format("DD/MM/YYYY");
         var description = charge.description;
         var value = tools.format(charge.value, 'currency');
         return [index, period, endDate, description, value];

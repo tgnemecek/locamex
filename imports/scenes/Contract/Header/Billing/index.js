@@ -128,8 +128,8 @@ export default class Billing extends React.Component {
       return (
         <tr key={i}>
           <td className="small-column">{(i + 1) + '/' + array.length}</td>
-          <td className="small-column">{moment(charge.startDate).format("DD-MM-YY") + ' a ' +  moment(charge.endDate).format("DD-MM-YY")}</td>
-          <td className="small-column">{moment(charge.endDate).format("DD-MM-YY")}</td>
+          <td className="small-column">{moment(charge.startDate).format("DD/MM/YYYY") + ' a ' +  moment(charge.endDate).format("DD/MM/YYYY")}</td>
+          <td className="small-column">{moment(charge.endDate).format("DD/MM/YYYY")}</td>
           <td><textarea name={i} value={charge.description} onChange={this.updateDescription}/></td>
           <td className="small-column">{this.state.equalDivision ? equalValueStr : <Input name={i} type="currency"
                                                               onChange={this.onChange}

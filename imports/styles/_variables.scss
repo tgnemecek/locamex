@@ -10,6 +10,8 @@ $light-red: #ff4d4d;
 $active: #1f9138;
 $inactive: #8e7f1c;
 $cancelled: #8e1b1b;
+$finished: #42bcf4;
+$prorogation: #1c536d;
 
 // Spacing
 $space: 1.4rem;
@@ -23,11 +25,15 @@ $large-font-size: 1.8rem;
 $input-border: $grey;
 $input-spacing: .8rem;
 
+// Regular view
+$loading-color: rgba($brand-primary, 0.9);
+$box-shadow-spread: 0px 0px 62px 4px rgba(0,0,0,0.2);
+$box-shadow-contained: 2px 3px 6px 0px rgba(0,0,0,0.2);
+
 // Boxed view
 $boxed-view-overlay-bg: $grey;
 $boxed-view-bg: white;
 $boxed-view-width: 80rem;
-$loading-color: rgba($brand-primary, 0.9);
 
 // Button
 $button-bg: $brand-primary;

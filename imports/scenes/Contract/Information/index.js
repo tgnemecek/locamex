@@ -18,11 +18,15 @@ export default class Information extends React.Component {
   }
 
   componentDidMount() {
-    this.Tracker = Tracker.autorun(() => {
+    this.tracker = Tracker.autorun(() => {
       Meteor.subscribe('clientsPub');
       var clientsDatabase = Clients.find().fetch();
       this.setState({ clientsDatabase });
     });
+  }
+
+  componentWillUnmount = () => {
+    this.tracker.stop();
   }
 
   selectClient = (e) => {

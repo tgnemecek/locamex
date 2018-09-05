@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router'
 import { Accounts } from 'meteor/accounts-base';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { Pages } from '/imports/api/pages/index';
 import MenuItem from './MenuItem/index'
 
@@ -10,14 +10,13 @@ class AppHeader extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      title: '',
+      title: undefined,
       pagesDatabase: [],
       usersDatabase: []
     }
     this.administrative = ["0000", "0001"];
     this.clients = ["0002"];
-    this.modules = ["0003"];
-    this.products = ["0004", "0005", "0006"];
+    this.products = ["0003", "0004", "0005"];
     this.contracts = ["0007"];
   };
 
@@ -30,6 +29,10 @@ class AppHeader extends React.Component {
       const usersDatabase = Meteor.users.find().fetch();
       this.setState({ pagesDatabase, usersDatabase });
     })
+  }
+
+  componentWillUnmount = () => {
+    this.tracker.stop();
   }
 
   componentDidUpdate = (prevProps) => {
@@ -62,52 +65,52 @@ class AppHeader extends React.Component {
     } else if (pathname.includes('modules')) {
       this.setState({ title: "Componentes" });
       return;
+    } else {
+      this.setState({ title: undefined });
+      return;
     }
-    throw new Error("Couldn't set title at AppHeader component");
+  }
+
+  logout = () => {
+    Meteor.logout();
+    window.location.reload();
   }
 
   render() {
-    return(
-      <div className="header__background">
-        <div className="header">
-          <h1 className="header__title">{this.state.title}</h1>
-          {this.state.pagesDatabase.length > 0 ?
-            <>
-            <MenuItem
-              name="Administrativo"
-              pagesDatabase={this.state.pagesDatabase}
-              usersDatabase={this.state.usersDatabase}
-              allowedPages={this.administrative}/>
-            <MenuItem
-              name="Clientes"
-              pagesDatabase={this.state.pagesDatabase}
-              usersDatabase={this.state.usersDatabase}
-              allowedPages={this.clients}/>
-            <MenuItem
-              name="Componentes"
-              pagesDatabase={this.state.pagesDatabase}
-              usersDatabase={this.state.usersDatabase}
-              allowedPages={this.modules}/>
-            <MenuItem
-              name="Produtos"
-              pagesDatabase={this.state.pagesDatabase}
-              usersDatabase={this.state.usersDatabase}
-              allowedPages={this.products}/>
-            <MenuItem
-              name="Contratos"
-              pagesDatabase={this.state.pagesDatabase}
-              usersDatabase={this.state.usersDatabase}
-              allowedPages={this.contracts}/>
-            </>
-          : null}
-          <button className="header__logout" onClick={() => Accounts.logout()}>Sair</button>
+    if (this.state.title) {
+      return (
+        <div className="header__background">
+          <div className="header">
+            <h1 className="header__title">{this.state.title}</h1>
+            {this.state.pagesDatabase.length > 0 ?
+              <>
+              <MenuItem
+                name="Administrativo"
+                pagesDatabase={this.state.pagesDatabase}
+                usersDatabase={this.state.usersDatabase}
+                allowedPages={this.administrative}/>
+              <MenuItem
+                name="Clientes"
+                pagesDatabase={this.state.pagesDatabase}
+                usersDatabase={this.state.usersDatabase}
+                allowedPages={this.clients}/>
+              <MenuItem
+                name="Produtos"
+                pagesDatabase={this.state.pagesDatabase}
+                usersDatabase={this.state.usersDatabase}
+                allowedPages={this.products}/>
+              <MenuItem
+                name="Contratos"
+                pagesDatabase={this.state.pagesDatabase}
+                usersDatabase={this.state.usersDatabase}
+                allowedPages={this.contracts}/>
+              </>
+            : null}
+            <button className="header__logout" onClick={() => this.logout()}>Sair</button>
+          </div>
         </div>
-      </div>
-    )
+      )
+    } else return null;
   }
 }
 export default withRouter(AppHeader);
-//
-// AppHeader.propTypes = {
-//   title: React.PropTypes.string.isRequired
-// };

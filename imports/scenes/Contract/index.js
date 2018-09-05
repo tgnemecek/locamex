@@ -1,6 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import { Redirect } from 'react-router';
 import moment from 'moment';
 
 import { Contracts } from '/imports/api/contracts/index';
@@ -20,7 +19,18 @@ export default class Contract extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      contract: {},
+      contract: {
+        createdBy: Meteor.user() || {username: "Thiago"},
+        createdDate: new Date(),
+        status: "inactive",
+
+        billing: [],
+        deliveryAddress: {},
+        dates: {},
+        containers: [],
+        accessories: [],
+        services: []
+      },
       toggleCancelWindow: false,
       toggleActivateWindow: false,
       ready: 0
@@ -30,6 +40,7 @@ export default class Contract extends React.Component {
   componentDidMount() {
     var contract;
     if (this.props.match.params.contractId == 'new') {
+      this.setState({ ready: 1 });
     } else {
       this.tracker = Tracker.autorun(() => {
         Meteor.subscribe('contractsPub');
@@ -37,7 +48,15 @@ export default class Contract extends React.Component {
         if (contract) this.setState({ contract, ready: 1 });
       })
     }
-    setTimeout(() => {if (!contract) this.setState({ ready: -1 })}, 3000);
+    setTimeout(() => {
+      if (!contract && this.state.ready == 0) {
+        this.setState({ ready: -1 })
+      }
+    }, 3000);
+  }
+
+  componentWillUnmount = () => {
+    this.tracker.stop();
   }
 
   updateContract = (value, what) => {
@@ -65,13 +84,16 @@ export default class Contract extends React.Component {
   }
 
   cancelContract = () => {
-    Meteor.call('contracts.cancel', this.state.contract._id, (err, res) => {
-      this.props.router.push('/database/contracts');
-    });
+    Meteor.call('contracts.cancel', this.state.contract._id);
+    this.toggleCancelWindow();
   }
 
   activateContract = () => {
-    Meteor.call('contracts.activate', this.state.contract);
+    if (this.props.match.params.contractId == 'new') {
+      this.setState({ status: "active" }, (err) => {
+        if (!err) Meteor.call('contracts.activate', this.state.contract);
+      })
+    } else Meteor.call('contracts.activate', this.state.contract);
     this.toggleActivateWindow();
   }
 
@@ -89,17 +111,15 @@ export default class Contract extends React.Component {
   }
 
   totalValue = () => {
-    var containers = this.state.contract.containers;
-    var services = this.state.contract.services;
-    var accessories = this.state.contract.accessories;
-    var all = containers.concat(services, accessories);
+    var containers = this.state.contract.containers || [];
+    var services = this.state.contract.services || [];
+    var accessories = this.state.contract.accessories || [];
+    var all = [].concat(containers, services, accessories);
     if (all.length == 0) return 0;
     return all.reduce((acc, current) => {
       var quantity = current.quantity ? current.quantity : 1;
-      return {
-        price: acc.price + (current.price * quantity)
-      }
-    }).price;
+      return acc + (current.price * quantity)
+    }, 0);
   }
 
   render () {
@@ -131,7 +151,7 @@ export default class Contract extends React.Component {
                   {text: "Ativar Contrato", className: "button--primary", onClick: () => this.toggleActivateWindow()},
                 ]}/>
                 : null}
-                <div className="contract__footer-text">Contrato criado dia 12/12/2018</div>
+                <div className="contract__footer-text">Contrato criado dia {moment(this.state.contract.createdDate).format("DD/MM/YYYY")}</div>
                 {this.state.toggleCancelWindow ?
                   <Box
                     title="Aviso:"

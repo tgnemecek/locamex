@@ -26,6 +26,10 @@ export default class ClientsTable extends React.Component {
     })
   }
 
+  componentWillUnmount = () => {
+    this.tracker.stop();
+  }
+
   searchReturn = (filteredDatabase) => {
     if (filteredDatabase) {
       this.setState({ filteredDatabase });

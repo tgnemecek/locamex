@@ -61,12 +61,19 @@ Meteor.methods({
   },
   'contracts.activate'(state) {
     const data = {
-      _id: state._id,
+      ...state,
       status: "active"
     }
-    Meteor.call('contracts.update', state, () => {
-      Contracts.update({ _id }, { $set: data });
-    });
+    var modules = [];
+    for (var i = 0; i < data.containers.length; i++) {
+      if (data.containers[i].type === 'modular') {
+        modules = modules.concat(data.containers[i].modules);
+      } else if (data.containers[i].type === 'fixed') {
+        Meteor.call('containers.status', data.containers[i]._id, "rented");
+      }
+    }
+    Meteor.call('modules.rent', modules);
+    Meteor.call('contracts.update', data, 'contracts');
     Meteor.call('history.insert', data, 'contracts');
   },
   'contracts.cancel'(_id) {

@@ -1,6 +1,10 @@
 @import './ItemList/styles';
 
 .contract__items {
+  background: white;
+  border: 1px solid $grey;
+  margin: 5px;
+  padding: 5px;
   height: 500px;
   margin-bottom: 10px;
   overflow-y: auto;

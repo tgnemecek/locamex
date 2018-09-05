@@ -1,16 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import moment from 'moment';
-
-import { Accessories } from '/imports/api/accessories/index';
-import { Categories } from '/imports/api/categories/index';
-import { Clients } from '/imports/api/clients/index';
-import { Containers } from '/imports/api/containers/index';
-import { Contracts } from '/imports/api/contracts/index';
-import { Modules } from '/imports/api/modules/index';
-import { Packs } from '/imports/api/packs/index';
-import { Pages } from '/imports/api/pages/index';
-
 import tools from '/imports/startup/tools/index';
 
 import AccessoriesTable from './AccessoriesTable/index';

@@ -97,6 +97,18 @@ Meteor.methods({
     Modules.update({ _id }, { $set: data });
     Meteor.call('history.insert', data, 'modules');
   },
+  'modules.rent' (modules) {
+    var data = [];
+    for (var i = 0; i < modules.length; i++) {
+      var changes = {
+        available: -modules[i].selected,
+        rented: modules[i].selected
+      }
+      Modules.update({ _id: modules[i]._id }, { $inc: changes });
+      if (!data.includes(modules[i])) data.push(modules[i]);
+      Meteor.call('history.insert', data, 'modules.rent');
+    }
+  },
   'modules.update'(state) {
     const data = {
       _id: state._id,

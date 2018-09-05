@@ -28,6 +28,10 @@ export default class ModulesTable extends React.Component {
     setTimeout(() => {if (!fullDatabase) this.setState({ ready: -1 })}, 3000);
   }
 
+  componentWillUnmount = () => {
+    this.tracker.stop();
+  }
+
   searchReturn = (filteredDatabase) => {
     if (filteredDatabase) {
       this.setState({ filteredDatabase });

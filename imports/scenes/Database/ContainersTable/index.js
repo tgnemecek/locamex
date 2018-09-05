@@ -30,6 +30,10 @@ export default class ContainersTable extends React.Component {
     })
   }
 
+  componentWillUnmount = () => {
+    this.tracker.stop();
+  }
+
   searchReturn = (filteredDatabase) => {
     if (filteredDatabase) {
       this.setState({ filteredDatabase });
@@ -88,7 +92,7 @@ export default class ContainersTable extends React.Component {
       )
     })
   }
-  
+
   render () {
     if (this.state.ready === 1) {
       return (

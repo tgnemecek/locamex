@@ -5,7 +5,6 @@ export default class FooterButtons extends React.Component {
 
   renderButtons = () => {
     var style = {};
-    var text;
 
     if (!this.props.buttons) return null;
 
@@ -14,18 +13,16 @@ export default class FooterButtons extends React.Component {
         style = {marginLeft: "0"}
       } else style = {marginLeft: "1%"}
       var className = "button ";
-      className += button.className;
-      text = button.text;
-      if (button.type === 'link') {
-        return <Link className={className} to={button.onClick}>{text}</Link>
-      } else {
-        return <button
-                  key={i}
-                  type="button"
-                  style={style}
-                  className={className}
-                  onClick={button.onClick}>{text}</button>
-      }
+      className += button.className || '';
+      var text = button.text;
+      var onClick = button.onClick || null;
+      var type = button.type || "button";
+      return <button
+                key={i}
+                type={type}
+                style={style}
+                className={className}
+                onClick={onClick}>{text}</button>
     })
   }
 

@@ -41,6 +41,9 @@ export default class RegisterContainers extends React.Component {
       this.setState({ modulesDatabase, placesDatabase });
     })
   }
+  componentWillUnmount = () => {
+    this.tracker.stop();
+  }
   renderOptions = (database) => {
     return this.state[database].map((item, i) => {
       return <option key={i} value={item._id}>{item.description}</option>

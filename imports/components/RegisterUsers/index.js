@@ -12,10 +12,16 @@ import PageSelection from './PageSelection/index';
 export default class RegisterUsers extends React.Component {
   constructor(props) {
     super(props);
+    var emails;
+    if (this.props.item.emails) {
+      if (this.props.item.emails[0]) {
+        emails = this.props.item.emails[0].address;
+      } else emails = '';
+    } else emails = '';
     this.state = {
       _id: this.props.item._id || '',
       username: this.props.item.username || '',
-      emails: this.props.item.emails[0].address || '',
+      emails,
       password: '',
       pages: this.props.item.pages || [],
 
@@ -30,6 +36,9 @@ export default class RegisterUsers extends React.Component {
       var pagesDatabase = Pages.find({ visible: true }).fetch();
       this.setState({ pagesDatabase });
     })
+  }
+  componentWillUnmount = () => {
+    this.tracker.stop();
   }
   onChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
@@ -63,7 +72,7 @@ export default class RegisterUsers extends React.Component {
           width="800px">
             <Block columns={5} options={[{block: 0, span: 2}, {block: 1, span: 2}]}>
               <Input
-                title="Nome (Login):"
+                title="Usuário:"
                 type="text"
                 name="username"
                 value={this.state.username}

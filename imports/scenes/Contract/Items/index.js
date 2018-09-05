@@ -40,7 +40,7 @@ export default class Items extends React.Component {
     return(
       <div className="contract__items">
         <div className="contract__list">
-          <label onClick={this.toggleProductSelection}><strong>Containers:</strong></label>
+          <h3 onClick={this.toggleProductSelection}>Containers:</h3>
           <ItemList
             updateContract={this.props.updateContract}
             contract={this.props.contract}
@@ -48,7 +48,7 @@ export default class Items extends React.Component {
             onClick={this.toggleProductSelection}/>
         </div>
         <div className="contract__list">
-          <label onClick={this.toggleProductSelection}><strong>Acessórios:</strong></label>
+          <h3 onClick={this.toggleProductSelection}>Acessórios:</h3>
           <ItemList
             updateContract={this.props.updateContract}
             contract={this.props.contract}
@@ -56,7 +56,7 @@ export default class Items extends React.Component {
             onClick={this.toggleProductSelection}/>
         </div>
         <div className="contract__list">
-          <label onClick={this.toggleProductSelection}><strong>Serviços:</strong></label>
+          <h3 onClick={this.toggleProductSelection}>Serviços:</h3>
           <ItemList
             updateContract={this.props.updateContract}
             contract={this.props.contract}

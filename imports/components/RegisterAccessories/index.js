@@ -44,6 +44,9 @@ export default class RegisterAccessories extends React.Component {
       this.setState({ categoriesDatabase, placesDatabase });
     })
   }
+  componentWillUnmount = () => {
+    this.tracker.stop();
+  }
   renderOptions = (database) => {
     return this.state[database].map((item, i) => {
       return <option key={i} value={item._id}>{item.description}</option>

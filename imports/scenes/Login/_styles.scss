@@ -1,4 +1,4 @@
-.not-found__background {
+.login__background {
   align-items: center;
   top: 0;
   left: 0;
@@ -11,11 +11,11 @@
   height: 100vh;
   width: 100vw;
 }
-
-.not-found__box {
+.login__box {
   background: $light-grey;
   box-shadow: $box-shadow-spread;
   padding: $space;
+  width: 300px;
   a {
     width: 100%;
   }

@@ -92,6 +92,13 @@ Meteor.methods({
     Containers.update({ _id }, { $set: data });
     Meteor.call('history.insert', data, 'containers');
   },
+  'containers.status' (_id, status) {
+    var data = {
+      status
+    }
+    Containers.update({ _id }, { $set: data });
+    Meteor.call('history.insert', data, 'containers');
+  },
   'containers.update'(state) {
     var data;
     if (state.type == 'fixed') {

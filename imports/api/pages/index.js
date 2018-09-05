@@ -27,20 +27,20 @@ if (Meteor.isServer) {
   });
   Pages.insert({
     _id: "0003",
-    description: "Componentes",
-    link: "/database/modules",
-    visible: true
-  });
-  Pages.insert({
-    _id: "0004",
     description: "Containers",
     link: "/database/containers",
     visible: true
   });
   Pages.insert({
-    _id: "0005",
+    _id: "0004",
     description: "Acessórios",
     link: "/database/accessories",
+    visible: true
+  });
+  Pages.insert({
+    _id: "0005",
+    description: "Componentes",
+    link: "/database/modules",
     visible: true
   });
   Pages.insert({

@@ -4,6 +4,7 @@ import React from 'react';
 import { Containers } from '/imports/api/containers/index';
 import { Services } from '/imports/api/services/index';
 import { Modules } from '/imports/api/modules/index';
+import { Accessories } from '/imports/api/accessories/index';
 
 import tools from '/imports/startup/tools/index';
 
@@ -41,11 +42,16 @@ export default class ProductSelection extends React.Component {
         this.state.pub = 'containersPub';
         this.state.dbName = Containers;
         break;
+      case 'accessories':
+        this.title = "Seleção de Acessórios";
+        this.state.pub = 'accessoriesPub';
+        this.state.dbName = Accessories;
+        break;
     }
   }
 
   componentDidMount() {
-    this.Tracker = Tracker.autorun(() => {
+    this.tracker = Tracker.autorun(() => {
       Meteor.subscribe(this.state.pub);
       Meteor.subscribe('modulesPub');
       var fullDatabase = this.state.dbName.find().fetch();
@@ -65,6 +71,10 @@ export default class ProductSelection extends React.Component {
         moduleDatabase
       }, () => { this.initialCalculations() });
     })
+  }
+
+  componentWillUnmount = () => {
+    this.tracker.stop();
   }
 
   initialCalculations = () => {

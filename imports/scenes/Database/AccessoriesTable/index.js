@@ -30,6 +30,10 @@ export default class AccessoriesTable extends React.Component {
     })
   }
 
+  componentWillUnmount = () => {
+    this.tracker.stop();
+  }
+
   searchReturn = (filteredDatabase) => {
     if (filteredDatabase) {
       this.setState({ filteredDatabase });

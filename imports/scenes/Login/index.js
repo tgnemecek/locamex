@@ -1,45 +1,63 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { Meteor } from 'meteor/meteor';
+import Input from '/imports/components/Input/index';
+import FooterButtons from '/imports/components/FooterButtons/index';
 
 export default class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      error: ""
+      error: '',
+      username: '',
+      password: ''
     };
   }
-  onSubmit(e) {
+  submit = (e) => {
     e.stopPropagation();
-
-    let email = this.refs.email.value.trim();
-    let password = this.refs.password.value.trim();
-
-    Meteor.loginWithPassword({email}, password, (err) => {
+    e.preventDefault();
+    let username = this.state.username.trim();
+    let password = this.state.password.trim();
+    Meteor.loginWithPassword({username}, password, (err) => {
       if (err) {
-        this.setState({error: 'Unable to Login. Check email and password.'});
+        this.setState({error: 'Falha de Login. Favor checar os dados.'});
       } else {
         this.setState({error: ''});
       }
     });
   }
+  onChange = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
+  }
   render() {
-    return (
-      <div className="boxed-view">
-        <div className="boxed-view__login-box">
-          <h1>Login</h1>
-
-          {this.state.error ? <p>{this.state.error}</p> : undefined}
-
-          <form onSubmit={this.onSubmit.bind(this)} noValidate className="boxed-view__form">
-            <input type="email" ref="email" name="email" placeholder="Email"/>
-            <input type="password" ref="password" name="password" placeholder="Password"/>
-            <div className="button__main-div">
-              <button className="button">Login</button>
-            </div>
-          </form>
+    if (!Meteor.userId()) {
+      return (
+        <div className="login__background">
+          <div className="login__box">
+            <h1>Login</h1>
+            {this.state.error ? <p>{this.state.error}</p> : undefined}
+            <form onSubmit={this.submit} className="boxed-view__form">
+              <Input
+                title="Usuário:"
+                type="text"
+                name="username"
+                value={this.state.username}
+                onChange={this.onChange}
+              />
+              <Input
+                title="Senha:"
+                type="password"
+                name="password"
+                value={this.state.password}
+                onChange={this.onChange}
+              />
+              <FooterButtons buttons={[
+                {text: "Login", type: "submit"}
+              ]}/>
+            </form>
+          </div>
         </div>
-      </div>
-    );
+      )
+    } else return <Redirect to="/database/contracts"/>
   }
 }

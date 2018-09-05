@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Route, Redirect } from 'react-router-dom';
 
 import AppHeader from '/imports/components/AppHeader/index';
 import NotFound from '/imports/components/NotFound/index';
@@ -11,19 +11,24 @@ import Database from '/imports/scenes/Database/index';
 export default App = () => {
   return (
     <div id="app">
-      {/* <AppHeader/> */}
       <Route path="/" render={ props => <AppHeader {...props}/> }/>
       <Switch>
-        <Route path="/test" component={Test}/>
         <Route exact path="/" component={Login}/>
         <Route path="/contract/:contractId" render={(props) => (
-          <Contract {...props}/>
+          redirect() ? <Contract {...props}/> : <Redirect to="/"/>
         )}/>
         <Route path="/database/:database" render={(props) => (
-          <Database {...props}/>
+          redirect() ? <Database {...props}/> : <Redirect to="/"/>
         )}/>
         <Route path="*" component={NotFound}/>
+        <Route path="/test" component={Test}/>
       </Switch>
     </div>
   )
+}
+
+function redirect() {
+  const BYPASS = true;
+  if (BYPASS) return true;
+  return Meteor.userId();
 }

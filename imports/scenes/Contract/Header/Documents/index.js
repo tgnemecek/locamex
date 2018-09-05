@@ -40,6 +40,10 @@ export default class Documents extends React.Component {
     })
   }
 
+  componentWillUnmount = () => {
+    this.tracker.stop();
+  }
+
   onChange = (e) => {
     var contactId = e.target.value;
     var name = e.target.name;
@@ -86,17 +90,10 @@ export default class Documents extends React.Component {
           title="Emitir Documentos:"
           closeBox={this.props.toggleWindow}>
             <div className="documents">
-              <div>
-                <label>Documento:</label>
-                <select>
-                  <option value="proposal-long">Contrato</option>
-                  <option value="invoice-sending">Nota Fiscal de Remessa</option>
-                </select>
-              </div>
               <Input
-                title="Contato"
+                title="Contato:"
                 type="select"
-                name="seller"
+                name="mainContact"
                 value={this.state.mainContact._id}
                 onChange={this.onChange}>
                 <option> </option>

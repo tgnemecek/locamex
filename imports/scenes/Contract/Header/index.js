@@ -20,6 +20,10 @@ export default class Header extends React.Component {
         return <span className="contract--inactive">Inativo</span>
       case "cancelled":
         return <span className="contract--cancelled">Cancelado</span>
+      case "finished":
+        return <span className="contract--finished">Finalizado</span>
+      case "prorogation":
+        return <span className="contract--prorogation">Em Prorrogação</span>
       default:
         return "-";
     }
@@ -48,7 +52,7 @@ export default class Header extends React.Component {
       return (
         <div className="contract__header">
           <div className="contract__overtitle">
-            <p>Contrato criado por: <strong>Jurgen</strong></p>
+            <p>Contrato criado por: <strong>{this.props.contract.createdBy.username}</strong></p>
           </div>
           <div className="contract__top-buttons">
             <button value={'observations'} onClick={this.toggleWindow} className={this.checkIfHasContent()}>⚠</button>

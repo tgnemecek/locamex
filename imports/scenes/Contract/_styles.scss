@@ -3,7 +3,7 @@
 @import './Information/styles';
 
 .contract {
-  border: 1px solid $dark-grey;
+  box-shadow: $box-shadow-spread;
   background: $light-grey;
 }
 

@@ -28,6 +28,11 @@ export default class ContractsTable extends React.Component {
       if (fullDatabase) this.setState({ fullDatabase, filteredDatabase, clientsDb, ready: 1 });
     })
   }
+
+  componentWillUnmount = () => {
+    this.tracker.stop();
+  }
+
   searchReturn = (filteredDatabase) => {
     if (filteredDatabase) {
       this.setState({ filteredDatabase });
@@ -44,8 +49,7 @@ export default class ContractsTable extends React.Component {
         <th className="small-column">Status</th>
         <th className="small-column">Valor Total do Contrato</th>
         <th className="small-column">
-          <Link className="button--link database__table__button" to={"/"}>+</Link>
-          {/* <button onClick={toggleWindow} className="database__table__button">+</button> */}
+          <Link className="button--link database__table__button" to="/contract/new">+</Link>
         </th>
       </tr>
     )

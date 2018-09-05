@@ -62,6 +62,7 @@ Meteor.methods({
     const data = {
       _id,
       username,
+      emails,
       pages,
       visible: true
     };
