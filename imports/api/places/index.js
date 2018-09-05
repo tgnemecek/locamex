@@ -12,17 +12,37 @@ if(Meteor.isServer) {
     Places.remove({});
     Places.insert({
       _id: "0000",
-      description: "Antônio Pepe",
+      description: "Monsenhor Antônio Pepe 52",
       visible: true
     })
     Places.insert({
       _id: "0001",
-      description: "Pátio 2",
+      description: "Monsenhor Antônio Pepe 123",
       visible: true
     })
     Places.insert({
       _id: "0002",
-      description: "Outro Pátio",
+      description: "Lacedemônia",
+      visible: true
+    })
+    Places.insert({
+      _id: "0003",
+      description: "Carmen Miranda",
+      visible: true
+    })
+    Places.insert({
+      _id: "0004",
+      description: "Fernando Pessoa (Galpão)",
+      visible: true
+    })
+    Places.insert({
+      _id: "0005",
+      description: "Fernando Pessoa (Terreno)",
+      visible: true
+    })
+    Places.insert({
+      _id: "0006",
+      description: "Niterói",
       visible: true
     })
   }

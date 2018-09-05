@@ -41,9 +41,17 @@ export default class Contract extends React.Component {
   }
 
   updateContract = (value, what) => {
-    var contract = {...this.state.contract};
-    contract[what] = value;
-    this.setState({ contract });
+    if (Array.isArray(value) && Array.isArray(what)) {
+      var contract = {...this.state.contract};
+      what.forEach((key, i) => {
+        contract[key] = value[i];
+      })
+      this.setState({ contract });
+    } else {
+      var contract = {...this.state.contract};
+      contract[what] = value;
+      this.setState({ contract });
+    }
   }
 
   toggleActivateWindow = () => {
@@ -63,7 +71,7 @@ export default class Contract extends React.Component {
   }
 
   activateContract = () => {
-    Meteor.call('contracts.activate', this.state.contract._id);
+    Meteor.call('contracts.activate', this.state.contract);
     this.toggleActivateWindow();
   }
 
@@ -97,81 +105,64 @@ export default class Contract extends React.Component {
   render () {
     if (this.state.ready === 1) {
       return (
-        <>
-          <AppHeader title="Contrato"/>
-          <div className="page-content">
-            <div className="contract">
-              <Header
-                toggleCancelWindow={this.toggleCancelWindow}
+        <div className="page-content">
+          <div className="contract">
+            <Header
+              toggleCancelWindow={this.toggleCancelWindow}
+              contract={this.state.contract}
+              updateContract={this.updateContract}
+            />
+            <div className={this.setDisabledClassName()}>
+              <Information
                 contract={this.state.contract}
                 updateContract={this.updateContract}
               />
-              <div className={this.setDisabledClassName()}>
-                <Information
-                  contract={this.state.contract}
-                  updateContract={this.updateContract}
-                />
-                <Items
-                  contract={this.state.contract}
-                  updateContract={this.updateContract}
-                />
-                <div>
-                  <div className="contract__total-value">
-                    <h3>Valor Total do Contrato: {tools.format(this.totalValue(), 'currency')}</h3>
-                  </div>
-                  {this.state.contract.status === 'inactive' ?
-                  <FooterButtons buttons={[
-                    {text: "Salvar Edições", className: "button--secondary", onClick: () => this.saveEdits()},
-                    {text: "Ativar Contrato", className: "button--primary", onClick: () => this.toggleActivateWindow()},
-                  ]}/>
-                  : null}
-                  <div className="contract__footer-text">Contrato criado dia 12/12/2018</div>
-                  {this.state.toggleCancelWindow ?
-                    <Box
-                      title="Aviso:"
-                      closeBox={this.toggleCancelWindow}>
-                      <p>Deseja mesmo cancelar este contrato? Ele não poderá ser reativado.</p>
-                      <FooterButtons buttons={[
-                        {text: "Não", className: "button--secondary", onClick: () => this.toggleCancelWindow()},
-                        {text: "Sim", className: "button--danger", onClick: () => this.cancelContract()}
-                      ]}/>
-                    </Box>
-                  : null}
-                  {this.state.toggleActivateWindow ?
-                    <Box
-                      title="Aviso:"
-                      closeBox={this.toggleActivateWindow}>
-                      <p>Deseja ativar este contrato e locar os itens?</p>
-                      <FooterButtons buttons={[
-                        {text: "Não", className: "button--secondary", onClick: () => this.toggleActivateWindow()},
-                        {text: "Sim", onClick: () => this.activateContract()}
-                      ]}/>
-                    </Box>
-                  : null}
+              <Items
+                contract={this.state.contract}
+                updateContract={this.updateContract}
+              />
+              <div>
+                <div className="contract__total-value">
+                  <h3>Valor Total do Contrato: {tools.format(this.totalValue(), 'currency')}</h3>
                 </div>
+                {this.state.contract.status === 'inactive' ?
+                <FooterButtons buttons={[
+                  {text: "Salvar Edições", className: "button--secondary", onClick: () => this.saveEdits()},
+                  {text: "Ativar Contrato", className: "button--primary", onClick: () => this.toggleActivateWindow()},
+                ]}/>
+                : null}
+                <div className="contract__footer-text">Contrato criado dia 12/12/2018</div>
+                {this.state.toggleCancelWindow ?
+                  <Box
+                    title="Aviso:"
+                    closeBox={this.toggleCancelWindow}>
+                    <p>Deseja mesmo cancelar este contrato? Ele não poderá ser reativado.</p>
+                    <FooterButtons buttons={[
+                      {text: "Não", className: "button--secondary", onClick: () => this.toggleCancelWindow()},
+                      {text: "Sim", className: "button--danger", onClick: () => this.cancelContract()}
+                    ]}/>
+                  </Box>
+                : null}
+                {this.state.toggleActivateWindow ?
+                  <Box
+                    title="Aviso:"
+                    closeBox={this.toggleActivateWindow}>
+                    <p>Deseja ativar este contrato e locar os itens?</p>
+                    <FooterButtons buttons={[
+                      {text: "Não", className: "button--secondary", onClick: () => this.toggleActivateWindow()},
+                      {text: "Sim", onClick: () => this.activateContract()}
+                    ]}/>
+                  </Box>
+                : null}
               </div>
             </div>
           </div>
-        </>
+        </div>
       )
     } else if (this.state.ready === 0) {
-      return (
-        <>
-        <AppHeader title="Contrato"/>
-          <div className="page-content">
-            <Loading fullPage={true}/>
-          </div>
-        </>
-      )
+      return <Loading/>
     } else if (this.state.ready === -1) {
-      return (
-        <>
-        <AppHeader title="Contrato"/>
-          <div className="page-content">
-            <NotFound/>
-          </div>
-        </>
-      )
+      return <NotFound/>
     }
   }
 }

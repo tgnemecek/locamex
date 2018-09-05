@@ -1,14 +1,20 @@
 @import './MenuItem/styles';
 
-.header {
+.header__background {
   background: $header-bg;
+  width: 100%;
+}
+
+.header {
   color: $header-color;
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin: 0 auto;
-  padding: 0 20%;
+  padding: 0 $space;
+  max-width: ($site-max-width /1.5);
 }
+
 .header__title {
   margin: 0 !important;
   width: 140px;

@@ -38,7 +38,7 @@ if (Meteor.isServer) {
 Meteor.methods({
   'accessories.insert'(state) {
     const _id = tools.generateId(Accessories);
-    Accessories.insert({
+    const data = {
       _id,
       description: state.description,
       category: state.category,
@@ -50,15 +50,19 @@ Meteor.methods({
       restitution: state.restitution,
       observations: state.observations,
       visible: true
-    });
+    }
+    Accessories.insert(data);
+    Meteor.call('history.insert', data, 'accessories');
   },
   'accessories.hide'(_id) {
-    Accessories.update({ _id: _id }, { $set: {
+    const data = {
       visible: false
-      } });
+    }
+    Accessories.update({ _id: _id }, { $set: data });
+    Meteor.call('history.insert', data, 'accessories');
   },
   'accessories.update'(state) {
-    Accessories.update({ _id: state._id }, { $set: {
+    const data = {
       description: state.description,
       category: state.category,
       place: state.place,
@@ -70,5 +74,7 @@ Meteor.methods({
       observations: state.observations,
       visible: true
     }
-  })}
+    Accessories.update({ _id: state._id }, { $set: data });
+    Meteor.call('history.insert', data, 'accessories');
+  }
 })

@@ -57,8 +57,9 @@ if (Meteor.isServer) {
 Meteor.methods({
   'containers.insert'(state) {
     const _id = tools.generateId(Containers);
+    var data;
     if (state.type == 'fixed') {
-      Containers.insert({
+      data = {
         _id,
         description: state.description,
         type: state.type,
@@ -68,9 +69,9 @@ Meteor.methods({
         restitution: state.restitution,
         observations: state.observations,
         visible: true
-      });
+      }
     } else if (state.type == 'modular') {
-      Containers.insert({
+      data = {
         _id,
         description: state.description,
         type: state.type,
@@ -79,17 +80,22 @@ Meteor.methods({
         restitution: state.restitution,
         modules: state.modules,
         visible: true
-      });
+      };
     }
+    Containers.insert(data);
+    Meteor.call('history.insert', data, 'containers');
   },
   'containers.hide'(_id) {
-    Containers.update({ _id }, { $set: {
+    const data = {
       visible: false
-      } });
+    };
+    Containers.update({ _id }, { $set: data });
+    Meteor.call('history.insert', data, 'containers');
   },
   'containers.update'(state) {
+    var data;
     if (state.type == 'fixed') {
-      Containers.update({ _id: state._id }, { $set: {
+      data = {
         description: state.description,
         type: state.type,
         place: state.place,
@@ -98,9 +104,9 @@ Meteor.methods({
         restitution: state.restitution,
         observations: state.observations,
         visible: true
-      }})
+      };
     } else if (state.type == 'modular') {
-      Containers.update({ _id: state._id }, { $set: {
+      data = {
         description: state.description,
         type: state.type,
         assembled: state.assembled,
@@ -108,7 +114,9 @@ Meteor.methods({
         restitution: state.restitution,
         modules: state.modules,
         visible: true
-      }})
+      };
     }
+    Containers.update({ _id: state._id }, { $set: data });
+    Meteor.call('history.insert', data, 'containers');
   }
 })

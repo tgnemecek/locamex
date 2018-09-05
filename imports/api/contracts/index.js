@@ -42,7 +42,7 @@ if (Meteor.isServer) {
 Meteor.methods({
   'contracts.insert'(state) {
     const _id = tools.generateId(Contracts);
-    Contracts.insert({
+    const data = {
       _id,
       clientId: state.clientId,
       status: state.status,
@@ -55,22 +55,31 @@ Meteor.methods({
       accessories: state.accessories,
       services: state.services,
       visible: true
-    });
+    };
+    Contracts.insert(data);
+    Meteor.call('history.insert', data, 'contracts');
   },
-  'contracts.activate'(_id) {
-    Meteor.call('contracts.update', _id, () => {
-      Contracts.update({ _id }, { $set: {
-        status: "active"
-        } });
+  'contracts.activate'(state) {
+    const data = {
+      _id: state._id,
+      status: "active"
+    }
+    Meteor.call('contracts.update', state, () => {
+      Contracts.update({ _id }, { $set: data });
     });
+    Meteor.call('history.insert', data, 'contracts');
   },
   'contracts.cancel'(_id) {
-    Contracts.update({ _id }, { $set: {
+    const data = {
+      _id,
       status: "cancelled"
-      } });
+    }
+    Contracts.update({ _id }, { $set: data });
+    Meteor.call('history.insert', data, 'contracts');
   },
   'contracts.update'(state) {
-    Contracts.update({ _id: state._id }, { $set: {
+    const data = {
+      _id: state._id,
       clientId: state.clientId,
       status: state.status,
       createdBy: state.createdBy,
@@ -83,5 +92,7 @@ Meteor.methods({
       services: state.services,
       visible: true
     }
-  })}
+    Contracts.update({ _id: state._id }, { $set: data });
+    Meteor.call('history.insert', data, 'contracts');
+  }
 })

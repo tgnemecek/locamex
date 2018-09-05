@@ -5,6 +5,7 @@ import { Session } from 'meteor/session';
 import { BrowserRouter } from 'react-router-dom'
 import React from 'react';
 
+import '../imports/startup/moment-configuration/index';
 import App from '/imports/components/App/index';
 
 Meteor.startup(() => {

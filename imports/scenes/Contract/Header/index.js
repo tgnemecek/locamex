@@ -61,6 +61,7 @@ export default class Header extends React.Component {
             {this.state.windowOpen == 'documents' ? <Documents
                                               contract={this.props.contract}
                                               toggleWindow={this.toggleWindow}
+                                              updateContract={this.props.updateContract}
                                               /> : null}
             <button value={'billing'} onClick={this.toggleWindow}>$</button>
             {this.state.windowOpen == 'billing' ? <Billing

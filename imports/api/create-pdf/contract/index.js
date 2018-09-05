@@ -4,8 +4,8 @@ var vfs_fonts = require('pdfmake/build/vfs_fonts');
 import tools from '/imports/startup/tools/index';
 import moment from 'moment';
 
-export default function createPdf(contract, client, seller, representatives) {
-  const globals = {
+export default function createPdf(contract, client, mainContact, representatives) {
+  const styleGlobals = {
     fontFamily: "Arial",
     h1Size: 11,
     h2Size: 10,
@@ -13,9 +13,37 @@ export default function createPdf(contract, client, seller, representatives) {
     marginBottom: 10,
     cellheight: 1
   }
-  const products = contract.containers.concat(contract.accessories);
+
   const cpfCnpjLabel = client.type == 'company' ? 'CNPJ': 'CPF';
   const registryLabel = client.registryMU ? 'Inscrição Municipal': 'Inscrição Estadual';
+
+  const products = contract.containers.concat(contract.accessories).map((item) => {
+    item.monthlyPrice = item.quantity * item.price;
+    item.finalPrice = item.monthlyPrice * contract.dates.duration;
+    return item;
+  })
+  const services = contract.services.map((item) => {
+    item.finalPrice = item.quantity * item.price;
+    return item;
+  })
+
+  const totalValueProducts = products.length ? products.reduce((acc, current) => {
+    return acc + current.finalPrice;
+  }, 0) : 0;
+  const totalValueServices = services.length ? products.reduce((acc, current) => {
+    return acc + current.finalPrice;
+  }, 0) : 0;
+  const totalValueProrogation = products.length ? products.reduce((acc, current) => {
+    return acc + current.monthlyPrice;
+  }, 0) : 0;
+  const totalValueRestitution = products.length ? products.reduce((acc, current) => {
+    return acc + current.restitution;
+  }, 0) : 0;
+  const totalValueContract = totalValueProducts + totalValueServices;
+
+  const resultFormat = (input) => {
+    return {text: tools.format(input, 'currency'), alignment: 'right', bold: true};
+  }
   const showCpfCnpj = () => {
     if (client.type == 'company') {
       return tools.format(client.registry, 'cnpj');
@@ -29,108 +57,67 @@ export default function createPdf(contract, client, seller, representatives) {
   const showAddress = () => {
     return client.address.street + ' ' + client.address.number;
   }
-  const displayValue = (type) => {
-    var valueStyle = {bold: true, alignment: 'right'};
-    var value;
-    switch(type) {
-      case 'prorogation':
-        value = 'R$ 10.000,00';
-        break;
-      case 'rent':
-        value = 'R$ 10.000,00';
-        break;
-      case 'services':
-        value = 'R$ 10.000,00';
-        break;
-    }
-    var prefix = {text: value};
-    return Object.assign(prefix, valueStyle);
-  }
+
   const tableInformation = () => {
     return {table: {
       headerRows: 0,
       widths: ['auto', '*', 'auto', 'auto', 40, 'auto'],
-      heights: globals.cellheight,
+      heights: styleGlobals.cellheight,
       body: [
           [ 'Razão Social', {text: client.officialName, colSpan: 5}, '', '', '', '' ],
           [ cpfCnpjLabel, showCpfCnpj(), {text: registryLabel, colSpan: 2}, '', {text: showRegistry(), colSpan: 2}, '' ],
           [ 'Endereço', {text: showAddress(), colSpan: 3}, '', '', 'CEP', tools.format(client.address.cep, 'cep') ],
-          [ 'Cidade', client.address.city, 'UF', client.address.state, 'Bairro', client.address.district ],
-          [ 'Contato', seller.contact, 'Telefone', tools.format(seller.phone, 'phone'), 'Email', seller.email ]
+          [ 'Cidade', {text: client.address.city, colSpan: 3}, '', '', 'UF', client.address.state ],
+          [ 'Contato', mainContact.name, 'Telefone', tools.format(mainContact.phone1, 'phone'), 'Email', mainContact.email ]
         ]
     }, style: 'table'};
   }
   const tableRepresentative = () => {
     const renderBody = () => {
-      console.log(representatives);
       return representatives.map((rep) => {
         return [ 'Nome', rep.name, 'CPF', tools.format(rep.cpf, 'cpf'), 'RG', tools.format(rep.rg, 'rg') ]
       });
     }
     return {table: {
       widths: ['auto', '*', 30, 80, 30, 80],
-      heights: globals.cellheight,
+      heights: styleGlobals.cellheight,
       body: renderBody(),
     }, style: 'table'}
   }
   const tableProducts = () => {
     const renderBody = () => {
-      var allValuesOneMonth = [];
-      var allValues = [];
-      const calcValue = (quantity, duration, price) => {
-        var result = quantity * price;
-        allValuesOneMonth.push(result);
-        result = result * duration;
-        allValues.push(result);
-        return {text: tools.format(result, 'currency'), alignment: 'right'};
-      }
-      const calcTotal = (values) => {
-        var result = values.length ? values.reduce((acc, current) => acc + current) : 0;
-        return {text: tools.format(result, 'currency'), bold: true, alignment: 'right'};
-      }
       var header = [ ['Item', 'Descrição', {text: 'Valor Unit. Mensal', alignment: 'left'}, {text: 'Qtd.', alignment: 'center'}, {text: 'Meses', alignment: 'center'}, {text: 'Valor Total', alignment: 'right'}] ];
       var body = products ? products.map((product) => {
-        return [product._id, product.description, tools.format(product.price, 'currency'), {text: product.quantity.toString(), alignment: 'center'}, {text: contract.dates.duration.toString(), alignment: 'center'}, calcValue(product.quantity, contract.dates.duration, product.price)];
+        return [product._id, product.description, tools.format(product.price, 'currency'), {text: product.quantity.toString(), alignment: 'center'}, {text: contract.dates.duration.toString(), alignment: 'center'}, {text: tools.format(product.finalPrice, 'currency'), alignment: 'right'} ];
       }) : [[ {text: '', colSpan: 6}, '', '', '', '', '' ]];
-      console.log(body);
       var footer = [
-        [ {text: 'Valor Mensal de Prorrogação:', colSpan: 5, alignment: 'right', bold: true}, '', '', '', '', calcTotal(allValuesOneMonth)],
-        [ {text: 'Valor Total da Locação:', colSpan: 5, alignment: 'right', bold: true}, '', '', '', '', calcTotal(allValues)]
+        [ {text: 'Valor Mensal de Prorrogação:', colSpan: 5, alignment: 'right', bold: true}, '', '', '', '', resultFormat(totalValueProrogation) ],
+        [ {text: 'Valor Total da Locação:', colSpan: 5, alignment: 'right', bold: true}, '', '', '', '', resultFormat(totalValueProducts)]
       ];
       return header.concat(body, footer);
     }
     return {table: {
       headerRows: 1,
       widths: [30, '*', 90, 'auto', 40, 80],
-      heights: globals.cellheight,
+      heights: styleGlobals.cellheight,
       body: renderBody(),
     }, style: 'table'}
   }
   const tableServices = () => {
     const renderBody = () => {
-      var allValues = [];
-      const calcValue = (quantity, price) => {
-        var result = quantity * price;
-        allValues.push(result);
-        return {text: tools.format(result, 'currency'), alignment: 'right'};
-      }
-      const calcTotal = () => {
-        var result = allValues.length ? allValues.reduce((acc, current) => acc + current): 0;
-        return {text: tools.format(result, 'currency'), bold: true, alignment: 'right'};
-      }
       var header = [ ['Item', 'Descrição', {text: 'Valor Unitário', alignment: 'left'}, {text: 'Qtd.', alignment: 'center'}, {text: 'Valor Total', alignment: 'right'}] ];
       var body = contract.services.map((service) => {
-        return [ service._id, service.name, tools.format(service.price, 'currency'), {text: service.quantity, alignment: 'center'}, calcValue(service.quantity, service.price)];
+        return [ service._id, service.description, tools.format(service.price, 'currency'), {text: service.quantity, alignment: 'center'}, resultFormat(service.finalPrice)];
       });
       var footer = [
-        [ {text: 'Valor Total do Pacote de Serviços:', colSpan: 4, alignment: 'right', bold: true}, '', '', '', calcTotal()]
+        [ {text: 'Valor Total do Pacote de Serviços:', colSpan: 4, alignment: 'right', bold: true}, '', '', '', resultFormat(totalValueServices)]
       ];
       return header.concat(body, footer);
     }
     return {table: {
       headerRows: 1,
       widths: [30, '*', 90, 'auto', 120],
-      heights: globals.cellheight,
+      heights: styleGlobals.cellheight,
       body: renderBody(),
     }, style: 'table'}
   }
@@ -140,7 +127,7 @@ export default function createPdf(contract, client, seller, representatives) {
     }
     return {table: {
       widths: ['auto', '*', 'auto', '*', 'auto', 'auto'],
-      heights: globals.cellheight,
+      heights: styleGlobals.cellheight,
       body: [
           [ 'Início em', {text: moment(contract.dates.startDate).format("DD-MMMM-YYYY"), alignment: 'center'}, 'Término em', calcEndDate(), 'Prazo mínimo de Locação', {text: contract.dates.duration + ' meses', alignment: 'center'} ]
         ]
@@ -157,20 +144,20 @@ export default function createPdf(contract, client, seller, representatives) {
         var value = tools.format(charge.value, 'currency');
         return [index, period, endDate, description, value];
       });
-      var footer = [ [{text: 'Valor Total do Contrato:', colSpan: 4, alignment: 'right', bold: true}, '', '', '', displayValue('rent')] ];
+      var footer = [ [{text: 'Valor Total do Contrato:', colSpan: 4, alignment: 'right', bold: true}, '', '', '', resultFormat(totalValueContract)] ];
       return header.concat(body, footer);
     }
     return {table: {
       headerRows: 1,
       widths: ['auto', 'auto', 'auto', '*', 'auto'],
-      heights: globals.cellheight,
+      heights: styleGlobals.cellheight,
       body: renderBody(contract.billing)
     }, style: 'table'}
   }
   const tableAddress = () => {
     return {table: {
       widths: ['*'],
-      heights: globals.cellheight,
+      heights: styleGlobals.cellheight,
       body: [
           [ contract.deliveryAddress.street + ', ' + contract.deliveryAddress.number + ' - ' + contract.deliveryAddress.city + ', ' + contract.deliveryAddress.state ]
         ]
@@ -180,17 +167,18 @@ export default function createPdf(contract, client, seller, representatives) {
     const renderBody = () => {
       var header = [ ['Item', 'Descrição', {text:'Valor Unitário de Indenização', alignment: 'right'}] ];
       var body = products ? products.map((product) => {
-        return [ product._id, product.description, {text: tools.format(product.restitution, 'currency'), alignment: 'right'} ]
+        return [ product._id, product.description, resultFormat(product.restitution) ]
       }) : [[ {text: '', colSpan: 3}, '', '' ]];
       return header.concat(body);
     }
     return {table: {
       headerRows: 1,
       widths: [30, '*', 'auto'],
-      heights: globals.cellheight,
+      heights: styleGlobals.cellheight,
       body: renderBody()
     }, style: 'table'}
   }
+
   const date = () => {
     var date = new Date();
     return {text: `São Paulo, ${date.getDate()} de ${moment(date).format('MMMM')} de ${date.getFullYear()}`, style: 'p', margin: [0, 50, 0, 50]}
@@ -203,7 +191,7 @@ export default function createPdf(contract, client, seller, representatives) {
           result = [
             {text: `__________________________________`, alignment: 'center'},
             {text: representatives[0].name, style: 'sig'},
-            {text: `NOME DA EMPRESA`, style: 'sig'},
+            {text: client.officialName, style: 'sig'},
             {text: `LOCATÁRIA`, style: 'sig'}]
         break;
       case 2:
@@ -238,7 +226,7 @@ export default function createPdf(contract, client, seller, representatives) {
   const tableWitness = () => {
     return {table: {
       widths: ['auto', '*', 'auto', 80, 'auto', 120],
-      heights: globals.cellheight,
+      heights: styleGlobals.cellheight,
       body: [
           [ {text: '1)', border: [false, false, false, false]},
           {text: '', border: [false, false, false, true]},
@@ -371,45 +359,45 @@ export default function createPdf(contract, client, seller, representatives) {
   },
   styles: {
     h1: {
-      fontFamily: globals.fontFamily,
-      fontSize: globals.h1Size,
+      fontFamily: styleGlobals.fontFamily,
+      fontSize: styleGlobals.h1Size,
       bold: true,
       alignment: 'center',
-      margin: [0, 0, 0, globals.marginBottom]
+      margin: [0, 0, 0, styleGlobals.marginBottom]
     },
     h2: {
-      fontFamily: globals.fontFamily,
-      fontSize: globals.h2Size,
+      fontFamily: styleGlobals.fontFamily,
+      fontSize: styleGlobals.h2Size,
       bold: true,
       alignment: 'justify',
-      margin: [0, 0, 0, globals.marginBottom]
+      margin: [0, 0, 0, styleGlobals.marginBottom]
     },
     p: {
-      fontFamily: globals.fontFamily,
-      fontSize: globals.pSize,
+      fontFamily: styleGlobals.fontFamily,
+      fontSize: styleGlobals.pSize,
       alignment: 'justify',
-      margin: [0, 0, 0, globals.marginBottom]
+      margin: [0, 0, 0, styleGlobals.marginBottom]
     },
     table: {
-      fontFamily: globals.fontFamily,
-      fontSize: globals.pSize,
+      fontFamily: styleGlobals.fontFamily,
+      fontSize: styleGlobals.pSize,
       alignment: 'left',
-      margin: [0, 0, 0, globals.marginBottom]
+      margin: [0, 0, 0, styleGlobals.marginBottom]
     },
     ol: {
-      fontFamily: globals.fontFamily,
-      fontSize: globals.pSize,
-      margin: [30, 0, 0, globals.marginBottom]
+      fontFamily: styleGlobals.fontFamily,
+      fontSize: styleGlobals.pSize,
+      margin: [30, 0, 0, styleGlobals.marginBottom]
     },
     sig: {
-      fontFamily: globals.fontFamily,
-      fontSize: globals.pSize,
+      fontFamily: styleGlobals.fontFamily,
+      fontSize: styleGlobals.pSize,
       alignment: 'center',
       margin: [0, 0, 0, 0]
     },
     footer: {
-      fontFamily: globals.fontFamily,
-      fontSize: globals.pSize,
+      fontFamily: styleGlobals.fontFamily,
+      fontSize: styleGlobals.pSize,
       alignment: 'center',
       margin: [ 0, 0, 0, 0 ]
     }

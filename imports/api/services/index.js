@@ -12,22 +12,31 @@ if (Meteor.isServer) {
 Meteor.methods({
   'services.insert'(description, price) {
     const _id = tools.generateId(Services);
-    Services.insert({
+    const data = {
       _id,
       description,
       price,
       visible: true
-    });
+    }
+    Services.insert(data);
+    Meteor.call('history.insert', data, 'services');
   },
-
   'services.hide'(_id) {
-    Services.update({ _id }, { $set: { visible: false } });
+    const data = {
+      _id,
+      visible: false
+    };
+    Services.update({ _id }, { $set: data });
+    Meteor.call('history.insert', data, 'services');
   },
 
   'services.update'(_id, description, price) {
-    Services.update({ _id }, { $set: {
+    const data = {
+      _id,
       description,
       price
-      }});
+    };
+    Services.update({ _id }, { $set: data });
+    Meteor.call('history.insert', data, 'services');
   }
 })

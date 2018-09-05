@@ -59,16 +59,23 @@ Meteor.methods({
     };
     const _id = Accounts.createUser({username, emails, password});
     if (!_id) {throw new Meteor.Error('user-not-created');}
-
-    Meteor.users.update({ _id }, { $set: {
+    const data = {
+      _id,
       username,
       pages,
       visible: true
-      } });
+    };
+    Meteor.users.update({ _id }, { $set: data });
+    Meteor.call('history.insert', data, 'users');
   },
 
   'users.hide'(_id) {
-    Meteor.users.update({ _id }, { $set: { visible: false } });
+    const data = {
+      _id,
+      visible: false
+    }
+    Meteor.users.update({ _id }, { $set: data });
+    Meteor.call('history.insert', data, 'users');
   },
 
   'users.update'(state) {
@@ -90,12 +97,16 @@ Meteor.methods({
     if (username.length > userNameMaxLength) {
       throw new Meteor.Error('name-too-long');
     };
-    Meteor.users.update({ _id }, { $set: {
+    const data = {
+      _id,
       username,
       emails,
       pages,
       visible: true
-    } });
-      password ? Accounts.setPassword(_id, password) : null;
+    }
+    Meteor.users.update({ _id }, { $set: data });
+    Meteor.call('history.insert', data, 'users');
+    password ? Accounts.setPassword(_id, password) : null;
+
   }
 })

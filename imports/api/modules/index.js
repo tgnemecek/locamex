@@ -1,4 +1,5 @@
 import { Mongo } from 'meteor/mongo';
+import tools from '/imports/startup/tools/index';
 
 export const Modules = new Mongo.Collection('modules');
 
@@ -77,27 +78,35 @@ if (Meteor.isServer) {
 Meteor.methods({
   'modules.insert'(state) {
     const _id = tools.generateId(Modules);
-    Modules.insert({
+    const data = {
       _id,
       description: state.description,
       available: state.available,
       rented: state.rented,
       maintenance: state.maintenance,
       visible: true
-    });
+    };
+    Modules.insert(data);
+    Meteor.call('history.insert', data, 'modules');
   },
   'modules.hide'(_id) {
-    Modules.update({ _id }, { $set: {
+    const data = {
+      _id,
       visible: false
-      } });
+    };
+    Modules.update({ _id }, { $set: data });
+    Meteor.call('history.insert', data, 'modules');
   },
   'modules.update'(state) {
-    Modules.update({ _id: state._id }, { $set: {
+    const data = {
+      _id: state._id,
       description: state.description,
       available: state.available,
       rented: state.rented,
       maintenance: state.maintenance,
       visible: true
-    }
-  })}
+    };
+    Modules.update({ _id: state._id }, { $set: data });
+    Meteor.call('history.insert', data, 'modules');
+  }
 })

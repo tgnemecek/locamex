@@ -17,12 +17,12 @@ export default class RegisterAccessories extends React.Component {
     this.state = {
       _id: this.props.item._id || '',
       description: this.props.item.description || '',
-      price: this.props.item.price || '',
+      price: this.props.item.price || 0,
       category: this.props.item.category || '',
       place: this.props.item.place || '',
       available: this.props.item.available || '',
       maintenance: this.props.item.maintenance || '',
-      restitution: this.props.item.restitution || '',
+      restitution: this.props.item.restitution || 0,
       observations: this.props.item.observations || '',
 
       origin: '-',

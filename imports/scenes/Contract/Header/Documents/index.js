@@ -12,9 +12,22 @@ import tools from '/imports/startup/tools/index';
 export default class Documents extends React.Component {
   constructor(props) {
     super(props);
+    var rep1 = {};
+    var rep2 = {};
+    if (this.props.contract.representatives) {
+      if (this.props.contract.representatives[0]) {
+        rep1 = this.props.contract.representatives[0];
+      }
+      if (this.props.contract.representatives[1]) {
+        rep2 = this.props.contract.representatives[1];
+      }
+    }
     this.state = {
       client: {},
-      representatives: this.props.contract.clientReps || ["0000", "0000"]
+      contacts: [],
+      mainContact: this.props.contract.mainContact || {},
+      rep1,
+      rep2
     }
   }
 
@@ -22,52 +35,49 @@ export default class Documents extends React.Component {
     this.tracker = Tracker.autorun(() => {
       Meteor.subscribe('clientsPub');
       var client = Clients.findOne(this.props.contract.clientId);
-      this.setState({ client });
+      var contacts = client.contacts;
+      this.setState({ client, contacts });
     })
   }
 
-  representativesOnChange = (e) => {
-    var value = e.target.value;
+  onChange = (e) => {
+    var contactId = e.target.value;
     var name = e.target.name;
-    var representatives = tools.deepCopy(this.state.representatives);
-    representatives[name] = value;
-    this.setState({ representatives });
+    var contacts = this.state.contacts;
+    var value = {};
+    for (var i = 0; i < contacts.length; i++) {
+      if (contacts[i]._id == contactId) {
+        value = contacts[i];
+        break;
+      }
+    }
+    this.setState({ [name]: value });
   }
 
   displayContacts = () => {
-    if (!this.state.client.contacts) return null;
-    return this.state.client.contacts.map((contact, i) => {
+    if (!this.state.contacts) return null;
+    return this.state.contacts.map((contact, i) => {
       return <option key={i} value={contact._id}>{contact.name}</option>
     })
   }
 
   generate = () => {
-    var seller = {
-      contact: 'Nome do Vendedor',
-      phone: '(11) 94514-8263',
-      email: 'tgnemecek@gmail.com'
-    };
-    var contacts = this.state.client.contacts;
-    var representativesTemp = tools.deepCopy(this.state.representatives);
-    if (representativesTemp[0] === representativesTemp[1]) {
-      representativesTemp.splice(1, 1);
+    var contacts = this.state.contacts;
+    var representatives;
+    if (this.state.rep1 == this.state.rep2 || !this.state.rep2._id) {
+      representatives = [ this.state.rep1 ];
+    } else {
+      representatives = [
+        this.state.rep1,
+        this.state.rep2
+      ]
     }
-    var representatives = tools.deepCopy(representativesTemp);
-    representativesTemp.forEach((rep) => {
-      for (var i = 0; i < contacts.length; i++) {
-        if (contacts._id === rep) {
-          rep = {
-            contactName: contact.name,
-            cpf: contact.cpf,
-            rg: contact.rg,
-          }
-          representatives.push(rep);
-          break;
-        }
-      }
+    createPdf(this.props.contract, this.state.client, this.state.mainContact, representatives);
+    var exportReps = representatives.map((rep) => {
+      return rep._id;
     })
-    console.log('doc', representatives);
-    createPdf(this.props.contract, this.state.client, seller, representatives);
+    var mainContact = this.state.mainContact._id;
+    this.props.updateContract([exportReps, mainContact], ["representatives", "mainContact"]);
   }
 
   render() {
@@ -84,19 +94,29 @@ export default class Documents extends React.Component {
                 </select>
               </div>
               <Input
+                title="Contato"
+                type="select"
+                name="seller"
+                value={this.state.mainContact._id}
+                onChange={this.onChange}>
+                <option> </option>
+                {this.displayContacts()}
+              </Input>
+              <Input
                 title="Representante Legal:"
                 type="select"
-                name={0}
-                value={this.state.representatives[0]}
-                onChange={this.representativesOnChange}>
+                name="rep1"
+                value={this.state.rep1._id}
+                onChange={this.onChange}>
+                <option> </option>
                 {this.displayContacts()}
               </Input>
               <Input
                 title="Segundo Representante: (opcional)"
                 type="select"
-                name={1}
-                value={this.state.representatives[1]}
-                onChange={this.representativesOnChange}>
+                name="rep2"
+                value={this.state.rep2._id}
+                onChange={this.onChange}>
                 <option> </option>
                 {this.displayContacts()}
               </Input>

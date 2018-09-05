@@ -1,4 +1,5 @@
 import { Mongo } from 'meteor/mongo';
+import tools from '/imports/startup/tools/index';
 
 export const Clients = new Mongo.Collection('clients');
 
@@ -76,7 +77,7 @@ if (Meteor.isServer) {
 Meteor.methods({
   'clients.insert'(state) {
     const _id = tools.generateId(Clients);
-    Clients.insert({
+    const data = {
       _id,
       description: state.description,
       type: state.description,
@@ -87,24 +88,30 @@ Meteor.methods({
       observations: state.observations,
       contacts: state.contacts,
       visible: true
-    });
+    };
+    Clients.insert(data);
+    Meteor.call('history.insert', data, 'clients');
   },
 
   'clients.hideContact'(_id, contactId) {
-
-    let contacts = Clients.find({ _id }).fetch()[0].contacts;
-
-    let contactToUpdate = contacts.find((element) => {
-      return element._id === contactId;
-    })
-
-    contactToUpdate.visible = false;
-
-    Clients.update({ _id }, { $set: { contacts } });
+    var client = Clients.findOne({ _id })
+    var contacts = client.contacts;
+    for (var i = 0; i < contacts.length; i++) {
+      if (contacts[i]._id === contactId) {
+        contacts[i].visible = false;
+      }
+    }
+    const data = {
+      _id,
+      contacts
+    }
+    Clients.update({ _id }, { $set: data });
+    Meteor.call('history.insert', data, 'clients');
   },
 
   'clients.update'(state) {
-    Clients.update({ _id: state._id }, { $set: {
+    const data = {
+      _id: state._id,
       description: state.description,
       registry: state.registry,
       officialName: state.officialName,
@@ -113,6 +120,8 @@ Meteor.methods({
       contacts: state.contacts,
       address: state.address,
       observations: state.observations
-      } });
+    };
+    Clients.update({ _id: state._id }, { $set: data });
+    Meteor.call('history.insert', data, 'clients');
   }
 })
