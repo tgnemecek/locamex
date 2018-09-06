@@ -109,6 +109,18 @@ Meteor.methods({
       Meteor.call('history.insert', data, 'modules.rent');
     }
   },
+  'modules.receive' (modules) {
+    var data = [];
+    for (var i = 0; i < modules.length; i++) {
+      var changes = {
+        available: modules[i].selected,
+        rented: -modules[i].selected
+      }
+      Modules.update({ _id: modules[i]._id }, { $inc: changes });
+      if (!data.includes(modules[i])) data.push(modules[i]);
+      Meteor.call('history.insert', data, 'modules.receive');
+    }
+  },
   'modules.update'(state) {
     const data = {
       _id: state._id,

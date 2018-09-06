@@ -20,8 +20,8 @@ export default class Header extends React.Component {
         return <span className="contract--inactive">Inativo</span>
       case "cancelled":
         return <span className="contract--cancelled">Cancelado</span>
-      case "finished":
-        return <span className="contract--finished">Finalizado</span>
+      case "finalized":
+        return <span className="contract--finalized">Finalizado</span>
       case "prorogation":
         return <span className="contract--prorogation">Em Prorrogação</span>
       default:
@@ -37,6 +37,10 @@ export default class Header extends React.Component {
     if (e) {
       e.stopPropagation();
       var windowOpen = e.target.value;
+      if (windowOpen == 'documents' && this.props.contract.clientId == '') {
+        alert("Escolha antes um cliente.")
+        return;
+      }
       this.setState({ windowOpen });
     } else this.setState({ windowOpen: false });
   }

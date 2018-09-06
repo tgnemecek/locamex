@@ -125,5 +125,13 @@ Meteor.methods({
     }
     Containers.update({ _id: state._id }, { $set: data });
     Meteor.call('history.insert', data, 'containers');
+  },
+  'containers.updateAssembled'(_id, increment) {
+    var data = {
+      assembled: increment
+    };
+    Containers.update({ _id }, { $inc: data });
+    data._id = _id;
+    Meteor.call('history.insert', data, 'containers.updateAssembled');
   }
 })

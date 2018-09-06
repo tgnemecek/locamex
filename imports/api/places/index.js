@@ -45,4 +45,9 @@ if(Meteor.isServer) {
       description: "Niterói",
       visible: true
     })
+    Places.insert({
+      _id: "0007",
+      description: "Paulínia",
+      visible: true
+    })
   }

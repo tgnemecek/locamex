@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Route } from 'react-router-dom';
 
 export default class FooterButtons extends React.Component {
 
@@ -17,12 +17,21 @@ export default class FooterButtons extends React.Component {
       var text = button.text;
       var onClick = button.onClick || null;
       var type = button.type || "button";
-      return <button
-                key={i}
-                type={type}
-                style={style}
-                className={className}
-                onClick={onClick}>{text}</button>
+      if (type == 'route') {
+        return <Route render={({ history }) => (
+          <button
+            key={i}
+            type="button"
+            style={style}
+            className={className}
+            onClick={() => { history.push(button.location) }}>{text}</button>
+        )}/>
+      } else return <button
+                  key={i}
+                  type={type}
+                  style={style}
+                  className={className}
+                  onClick={onClick}>{text}</button>
     })
   }
 

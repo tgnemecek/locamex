@@ -28,13 +28,12 @@ export default class Billing extends React.Component {
     var charges = tools.deepCopy(this.state.charges);
     var equalDivision = calcIfEqualDivision(charges);
     var totalValue = calcTotalValue(all);
-    function calcTotalValue(arr) {
+    function calcTotalValue (arr) {
       if (arr.length == 0) return 0;
       return arr.reduce((acc, current) => {
-        return {
-            price: acc.price + current.price
-          }
-        }).price;
+        var quantity = current.quantity ? current.quantity : 1;
+        return acc + (current.price * quantity)
+      }, 0);
     }
     function calcIfEqualDivision(charges) {
       if (!charges.length) return false;
@@ -81,9 +80,10 @@ export default class Billing extends React.Component {
     var moment2 = moment(this.state.startDate).add((30 * i + 30 + i), 'days');
     if (value > charges.length) {
       for (var i = 0; i < difference; i++) {
+        var chargeValue = this.state.charges[0] ? this.state.charges[0].value : '';
         newCharges.push({
           description: `Cobrança #${i +  charges.length + 1} referente ao Valor Total do Contrato`,
-          value: this.state.equalDivision ? this.state.charges[0].value : '',
+          value: this.state.equalDivision ? chargeValue : '',
           startDate: moment1,
           endDate: moment2
         })
@@ -128,8 +128,8 @@ export default class Billing extends React.Component {
       return (
         <tr key={i}>
           <td className="small-column">{(i + 1) + '/' + array.length}</td>
-          <td className="small-column">{moment(charge.startDate).format("DD/MM/YYYY") + ' a ' +  moment(charge.endDate).format("DD/MM/YYYY")}</td>
-          <td className="small-column">{moment(charge.endDate).format("DD/MM/YYYY")}</td>
+          <td className="small-column">{moment(charge.startDate).format("DD/MM/YY") + ' a ' +  moment(charge.endDate).format("DD/MM/YY")}</td>
+          <td className="small-column">{moment(charge.endDate).format("DD/MM/YY")}</td>
           <td><textarea name={i} value={charge.description} onChange={this.updateDescription}/></td>
           <td className="small-column">{this.state.equalDivision ? equalValueStr : <Input name={i} type="currency"
                                                               onChange={this.onChange}

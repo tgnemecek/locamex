@@ -1,17 +1,25 @@
 // Colors
 $brand-primary: #f7931b;
 $brand-primary-light: #ffb760;
+
 $grey: #dddddd;
 $light-grey: #f9f9f9;
 $dark-grey: #777777;
-$red: #ad0808;
+
+$red: #8e1b1b;
 $light-red: #ff4d4d;
-//Status-Colors
-$active: #1f9138;
-$inactive: #8e7f1c;
-$cancelled: #8e1b1b;
-$finished: #42bcf4;
-$prorogation: #1c536d;
+
+$green: #1f9138;
+$yellow: #8e7f1c;
+
+$light-blue: #42bcf4;
+$dark-blue: #1c536d;
+// Contract Colors
+$active: $green;
+$inactive: $yellow;
+$cancelled: $red;
+$finalized: $light-blue;
+$prorogation: $dark-blue;
 
 // Spacing
 $space: 1.4rem;

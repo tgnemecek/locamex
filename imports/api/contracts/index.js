@@ -58,23 +58,59 @@ Meteor.methods({
     };
     Contracts.insert(data);
     Meteor.call('history.insert', data, 'contracts');
+    return _id;
   },
   'contracts.activate'(state) {
+    const activate = (_id) => {
+      const data = {
+        ...state,
+        _id: _id || state._id,
+        status: "active"
+      }
+      var modules = [];
+      for (var i = 0; i < data.containers.length; i++) {
+        if (data.containers[i].type === 'modular') {
+          data.containers[i].modules.forEach((module) => {
+            module.selected = module.selected * data.containers[i].quantity;
+          })
+          modules = modules.concat(data.containers[i].modules);
+        } else if (data.containers[i].type === 'fixed') {
+          Meteor.call('containers.status', data.containers[i]._id, "rented");
+        }
+      }
+      Meteor.call('modules.rent', modules);
+      Meteor.call('contracts.update', data);
+      Meteor.call('history.insert', data, 'contracts');
+      return data._id;
+    }
+    if (!state._id) {
+      var _id = Meteor.call('contracts.insert', state);
+      return activate(_id);
+    } else return activate();
+  },
+  'contracts.finalize'(_id, products) {
     const data = {
-      ...state,
-      status: "active"
+      _id,
+      status: "finalized"
     }
     var modules = [];
-    for (var i = 0; i < data.containers.length; i++) {
-      if (data.containers[i].type === 'modular') {
-        modules = modules.concat(data.containers[i].modules);
-      } else if (data.containers[i].type === 'fixed') {
-        Meteor.call('containers.status', data.containers[i]._id, "rented");
+    for (var i = 0; i < products.length; i++) {
+      if (products[i].type === 'modular') {
+        if (products[i].selectedAssembled > 0) {
+          Meteor.call('containers.updateAssembled', products[i].containerId, products[i].selectedAssembled);
+        }
+        products[i].modules.forEach((module) => {
+          module.selected = module.selected * (products[i].quantity - products[i].selectedAssembled);
+        })
+        modules = modules.concat(products[i].modules);
+      } else if (products[i].type === 'fixed') {
+        Meteor.call('containers.status', products[i]._id, "available");
       }
     }
-    Meteor.call('modules.rent', modules);
-    Meteor.call('contracts.update', data, 'contracts');
+    Meteor.call('modules.receive', modules);
+    Meteor.call('contracts.update', data);
     Meteor.call('history.insert', data, 'contracts');
+    return data._id;
   },
   'contracts.cancel'(_id) {
     const data = {

@@ -80,8 +80,10 @@ export default class Information extends React.Component {
             <Input
               title="Cliente:"
               type="select"
-              name="client"
+              name="clientId"
+              value={this.props.contract.clientId}
               onChange={this.handleChange}>
+              <option> </option>
               {this.clientOptions()}
             </Input>
             <Input

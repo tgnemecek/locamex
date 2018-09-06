@@ -64,6 +64,8 @@ export default class ContractsTable extends React.Component {
         if (input === 'active') return 'Ativo';
         if (input === 'inactive') return 'Inativo';
         if (input === 'cancelled') return 'Cancelado';
+        if (input === 'finalized') return 'Finalizado';
+        if (input === 'prorogation') return 'Em Prorrogação';
         return input;
       }
       var clientName = () => {
