@@ -13,11 +13,10 @@ export default class Finalize extends React.Component {
     super(props);
     this.state = {
       containers: this.props.contract.containers,
-      accessories: this.props.contract.accessories,
       places: []
     }
     this.state.containers.forEach((container) => {
-      container.selectedAssembled = 0;
+      container.selectedAssembled = container.quantity;
     })
   }
 
@@ -47,31 +46,33 @@ export default class Finalize extends React.Component {
         containers[i].selectedAssembled = e.target.value;
         this.setState({ containers });
       }
-      const maintenance = (e) => {
-        container.status = e.target.value ? "maintenance" : "available";
-
-        this.setState({ containers });
-      }
       return (
         <tr key={i}>
           <td>{container._id}</td>
           <td>{container.description}</td>
           <td>
-            {container.type == "fixed" ?
             <Input
-              title="Pátio:"
               type="select"
               value={container.place}
               onChange={changePlace}>
+              <option> </option>
               {this.renderPlaces()}
             </Input>
+          </td>
+          <td className="contract__finalize__center-column">
+            {container.type == "fixed" ?
+            "-"
             :
-            <Input
-              title="Manter Montado:"
-              type="number"
-              max={container.quantity}
-              value={container.selectedAssembled}
-              onChange={changeAssembled}/>}
+            <>
+              <Input
+                className="contract__finalize__assembled-input"
+                type="number"
+                max={container.quantity}
+                value={container.selectedAssembled}
+                onChange={changeAssembled}/>
+              <span>/ {container.quantity}</span>
+            </>
+            }
           </td>
         </tr>
       )
@@ -79,8 +80,7 @@ export default class Finalize extends React.Component {
   }
 
   finalizeContract = () => {
-    var products = this.state.containers.concat(this.state.accessories);
-    this.props.finalizeContract(products);
+    this.props.finalizeContract(this.state.containers, this.props.contract.accessories);
   }
 
   renderHeader = () => {
@@ -88,7 +88,8 @@ export default class Finalize extends React.Component {
       <tr>
         <th>Código</th>
         <th>Descrição</th>
-        <th>Opções</th>
+        <th>Pátio</th>
+        <th className="contract__finalize__center-column">Manter Montado?</th>
       </tr>
     )
   }
@@ -96,7 +97,7 @@ export default class Finalize extends React.Component {
   render () {
     return (
       <Box
-        title="Retorno dos Itens Locados:"
+        title="Retorno dos Containers Locados:"
         closeBox={this.props.toggleWindow}>
         <table className="table">
           <thead>

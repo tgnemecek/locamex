@@ -80,7 +80,7 @@ export default class Header extends React.Component {
             <button onClick={this.props.toggleCancelWindow}>✖</button>
           </div>
           <div className="contract__title">
-            <h1>Contrato #{this.props._id}</h1>
+            <h1>Contrato #{this.props.contract._id}</h1>
           </div>
           <div className="contract__subtitle">
             <h3>Status: {this.statusToJSX()}</h3>

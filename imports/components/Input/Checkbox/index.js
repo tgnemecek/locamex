@@ -3,7 +3,7 @@ import React from 'react';
 export default class Checkbox extends React.Component {
   constructor(props) {
     super(props);
-    if (!this.props.id) throw new Error('No id provided to checkbox component!');
+    if (!this.props.id) throw new Meteor.Error('No id provided to checkbox component!');
   }
   onChange = (e) => {
     if (e) {

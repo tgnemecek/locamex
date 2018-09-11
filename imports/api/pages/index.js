@@ -55,4 +55,10 @@ if (Meteor.isServer) {
     link: "/database/contracts",
     visible: true
   });
+  Pages.insert({
+    _id: "0008",
+    description: "Pacotes",
+    link: "/database/packs",
+    visible: true
+  });
 }

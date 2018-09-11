@@ -1,32 +1,32 @@
 import React from 'react';
-import { Accessories } from '/imports/api/accessories/index';
-import { Categories } from '/imports/api/categories/index';
-import ErrorBoundary from '/imports/components/ErrorBoundary/index';
+import { Places } from '/imports/api/places/index';
+import { Packs } from '/imports/api/packs/index';
 import tools from '/imports/startup/tools/index';
+import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
-import RegisterAccessories from '/imports/components/RegisterAccessories/index';
+import RegisterPacks from '/imports/components/RegisterPacks/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
-export default class AccessoriesTable extends React.Component {
+export default class PacksTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       fullDatabase: [],
       filteredDatabase: [],
-      categoriesDb: [],
+      placesDatabase: [],
       ready: 0
     }
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
     this.tracker = Tracker.autorun(() => {
-      Meteor.subscribe('accessoriesPub');
-      Meteor.subscribe('categoriesPub');
-      var fullDatabase = Accessories.find({visible: true}).fetch();
+      Meteor.subscribe('placesPub');
+      Meteor.subscribe('packsPub');
+      var placesDatabase = Places.find({ visible: true }).fetch();
+      var fullDatabase = Packs.find({ visible: true }).fetch();
       var filteredDatabase = fullDatabase;
-      var categoriesDb = Categories.find({visible: true}).fetch();
-      if (fullDatabase) this.setState({ fullDatabase, filteredDatabase, categoriesDb, ready: 1 });
+      if (fullDatabase) this.setState({ fullDatabase, filteredDatabase, placesDatabase, ready: 1 });
     })
   }
 
@@ -48,12 +48,7 @@ export default class AccessoriesTable extends React.Component {
       <tr>
         <th className="small-column">Código</th>
         <th>Descrição</th>
-        <th className="small-column">Categoria</th>
-        <th className="small-column">Disponíveis</th>
-        <th className="small-column">Locados</th>
-        <th className="small-column">Manutenção</th>
-        <th className="small-column">Total</th>
-        <th className="small-column">Valor</th>
+        <th className="small-column">Pátio</th>
         <th className="small-column"><button onClick={toggleWindow} className="database__table__button">+</button></th>
       </tr>
     )
@@ -61,26 +56,22 @@ export default class AccessoriesTable extends React.Component {
 
   renderBody = () => {
     return this.state.filteredDatabase.map((item, i) => {
-      var category;
       const toggleWindow = () => {
         this.props.toggleWindow(item);
       }
-      for (var j = 0; j < this.state.categoriesDb.length; j++) {
-        if (this.state.categoriesDb[j]._id === item.category) {
-          category = this.state.categoriesDb[j].description;
-          break;
-        }
+      const translatePlaces = (place) => {
+        if (!place) return "-";
+        for (var i = 0; i < this.state.placesDatabase.length; i++) {
+          if (this.state.placesDatabase[i]._id === place) {
+            return this.state.placesDatabase[i].description;
+          }
+        } return "-";
       }
       return (
         <tr key={i}>
           <td className="small-column">{item._id}</td>
           <td>{item.description}</td>
-          <td className="small-column">{category}</td>
-          <td className="small-column">{item.available}</td>
-          <td className="small-column">{item.rented}</td>
-          <td className="small-column">{item.maintenance}</td>
-          <td className="small-column">{(item.available + item.rented + item.maintenance).toString()}</td>
-          <td className="small-column">{tools.format(item.price, 'currency')}</td>
+          <td className="small-column">{translatePlaces(item.place)}</td>
           <td className="small-column"><button className="database__table__button" onClick={toggleWindow}>✎</button></td>
         </tr>
       )
@@ -96,7 +87,7 @@ export default class AccessoriesTable extends React.Component {
             options={this.searchOptions}
             searchReturn={this.searchReturn}
           />
-          <table className="table database__table database__table--accessories">
+          <table className="table database__table">
             <thead>
               {this.renderHeader()}
             </thead>
@@ -105,7 +96,7 @@ export default class AccessoriesTable extends React.Component {
             </tbody>
           </table>
           {this.props.item ?
-            <RegisterAccessories
+            <RegisterPacks
               item={this.props.item}
               toggleWindow={this.props.toggleWindow}
             />

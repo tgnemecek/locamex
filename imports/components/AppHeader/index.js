@@ -16,7 +16,7 @@ class AppHeader extends React.Component {
     }
     this.administrative = ["0000", "0001"];
     this.clients = ["0002"];
-    this.products = ["0003", "0004", "0005"];
+    this.products = ["0003", "0004", "0005", "0008"];
     this.contracts = ["0007"];
   };
 
@@ -65,6 +65,9 @@ class AppHeader extends React.Component {
     } else if (pathname.includes('modules')) {
       this.setState({ title: "Componentes" });
       return;
+    } else if (pathname.includes('packs')) {
+      this.setState({ title: "Pacotes" });
+      return;
     } else {
       this.setState({ title: undefined });
       return;
@@ -82,31 +85,33 @@ class AppHeader extends React.Component {
         <div className="header__background">
           <div className="header">
             <h1 className="header__title">{this.state.title}</h1>
+            <div className="header__menu">
             {this.state.pagesDatabase.length > 0 ?
-              <>
-              <MenuItem
-                name="Administrativo"
-                pagesDatabase={this.state.pagesDatabase}
-                usersDatabase={this.state.usersDatabase}
-                allowedPages={this.administrative}/>
-              <MenuItem
-                name="Clientes"
-                pagesDatabase={this.state.pagesDatabase}
-                usersDatabase={this.state.usersDatabase}
-                allowedPages={this.clients}/>
-              <MenuItem
-                name="Produtos"
-                pagesDatabase={this.state.pagesDatabase}
-                usersDatabase={this.state.usersDatabase}
-                allowedPages={this.products}/>
-              <MenuItem
-                name="Contratos"
-                pagesDatabase={this.state.pagesDatabase}
-                usersDatabase={this.state.usersDatabase}
-                allowedPages={this.contracts}/>
-              </>
+                <>
+                <MenuItem
+                  name="Administrativo"
+                  pagesDatabase={this.state.pagesDatabase}
+                  usersDatabase={this.state.usersDatabase}
+                  pages={this.administrative}/>
+                <MenuItem
+                  name="Clientes"
+                  pagesDatabase={this.state.pagesDatabase}
+                  usersDatabase={this.state.usersDatabase}
+                  pages={this.clients}/>
+                <MenuItem
+                  name="Produtos"
+                  pagesDatabase={this.state.pagesDatabase}
+                  usersDatabase={this.state.usersDatabase}
+                  pages={this.products}/>
+                <MenuItem
+                  name="Contratos"
+                  pagesDatabase={this.state.pagesDatabase}
+                  usersDatabase={this.state.usersDatabase}
+                  pages={this.contracts}/>
+                </>
             : null}
             <button className="header__logout" onClick={() => this.logout()}>Sair</button>
+            </div>
           </div>
         </div>
       )

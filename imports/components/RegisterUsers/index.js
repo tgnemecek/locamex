@@ -53,12 +53,12 @@ export default class RegisterUsers extends React.Component {
   }
   saveEdits = () => {
     if (!this.state.username || !this.state.emails) {
-      throw new Error('required fields empty');
+      throw new Meteor.Error('required fields empty');
     }
     if (this.props.item._id) {
       Meteor.call('users.update', this.state);
     } else {
-      if (!this.state.password) throw new Error('password empty');
+      if (!this.state.password) throw new Meteor.Error('password empty');
       Meteor.call('users.insert', this.state);
     }
     this.props.toggleWindow();

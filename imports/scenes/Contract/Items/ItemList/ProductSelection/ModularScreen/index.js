@@ -23,30 +23,30 @@ export default class ModularScreen extends React.Component {
         quantity: 1
       };
       pack.modules = this.props.pack.modules.map((module, i) => {
-        var selected;
+        var quantity;
         var available;
         var description;
         for (var i = 0; i < moduleDatabase.length; i++) {
           if (moduleDatabase[i]._id == module) {
             available = moduleDatabase[i].available;
-            if (!selected) selected = available > 0 ? 1 : 0;
+            if (!quantity) quantity = available > 0 ? 1 : 0;
             description = moduleDatabase[i].description;
           }
         }
-        return {_id: module, available, selected, description}
+        return {_id: module, available, quantity, description}
       });
     } else if (this.props.modularScreenType == 2) { //Edit
       pack = {...this.props.pack};
       pack.modules = this.props.pack.modules.map((module, i) => {
-        var selected;
+        var quantity;
         var available;
         var description;
         for (var i = 0; i < moduleDatabase.length; i++) {
           if (moduleDatabase[i]._id == module._id) {
-            selected = module.selected;
-            available = Number(moduleDatabase[i].available) + (module.selected * pack.quantity);
+            quantity = module.quantity;
+            available = Number(moduleDatabase[i].available) + (module.quantity * pack.quantity);
             description = moduleDatabase[i].description;
-            return {_id: module._id, available, selected, description};
+            return {_id: module._id, available, quantity, description};
           }
         }
       });
@@ -66,7 +66,7 @@ export default class ModularScreen extends React.Component {
                 type="number"
                 max={module.available}
                 name={i}
-                value={module.selected}
+                value={module.quantity}
                 onChange={this.onChange}/></td>
           <td>{module.available}</td>
         </tr>
@@ -90,7 +90,7 @@ export default class ModularScreen extends React.Component {
       ...this.state.pack,
       quantity
     }
-    pack.modules[index].selected = value;
+    pack.modules[index].quantity = value;
     this.setState({ pack });
   }
 
@@ -100,18 +100,22 @@ export default class ModularScreen extends React.Component {
     var minorDivisible = 999;
     var division;
     for (var i = 0; i < modules.length; i++) {
-      if (!modules[i].selected) continue;
-      division = Number(modules[i].available) / Number(modules[i].selected);
+      if (!modules[i].quantity) continue;
+      division = Number(modules[i].available) / Number(modules[i].quantity);
       if (division < minorDivisible) minorDivisible = division;
     }
     return Math.floor(minorDivisible);
   }
 
   saveEdits = () => {
+    var pack = {
+      ...this.state.pack,
+      available: undefined
+    }
     if (this.props.modularScreenType == 1) {
-      this.props.addModular(this.state.pack);
+      this.props.addModular(pack);
     } else {
-      this.props.editModular(this.state.pack);
+      this.props.editModular(pack);
     }
   }
 

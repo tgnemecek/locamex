@@ -7,17 +7,23 @@
 
 .header {
   color: $header-color;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  max-width: ($site-max-width /1.5);
   margin: 0 auto;
   padding: 0 $space;
-  max-width: ($site-max-width /1.5);
+}
+
+.header__menu {
+  display: inline-flex;
+  width: 85%;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .header__title {
+  display: inline-block;
   margin: 0 !important;
-  width: 140px;
+  width: 15%;
+  vertical-align: middle;
 }
 
 .header__logout {
@@ -28,4 +34,9 @@
   padding: $space ($space /2);
   text-decoration: none;
   position: relative;
+  margin-left: $space;
+}
+
+.header__logout:hover {
+  background-color: darken($brand-primary, 5);
 }

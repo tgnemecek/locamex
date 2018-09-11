@@ -8,7 +8,7 @@ export default class DatabaseSide extends React.Component {
 
   renderDatabase = () => {
     return this.props.database.map((item, i, array) => {
-      if (!item.added) {
+      if (!item.added && item.available !== 0) {
         return (
           <tr key={i} className="product-selection__db-item">
             <td>{item._id}</td>

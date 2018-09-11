@@ -15,17 +15,16 @@ export default class ItemList extends React.Component {
   renderModular = (item) => {
     var str = "(";
     item.modules.forEach((module, i, array) => {
-      if (module.selected) {
+      if (module.quantity) {
         if (i < (array.length - 1)) {
-          str += module.description + ": " + module.selected + ". ";
-        } else str += module.description + ": " + module.selected;
+          str += module.description + ": " + module.quantity + ". ";
+        } else str += module.description + ": " + module.quantity;
       }
     });
     return str + ")";
   }
 
   toggleWindow = () => {
-
     var windowOpen = !this.state.windowOpen;
     this.setState({ windowOpen });
   }

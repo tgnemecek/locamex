@@ -103,7 +103,7 @@ export default class Contract extends React.Component {
   }
 
   cancelContract = () => {
-    Meteor.call('contracts.cancel', this.state.contract._id);
+    Meteor.call('contracts.update.one', this.state.contract._id, {status: "cancelled"});
     this.toggleCancelWindow();
   }
 
@@ -118,13 +118,13 @@ export default class Contract extends React.Component {
         this.props.history.push("/contract/" + res);
         this.setState({ contract });
       }
-      else if (err) console.log(err);
+      else if (err) alert(err.reason);
     });
     this.toggleActivateWindow();
   }
 
-  finalizeContract = (products) => {
-    Meteor.call('contracts.finalize', this.state.contract._id, products, (err, res) => {
+  finalizeContract = (containers, accessories) => {
+    Meteor.call('contracts.finalize', this.state.contract._id, containers, accessories, (err, res) => {
       if (res) {
         var contract = {
           ...this.state.contract,
@@ -132,7 +132,7 @@ export default class Contract extends React.Component {
         }
         this.setState({ contract });
       }
-      else if (err) console.log(err);
+      else if (err) alert(err.reason);
     });
     this.toggleFinalizeWindow();
   }

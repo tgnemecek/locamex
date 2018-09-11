@@ -5,12 +5,20 @@ export default class MenuItem extends React.Component {
 
   constructor(props) {
     super(props);
-    var allowedPages = this.props.allowedPages;
-    var allPages = this.props.pagesDatabase;
+    var usersDatabase = this.props.usersDatabase;
+    var pagesDatabase = this.props.pagesDatabase;
+    var pages = this.props.pages;
+    var allowedPages = [];
+    for (var i = 0; i < usersDatabase.length; i++) {
+      if (usersDatabase[i]._id == Meteor.userId()){
+        allowedPages = usersDatabase[i].pages;
+        break;
+      }
+    }
     this.filteredPages = [];
-    for (var i = 0; i < allPages.length; i++) {
-      if (allowedPages.includes(allPages[i]._id)) {
-        this.filteredPages.push(allPages[i]);
+    for (var i = 0; i < pagesDatabase.length; i++) {
+      if (allowedPages.includes(pagesDatabase[i]._id) && pages.includes(pagesDatabase[i]._id)) {
+        this.filteredPages.push(pagesDatabase[i]);
       }
     }
   }

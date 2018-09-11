@@ -3,12 +3,10 @@ import tools from '/imports/startup/tools/index';
 
 export const Places = new Mongo.Collection('places');
 
-if(Meteor.isServer) {
-    if (Meteor.isServer) {
-      Meteor.publish('placesPub', () => {
-        return Places.find();
-      })
-    }
+if (Meteor.isServer) {
+  Meteor.publish('placesPub', () => {
+    return Places.find();
+  })
     Places.remove({});
     Places.insert({
       _id: "0000",
@@ -48,6 +46,11 @@ if(Meteor.isServer) {
     Places.insert({
       _id: "0007",
       description: "Paulínia",
+      visible: true
+    })
+    Places.insert({
+      _id: "0008",
+      description: "Fábrica",
       visible: true
     })
   }

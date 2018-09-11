@@ -76,13 +76,16 @@ export default class ContractsTable extends React.Component {
         }
       }
       var totalValue = () => {
-        var arr = item.containers.concat(item.accessories, item.services);
-        if (arr.length == 0) return "-";
-        return tools.format(arr.reduce((acc, current) => {
-          return {
-              price: acc.price + current.price
-          }
-        }).price, "currency");
+        var containers = item.containers || [];
+        var services = item.services || [];
+        var accessories = item.accessories || [];
+        var all = [].concat(containers, services, accessories);
+        if (all.length == 0) return "-";
+        var value = all.reduce((acc, current) => {
+          var quantity = current.quantity ? current.quantity : 1;
+          return acc + (current.price * quantity)
+        }, 0);
+        return tools.format(value, "currency");
       }
       return (
         <tr key={i}>
@@ -95,7 +98,6 @@ export default class ContractsTable extends React.Component {
               className="button--link database__table__button"
               key={i}
               to={"/contract/" + item._id}>✎</Link>
-            {/* <button className="database__table__button" onClick={toggleWindow}>✎</button> */}
           </td>
         </tr>
       )

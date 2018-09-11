@@ -89,7 +89,7 @@ export default class ProductSelection extends React.Component {
         for (var i = 0; i < usedModules.length; i++) {
           for (var j = 0; j < moduleDatabase.length; j++) {
             if (moduleDatabase[j]._id == usedModules[i]._id) {
-              moduleDatabase[j].available -= usedModules[i].selected * pack.quantity;
+              moduleDatabase[j].available -= usedModules[i].quantity * pack.quantity;
               break;
             }
           }
@@ -198,14 +198,14 @@ export default class ProductSelection extends React.Component {
     var moduleDatabase = tools.deepCopy(this.state.moduleDatabase);
     var usedModules = pack.modules;
     var modularCount = this.state.modularCount;
-    var _id = "G" + (modularCount.toString().padStart(3, '0'));
+    var _id = "P" + (modularCount.toString().padStart(3, '0'));
     modularCount++;
     pack._id = _id;
     addedItems.push(pack);
     for (var i = 0; i < usedModules.length; i++) {
       for (var j = 0; j < moduleDatabase.length; j++) {
         if (moduleDatabase[j]._id == usedModules[i]._id) {
-          moduleDatabase[j].available -= usedModules[i].selected * pack.quantity;
+          moduleDatabase[j].available -= usedModules[i].quantity * pack.quantity;
           break;
         }
       }
@@ -231,8 +231,8 @@ export default class ProductSelection extends React.Component {
     for (var i = 0; i < usedModules.length; i++) {
       for (var j = 0; j < moduleDatabase.length; j++) {
         if (moduleDatabase[j]._id == usedModules[i]._id) {
-          moduleDatabase[j].available += oldModules[i].selected * oldQuantity;
-          moduleDatabase[j].available -= usedModules[i].selected * pack.quantity;
+          moduleDatabase[j].available += oldModules[i].quantity * oldQuantity;
+          moduleDatabase[j].available -= usedModules[i].quantity * pack.quantity;
           break;
         }
       }
@@ -255,7 +255,7 @@ export default class ProductSelection extends React.Component {
     for (var i = 0; i < oldModules.length; i++) {
       for (var j = 0; j < moduleDatabase.length; j++) {
         if (moduleDatabase[j]._id == oldModules[i]._id) {
-          moduleDatabase[j].available += oldModules[i].selected;
+          moduleDatabase[j].available += oldModules[i].quantity;
           break;
         }
       }

@@ -16,6 +16,7 @@ export default class Input extends React.Component {
   constructor(props) {
     super(props);
     this.state = { value: this.props.value };
+    this.className = this.props.className || "";
   }
   componentDidUpdate(prevProps) {
     if (prevProps.value !== this.props.value) {
@@ -23,7 +24,7 @@ export default class Input extends React.Component {
     }
   }
   onChange = (exportValue) => {
-    if (exportValue === undefined) throw new Error('exportValue is undefined in ' + this.props.name);
+    if (exportValue === undefined) throw new Meteor.Error('exportValue is undefined in ' + this.props.name);
     var e = {
       target: {
         value: exportValue,
@@ -72,7 +73,7 @@ export default class Input extends React.Component {
         ChosenComponent = Text;
     }
     return (
-      <div className={"input " + "input--"+ this.props.type + " " + this.props.className}>
+      <div className={"input " + "input--"+ this.props.type + " " + this.className}>
         {this.props.title ?
           <label style={this.props.labelStyle}>{this.props.title}</label>
         : null}

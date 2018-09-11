@@ -64,7 +64,7 @@ export default class ContainersTable extends React.Component {
       }
       function translate (input) {
         if (input === 'available') return 'Disponível';
-        if (input === 'rented') return 'Alugado';
+        if (input === 'rented') return 'Locado';
         if (input === 'maintenance') return 'Manutenção';
         if (input === 'inactive') return 'Inativo';
         if (input === 'fixed') return 'Fixo';
@@ -85,7 +85,7 @@ export default class ContainersTable extends React.Component {
           <td>{item.description}</td>
           <td className="small-column">{translate(item.type)}</td>
           <td className="small-column">{translate(item.status) || "Montados: " + item.assembled}</td>
-          <td className="small-column">{translatePlaces(item.place)}</td>
+          <td className="small-column">{item.status == "rented" ? "-" : translatePlaces(item.place)}</td>
           <td className="small-column">{tools.format(item.price, 'currency')}</td>
           <td className="small-column"><button className="database__table__button" onClick={toggleWindow}>✎</button></td>
         </tr>
