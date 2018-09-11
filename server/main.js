@@ -14,6 +14,7 @@ import '../imports/api/places/index';
 import '../imports/api/services/index';
 import '../imports/api/users/index';
 
+import '../imports/startup/bugsnag-configuration/index';
 import '../imports/startup/simple-schema-configuration/index';
 
 Meteor.startup(() => {

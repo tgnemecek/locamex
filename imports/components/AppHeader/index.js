@@ -4,6 +4,7 @@ import { Accounts } from 'meteor/accounts-base';
 import { Link, Redirect } from 'react-router-dom';
 import { Pages } from '/imports/api/pages/index';
 import MenuItem from './MenuItem/index'
+import bugsnag from 'bugsnag';
 
 class AppHeader extends React.Component {
 
@@ -29,6 +30,7 @@ class AppHeader extends React.Component {
       const usersDatabase = Meteor.users.find().fetch();
       this.setState({ pagesDatabase, usersDatabase });
     })
+    bugsnag.notify(new Error('Test error'))
   }
 
   componentWillUnmount = () => {
