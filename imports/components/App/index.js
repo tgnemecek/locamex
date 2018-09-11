@@ -28,7 +28,7 @@ export default App = () => {
 }
 
 function redirect() {
-  const BYPASS = false;
+  const BYPASS = true;
   if (BYPASS) return true;
   return Meteor.userId();
 }
