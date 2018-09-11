@@ -2,35 +2,37 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 export default class MenuItem extends React.Component {
-
   constructor(props) {
     super(props);
-    var usersDatabase = this.props.usersDatabase;
+    this.state = { filteredPages: [] };
+  }
+  componentDidMount = () => {
+    var user = {};
+    var allowedPages;
+    var filteredPages = [];
+    this.tracker = Tracker.autorun(() => {
+      user = Meteor.user();
+      allowedPages = user.pages;
+    })
     var pagesDatabase = this.props.pagesDatabase;
     var pages = this.props.pages;
-    var allowedPages = [];
-    for (var i = 0; i < usersDatabase.length; i++) {
-      if (usersDatabase[i]._id == Meteor.userId()){
-        allowedPages = usersDatabase[i].pages;
-        break;
+    for (var i = 0; i < allowedPages.length; i++) {
+      for (var j = 0; j < pagesDatabase.length; j++) {
+        if (allowedPages[i] == pagesDatabase[j]._id) {
+          filteredPages.push(pagesDatabase[j]);
+          break;
+        }
       }
     }
-    this.filteredPages = [];
-    for (var i = 0; i < pagesDatabase.length; i++) {
-      if (allowedPages.includes(pagesDatabase[i]._id) && pages.includes(pagesDatabase[i]._id)) {
-        this.filteredPages.push(pagesDatabase[i]);
-      }
-    }
+    this.setState({ filteredPages });
   }
-
   renderMultiple = () => {
-    return this.filteredPages.map((filteredPage, i) => {
+    return this.state.filteredPages.map((filteredPage, i) => {
       return <Link key={i} to={filteredPage.link}>{filteredPage.description}</Link>
     })
   }
-
   render() {
-    if (this.filteredPages.length > 1) {
+    if (this.state.filteredPages.length > 1) {
       return (
         <div className="menu-item">
           {this.props.name}
@@ -39,9 +41,9 @@ export default class MenuItem extends React.Component {
           </div>
         </div>
       )
-    } else if (this.filteredPages.length === 1) {
+    } else if (this.state.filteredPages.length === 1) {
       return (
-          <Link className="menu-item" to={this.filteredPages[0].link}>{this.filteredPages[0].description}</Link>
+          <Link className="menu-item" to={this.state.filteredPages[0].link}>{this.state.filteredPages[0].description}</Link>
       )
     } else return null;
   }

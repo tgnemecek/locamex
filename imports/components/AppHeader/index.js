@@ -28,7 +28,8 @@ class AppHeader extends React.Component {
       Meteor.subscribe('usersPub');
       const pagesDatabase = Pages.find().fetch();
       const usersDatabase = Meteor.users.find().fetch();
-      this.setState({ pagesDatabase, usersDatabase, ready: true });
+      const ready = pagesDatabase.length ? true : false;
+      this.setState({ pagesDatabase, usersDatabase, ready });
     })
   }
 
