@@ -145,6 +145,43 @@ export default class tools {
     }
   }
 
+  // Fix for version 2.0
+  // static trimStrings = (input) => {
+  //   if (Array.isArray(input)) {
+  //     return trimStringsInArray(input)
+  //   } else if (typeof input === 'object') {
+  //     return trimStringsInObject(input);
+  //   } else {
+  //     throw new Error('type-incorrect', 'tools.trimStrings only accepts arrays or objects, got: ' + typeof input);
+  //   }
+  //
+  //   function trimStringsInArray (array) {
+  //     var returnValue = array.map((item) => {
+  //       if (typeof item === 'string') {
+  //         item = item.trim();
+  //       } else if (Array.isArray(item)) {
+  //         item = trimStringsInArray(item);
+  //       } else if (typeof item === 'object') {
+  //         item = trimStringsInObject(item);
+  //       }
+  //     })
+  //     return returnValue;
+  //   }
+  //   function trimStringsInObject (object0) {
+  //     var object = {...object0};
+  //     Object.keys(object).forEach((key) => {
+  //       if (typeof object[key] === 'string') {
+  //         object[key] = object[key].trim();
+  //       } else if (Array.isArray(object[key])) {
+  //         object[key] = trimStringsInArray(object[key]);
+  //       } else if (typeof object[key] === 'object') {
+  //         object[key] = trimStringsInObject(object[key]);
+  //       }
+  //     })
+  //     return object;
+  //   }
+  // }
+
   static round = (value, decimals) => {
     typeof(value) == 'string' ? value.replace(',', '.') : null;
     return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
@@ -183,25 +220,49 @@ export default class tools {
   }
 
   static checkCpf(arg) {
-      var Soma = 0;
-      var Resto;
+      var sum = 0;
+      var remainder;
 
-      arg = arg.toString();
+      arg = arg.toString().replace(/\D+/g, '').trim();
 
-      if (arg == "00000000000") return false;
+      if (arg == "00000000000") {
+        return false;
+      } else if (arg == "11111111111") {
+        return false;
+      } else if (arg == "22222222222") {
+        return false;
+      } else if (arg == "33333333333") {
+        return false;
+      } else if (arg == "44444444444") {
+        return false;
+      } else if (arg == "55555555555") {
+        return false;
+      } else if (arg == "66666666666") {
+        return false;
+      } else if (arg == "77777777777") {
+        return false;
+      } else if (arg == "88888888888") {
+        return false;
+      } else if (arg == "99999999999") {
+        return false;
+      } else if (arg.length !== 11) {
+        return false;
+      }
 
-      for (var i=1; i<=9; i++) Soma = Soma + parseInt(arg.substring(i-1, i)) * (11 - i);
-      Resto = (Soma * 10) % 11;
+      for (var i = 1; i <= 9; i++) {
+        sum = sum + parseInt(arg.substring(i - 1, i)) * (11 - i);
+      }
+      remainder = (sum * 10) % 11;
 
-      if ((Resto == 10) || (Resto == 11))  Resto = 0;
-      if (Resto != parseInt(arg.substring(9, 10)) ) return false;
+      if ((remainder == 10) || (remainder == 11)) remainder = 0;
+      if (remainder != parseInt(arg.substring(9, 10)) ) return false;
 
-      Soma = 0;
-      for (i = 1; i <= 10; i++) Soma = Soma + parseInt(arg.substring(i-1, i)) * (12 - i);
-      Resto = (Soma * 10) % 11;
+      sum = 0;
+      for (i = 1; i <= 10; i++) sum = sum + parseInt(arg.substring(i-1, i)) * (12 - i);
+      remainder = (sum * 10) % 11;
 
-      if ((Resto == 10) || (Resto == 11))  Resto = 0;
-      if (Resto != parseInt(arg.substring(10, 11) ) ) return false;
+      if ((remainder == 10) || (remainder == 11))  remainder = 0;
+      if (remainder != parseInt(arg.substring(10, 11) ) ) return false;
       return true;
   }
 
@@ -227,29 +288,29 @@ export default class tools {
     var tamanho = arg.length - 2;
     var numeros = arg.substring(0,tamanho);
     var digitos = arg.substring(tamanho);
-    var soma = 0;
+    var sum = 0;
     var pos = tamanho - 7;
 
     for (var i = tamanho; i >= 1; i--) {
-      soma += numeros.charAt(tamanho - i) * pos--;
+      sum += numeros.charAt(tamanho - i) * pos--;
       if (pos < 2)
             pos = 9;
     }
 
-    var resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+    var resultado = sum % 11 < 2 ? 0 : 11 - sum % 11;
 
     if (resultado != digitos.charAt(0))
         return false;
     tamanho = tamanho + 1;
     numeros = arg.substring(0,tamanho);
-    soma = 0;
+    sum = 0;
     pos = tamanho - 7;
     for (i = tamanho; i >= 1; i--) {
-      soma += numeros.charAt(tamanho - i) * pos--;
+      sum += numeros.charAt(tamanho - i) * pos--;
       if (pos < 2)
             pos = 9;
     }
-    resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+    resultado = sum % 11 < 2 ? 0 : 11 - sum % 11;
     if (resultado != digitos.charAt(1))
           return false;
     return true;

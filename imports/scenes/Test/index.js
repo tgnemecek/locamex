@@ -9,21 +9,41 @@ export default class Test extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 10
+      // array: [
+      //   "000   ",
+      //   1,
+      //   {name: "aaa     "},
+      //   {name: "   bbb"},
+      //   [
+      //     {name1: "ccc    "},
+      //     {name2: "    ddd"},
+      //     {object: [
+      //       [{name3: "eee   "}, {name4: "   fff"}],
+      //       [{name5: "ggg   "}, {name6: "   hhh"}],
+      //       {object2: {name7: "iii   "}}
+      //     ]}
+      //   ]
+      // ]
+      // array: [
+      //   "000     ",
+      //   {name: "111   "},
+      //   "222      "
+      // ]
+      array: ["000   ", "111   "]
+      // array: [{name: "000   "}]
     }
   }
 
   onClick = () => {
-    {//Transaction
-      this.setState({ value: 999999 });
-    }
+    var state = {...this.state};
+    state = tools.trimStrings(state);
+    console.log(state);
   }
-
 
   render() {
     return (
       <>
-        <button onClick={this.onClick}>{this.state.value}</button>
+        <button onClick={this.onClick}>TRIM!!!!</button>
       </>
 
     )

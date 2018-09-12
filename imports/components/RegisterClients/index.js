@@ -51,7 +51,8 @@ export default class RegisterClients extends React.Component {
 
       confirmationWindow: false,
       tab: 'main',
-      errorMsg: ''
+      errorMsg: '',
+      errorKeys: []
     }
   }
   onChange = (e) => {
@@ -68,28 +69,29 @@ export default class RegisterClients extends React.Component {
     this.props.toggleWindow();
   }
   saveEdits = () => {
-    if (this.state.type == 'company') {
-      var registryAdditional = false;
-      if (this.state.registryMU) {
-        registryAdditional = true;
-      } else if (this.state.registryES) registryAdditional = true;
-      var check = checkRequiredFields(this.state);
-      if (check === true) {
-        var contacts = [];
-        for (var i = 0; i < this.state.contacts.length; i++) {
-          if (this.state.contacts[i].name) contacts.push(this.state.contacts[i]);
-        }
-        contacts.forEach((contact, i) => {
-          contact._id = i.toString().padStart(4, '0');
-        })
-        var state = {...this.state, contacts};
-        if (this.props.item._id) {
-          Meteor.call('clients.update', state);
-        } else Meteor.call('clients.insert', state);
-        this.props.toggleWindow();
-      } else {
-        this.setState({ errorMsg: `Campos obrigatórios não preenchidos: ${check}` })
-      }
+    var state = { ...this.state };
+    var originalContacts = state.contacts;
+    var contactsToCheck = [];
+    if (state.type == "company") {
+      contactsToCheck.push(state.contacts[requiredContactIndex]);
+      state.contacts = contactsToCheck;
+    }
+    var check = checkRequiredFields(state);
+    state.contacts = originalContacts;
+
+    if (check === true) {
+      state.contacts.forEach((contact, i) => {
+        contact._id = i.toString().padStart(4, '0');
+      })
+      if (this.props.item._id) {
+        Meteor.call('clients.update', state);
+      } else Meteor.call('clients.insert', state);
+      this.props.toggleWindow();
+    } else {
+      this.setState({
+        errorMsg: 'Campos obrigatórios não preenchidos/inválidos.',
+        errorKeys: check
+      })
     }
   }
   changeTab = (tab) => {
@@ -146,6 +148,7 @@ export default class RegisterClients extends React.Component {
               <option value="company">Pessoa Jurídica</option>
               <option value="person">Pessoa Física</option>
           </Input>
+          <div className="error-message">{this.state.errorMsg}</div>
           <Tab
             tab={this.state.tab}
             addNewTab={this.addNewTab}

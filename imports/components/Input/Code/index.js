@@ -7,7 +7,7 @@ export default class Code extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      style: {}
+      valid: 0
     }
     this.cursor = 0;
     this.ref = React.createRef();
@@ -20,27 +20,30 @@ export default class Code extends React.Component {
       var subtraction = substring1.length - substring2.length;
       newCursor = newCursor + subtraction;
       this.ref.current.setSelectionRange(newCursor, newCursor);
-      // if (subtraction < 0) {
-      //   this.ref.current.setSelectionRange(newCursor, newCursor);
-      // } else this.ref.current.setSelectionRange(this.cursor+1, this.cursor+1);
     }
   }
   validateCode = (value, type) => {
     var valid;
-    switch (type) {
-      // case 'phone':
-      //   valid = tools.checkPhone(value);
-      case 'email':
-        valid = tools.checkEmail(value);
-      case 'cnpj':
-        valid = tools.checkCNPJ(value);
-      case 'cpf':
-        valid = tools.checkCpf(value);
-      default:
-        valid = true;
+    if (type === 'email') {
+      valid = tools.checkEmail(value);
+    } else if (type === 'cnpj') {
+      valid = tools.checkCNPJ(value);
+    } else if (type === 'cpf') {
+      valid = tools.checkCpf(value);
+    } else {
+      valid = -1;
     }
-    var style = {borderColor: 'red'};
-    valid ? this.setState({ style: {} }) : this.setState({ style });
+    if (valid === true) { valid = 1 };
+    this.setState({ valid });
+  }
+  styleChanger = () => {
+    var style = {...this.props.style};
+    if (this.state.valid === 1) {
+      style.borderColor = "green";
+    } else if (this.state.valid !== 0) {
+      style.borderColor = "red";
+    }
+    return style;
   }
   onChange = (e) => {
     if (e) {
@@ -52,10 +55,10 @@ export default class Code extends React.Component {
       exportValue = tools.unformat(inputValue, this.props.type);
 
       var cursorStart = cursorStart + (displayValue.length - inputValue.length);
+      if (inputValue.length) {
+        this.validateCode(displayValue, this.props.type);
+      } else this.setState({ valid: 0 });
 
-      this.validateCode(displayValue, this.props.type);
-
-      // e.target.setSelectionRange(cursorStart, cursorStart);
       this.props.onChange(exportValue);
     }
   }
@@ -71,7 +74,7 @@ export default class Code extends React.Component {
         placeholder={this.props.placeholder}
         disabled={this.props.disabled}
 
-        style={this.state.style}
+        style={this.styleChanger()}
         />
     )
   }

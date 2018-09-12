@@ -20,8 +20,8 @@ export default App = () => {
         <Route path="/database/:database" render={(props) => (
           redirect() ? <Database {...props}/> : <Redirect to="/"/>
         )}/>
-        <Route path="*" component={NotFound}/>
         <Route path="/test" component={Test}/>
+        <Route path="*" component={NotFound}/>
       </Switch>
     </div>
   )

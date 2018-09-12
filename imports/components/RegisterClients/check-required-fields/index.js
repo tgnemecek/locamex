@@ -1,9 +1,10 @@
+import tools from '/imports/startup/tools/index';
+
 const requiredFieldsCompany = [
   "description",
   "type",
   "registry",
   "officialName",
-  "registryES",
   "registryMU"
 ]
 
@@ -32,6 +33,12 @@ const requiredFieldsFirstContact = [
   "phone1"
 ]
 
+const verificationFields = [
+  "registry",
+  "email",
+  "cpf"
+]
+
 export default function checkRequiredFields (state) {
   var currentFields;
   var emptyFields = [];
@@ -46,6 +53,12 @@ export default function checkRequiredFields (state) {
       if (currentFields.includes(key)) {
         if (!state[key]) {
           emptyFields.push(key);
+        } else {
+          if (verificationFields.includes(key)) {
+            var type = key;
+            if (key == "registry") type = state.type == "company" ? "cnpj" : "cpf";
+            if (!validateField(state[key], type)) emptyFields.push(key);
+          }
         }
       }
     } else {
@@ -58,13 +71,15 @@ export default function checkRequiredFields (state) {
         object = state[key][0];
         requiredSpecialFields = requiredFieldsFirstContact;
       }
-      Object.keys(object).forEach((innerKey) => {
-        if (requiredSpecialFields.includes(innerKey)) {
-          if (!object[innerKey]) {
-            emptyFields.push(innerKey);
+      if (object) {
+        Object.keys(object).forEach((innerKey) => {
+          if (requiredSpecialFields.includes(innerKey)) {
+            if (!object[innerKey]) {
+              emptyFields.push(innerKey);
+            }
           }
-        }
-      })
+        })
+      }
     }
   })
   if (emptyFields.length > 0) {
@@ -72,3 +87,16 @@ export default function checkRequiredFields (state) {
   } else return true;
 }
 
+function validateField (value, type) {
+  var valid;
+  if (type === 'email') {
+    valid = tools.checkEmail(value);
+  } else if (type === 'cnpj') {
+    valid = tools.checkCNPJ(value);
+  } else if (type === 'cpf') {
+    valid = tools.checkCpf(value);
+  } else {
+    valid = false;
+  }
+  return valid;
+}
