@@ -32,7 +32,7 @@ export default function Person (props) {
       />
       <Input
         title="RG:"
-        type="rg"
+        type="text"
         name="rg"
         style={props.item.errorKeys.includes("rg") ? {borderColor: "red"} : null}
         value={props.item.rg}

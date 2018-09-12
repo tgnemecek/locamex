@@ -5,12 +5,14 @@ import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 
-export default class ContactTab extends React.Component {
+export default function ContactTab (props) {
+
+  const tab = (Number(props.item.tab) - 2);
+
   onChange = (e) => {
-    var contacts = tools.deepCopy(this.props.item.contacts);
-    var tab = (Number(this.props.item.tab) - 2);
+    var contacts = tools.deepCopy(props.item.contacts);
     contacts[tab] = {
-      ...this.props.item.contacts[tab],
+      ...props.item.contacts[tab],
       [e.target.name]: e.target.value
     };
     var exportObj = {
@@ -19,65 +21,73 @@ export default class ContactTab extends React.Component {
         name: 'contacts'
       }
     };
-    this.props.onChange(exportObj);
+    props.onChange(exportObj);
   }
-  render() {
-    var tab = (Number(this.props.item.tab) - 2);
-    return (
-      <>
-      <Block columns={4} options={[{block: 1, span: 3}, {block: 2, span: 2}, {block: 3, span: 2}, {block: 4, span: 2}]}>
-        <Input
-          title="Código:"
-          type="text"
-          disabled={true}
-          name="_id"
-          value={this.props.item.contacts[tab]._id}
-          onChange={this.onChange}
-        />
-        <Input
-          title="Nome Completo:"
-          type="text"
-          name="name"
-          value={this.props.item.contacts[tab].name}
-          onChange={this.onChange}
-        />
-        <Input
-          title="CPF:"
-          type="cpf"
-          name="cpf"
-          value={this.props.item.contacts[tab].cpf}
-          onChange={this.onChange}
-        />
-        <Input
-          title="RG:"
-          type="rg"
-          name="rg"
-          value={this.props.item.contacts[tab].rg}
-          onChange={this.onChange}
-        />
-        <Input
-          title="Email:"
-          type="email"
-          name="email"
-          value={this.props.item.contacts[tab].email}
-          onChange={this.onChange}
-        />
-        <Input
-          title="Telefone 1:"
-          type="phone"
-          name="phone1"
-          value={this.props.item.contacts[tab].phone1}
-          onChange={this.onChange}
-        />
-        <Input
-          title="Telefone 2:"
-          type="text"
-          name="phone2"
-          value={this.props.item.contacts[tab].phone2}
-          onChange={this.onChange}
-        />
-      </Block>
-      </>
-    )
+  style = (name) => {
+    if (tab === 0 && props.item.type === "company") {
+      if (props.item.errorKeys.includes(name)) {
+        return {borderColor: "red"}
+      } else return null
+    }
   }
+  return (
+    <Block columns={4} options={[{block: 1, span: 3}, {block: 2, span: 2}, {block: 3, span: 2}, {block: 4, span: 2}]}>
+      <Input
+        title="Código do Contato:"
+        type="text"
+        disabled={true}
+        name="_id"
+        style={style("_id")}
+        value={props.item.contacts[tab]._id}
+        onChange={onChange}
+      />
+      <Input
+        title="Nome Completo:"
+        type="text"
+        name="name"
+        style={style("name")}
+        value={props.item.contacts[tab].name}
+        onChange={onChange}
+      />
+      <Input
+        title="CPF:"
+        type="cpf"
+        name="cpf"
+        style={style("cpf")}
+        value={props.item.contacts[tab].cpf}
+        onChange={onChange}
+      />
+      <Input
+        title="RG:"
+        type="rg"
+        name="rg"
+        style={style("rg")}
+        value={props.item.contacts[tab].rg}
+        onChange={onChange}
+      />
+      <Input
+        title="Email:"
+        type="email"
+        name="email"
+        style={style("email")}
+        value={props.item.contacts[tab].email}
+        onChange={onChange}
+      />
+      <Input
+        title="Telefone 1:"
+        type="phone"
+        name="phone1"
+        style={style("phone1")}
+        value={props.item.contacts[tab].phone1}
+        onChange={onChange}
+      />
+      <Input
+        title="Telefone 2:"
+        type="text"
+        name="phone2"
+        value={props.item.contacts[tab].phone2}
+        onChange={onChange}
+      />
+    </Block>
+  )
 }

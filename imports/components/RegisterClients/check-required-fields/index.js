@@ -36,7 +36,8 @@ const requiredFieldsFirstContact = [
 const verificationFields = [
   "registry",
   "email",
-  "cpf"
+  "cpf",
+  "phone"
 ]
 
 export default function checkRequiredFields (state) {
@@ -57,6 +58,7 @@ export default function checkRequiredFields (state) {
           if (verificationFields.includes(key)) {
             var type = key;
             if (key == "registry") type = state.type == "company" ? "cnpj" : "cpf";
+            if (key == "phone1") type = "phone";
             if (!validateField(state[key], type)) emptyFields.push(key);
           }
         }
@@ -67,7 +69,7 @@ export default function checkRequiredFields (state) {
       if (key == "address") {
         object = state[key];
         requiredSpecialFields = requiredFieldsAddress;
-      } else if (key == "contacts") {
+      } else if (key == "contacts" && state.type == "company") {
         object = state[key][0];
         requiredSpecialFields = requiredFieldsFirstContact;
       }
@@ -95,6 +97,8 @@ function validateField (value, type) {
     valid = tools.checkCNPJ(value);
   } else if (type === 'cpf') {
     valid = tools.checkCpf(value);
+  } else if (type === 'phone') {
+    valid = tools.checkPhone(value);
   } else {
     valid = false;
   }

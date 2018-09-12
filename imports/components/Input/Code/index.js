@@ -30,6 +30,8 @@ export default class Code extends React.Component {
       valid = tools.checkCNPJ(value);
     } else if (type === 'cpf') {
       valid = tools.checkCpf(value);
+    } else if (type === 'phone') {
+      valid = tools.checkPhone(value);
     } else {
       valid = -1;
     }

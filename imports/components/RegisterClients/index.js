@@ -73,7 +73,7 @@ export default class RegisterClients extends React.Component {
     var originalContacts = state.contacts;
     var contactsToCheck = [];
     if (state.type == "company") {
-      contactsToCheck.push(state.contacts[requiredContactIndex]);
+      contactsToCheck.push(state.contacts[0]);
       state.contacts = contactsToCheck;
     }
     var check = checkRequiredFields(state);
