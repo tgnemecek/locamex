@@ -12,7 +12,6 @@ class AppHeader extends React.Component {
     this.state = {
       title: undefined,
       pagesDatabase: [],
-      usersDatabase: [],
       ready: false
     }
     this.administrative = ["0000", "0001"];
@@ -27,9 +26,8 @@ class AppHeader extends React.Component {
       Meteor.subscribe('pagesPub');
       Meteor.subscribe('usersPub');
       const pagesDatabase = Pages.find().fetch();
-      const usersDatabase = Meteor.users.find().fetch();
       const ready = pagesDatabase.length ? true : false;
-      this.setState({ pagesDatabase, usersDatabase, ready });
+      this.setState({ pagesDatabase, ready });
     })
   }
 
@@ -93,22 +91,18 @@ class AppHeader extends React.Component {
                 <MenuItem
                   name="Administrativo"
                   pagesDatabase={this.state.pagesDatabase}
-                  usersDatabase={this.state.usersDatabase}
                   pages={this.administrative}/>
                 <MenuItem
                   name="Clientes"
                   pagesDatabase={this.state.pagesDatabase}
-                  usersDatabase={this.state.usersDatabase}
                   pages={this.clients}/>
                 <MenuItem
                   name="Produtos"
                   pagesDatabase={this.state.pagesDatabase}
-                  usersDatabase={this.state.usersDatabase}
                   pages={this.products}/>
                 <MenuItem
                   name="Contratos"
                   pagesDatabase={this.state.pagesDatabase}
-                  usersDatabase={this.state.usersDatabase}
                   pages={this.contracts}/>
                 </>
             : null}

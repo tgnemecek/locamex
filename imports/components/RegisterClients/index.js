@@ -12,6 +12,7 @@ import MainTab from './MainTab/index';
 import AddressTab from './AddressTab/index';
 import ContactTab from './ContactTab/index';
 import ObservationsTab from './ObservationsTab/index';
+import checkRequiredFields from './check-required-fields/index';
 
 export default class RegisterClients extends React.Component {
   constructor(props) {
@@ -20,10 +21,14 @@ export default class RegisterClients extends React.Component {
       _id: this.props.item._id || '',
       description: this.props.item.description || '',
       officialName: this.props.item.officialName || '',
-      type: this.props.item.type || '',
+      type: this.props.item.type || 'company',
       registry: this.props.item.registry || '',
       registryES: this.props.item.registryES || '',
       registryMU: this.props.item.registryMU || '',
+      rg: this.props.item.rg || '',
+      phone1: this.props.item.phone1 || '',
+      phone2: this.props.item.phone2 || '',
+      email: this.props.item.email || '',
       address: this.props.item.address || {
         number: '',
         street: '',
@@ -33,10 +38,20 @@ export default class RegisterClients extends React.Component {
         additional: ''
       },
       observations: this.props.item.observations || '',
-      contacts: this.props.item.contacts || [],
+      contacts: this.props.item.contacts || [{
+        _id: '',
+        name: '',
+        phone1: '',
+        phone2: '',
+        email: '',
+        cpf: '',
+        rg: '',
+        visible: true
+      }],
 
       confirmationWindow: false,
-      tab: 'main'
+      tab: 'main',
+      errorMsg: ''
     }
   }
   onChange = (e) => {
@@ -53,18 +68,29 @@ export default class RegisterClients extends React.Component {
     this.props.toggleWindow();
   }
   saveEdits = () => {
-    var contacts = [];
-    for (var i = 0; i < this.state.contacts.length; i++) {
-      if (this.state.contacts[i].name) contacts.push(this.state.contacts[i]);
+    if (this.state.type == 'company') {
+      var registryAdditional = false;
+      if (this.state.registryMU) {
+        registryAdditional = true;
+      } else if (this.state.registryES) registryAdditional = true;
+      var check = checkRequiredFields(this.state);
+      if (check === true) {
+        var contacts = [];
+        for (var i = 0; i < this.state.contacts.length; i++) {
+          if (this.state.contacts[i].name) contacts.push(this.state.contacts[i]);
+        }
+        contacts.forEach((contact, i) => {
+          contact._id = i.toString().padStart(4, '0');
+        })
+        var state = {...this.state, contacts};
+        if (this.props.item._id) {
+          Meteor.call('clients.update', state);
+        } else Meteor.call('clients.insert', state);
+        this.props.toggleWindow();
+      } else {
+        this.setState({ errorMsg: `Campos obrigatórios não preenchidos: ${check}` })
+      }
     }
-    contacts.forEach((contact, i) => {
-      contact._id = i.toString().padStart(4, '0');
-    })
-    var state = {...this.state, contacts};
-    if (this.props.item._id) {
-      Meteor.call('clients.update', state);
-    } else Meteor.call('clients.insert', state);
-    this.props.toggleWindow();
   }
   changeTab = (tab) => {
     if (tab === '+') {
@@ -79,7 +105,9 @@ export default class RegisterClients extends React.Component {
       {value: 'address', title: 'Endereço'}
     ];
     var arr2 = this.state.contacts.map((contact, i) => {
-      return {value: (i+2), title: `Contato ${i + 1}`}
+      if (this.state.type == 'company') {
+        return {value: (i+2), title: `Contato ${i + 1}`}
+      } else return {value: (i+2), title: `Contato Adicional ${i + 1}`}
     })
     var arr3 = [
       {value: '+', title: '+'},
@@ -108,6 +136,16 @@ export default class RegisterClients extends React.Component {
           title={this.props.item._id ? "Editar Cliente" : "Criar Novo Cliente"}
           closeBox={this.props.toggleWindow}
           width="800px">
+          <Input
+            type="select"
+            name="type"
+            className="register-clients__type-select"
+            disabled={!!this.props.item.type}
+            value={this.state.type}
+            onChange={this.onChange}>
+              <option value="company">Pessoa Jurídica</option>
+              <option value="person">Pessoa Física</option>
+          </Input>
           <Tab
             tab={this.state.tab}
             addNewTab={this.addNewTab}
@@ -131,9 +169,9 @@ export default class RegisterClients extends React.Component {
                 ]}/>
               </Box>
             : null}
-            {this.state.tab > 1 ?
+            {/* {this.state.tab > 1 ?
               <button className="button button--danger" style={{width: "100%"}} onClick={this.toggleConfirmationWindow}>Excluir Contato</button>
-            : null}
+            : null} */}
             <FooterButtons buttons={[
               {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
               {text: "Salvar", onClick: () => this.saveEdits()}

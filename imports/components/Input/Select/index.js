@@ -9,7 +9,7 @@ export default class Select extends React.Component {
   }
   render() {
     return (
-      <select value={this.props.value} onChange={this.onChange}>
+      <select value={this.props.value} onChange={this.onChange} disabled={this.props.disabled}>
         {this.props.children}
       </select>
     )
