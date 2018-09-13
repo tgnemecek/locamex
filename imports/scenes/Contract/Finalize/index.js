@@ -1,6 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import moment from 'moment';
 import { Places } from '/imports/api/places/index';
 import tools from '/imports/startup/tools/index';
 import Input from '/imports/components/Input/index';

@@ -38,6 +38,7 @@ export default class Contract extends React.Component {
         dates: {
           creationDate: new Date(),
           startDate: new Date(),
+          billingDate: new Date(),
           duration: 1
         },
         containers: [],
@@ -47,6 +48,8 @@ export default class Contract extends React.Component {
       toggleCancelWindow: false,
       toggleActivateWindow: false,
       toggleFinalizeWindow: false,
+      errorMsg: '',
+      errorKeys: [],
       ready: 0
     }
   }
@@ -89,7 +92,32 @@ export default class Contract extends React.Component {
 
   toggleActivateWindow = () => {
     var toggleActivateWindow = !this.state.toggleActivateWindow;
-    this.setState({ toggleActivateWindow });
+    if (toggleActivateWindow) {
+      var errorKeys = [];
+      var errorMsg = 'Campos obrigatórios não preenchidos/inválidos.';
+
+      if (!this.state.contract.clientId) errorKeys.push("clientId");
+
+      if (!this.state.contract.deliveryAddress.cep) errorKeys.push("cep");
+      if (!this.state.contract.deliveryAddress.street) errorKeys.push("street");
+      if (!this.state.contract.deliveryAddress.city) errorKeys.push("city");
+      if (!this.state.contract.deliveryAddress.state) errorKeys.push("state");
+      if (!this.state.contract.deliveryAddress.number) errorKeys.push("number");
+
+      if (!this.state.contract.billing.length) {
+        errorKeys.push("billing");
+        errorMsg = 'Favor preencher a Tabela de Cobrança.';
+      }
+
+      if (!this.totalValue()) {
+        errorKeys.push("totalValue");
+        errorMsg = 'O Valor Total do Contrato não pode ser zero.';
+      }
+      if (errorKeys.length > 0) {
+        this.setState({ errorKeys, errorMsg });
+      } else this.setState({ toggleActivateWindow, errorKeys, errorMsg: '' });
+
+    } else this.setState({ toggleActivateWindow });
   }
 
   toggleCancelWindow = () => {
@@ -180,11 +208,13 @@ export default class Contract extends React.Component {
               toggleCancelWindow={this.toggleCancelWindow}
               contract={this.state.contract}
               updateContract={this.updateContract}
+              errorKeys={this.state.errorKeys}
             />
             <div className={this.setDisabledClassName()}>
               <Information
                 contract={this.state.contract}
                 updateContract={this.updateContract}
+                errorKeys={this.state.errorKeys}
               />
               <Items
                 contract={this.state.contract}
@@ -192,7 +222,8 @@ export default class Contract extends React.Component {
               />
             </div>
             <div className="contract__footer">
-              <div className="contract__total-value">
+              <div className="error-message">{this.state.errorMsg}</div>
+              <div className="contract__total-value" style={this.state.errorKeys.includes("totalValue") ? {color: "red"} : null}>
                 <h3>Valor Total do Contrato: {tools.format(this.totalValue(), 'currency')}</h3>
               </div>
               {this.state.contract.status === 'inactive' ?

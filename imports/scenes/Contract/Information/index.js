@@ -47,14 +47,13 @@ export default class Information extends React.Component {
   handleChange = (e) => {
     var value = e.target.value;
     var name = e.target.name;
-    if (name == 'client') {
-      this.props.updateContract(value, "clientId");
-      return;
-    }
     var extra = e.target.extra;
-    var obj = {...this.props.contract[extra]};
-    obj[name] = value;
-    this.props.updateContract(obj, extra);
+    if (extra) {
+      var obj = {...this.props.contract[extra]};
+      obj[name] = value;
+      this.props.updateContract(obj, extra);
+    } else this.props.updateContract(value, name);
+
   }
 
   cepButtonClick = (data) => {
@@ -81,6 +80,7 @@ export default class Information extends React.Component {
               title="Cliente:"
               type="select"
               name="clientId"
+              style={this.props.errorKeys.includes("clientId") ? {borderColor: "red"} : null}
               value={this.props.contract.clientId}
               onChange={this.handleChange}>
               <option> </option>
@@ -91,6 +91,7 @@ export default class Information extends React.Component {
               name="street"
               type="text"
               extra="deliveryAddress"
+              style={this.props.errorKeys.includes("street") ? {borderColor: "red"} : null}
               value={this.props.contract.deliveryAddress.street}
               onChange={this.handleChange}
             />
@@ -99,6 +100,7 @@ export default class Information extends React.Component {
               name="cep"
               type="cep"
               extra="deliveryAddress"
+              style={this.props.errorKeys.includes("cep") ? {borderColor: "red"} : null}
               buttonClick={this.cepButtonClick}
               value={this.props.contract.deliveryAddress.cep}
               onChange={this.handleChange}
@@ -117,6 +119,7 @@ export default class Information extends React.Component {
               title="Duração: (meses)"
               value={this.props.contract.dates.duration}
               onChange={this.handleChange}
+              min={1}
               name="duration"
               extra="dates"
               type="number"/>
@@ -125,6 +128,7 @@ export default class Information extends React.Component {
               name="city"
               type="text"
               extra="deliveryAddress"
+              style={this.props.errorKeys.includes("city") ? {borderColor: "red"} : null}
               value={this.props.contract.deliveryAddress.city}
               onChange={this.handleChange}
             />
@@ -133,6 +137,7 @@ export default class Information extends React.Component {
               type="select"
               name="state"
               extra="deliveryAddress"
+              style={this.props.errorKeys.includes("state") ? {borderColor: "red"} : null}
               onChange={this.handleChange}
               value={this.props.contract.deliveryAddress.state}>
               {tools.states.map((item, i) => {
@@ -144,6 +149,7 @@ export default class Information extends React.Component {
               name="number"
               type="number"
               extra="deliveryAddress"
+              style={this.props.errorKeys.includes("number") ? {borderColor: "red"} : null}
               value={this.props.contract.deliveryAddress.number}
               onChange={this.handleChange}
             />

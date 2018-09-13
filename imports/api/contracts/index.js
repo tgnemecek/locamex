@@ -4,38 +4,9 @@ import tools from '/imports/startup/tools/index';
 export const Contracts = new Mongo.Collection('contracts');
 
 if (Meteor.isServer) {
-
   Meteor.publish('contractsPub', () => {
     return Contracts.find();
   })
-  // Contracts.remove({});
-  // Contracts.insert({
-  //   _id: "0000",
-  //   clientId: "0000",
-  //   status: "inactive", //active-inactive-cancelled-finished
-  //   createdBy: "Funcionário 1",
-  //   dates: {
-  //     creationDate: new Date(),
-  //     startDate: new Date(),
-  //     duration: 6
-  //   },
-  //   billing: [],
-  //   observations: 'Exposição nova',
-  //   deliveryAddress: {
-  //     state: "SP",
-  //     city: "São Paulo",
-  //     street: "Rua Sonia Ribeiro",
-  //     number: 1212,
-  //     additional: "Casa 4",
-  //     district: "Brooklin Paulista",
-  //     cep: 04621010
-  //   },
-  //   containers: [],
-  //   accessories: [],
-  //   services: [],
-  //   visible: true
-  // });
-
   Meteor.methods({
     'contracts.insert'(state) {
       const prefix = new Date().getFullYear();
@@ -89,7 +60,6 @@ if (Meteor.isServer) {
         }
         for (var i = 0; i < data.accessories.length; i++) {
           var stillAvailable = Meteor.call('accessories.check', data.accessories[i]._id, data.accessories[i].quantity);
-          console.log('stillAvailable', stillAvailable)
           if (!stillAvailable) {
             throw new Meteor.Error ("accessory-not-available",
             "O acessório " + data.accessories[i]._id + " não está mais disponível na quantidade desejada.");

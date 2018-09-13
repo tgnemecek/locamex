@@ -71,13 +71,16 @@ export default class Header extends React.Component {
                                               toggleWindow={this.toggleWindow}
                                               updateContract={this.props.updateContract}
                                               /> : null}
-            <button value={'billing'} onClick={this.toggleWindow}>$</button>
+            <button value={'billing'} onClick={this.toggleWindow} style={this.props.errorKeys.includes("billing") ? {color: "red"} : null}>$</button>
             {this.state.windowOpen == 'billing' ? <Billing
                                               contract={this.props.contract}
                                               toggleWindow={this.toggleWindow}
                                               updateContract={this.props.updateContract}
+                                              errorKeys={this.props.errorKeys}
                                               /> : null}
-            <button onClick={this.props.toggleCancelWindow}>✖</button>
+            {this.props.contract.status !== "finalized" ?
+              <button onClick={this.props.toggleCancelWindow}>✖</button>
+            : null}
           </div>
           <div className="contract__title">
             <h1>Contrato #{this.props.contract._id}</h1>

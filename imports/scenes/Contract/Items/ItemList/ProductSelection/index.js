@@ -183,7 +183,6 @@ export default class ProductSelection extends React.Component {
   }
 
   saveEdits = () => {
-
     var addedItems = this.state.addedItems;
     var newArray = [];
     addedItems.forEach((item) => {

@@ -19,7 +19,9 @@ export default class Billing extends React.Component {
       valid: false,
       calendarOpen: false,
       startDate: this.props.contract.startDate,
-      messageBox: false
+
+      errorKeys: [],
+      errorMsg: ''
     }
     var containers = this.props.contract.containers ? this.props.contract.containers : [];
     var accessories = this.props.contract.accessories ? this.props.contract.accessories : [];
@@ -68,35 +70,66 @@ export default class Billing extends React.Component {
       if (i == 0) charge.value = (equalValue + rest);
       else charge.value = equalValue;
     })
-    this.setState({ charges });
+    return charges;
   }
 
-  updateTable = (e) => {
+  updateChargesDates = (input) => {
+    var array = input || this.state.charges;
+    var charges = array.map((charge, i) => {
+      return {
+        ...charge,
+        startDate: moment(this.state.startDate).add((30 * i + i), 'days').toDate(),
+        endDate: moment(this.state.startDate).add((30 * i + 30 + i), 'days').toDate(),
+      }
+    })
+    return charges;
+  }
+
+  updateTableLength = (e) => {
+    // var value = Number(e.target.value);
+    // var charges = tools.deepCopy(this.state.charges);
+    // var difference = Math.abs(charges.length - value);
+    // var chargeValue = this.state.charges[0] ? this.state.charges[0].value : '';
+    // for (var i = 0; i < value; i++) {
+    //   if (i < charges.length) {
+    //     charges[i] = {
+    //       description: charges[i].description,
+    //       value: this.state.equalDivision ? chargeValue : charges[i].value,
+    //       startDate: moment(this.state.startDate).add((30 * i + i), 'days').toDate(),
+    //       endDate: moment(this.state.startDate).add((30 * i + 30 + i), 'days').toDate(),
+    //     }
+    //   } else {
+    //     charges[i] = {
+    //       description: `Cobrança #${i + 1} referente ao Valor Total do Contrato`,
+    //       value: this.state.equalDivision ? chargeValue : 0,
+    //       startDate: moment(this.state.startDate).add((30 * i + i), 'days').toDate(),
+    //       endDate: moment(this.state.startDate).add((30 * i + 30 + i), 'days').toDate(),
+    //     }
+    //   }
+    // }
+    // if (difference > 0) charges.splice(value, difference);
+    // this.setEqualValues(charges);
     var value = Number(e.target.value);
     var charges = tools.deepCopy(this.state.charges);
     var newCharges = [];
     var difference = Math.abs(charges.length - value);
-    var moment1 = moment(this.state.startDate).add((30 * i + i), 'days');
-    var moment2 = moment(this.state.startDate).add((30 * i + 30 + i), 'days');
     if (value > charges.length) {
       for (var i = 0; i < difference; i++) {
         var chargeValue = this.state.charges[0] ? this.state.charges[0].value : '';
         newCharges.push({
-          description: `Cobrança #${i +  charges.length + 1} referente ao Valor Total do Contrato`,
-          value: this.state.equalDivision ? chargeValue : '',
-          startDate: moment1,
-          endDate: moment2
+          description: `Cobrança #${i +  charges.length + 1} referente ao Valor Total do Contrato`
         })
       }
       charges = charges.concat(newCharges);
-      this.setEqualValues(charges);
-    }
-    if (value < charges.length) {
+      charges = this.setEqualValues(charges);
+    } else if (value < charges.length) {
       for (var i = 0; i < value; i++) {
         newCharges.push(charges[i]);
       }
-      this.setEqualValues(newCharges);
+      charges = this.setEqualValues(newCharges);
     }
+    charges = this.updateChargesDates(charges);
+    this.setState({ charges });
   }
 
   onChange = (e) => {
@@ -143,7 +176,7 @@ export default class Billing extends React.Component {
 
   calcDifference = () => {
     var value = tools.format(this.state.difference, 'currency');
-    var className = this.state.difference != 0 ? "difference--danger" : "difference--zero";
+    var className = this.state.difference !== 0 ? "billing__difference--danger" : "billing__difference--zero";
     return <span className={className}>{value}</span>
   }
 
@@ -153,15 +186,33 @@ export default class Billing extends React.Component {
     this.setState({ calendarOpen });
   }
 
-  changeDate = (startDate) => {
-    this.setState({ startDate });
-    this.toggleCalendar();
+  changeDate = (e) => {
+    var startDate = e.target.value;
+    this.setState({ startDate }, () => {
+      var charges = this.updateChargesDates();
+      this.setState({ charges });
+      this.toggleCalendar();
+    });
   }
 
   saveEdits = () => {
     if (this.state.difference !== 0) {
-      this.setState({ messageBox: true });
+      this.setState({ errorMsg: 'O valor resultante das parcelas não coincide com o Valor Total do Contrato.' });
+    } else if (this.state.totalValue === 0) {
+      this.setState({
+        errorKeys: ["totalValue"],
+        errorMsg: 'O Valor Total do Contrato não pode ser zero. Adicione produtos antes.'
+      });
     } else {
+      for (var i = 0; i < this.state.charges.length; i++) {
+        if (this.state.charges[i].value <= 0) {
+          this.setState({
+            errorKeys: ["zeroCharges"],
+            errorMsg: 'Não deve haver cobranças com valor zero.'
+          })
+          return;
+        }
+      }
       this.props.updateContract(this.state.charges, "billing");
       this.props.toggleWindow();
     }
@@ -174,18 +225,13 @@ export default class Billing extends React.Component {
           width="1000px"
           closeBox={this.props.toggleWindow}>
           <div className={this.props.contract.status !== 'inactive' ? "contract--disabled" : null}>
-            {this.state.messageBox ?
-              <Box title="Aviso:">
-                <p>O valor resultante das parcelas não coincide com o Valor Total do Contrato.</p>
-                <FooterButtons buttons={[{text: "Voltar", onClick: () => this.setState({ messageBox: false })}]}/>
-              </Box>
-            : null}
+            <div className="error-message">{this.state.errorMsg}</div>
               <Block columns={3}>
                 <Input
                   title="Número de Cobranças:"
                   type="number"
                   value={this.state.charges.length}
-                  onChange={this.updateTable}
+                  onChange={this.updateTableLength}
                 />
                 <Input
                   title="Início da Cobrança:"
@@ -222,7 +268,7 @@ export default class Billing extends React.Component {
                     <td>{this.calcDifference()}</td>
                   </tr>
                   <tr>
-                    <th colSpan="4"><b>Valor Total do Contrato:</b></th>
+                    <th colSpan="4" ><b>Valor Total do Contrato:</b></th>
                     <th>{tools.format(this.state.totalValue, "currency")}</th>
                   </tr>
                 </tfoot>

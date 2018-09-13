@@ -29,7 +29,7 @@ export default class ModularScreen extends React.Component {
         for (var i = 0; i < moduleDatabase.length; i++) {
           if (moduleDatabase[i]._id == module) {
             available = moduleDatabase[i].available;
-            if (!quantity) quantity = available > 0 ? 1 : 0;
+            if (!quantity) quantity = 0;
             description = moduleDatabase[i].description;
           }
         }

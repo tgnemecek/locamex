@@ -7,8 +7,7 @@ export default class ItemList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      windowOpen: false,
-      addedItems: this.props.contract[this.props.database]
+      windowOpen: false
     }
   }
 
@@ -30,11 +29,11 @@ export default class ItemList extends React.Component {
   }
 
   updateTable = (addedItems) => {
-    this.setState({ addedItems }, () => { this.props.updateContract(addedItems, this.props.database) });
+    this.props.updateContract([addedItems, []], [this.props.database, "billing"]);
   }
 
   row = () => {
-    return this.state.addedItems.map((item, i) => {
+    return this.props.contract[this.props.database].map((item, i) => {
       return (
         <tr key={i}>
           <td className="small-column">{item._id}</td>
@@ -51,11 +50,11 @@ export default class ItemList extends React.Component {
       <>
       {this.state.windowOpen ? <ProductSelection
                                   database={this.props.database}
-                                  addedItems={this.state.addedItems}
+                                  addedItems={this.props.contract[this.props.database]}
                                   saveEdits={this.updateTable}
                                   closeProductSelection={this.toggleWindow}/> : null}
       <div className="contract__item-list" onClick={this.toggleWindow}>
-        {this.state.addedItems.length > 0 ?
+        {this.props.contract[this.props.database].length > 0 ?
           <div>
             <div className="contract__item-list__overlay">
               <div>✎</div>
