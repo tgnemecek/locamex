@@ -1,5 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import { Meteor } from 'meteor/meteor';
+import tools from '/imports/startup/tools/index';
 
 export const Services = new Mongo.Collection('services');
 
