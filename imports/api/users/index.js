@@ -3,7 +3,7 @@ import { Accounts } from 'meteor/accounts-base';
 import SimpleSchema from 'simpl-schema';
 import tools from '/imports/startup/tools/index';
 
-var passwordMinLength = 6;
+var passwordMinLength = 4;
 var userNameMinLength = 3;
 var userNameMaxLength = 40;
 
@@ -86,28 +86,3 @@ if (Meteor.isServer) {
     }
   })
 }
-// if (Meteor.isClient) {
-//   console.log('created');
-//   Accounts.createUser({
-//     username: "thiago",
-//     email: "tgnemecek@gmail.com",
-//     password: "1234",
-//     pages: [],
-//     visible: true
-//   });
-// }
-
-
-
-// Accounts.validateNewUser((user) => {
-//   const email = user.emails[0].address;
-//
-//   new SimpleSchema({
-//     email: {
-//       type: String,
-//       regEx: SimpleSchema.RegEx.Email
-//     }
-//   }).validate({ email });
-//
-//   return true;
-// });

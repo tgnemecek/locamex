@@ -27,6 +27,9 @@ export default class RegisterUsers extends React.Component {
 
       pagesDatabase: [],
 
+      errorMsg: '',
+      errorKeys: [],
+
       confirmationWindow: false
     }
   }
@@ -52,16 +55,35 @@ export default class RegisterUsers extends React.Component {
     this.props.toggleWindow();
   }
   saveEdits = () => {
-    if (!this.state.username || !this.state.emails) {
-      throw new Meteor.Error('required fields empty');
+    var errorKeys = [];
+    var errorMsg = '';
+    if (!this.state.username.trim()) {
+      errorKeys.push("username");
     }
-    if (this.props.item._id) {
-      Meteor.call('users.update', this.state);
-    } else {
-      if (!this.state.password) throw new Meteor.Error('password empty');
-      Meteor.call('users.insert', this.state);
+    if (!this.state.password.trim()) {
+      errorKeys.push("password");
     }
-    this.props.toggleWindow();
+    if (!this.state.emails || !tools.checkEmail(this.state.emails)) {
+      errorKeys.push("emails");
+    }
+    errorMsg = 'Campos obrigatórios não preenchidos/inválidos.';
+    if (this.state.password.trim() && this.state.password.trim().length < 4) {
+      errorKeys.push("password");
+      errorMsg = 'A senha deve ter ao menos 4 caracteres';
+    }
+    if (this.state.username.trim() && this.state.username.trim().length < 3) {
+      errorKeys.push("username");
+      errorMsg = 'O nome de usuário deve ter ao menos 3 caracteres';
+    }
+    if (errorKeys.length === 0) {
+      if (this.props.item._id) {
+        Meteor.call('users.update', this.state);
+      } else {
+        if (!this.state.password) throw new Meteor.Error('password empty');
+        Meteor.call('users.insert', this.state);
+      }
+      this.props.toggleWindow();
+    } else this.setState({ errorMsg, errorKeys })
   }
   render() {
     return (
@@ -70,11 +92,13 @@ export default class RegisterUsers extends React.Component {
           title={this.props.item._id ? "Editar Usuário" : "Criar Novo Usuário"}
           closeBox={this.props.toggleWindow}
           width="800px">
+            <div className="error-message">{this.state.errorMsg}</div>
             <Block columns={5} options={[{block: 0, span: 2}, {block: 1, span: 2}]}>
               <Input
                 title="Usuário:"
                 type="text"
                 name="username"
+                style={this.state.errorKeys.includes("username") ? {borderColor: "red"} : null}
                 value={this.state.username}
                 onChange={this.onChange}
               />
@@ -82,6 +106,7 @@ export default class RegisterUsers extends React.Component {
                 title="Email:"
                 type="email"
                 name="emails"
+                style={this.state.errorKeys.includes("emails") ? {borderColor: "red"} : null}
                 value={this.state.emails}
                 onChange={this.onChange}
               />
@@ -89,6 +114,7 @@ export default class RegisterUsers extends React.Component {
                 title="Senha:"
                 type="password"
                 name="password"
+                style={this.state.errorKeys.includes("password") ? {borderColor: "red"} : null}
                 value={this.state.password}
                 onChange={this.onChange}
               />
@@ -98,7 +124,7 @@ export default class RegisterUsers extends React.Component {
               <Box
                 title="Aviso:"
                 closeBox={this.toggleConfirmationWindow}>
-                <p>Deseja mesmo excluir este item do banco de dados?</p>
+                <p>Deseja mesmo excluir este usuário do banco de dados?</p>
                 <FooterButtons buttons={[
                   {text: "Não", className: "button--secondary", onClick: () => this.toggleConfirmationWindow()},
                   {text: "Sim", className: "button--danger", onClick: () => this.removeItem()}
