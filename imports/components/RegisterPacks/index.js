@@ -67,47 +67,45 @@ export default class RegisterPacks extends React.Component {
   }
   render() {
     return (
-      <ErrorBoundary>
-        <Box
-          title={this.props.item._id ? "Editar Container" : "Criar Novo Container"}
-          closeBox={this.props.toggleWindow}
-          width="700px">
-            <Block columns={2.5} options={[{block: 0, span: 0.5}]}>
-              <Input
-                title="Código:"
-                type="text"
-                name="_id"
-                readOnly={true}
-                value={this.props.item._id}
-                onChange={this.onChange}
-              />
-              <Input
-                title="Descrição:"
-                type="text"
-                name="description"
-                readOnly={true}
-                value={this.props.item.description}
-                onChange={this.onChange}
-              />
-              <Input
-                title="Pátio:"
-                type="select"
-                name="place"
-                value={this.state.place}
-                onChange={this.onChange}>
-                  {this.renderPlaces()}
-              </Input>
-            </Block>
-            <ModulesTable
-              item={this.state}
-              modulesDatabase={this.state.modulesDatabase}/>
-            <button className="button button--danger" style={{width: "100%"}} onClick={this.unmountPack}>Desmontar Pacote</button>
-            <FooterButtons buttons={[
-              {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
-              {text: "Salvar", onClick: () => this.saveEdits()}
-            ]}/>
-        </Box>
-      </ErrorBoundary>
+      <Box
+        title="Editar Pacote"
+        closeBox={this.props.toggleWindow}
+        width="700px">
+          <Block columns={2.5} options={[{block: 0, span: 0.5}]}>
+            <Input
+              title="Código:"
+              type="text"
+              name="_id"
+              readOnly={true}
+              value={this.props.item._id}
+              onChange={this.onChange}
+            />
+            <Input
+              title="Descrição:"
+              type="text"
+              name="description"
+              readOnly={true}
+              value={this.props.item.description}
+              onChange={this.onChange}
+            />
+            <Input
+              title="Pátio:"
+              type="select"
+              name="place"
+              value={this.state.place}
+              onChange={this.onChange}>
+                {this.renderPlaces()}
+            </Input>
+          </Block>
+          <ModulesTable
+            item={this.state}
+            modulesDatabase={this.state.modulesDatabase}/>
+          <button className="button button--danger" style={{width: "100%"}} onClick={this.unmountPack}>Desmontar Pacote</button>
+          <FooterButtons buttons={[
+            {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
+            {text: "Salvar", onClick: () => this.saveEdits()}
+          ]}/>
+      </Box>
     )
   }
 }
