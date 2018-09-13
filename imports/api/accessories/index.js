@@ -7,34 +7,6 @@ if (Meteor.isServer) {
   Meteor.publish('accessoriesPub', () => {
     return Accessories.find();
   })
-  // Accessories.remove({});
-  // Accessories.insert({
-  //   _id: "0000",
-  //   description: "Cadeira Tipo A",
-  //   category: "0000",
-  //   place: "0001",
-  //   available: 100,
-  //   rented: 50,
-  //   maintenance: 10,
-  //   price: 100,
-  //   restitution: 600,
-  //   observations: '',
-  //   visible: true
-  // })
-  // Accessories.insert({
-  //   _id: "0001",
-  //   description: "Cadeira Tipo B",
-  //   category: "0000",
-  //   place: "0001",
-  //   available: 100,
-  //   rented: 50,
-  //   maintenance: 10,
-  //   price: 100,
-  //   restitution: 600,
-  //   observations: '',
-  //   visible: true
-  // })
-
   Meteor.methods({
     'accessories.insert'(state) {
       const _id = tools.generateId(Accessories);
@@ -43,9 +15,9 @@ if (Meteor.isServer) {
         description: state.description,
         category: state.category,
         place: state.place,
-        available: state.available,
-        rented: state.rented,
-        maintenance: state.maintenance,
+        available: state.available || 0,
+        rented: state.rented || 0,
+        maintenance: state.maintenance || 0,
         price: state.price,
         restitution: state.restitution,
         observations: state.observations,
@@ -98,9 +70,9 @@ if (Meteor.isServer) {
         description: state.description,
         category: state.category,
         place: state.place,
-        available: state.available,
-        rented: state.rented,
-        maintenance: state.maintenance,
+        available: state.available || 0,
+        rented: state.rented || 0,
+        maintenance: state.maintenance || 0,
         price: state.price,
         restitution: state.restitution,
         observations: state.observations,

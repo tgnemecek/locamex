@@ -32,6 +32,9 @@ export default class RegisterAccessories extends React.Component {
       categoriesDatabase: [],
       placesDatabase: [],
 
+      errorMsg: '',
+      errorKeys: [],
+
       confirmationWindow: false
     }
   }
@@ -64,105 +67,111 @@ export default class RegisterAccessories extends React.Component {
     this.props.toggleWindow();
   }
   saveEdits = () => {
-    const transaction = () => {
-      if (this.state.transaction === 0) return;
-      if (this.state.origin === '-' && this.state.destination === '-') return;
-      if (this.state.origin === '-') {
-        this.state[this.state.destination] += this.state.transaction;
-        return;
-      }
-      if (this.state.destination === '-') {
-        this.state[this.state.origin] -= this.state.transaction;
-        return;
-      }
-      this.state[this.state.origin] -= this.state.transaction;
-      this.state[this.state.destination] += this.state.transaction;
+    var errorKeys = [];
+    function transaction (originalState) {
+      var state = { ...originalState };
+      if (originalState.transaction === 0) return originalState;
+      if (originalState.origin === '-' && originalState.destination === '-') return originalState;
+
+      var from = originalState.origin;
+      var transactionValue = Number(originalState.transaction);
+      var to = originalState.destination;
+
+      if (from !== '-') state[from] = Number (state[from]) - transactionValue;
+      if (to !== '-') state[to] = Number (state[to]) + transactionValue;
+
+      return state;
     }
-    transaction();
-    if (this.props.item._id) {
-      Meteor.call('accessories.update', this.state);
-    } else Meteor.call('accessories.insert', this.state);
-    this.props.toggleWindow();
+    if (!this.state.description.trim()) {
+      errorKeys.push("description");
+      this.setState({ errorMsg: "Favor informar uma descrição.", errorKeys });
+    } else {
+      var state = transaction(this.state);
+      if (this.props.item._id) {
+        Meteor.call('accessories.update', state);
+      } else Meteor.call('accessories.insert', state);
+      this.props.toggleWindow();
+    }
   }
   render() {
     return (
-      <ErrorBoundary>
-        <Box
-          title={this.props.item._id ? "Editar Acessório" : "Criar Novo Acessório"}
-          closeBox={this.props.toggleWindow}
-          width="800px">
-            <Block columns={6} options={[
-              {block: 1, span: 4},
-              {block: 3, span: 2},
-              {block: 4, span: 3}]}>
-              <Input
-                title="Código:"
-                type="text"
-                disabled={true}
-                name="_id"
-                value={this.state._id}
-                onChange={this.onChange}
-              />
-              <Input
-                title="Descrição:"
-                type="text"
-                name="description"
-                value={this.state.description}
-                onChange={this.onChange}
-              />
-              <Input
-                title="Valor Mensal:"
-                type="currency"
-                name="price"
-                value={this.state.price}
-                onChange={this.onChange}
-              />
-              <Input
-                title="Categoria:"
-                type="select"
-                name="category"
-                value={this.state.category}
-                onChange={this.onChange}>
-                  {this.renderOptions("categoriesDatabase")}
-              </Input>
-              <Input
-                title="Pátio:"
-                type="select"
-                name="place"
-                value={this.state.place}
-                onChange={this.onChange}>
-                  {this.renderOptions("placesDatabase")}
-              </Input>
-              <Input
-                title="Indenização:"
-                type="currency"
-                name="restitution"
-                value={this.state.restitution}
-                onChange={this.onChange}
-              />
-            </Block>
-            <h4 className="register-accessories__transaction__title">Movimentação de estoque:</h4>
-            <Transaction item={this.state} onChange={this.onChange}/>
-            {this.state.confirmationWindow ?
-              <Box
-                title="Aviso:"
-                closeBox={this.toggleConfirmationWindow}>
-                <p>Deseja mesmo excluir este item do banco de dados?</p>
-                <FooterButtons buttons={[
-                  {text: "Não", className: "button--secondary", onClick: () => this.toggleConfirmationWindow()},
-                  {text: "Sim", className: "button--danger", onClick: () => this.removeItem()}
-                ]}/>
-              </Box>
-            : null}
-            {this.props.item._id ?
-              <button className="button button--danger" style={{width: "100%"}} onClick={this.toggleConfirmationWindow}>Excluir Registro</button>
-            : null}
-            <FooterButtons buttons={[
-              {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
-              {text: "Salvar", onClick: () => this.saveEdits()}
-            ]}/>
-        </Box>
-      </ErrorBoundary>
+      <Box
+        title={this.props.item._id ? "Editar Acessório" : "Criar Novo Acessório"}
+        closeBox={this.props.toggleWindow}
+        width="800px">
+          <div className="error-message">{this.state.errorMsg}</div>
+          <Block columns={6} options={[
+            {block: 1, span: 4},
+            {block: 3, span: 2},
+            {block: 4, span: 3}]}>
+            <Input
+              title="Código:"
+              type="text"
+              disabled={true}
+              name="_id"
+              value={this.state._id}
+              onChange={this.onChange}
+            />
+            <Input
+              title="Descrição:"
+              type="text"
+              name="description"
+              style={this.state.errorKeys.includes("description") ? {borderColor: "red"} : null}
+              value={this.state.description}
+              onChange={this.onChange}
+            />
+            <Input
+              title="Valor Mensal:"
+              type="currency"
+              name="price"
+              value={this.state.price}
+              onChange={this.onChange}
+            />
+            <Input
+              title="Categoria:"
+              type="select"
+              name="category"
+              value={this.state.category}
+              onChange={this.onChange}>
+                {this.renderOptions("categoriesDatabase")}
+            </Input>
+            <Input
+              title="Pátio:"
+              type="select"
+              name="place"
+              value={this.state.place}
+              onChange={this.onChange}>
+                {this.renderOptions("placesDatabase")}
+            </Input>
+            <Input
+              title="Indenização:"
+              type="currency"
+              name="restitution"
+              value={this.state.restitution}
+              onChange={this.onChange}
+            />
+          </Block>
+          <h4 className="register-accessories__transaction__title">Movimentação de estoque:</h4>
+          <Transaction item={this.state} onChange={this.onChange}/>
+          {this.state.confirmationWindow ?
+            <Box
+              title="Aviso:"
+              closeBox={this.toggleConfirmationWindow}>
+              <p>Deseja mesmo excluir este item do banco de dados?</p>
+              <FooterButtons buttons={[
+                {text: "Não", className: "button--secondary", onClick: () => this.toggleConfirmationWindow()},
+                {text: "Sim", className: "button--danger", onClick: () => this.removeItem()}
+              ]}/>
+            </Box>
+          : null}
+          {this.props.item._id ?
+            <button className="button button--danger" style={{width: "100%"}} onClick={this.toggleConfirmationWindow}>Excluir Registro</button>
+          : null}
+          <FooterButtons buttons={[
+            {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
+            {text: "Salvar", onClick: () => this.saveEdits()}
+          ]}/>
+      </Box>
     )
   }
 }
