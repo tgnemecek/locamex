@@ -142,7 +142,7 @@ export default class RegisterClients extends React.Component {
             type="select"
             name="type"
             className="register-clients__type-select"
-            disabled={!!this.props.item.type}
+            readOnly={!!this.props.item.type}
             value={this.state.type}
             onChange={this.onChange}>
               <option value="company">Pessoa Jurídica</option>

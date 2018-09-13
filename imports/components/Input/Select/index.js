@@ -12,6 +12,7 @@ export default function Select (props) {
       value={props.value}
       onChange={onChange}
       style={props.style}
+      readOnly={props.readOnly}
       disabled={props.disabled}>
       {props.children}
     </select>

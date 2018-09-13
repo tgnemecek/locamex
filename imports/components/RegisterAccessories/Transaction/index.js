@@ -52,7 +52,7 @@ export default class Transaction extends React.Component {
           labelStyle={{visibility: "hidden"}}
           type="text"
           name="quantity-origin"
-          disabled={true}
+          readOnly={true}
           style={{textAlign: "center"}}
           value={this.displayQuantities("origin")}
           onChange={this.onChange}/>
@@ -72,7 +72,7 @@ export default class Transaction extends React.Component {
           labelStyle={{visibility: "hidden"}}
           type="text"
           name="quantity-destination"
-          disabled={true}
+          readOnly={true}
           style={{textAlign: "center"}}
           value={this.displayQuantities("destination")}
           onChange={this.onChange}/>

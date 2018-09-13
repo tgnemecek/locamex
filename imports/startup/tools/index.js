@@ -190,7 +190,7 @@ export default class tools {
   static deepCopy = (input) => {
     if (Array.isArray(input) || typeof(input) == 'object') {
       return JSON.parse(JSON.stringify(input));
-    } else throw new Meteor.Error('invalid-type. ' + typeof(input) + ' is not accepted' );
+    } else return [input];
   }
 
   static generateId = (Database) => {

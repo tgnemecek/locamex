@@ -35,7 +35,7 @@ export default function ContactTab (props) {
       <Input
         title="Código do Contato:"
         type="text"
-        disabled={true}
+        readOnly={true}
         name="_id"
         style={style("_id")}
         value={props.item.contacts[tab]._id}

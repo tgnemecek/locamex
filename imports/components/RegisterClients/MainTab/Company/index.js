@@ -13,7 +13,7 @@ export default function Company (props) {
       <Input
         title="Código:"
         type="text"
-        disabled={true}
+        readOnly={true}
         name="_id"
         value={props.item._id}
         onChange={props.onChange}

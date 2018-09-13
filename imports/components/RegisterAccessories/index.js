@@ -107,7 +107,7 @@ export default class RegisterAccessories extends React.Component {
             <Input
               title="Código:"
               type="text"
-              disabled={true}
+              readOnly={true}
               name="_id"
               value={this.state._id}
               onChange={this.onChange}

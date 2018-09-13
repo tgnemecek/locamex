@@ -16,7 +16,7 @@ class AppHeader extends React.Component {
     }
     this.administrative = ["0000", "0001"];
     this.clients = ["0002"];
-    this.products = ["0003", "0004", "0005", "0008"];
+    this.products = ["0004", "0005", "0008", "0003"];
     this.contracts = ["0007"];
   };
 

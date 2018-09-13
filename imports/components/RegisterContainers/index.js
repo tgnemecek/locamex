@@ -19,15 +19,18 @@ export default class RegisterContainers extends React.Component {
       _id: this.props.item._id || '',
       description: this.props.item.description || '',
       price: this.props.item.price || '',
-      type: this.props.item.type || '',
-      place: this.props.item.place || '',
-      status: this.props.item.status || '',
-      modules: this.props.item.modules || '',
+      type: this.props.item.type || 'fixed',
+      place: this.props.item.place || '0000',
+      status: this.props.item.status || 'available',
+      modules: this.props.item.modules || [],
       restitution: this.props.item.restitution || '',
       observations: this.props.item.observations || '',
 
       modulesDatabase: [],
       placesDatabase: [],
+
+      errorMsg: '',
+      errorKeys: [],
 
       confirmationWindow: false
     }
@@ -61,74 +64,91 @@ export default class RegisterContainers extends React.Component {
     this.props.toggleWindow();
   }
   saveEdits = () => {
-    if (this.props.item._id) {
-      Meteor.call('containers.update', this.state);
-    } else Meteor.call('containers.insert', this.state);
-    this.props.toggleWindow();
+    var errorKeys = [];
+    if (!this.state.description.trim()) {
+      errorKeys.push("description");
+      this.setState({ errorMsg: "Favor informar uma descrição.", errorKeys });
+    } else {
+      if (this.props.item._id) {
+        Meteor.call('containers.update', this.state);
+      } else Meteor.call('containers.insert', this.state);
+      this.props.toggleWindow();
+    }
   }
   render() {
     return (
-      <ErrorBoundary>
-        <Box
-          title={this.props.item._id ? "Editar Container" : "Criar Novo Container"}
-          closeBox={this.props.toggleWindow}
-          width="800px">
-            <Block columns={6} options={[
-              {block: 1, span: 3}]}>
-              <Input
-                title="Código:"
-                type="text"
-                name="_id"
-                value={this.state._id}
-                onChange={this.onChange}
-              />
-              <Input
-                title="Descrição:"
-                type="text"
-                name="description"
-                value={this.state.description}
-                onChange={this.onChange}
-              />
-              <Input
-                title="Valor Mensal:"
-                type="currency"
-                name="price"
-                value={this.state.price}
-                onChange={this.onChange}
-              />
-              <Input
-                title="Indenização:"
-                type="currency"
-                name="restitution"
-                value={this.state.restitution}
-                onChange={this.onChange}
-              />
-            </Block>
-            {this.state.type === 'modular' ?
-              <Modular item={this.state} onChange={this.onChange} modulesDatabase={this.state.modulesDatabase}/>
-              :
-              <Fixed item={this.state} onChange={this.onChange} placesDatabase={this.state.placesDatabase}/>
-            }
-            {this.state.confirmationWindow ?
-              <Box
-                title="Aviso:"
-                closeBox={this.toggleConfirmationWindow}>
-                <p>Deseja mesmo excluir este item do banco de dados?</p>
-                <FooterButtons buttons={[
-                  {text: "Não", className: "button--secondary", onClick: () => this.toggleConfirmationWindow()},
-                  {text: "Sim", className: "button--danger", onClick: () => this.removeItem()}
-                ]}/>
-              </Box>
-            : null}
-            {this.props.item._id ?
-              <button className="button button--danger" style={{width: "100%"}} onClick={this.toggleConfirmationWindow}>Excluir Registro</button>
-            : null}
-            <FooterButtons buttons={[
-              {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
-              {text: "Salvar", onClick: () => this.saveEdits()}
-            ]}/>
-        </Box>
-      </ErrorBoundary>
+      <Box
+        title={this.props.item._id ? "Editar Container" : "Criar Novo Container"}
+        closeBox={this.props.toggleWindow}
+        width="800px">
+        <div className="error-message">{this.state.errorMsg}</div>
+          <Block columns={6} options={[
+            {block: 1, span: 2}]}>
+            <Input
+              title="Código:"
+              type="text"
+              name="_id"
+              readOnly={true}
+              value={this.state._id}
+              onChange={this.onChange}
+            />
+            <Input
+              title="Descrição:"
+              type="text"
+              name="description"
+              style={this.state.errorKeys.includes("description") ? {borderColor: "red"} : null}
+              value={this.state.description}
+              onChange={this.onChange}
+            />
+            <Input
+              title="Tipo:"
+              type="select"
+              name="type"
+              disabled={!!this.props.item._id}
+              value={this.state.type}
+              onChange={this.onChange}>
+                <option value="fixed">Fixo</option>
+                <option value="modular">Modular</option>
+            </Input>
+            <Input
+              title="Valor Mensal:"
+              type="currency"
+              name="price"
+              value={this.state.price}
+              onChange={this.onChange}
+            />
+            <Input
+              title="Indenização:"
+              type="currency"
+              name="restitution"
+              value={this.state.restitution}
+              onChange={this.onChange}
+            />
+          </Block>
+          {this.state.type === 'modular' ?
+            <Modular item={this.state} onChange={this.onChange} modulesDatabase={this.state.modulesDatabase}/>
+            :
+            <Fixed item={this.state} onChange={this.onChange} placesDatabase={this.state.placesDatabase}/>
+          }
+          {this.state.confirmationWindow ?
+            <Box
+              title="Aviso:"
+              closeBox={this.toggleConfirmationWindow}>
+              <p>Deseja mesmo excluir este item do banco de dados?</p>
+              <FooterButtons buttons={[
+                {text: "Não", className: "button--secondary", onClick: () => this.toggleConfirmationWindow()},
+                {text: "Sim", className: "button--danger", onClick: () => this.removeItem()}
+              ]}/>
+            </Box>
+          : null}
+          {this.props.item._id ?
+            <button className="button button--danger" style={{width: "100%"}} onClick={this.toggleConfirmationWindow}>Excluir Registro</button>
+          : null}
+          <FooterButtons buttons={[
+            {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
+            {text: "Salvar", onClick: () => this.saveEdits()}
+          ]}/>
+      </Box>
     )
   }
 }
