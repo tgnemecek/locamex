@@ -20,12 +20,14 @@ Version: 1.0
 
 ### Medium Priority:
 
+-Fix MenuItem inconsistencies inside AppHeader (sometimes they don't appear);
 -Fix trim() tool and apply to Register classes (currently empty spaces count as filled);
 -Add CategoryTable and PlacesTable in Database for future implementations;
 -Change order of ContractsTable, recent first, adding date to the table;
 
 ### Low Priority: (future implementations)
 
+-Insert Logo on Login scene;
 -Add Settings scene for global changes (like the billing charges text);
 -Remove display of "Código" from tables (especially UsersTable);
 -Add colors to tables for the different statuses (contracts and products);
