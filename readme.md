@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.1.6
+Version: 1.1.7
 
 ## Information:
 
@@ -9,11 +9,14 @@ Version: 1.1.6
 
 ## Changelog:
 
+### Version 1.1.7
+
+-AppHeader: fixed empty menu bug;
+
 ### Version 1.1.6
 
 -App: fixed version number;
 -App: fixed blank screen bug;
-
 
 ### Version 1.1.5
 
@@ -87,6 +90,7 @@ Version: 1.1.6
 -Add the possibility for accessories to be "qualitative" allowing only quantity of 1;
 -Make Documents save representatives in Contract;
 -Create tag functionality to replace categories;
+-Change bug that makes Login appear on F5;
 
 
 

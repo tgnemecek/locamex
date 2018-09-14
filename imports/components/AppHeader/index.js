@@ -84,29 +84,31 @@ class AppHeader extends React.Component {
         <div className="header">
           <h1 className="header__title">{this.state.title}</h1>
           <div className="header__menu">
-          {this.state.ready ?
+          {this.props.user ?
               <>
-              {/* <div>
-                páaaaagina: {this.state.pagesDatabase ? this.state.pagesDatabase[0]._id : null}
-              </div> */}
               <MenuItem
                 name="Início"
+                user={this.props.user}
                 pagesDatabase={this.state.pagesDatabase}
                 pages={this.dashboard}/>
               <MenuItem
                 name="Administrativo"
+                user={this.props.user}
                 pagesDatabase={this.state.pagesDatabase}
                 pages={this.administrative}/>
               <MenuItem
                 name="Clientes"
+                user={this.props.user}
                 pagesDatabase={this.state.pagesDatabase}
                 pages={this.clients}/>
               <MenuItem
                 name="Produtos"
+                user={this.props.user}
                 pagesDatabase={this.state.pagesDatabase}
                 pages={this.products}/>
               <MenuItem
                 name="Contratos"
+                user={this.props.user}
                 pagesDatabase={this.state.pagesDatabase}
                 pages={this.contracts}/>
               </>

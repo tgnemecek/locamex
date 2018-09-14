@@ -34,7 +34,7 @@ export default class App extends React.Component {
       if (this.state.user) {
         return (
           <div id="app">
-            <Route path="/" render={ props => <AppHeader {...props}/> }/>
+            <Route path="/" render={ props => <AppHeader {...props} user={this.state.user}/> }/>
             <Switch>
               <Route path="/dashboard" render={(props) => <Dashboard {...props} user={this.state.user}/>}/>
               <Route path="/contract/:contractId" render={(props) => <Contract {...props} user={this.state.user}/>}/>
