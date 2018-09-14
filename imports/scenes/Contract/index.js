@@ -98,6 +98,8 @@ export default class Contract extends React.Component {
 
       if (!this.state.contract.clientId) errorKeys.push("clientId");
 
+      if (!this.state.contract.dates.duration) errorKeys.push("duration");
+
       if (!this.state.contract.deliveryAddress.cep) errorKeys.push("cep");
       if (!this.state.contract.deliveryAddress.street) errorKeys.push("street");
       if (!this.state.contract.deliveryAddress.city) errorKeys.push("city");
@@ -192,10 +194,11 @@ export default class Contract extends React.Component {
     var services = this.state.contract.services || [];
     var accessories = this.state.contract.accessories || [];
     var all = [].concat(containers, services, accessories);
+    var duration = this.state.contract.dates.duration;
     if (all.length == 0) return 0;
     return all.reduce((acc, current) => {
       var quantity = current.quantity ? current.quantity : 1;
-      return acc + (current.price * quantity)
+      return acc + (current.price * quantity * duration)
     }, 0);
   }
 

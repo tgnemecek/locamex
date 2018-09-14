@@ -18,7 +18,7 @@ export default class Billing extends React.Component {
       difference: 0,
       valid: false,
       calendarOpen: false,
-      startDate: this.props.contract.startDate,
+      startDate: new Date(),
 
       errorKeys: [],
       errorMsg: ''
@@ -29,12 +29,12 @@ export default class Billing extends React.Component {
     var all = this.props.contract.containers.concat(this.props.contract.accessories, this.props.contract.services);
     var charges = tools.deepCopy(this.state.charges);
     var equalDivision = calcIfEqualDivision(charges);
-    var totalValue = calcTotalValue(all);
-    function calcTotalValue (arr) {
+    var totalValue = calcTotalValue(all, this.props.contract.dates.duration);
+    function calcTotalValue (arr, duration) {
       if (arr.length == 0) return 0;
       return arr.reduce((acc, current) => {
         var quantity = current.quantity ? current.quantity : 1;
-        return acc + (current.price * quantity)
+        return acc + (current.price * quantity * duration)
       }, 0);
     }
     function calcIfEqualDivision(charges) {
@@ -86,29 +86,6 @@ export default class Billing extends React.Component {
   }
 
   updateTableLength = (e) => {
-    // var value = Number(e.target.value);
-    // var charges = tools.deepCopy(this.state.charges);
-    // var difference = Math.abs(charges.length - value);
-    // var chargeValue = this.state.charges[0] ? this.state.charges[0].value : '';
-    // for (var i = 0; i < value; i++) {
-    //   if (i < charges.length) {
-    //     charges[i] = {
-    //       description: charges[i].description,
-    //       value: this.state.equalDivision ? chargeValue : charges[i].value,
-    //       startDate: moment(this.state.startDate).add((30 * i + i), 'days').toDate(),
-    //       endDate: moment(this.state.startDate).add((30 * i + 30 + i), 'days').toDate(),
-    //     }
-    //   } else {
-    //     charges[i] = {
-    //       description: `Cobrança #${i + 1} referente ao Valor Total do Contrato`,
-    //       value: this.state.equalDivision ? chargeValue : 0,
-    //       startDate: moment(this.state.startDate).add((30 * i + i), 'days').toDate(),
-    //       endDate: moment(this.state.startDate).add((30 * i + 30 + i), 'days').toDate(),
-    //     }
-    //   }
-    // }
-    // if (difference > 0) charges.splice(value, difference);
-    // this.setEqualValues(charges);
     var value = Number(e.target.value);
     var charges = tools.deepCopy(this.state.charges);
     var newCharges = [];

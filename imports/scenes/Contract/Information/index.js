@@ -51,9 +51,10 @@ export default class Information extends React.Component {
     if (extra) {
       var obj = {...this.props.contract[extra]};
       obj[name] = value;
-      this.props.updateContract(obj, extra);
+      if (name == 'duration') {
+        this.props.updateContract([obj, []], [extra, 'billing']);
+      } else this.props.updateContract(obj, extra);
     } else this.props.updateContract(value, name);
-
   }
 
   cepButtonClick = (data) => {
@@ -119,7 +120,7 @@ export default class Information extends React.Component {
               title="Duração: (meses)"
               value={this.props.contract.dates.duration}
               onChange={this.handleChange}
-              min={1}
+              style={this.props.errorKeys.includes("duration") ? {borderColor: "red"} : null}
               name="duration"
               extra="dates"
               type="number"/>

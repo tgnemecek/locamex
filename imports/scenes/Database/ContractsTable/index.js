@@ -80,10 +80,11 @@ export default class ContractsTable extends React.Component {
         var services = item.services || [];
         var accessories = item.accessories || [];
         var all = [].concat(containers, services, accessories);
+        var duration = item.dates.duration;
         if (all.length == 0) return "-";
         var value = all.reduce((acc, current) => {
           var quantity = current.quantity ? current.quantity : 1;
-          return acc + (current.price * quantity)
+          return acc + (current.price * quantity * duration)
         }, 0);
         return tools.format(value, "currency");
       }

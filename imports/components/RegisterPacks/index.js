@@ -94,6 +94,7 @@ export default class RegisterPacks extends React.Component {
               name="place"
               value={this.state.place}
               onChange={this.onChange}>
+                <option> </option>
                 {this.renderPlaces()}
             </Input>
           </Block>

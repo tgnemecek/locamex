@@ -82,9 +82,9 @@ export default class Transaction extends React.Component {
           name="destination"
           value={this.props.item.destination}
           onChange={this.onChangeEntryDestination}>
-            <option value="-">Saída (Desmanche)</option>
             <option value="available">Disponíveis</option>
             <option value="maintenance">Manutenção</option>
+            <option value="-">Saída (Desmanche)</option>
         </Input>
       </Block>
     )

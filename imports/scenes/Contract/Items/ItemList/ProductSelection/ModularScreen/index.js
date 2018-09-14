@@ -20,6 +20,7 @@ export default class ModularScreen extends React.Component {
         description: this.props.pack.description,
         containerId: this.props.pack._id,
         price: this.props.pack.price,
+        restitution: this.props.pack.restitution,
         quantity: 1
       };
       pack.modules = this.props.pack.modules.map((module, i) => {

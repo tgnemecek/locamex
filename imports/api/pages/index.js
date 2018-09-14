@@ -9,13 +9,13 @@ if (Meteor.isServer) {
   Pages.remove({});
   Pages.insert({
     _id: "0000",
-    description: "Usuários",
-    link: "/database/users",
+    description: "Início",
+    link: "/dashboard",
     visible: true
   });
   Pages.insert({
     _id: "0001",
-    description: "Serviços",
+    description: "Usuários",
     link: "/database/services",
     visible: true
   });

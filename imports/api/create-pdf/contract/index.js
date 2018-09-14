@@ -5,6 +5,9 @@ import tools from '/imports/startup/tools/index';
 import moment from 'moment';
 
 export default function createPdf(contract, client, mainContact, representatives) {
+
+  const fileName = `Locamex - Contrato de Locação #${contract._id}`;
+
   const styleGlobals = {
     fontFamily: "Arial",
     h1Size: 11,
@@ -245,7 +248,7 @@ export default function createPdf(contract, client, mainContact, representatives
   }
   var docDefinition = {
     pageSize: 'A4',
-    pageMargins: [ 40, 60, 40, 30 ], //[left, top, right, bottom]
+    pageMargins: [ 40, 30, 40, 45 ], //[left, top, right, bottom]
     info: {
       title: `Contrato Locamex #${contract._id}`,
       author: `Locamex`,
@@ -354,8 +357,11 @@ export default function createPdf(contract, client, mainContact, representatives
     tableWitness()
 // End of body ----------------------------------------------------------------------------
   ],
-  footer: function(currentPage, pageCount) {
-    return {text: currentPage.toString(), style: 'footer'};
+  footer: (currentPage, pageCount) => {
+    return {text: [
+        {text: `Contrato de Locação de Bens Móveis e Prestação de Serviços nº ${contract._id}\n`},
+        {text: (currentPage + "/" + pageCount)}
+      ], style: 'footer'};
   },
   styles: {
     h1: {
@@ -396,12 +402,14 @@ export default function createPdf(contract, client, mainContact, representatives
       margin: [0, 0, 0, 0]
     },
     footer: {
+      color: "#545454",
+      italics: true,
       fontFamily: styleGlobals.fontFamily,
       fontSize: styleGlobals.pSize,
       alignment: 'center',
-      margin: [ 0, 0, 0, 0 ]
+      margin: [ 0, 10, 0, 0 ]
     }
   }
 };
-  pdfMake.createPdf(docDefinition).download();
+  pdfMake.createPdf(docDefinition).download(fileName);
 }

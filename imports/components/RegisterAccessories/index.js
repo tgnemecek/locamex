@@ -27,7 +27,7 @@ export default class RegisterAccessories extends React.Component {
 
       origin: '-',
       transaction: 0,
-      destination: '-',
+      destination: 'available',
 
       categoriesDatabase: [],
       placesDatabase: [],
@@ -133,6 +133,7 @@ export default class RegisterAccessories extends React.Component {
               name="category"
               value={this.state.category}
               onChange={this.onChange}>
+                <option> </option>
                 {this.renderOptions("categoriesDatabase")}
             </Input>
             <Input
@@ -141,6 +142,7 @@ export default class RegisterAccessories extends React.Component {
               name="place"
               value={this.state.place}
               onChange={this.onChange}>
+                <option> </option>
                 {this.renderOptions("placesDatabase")}
             </Input>
             <Input

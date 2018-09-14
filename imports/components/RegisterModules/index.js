@@ -21,7 +21,7 @@ export default class RegisterModules extends React.Component {
 
       origin: '-',
       transaction: 0,
-      destination: '-',
+      destination: 'available',
 
       errorMsg: '',
       errorKeys: [],

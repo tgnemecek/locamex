@@ -9,41 +9,34 @@ export default class Test extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      // array: [
-      //   "000   ",
-      //   1,
-      //   {name: "aaa     "},
-      //   {name: "   bbb"},
-      //   [
-      //     {name1: "ccc    "},
-      //     {name2: "    ddd"},
-      //     {object: [
-      //       [{name3: "eee   "}, {name4: "   fff"}],
-      //       [{name5: "ggg   "}, {name6: "   hhh"}],
-      //       {object2: {name7: "iii   "}}
-      //     ]}
-      //   ]
-      // ]
-      // array: [
-      //   "000     ",
-      //   {name: "111   "},
-      //   "222      "
-      // ]
-      array: ["000   ", "111   "]
-      // array: [{name: "000   "}]
+      str1: 'aaaa',
+      str2: 'AAAA',
+      str3: 'aAaA',
+      str4: 'aaaa bBbB',
+      str5: 'aaaa (aaaa) /aaaa 1aaaa ,aaaa .aaaa'
     }
   }
 
   onClick = () => {
     var state = {...this.state};
-    state = tools.trimStrings(state);
-    console.log(state);
+    Object.keys(state).forEach((key) => {
+      state[key] = capitalizeFirstLetter(state[key]);
+    })
+    this.setState(state);
+    function capitalizeFirstLetter(string) {
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
   }
 
   render() {
     return (
       <>
-        <button onClick={this.onClick}>TRIM!!!!</button>
+      {this.state.str1}<br/>
+      {this.state.str2}<br/>
+      {this.state.str3}<br/>
+      {this.state.str4}<br/>
+      {this.state.str5}<br/>
+        <button onClick={this.onClick}>capitalize!!!!</button>
       </>
 
     )

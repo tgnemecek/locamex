@@ -7,24 +7,22 @@ export default class MenuItem extends React.Component {
     this.state = { filteredPages: [] };
   }
   componentDidMount = () => {
-    var user = {};
-    var allowedPages = [];
     var filteredPages = [];
-    this.tracker = Tracker.autorun(() => {
-      user = Meteor.user() || {};
-      allowedPages = user.pages || [];
-    })
     var pagesDatabase = this.props.pagesDatabase;
     var pages = this.props.pages;
-    for (var i = 0; i < allowedPages.length; i++) {
-      for (var j = 0; j < pagesDatabase.length; j++) {
-        if (allowedPages[i] == pagesDatabase[j]._id && pages.includes(pagesDatabase[j]._id)) {
-          filteredPages.push(pagesDatabase[j]);
-          break;
+    this.tracker = Tracker.autorun(() => {
+      var user = Meteor.user() || {};
+      var allowedPages = user.pages || [];
+      for (var i = 0; i < allowedPages.length; i++) {
+        for (var j = 0; j < pagesDatabase.length; j++) {
+          if (allowedPages[i] == pagesDatabase[j]._id && pages.includes(pagesDatabase[j]._id)) {
+            filteredPages.push(pagesDatabase[j]);
+            break;
+          }
         }
       }
-    }
-    this.setState({ filteredPages });
+      this.setState({ filteredPages });
+    })
   }
   componentWillUnmount = () => {
     this.tracker.stop();

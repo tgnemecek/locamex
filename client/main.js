@@ -8,7 +8,7 @@ import React from 'react';
 import createPlugin from 'bugsnag-react';
 
 import '../imports/startup/moment-configuration/index';
-import App from '/imports/components/App/index';
+import App from '/imports/scenes/App/index';
 
 const bugsnagClient = bugsnag({
   apiKey: 'bca16e3d4f16e82887efee5f8d0bd2c6',

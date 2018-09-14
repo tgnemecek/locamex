@@ -1,5 +1,6 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
+import { version } from '/package.json';
 
 import AppHeader from '/imports/components/AppHeader/index';
 import NotFound from '/imports/components/NotFound/index';
@@ -23,8 +24,13 @@ export default App = () => {
         <Route path="/test" component={Test}/>
         <Route path="*" component={NotFound}/>
       </Switch>
+      <Route path="/" component={AppVersion}/>
     </div>
   )
+}
+
+AppVersion = () => {
+  return <div className="app-version">versão {version}</div>
 }
 
 function redirect() {

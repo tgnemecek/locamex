@@ -27,7 +27,10 @@ export default class Documents extends React.Component {
       contacts: [],
       mainContact: this.props.contract.mainContact || {},
       rep1,
-      rep2
+      rep2,
+
+      errorMsg: '',
+      errorKeys: []
     }
   }
 
@@ -66,22 +69,36 @@ export default class Documents extends React.Component {
   }
 
   generate = () => {
-    var contacts = this.state.contacts;
-    var representatives;
-    if (this.state.rep1 == this.state.rep2 || !this.state.rep2._id) {
-      representatives = [ this.state.rep1 ];
+    var errorMsg = '';
+    var errorKeys = [];
+
+    if (!this.state.mainContact._id) errorKeys.push("mainContact");
+    if (!this.state.rep1._id) errorKeys.push("rep1");
+
+    if (errorKeys.length) {
+      errorMsg = 'Campos obrigatórios não preenchidos/inválidos.';
+      this.setState({ errorMsg, errorKeys });
+      return;
     } else {
-      representatives = [
-        this.state.rep1,
-        this.state.rep2
-      ]
+      var contacts = this.state.contacts;
+      var representatives;
+      if (this.state.rep1 == this.state.rep2 || !this.state.rep2._id) {
+        representatives = [ this.state.rep1 ];
+      } else {
+        representatives = [
+          this.state.rep1,
+          this.state.rep2
+        ]
+      }
+
+      createPdf(this.props.contract, this.state.client, this.state.mainContact, representatives);
+      var exportReps = representatives.map((rep) => {
+        return rep._id;
+      })
+      var mainContact = this.state.mainContact._id;
+      this.props.updateContract([exportReps, mainContact], ["representatives", "mainContact"]);
+      this.setState({ errorMsg, errorKeys });
     }
-    createPdf(this.props.contract, this.state.client, this.state.mainContact, representatives);
-    var exportReps = representatives.map((rep) => {
-      return rep._id;
-    })
-    var mainContact = this.state.mainContact._id;
-    this.props.updateContract([exportReps, mainContact], ["representatives", "mainContact"]);
   }
 
   render() {
@@ -94,6 +111,7 @@ export default class Documents extends React.Component {
                 title="Contato:"
                 type="select"
                 name="mainContact"
+                style={this.state.errorKeys.includes("mainContact") ? {borderColor: "red"} : null}
                 value={this.state.mainContact._id}
                 onChange={this.onChange}>
                 <option> </option>
@@ -103,6 +121,7 @@ export default class Documents extends React.Component {
                 title="Representante Legal:"
                 type="select"
                 name="rep1"
+                style={this.state.errorKeys.includes("rep1") ? {borderColor: "red"} : null}
                 value={this.state.rep1._id}
                 onChange={this.onChange}>
                 <option> </option>
