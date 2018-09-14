@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.1.0
+Version: 1.1.6
 
 ## Information:
 
@@ -8,6 +8,12 @@ Version: 1.1.0
 -To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.1.6
+
+-App: fixed version number;
+-App: fixed blank screen bug;
+
 
 ### Version 1.1.5
 
@@ -50,8 +56,6 @@ Version: 1.1.0
 
 -Online: review Users Collection for who can access Dashboard, Users and Services;
 -Contract, ProductSelection: when selecting containers, the packs should appear, create functionality;
--Add 'person' version of contract;
--Fix Contract/Documents: when type == 'person', it should read the info from outside client/contacts[];
 
 ### High Priority:
 

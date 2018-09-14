@@ -165,7 +165,7 @@ export default function createPdf(contract, client, mainContact, representatives
       widths: ['auto', 'auto', 'auto', '*', 'auto'],
       heights: styleGlobals.cellheight,
       body: renderBody(contract.billing)
-    }, style: 'table', dontBreakRows: true}
+    }, style: 'table'}
   }
   const tableAddress = () => {
     return {table: {
@@ -367,8 +367,9 @@ export default function createPdf(contract, client, mainContact, representatives
 // End of body ----------------------------------------------------------------------------
   ],
   pageBreakBefore: function (currentNode, followingNodesOnPage, nodesOnNextPage, previousNodesOnPage) {
-    if (currentNode.headlineLevel === 1) debugger;
-    return currentNode.headlineLevel === 1 && followingNodesOnPage.length === 0;
+    if (currentNode.style == "table") {
+      if (currentNode.pageNumbers.length > 1) return true;
+    } else return false;
   },
   footer: (currentPage, pageCount) => {
     return {text: [

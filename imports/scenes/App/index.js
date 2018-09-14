@@ -24,7 +24,7 @@ export default class App extends React.Component {
     Tracker.autorun(() => {
       Meteor.subscribe('usersPub');
       const user = Meteor.user();
-      const ready = this.state.user === false ? false : true;
+      const ready = user === false ? false : true;
       this.setState({ user, ready });
     })
   }

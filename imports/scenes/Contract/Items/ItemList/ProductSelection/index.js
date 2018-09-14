@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 
 import { Containers } from '/imports/api/containers/index';
+import { Packs } from '/imports/api/packs/index';
 import { Services } from '/imports/api/services/index';
 import { Modules } from '/imports/api/modules/index';
 import { Accessories } from '/imports/api/accessories/index';
@@ -55,6 +56,12 @@ export default class ProductSelection extends React.Component {
       Meteor.subscribe(this.state.pub);
       Meteor.subscribe('modulesPub');
       var fullDatabase = this.state.dbName.find().fetch();
+      if (this.props.database == 'containers') {
+        Meteor.subscribe('packsPub');
+        var packsDatabase = Packs.find({ visible: true }).fetch();
+        fullDatabase = fullDatabase.concat(packsDatabase);
+      }
+
       fullDatabase.forEach((item, i) => {
         switch (item.status) {
           case 'inactive':
@@ -83,7 +90,7 @@ export default class ProductSelection extends React.Component {
     var moduleDatabase = tools.deepCopy(this.state.moduleDatabase);
     var filteredDatabase = tools.deepCopy(this.state.filteredDatabase);
     addedItems.forEach((pack) => {
-      if (pack.type == 'modular') {
+      if (pack.type !== 'fixed') {
         var usedModules = pack.modules;
         modularCount++;
         for (var i = 0; i < usedModules.length; i++) {
@@ -186,7 +193,7 @@ export default class ProductSelection extends React.Component {
     var addedItems = this.state.addedItems;
     var newArray = [];
     addedItems.forEach((item) => {
-      if (item.quantity > 0 || item.type == 'modular') newArray.push(item);
+      if (item.quantity > 0 || item.type !== 'fixed') newArray.push(item);
     })
     this.props.saveEdits(newArray);
     this.props.closeProductSelection();
@@ -219,7 +226,7 @@ export default class ProductSelection extends React.Component {
     var oldModules;
     var oldQuantity;
     for (var i = 0; i < addedItems.length; i++) {
-      if (addedItems[i]._id == pack._id && addedItems[i].type == 'modular') {
+      if (addedItems[i]._id == pack._id && addedItems[i].type !== 'fixed') {
         oldModules = tools.deepCopy(addedItems[i].modules);
         oldQuantity = addedItems[i].quantity;
         addedItems[i] = {...pack};
@@ -245,7 +252,7 @@ export default class ProductSelection extends React.Component {
     var moduleDatabase = tools.deepCopy(this.state.moduleDatabase);
     var oldModules;
     for (var i = 0; i < addedItems.length; i++) {
-      if (addedItems[i]._id == pack._id && addedItems[i].type == 'modular') {
+      if (addedItems[i]._id == pack._id && addedItems[i].type !== 'fixed') {
         oldModules = tools.deepCopy(addedItems[i].modules);
         addedItems.splice(i, 1);
         break;

@@ -21,6 +21,7 @@ if (Meteor.isServer) {
           ...packInfo,
           _id,
           modules,
+          type: 'pack',
           selectedAssembled: undefined,
           visible: true
         }
