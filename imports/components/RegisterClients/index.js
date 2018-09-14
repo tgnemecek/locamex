@@ -81,6 +81,7 @@ export default class RegisterClients extends React.Component {
 
     if (check === true) {
       state.contacts.forEach((contact, i) => {
+        if (state.type == 'person') i++;
         contact._id = i.toString().padStart(4, '0');
       })
       if (this.props.item._id) {

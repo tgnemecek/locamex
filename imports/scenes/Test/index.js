@@ -13,20 +13,28 @@ export default class Test extends React.Component {
       str2: 'AAAA',
       str3: 'aAaA',
       str4: 'aaaa bBbB',
-      str5: 'aaaa (aaaa) /aaaa 1aaaa ,aaaa .aaaa'
+      str5: 'aaaa (aaaa) /aaaa 1aaaa ,aaaa .aaaa',
+      array: [0, 1, 2, 3, 4]
     }
   }
 
   onClick = () => {
-    var state = {...this.state};
-    Object.keys(state).forEach((key) => {
-      state[key] = capitalizeFirstLetter(state[key]);
+    var array = this.state.array.map((a) => {
+      if (a == 1 || a == 3) return a;
     })
-    this.setState(state);
-    function capitalizeFirstLetter(string) {
-      return string.charAt(0).toUpperCase() + string.slice(1);
-    }
+    this.setState({ array })
   }
+
+  // onClick = () => {
+  //   var state = {...this.state};
+  //   Object.keys(state).forEach((key) => {
+  //     state[key] = capitalizeFirstLetter(state[key]);
+  //   })
+  //   this.setState(state);
+  //   function capitalizeFirstLetter(string) {
+  //     return string.charAt(0).toUpperCase() + string.slice(1);
+  //   }
+  // }
 
   render() {
     return (

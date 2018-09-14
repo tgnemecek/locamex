@@ -38,7 +38,23 @@ export default class Documents extends React.Component {
     this.tracker = Tracker.autorun(() => {
       Meteor.subscribe('clientsPub');
       var client = Clients.findOne(this.props.contract.clientId);
-      var contacts = client.contacts;
+      var contacts = [];
+      client.contacts.forEach((contact) => {
+        if (contact.visible) contacts.push(contact)
+      });
+      if (client.type == 'person') {
+        var firstContact = {
+          _id: "0000",
+          name: client.description,
+          cpf: client.registry,
+          rg: client.rg,
+          phone1: client.phone1,
+          phone2: client.phone2,
+          email: client.email,
+          visible: true
+        }
+        contacts.unshift(firstContact);
+      }
       this.setState({ client, contacts });
     })
   }
@@ -63,7 +79,10 @@ export default class Documents extends React.Component {
 
   displayContacts = () => {
     if (!this.state.contacts) return null;
-    return this.state.contacts.map((contact, i) => {
+
+    var contacts = tools.deepCopy(this.state.contacts);
+    var client = this.state.client;
+    return contacts.map((contact, i) => {
       return <option key={i} value={contact._id}>{contact.name}</option>
     })
   }
@@ -104,7 +123,7 @@ export default class Documents extends React.Component {
   render() {
       return (
         <Box
-          title="Emitir Documentos:"
+          title="Emitir Contrato:"
           closeBox={this.props.toggleWindow}>
             <div className="documents">
               <Input

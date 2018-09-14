@@ -14,7 +14,8 @@ class AppHeader extends React.Component {
       pagesDatabase: [],
       ready: false
     }
-    this.administrative = ["0000", "0001"];
+    this.dashboard = ["0000"];
+    this.administrative = ["0006", "0001"];
     this.clients = ["0002"];
     this.products = ["0004", "0005", "0008", "0003"];
     this.contracts = ["0007"];
@@ -68,50 +69,53 @@ class AppHeader extends React.Component {
     } else if (pathname.includes('packs')) {
       this.setState({ title: "Pacotes" });
       return;
+    } else if (pathname.includes('dashboard')) {
+      this.setState({ title: "Início" });
+      return;
     } else {
       this.setState({ title: undefined });
       return;
     }
   }
 
-  logout = () => {
-    Meteor.logout();
-    window.location.reload();
-  }
-
   render() {
-    if (this.state.title) {
-      return (
-        <div className="header__background">
-          <div className="header">
-            <h1 className="header__title">{this.state.title}</h1>
-            <div className="header__menu">
-            {this.state.ready ?
-                <>
-                <MenuItem
-                  name="Administrativo"
-                  pagesDatabase={this.state.pagesDatabase}
-                  pages={this.administrative}/>
-                <MenuItem
-                  name="Clientes"
-                  pagesDatabase={this.state.pagesDatabase}
-                  pages={this.clients}/>
-                <MenuItem
-                  name="Produtos"
-                  pagesDatabase={this.state.pagesDatabase}
-                  pages={this.products}/>
-                <MenuItem
-                  name="Contratos"
-                  pagesDatabase={this.state.pagesDatabase}
-                  pages={this.contracts}/>
-                </>
-            : null}
-            <button className="header__logout" onClick={() => this.logout()}>Sair</button>
-            </div>
+    return (
+      <div className="header__background">
+        <div className="header">
+          <h1 className="header__title">{this.state.title}</h1>
+          <div className="header__menu">
+          {this.state.ready ?
+              <>
+              {/* <div>
+                páaaaagina: {this.state.pagesDatabase ? this.state.pagesDatabase[0]._id : null}
+              </div> */}
+              <MenuItem
+                name="Início"
+                pagesDatabase={this.state.pagesDatabase}
+                pages={this.dashboard}/>
+              <MenuItem
+                name="Administrativo"
+                pagesDatabase={this.state.pagesDatabase}
+                pages={this.administrative}/>
+              <MenuItem
+                name="Clientes"
+                pagesDatabase={this.state.pagesDatabase}
+                pages={this.clients}/>
+              <MenuItem
+                name="Produtos"
+                pagesDatabase={this.state.pagesDatabase}
+                pages={this.products}/>
+              <MenuItem
+                name="Contratos"
+                pagesDatabase={this.state.pagesDatabase}
+                pages={this.contracts}/>
+              </>
+          : null}
+          <button className="header__logout" onClick={() => Meteor.logout()}>Sair</button>
           </div>
         </div>
-      )
-    } else return null;
+      </div>
+    )
   }
 }
 export default withRouter(AppHeader);

@@ -18,6 +18,8 @@ export default function createPdf(contract, client, mainContact, representatives
   }
 
   const cpfCnpjLabel = client.type == 'company' ? 'CNPJ': 'CPF';
+  const officialNameLabel = client.type == 'company' ? 'Razão Social': 'Nome';
+  const officialName = client.type == 'company' ? client.officialName: client.description;
   const registryLabel = client.registryMU ? 'Inscrição Municipal': 'Inscrição Estadual';
 
   const products = contract.containers.concat(contract.accessories).map((item) => {
@@ -62,24 +64,32 @@ export default function createPdf(contract, client, mainContact, representatives
   }
 
   const tableInformation = () => {
+    var lastRow;
+    if (client.type == 'person') {
+      lastRow = [ {text: '', colSpan: 2}, '', 'Telefone', tools.format(mainContact.phone1, 'phone'), 'Email', mainContact.email ]
+    } else lastRow = [ 'Contato', mainContact.name, 'Telefone', tools.format(mainContact.phone1, 'phone'), 'Email', mainContact.email ]
     return {table: {
       headerRows: 0,
       widths: ['auto', '*', 'auto', 'auto', 40, 'auto'],
       heights: styleGlobals.cellheight,
       body: [
-          [ 'Razão Social', {text: client.officialName, colSpan: 5}, '', '', '', '' ],
+          [ officialNameLabel, {text: officialName, colSpan: 5}, '', '', '', '' ],
           [ cpfCnpjLabel, showCpfCnpj(), {text: registryLabel, colSpan: 2}, '', {text: showRegistry(), colSpan: 2}, '' ],
           [ 'Endereço', {text: showAddress(), colSpan: 3}, '', '', 'CEP', tools.format(client.address.cep, 'cep') ],
           [ 'Cidade', {text: client.address.city, colSpan: 3}, '', '', 'UF', client.address.state ],
-          [ 'Contato', mainContact.name, 'Telefone', tools.format(mainContact.phone1, 'phone'), 'Email', mainContact.email ]
+          lastRow
+
         ]
     }, style: 'table'};
   }
   const tableRepresentative = () => {
+    if (client.type == 'person' && representatives.length == 1 && representatives[0].name == officialName) return null;
     const renderBody = () => {
-      return representatives.map((rep) => {
+      var title = {text: `Representada neste ato por:`, style: 'p'};
+      var body = representatives.map((rep) => {
         return [ 'Nome', rep.name, 'CPF', tools.format(rep.cpf, 'cpf'), 'RG', tools.format(rep.rg, 'rg') ]
       });
+      return body.unshift(title);
     }
     return {table: {
       widths: ['auto', '*', 30, 80, 30, 80],
@@ -155,7 +165,7 @@ export default function createPdf(contract, client, mainContact, representatives
       widths: ['auto', 'auto', 'auto', '*', 'auto'],
       heights: styleGlobals.cellheight,
       body: renderBody(contract.billing)
-    }, style: 'table'}
+    }, style: 'table', dontBreakRows: true}
   }
   const tableAddress = () => {
     return {table: {
@@ -258,7 +268,6 @@ export default function createPdf(contract, client, mainContact, representatives
     {text: `CONTRATO DE LOCAÇÃO DE BENS MÓVEIS E PRESTAÇÃO DE SERVIÇOS Nº ${contract._id}`, style: 'h1'},
     {text: `Pelo presente instrumento particular de locação, de um lado a pessoa jurídica LOCAMEX LOCAÇÕES E OBRAS EIRELI – EPP, CNPJ 05.411.043/0001-83, Inscrição Estadual 148.701.950.113 e Inscrição Municipal 3.186.381/7 com sede em Rua Monsenhor Antonio Pepe, nº 52 – Parque Jabaquara – São Paulo – SP – CEP  04357-080, representada neste ato por Jürgen Nemecek Junior, Cpf 104.550.568-46, RG 10.937.140-9, órgão expedidor SSP, doravante denominada LOCADORA, e de outro lado a LOCATÁRIA abaixo qualificada:`, style: 'p'},
     tableInformation(),
-    {text: `Representada neste ato por:`, style: 'p'},
     tableRepresentative(),
     {text: `que declara estar investido dos poderes necessários para contratar em nome da LOCATÁRIA, assumindo inclusive a qualidade de fiel depositário do Objeto da Locação descrito abaixo, assim como os serviços associados, e estabelecem entre si o presente Contrato de Locação de Bens Móveis e Prestação de Serviços, regido pelas cláusulas e condições a seguir:`, style: 'p'},
     {text: `CLÁUSULA PRIMEIRA - DO OBJETO DO CONTRATO`, style: 'h2'},
@@ -357,6 +366,10 @@ export default function createPdf(contract, client, mainContact, representatives
     tableWitness()
 // End of body ----------------------------------------------------------------------------
   ],
+  pageBreakBefore: function (currentNode, followingNodesOnPage, nodesOnNextPage, previousNodesOnPage) {
+    if (currentNode.headlineLevel === 1) debugger;
+    return currentNode.headlineLevel === 1 && followingNodesOnPage.length === 0;
+  },
   footer: (currentPage, pageCount) => {
     return {text: [
         {text: `Contrato de Locação de Bens Móveis e Prestação de Serviços nº ${contract._id}\n`},

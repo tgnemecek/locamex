@@ -16,7 +16,7 @@ if (Meteor.isServer) {
   Pages.insert({
     _id: "0001",
     description: "Usuários",
-    link: "/database/services",
+    link: "/database/users",
     visible: true
   });
   Pages.insert({

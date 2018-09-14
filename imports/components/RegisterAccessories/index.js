@@ -131,6 +131,7 @@ export default class RegisterAccessories extends React.Component {
               title="Categoria:"
               type="select"
               name="category"
+              disabled={true}
               value={this.state.category}
               onChange={this.onChange}>
                 <option> </option>

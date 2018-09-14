@@ -8,10 +8,14 @@ export default class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      error: '',
+      ready: false,
       username: '',
-      password: ''
+      password: '',
+      error: ''
     };
+  }
+  componentDidMount() {
+    this.setState({ ready: true });
   }
   submit = (e) => {
     e.stopPropagation();
@@ -30,34 +34,32 @@ export default class Login extends React.Component {
     this.setState({ [e.target.name]: e.target.value });
   }
   render() {
-    if (!Meteor.userId()) {
-      return (
-        <div className="login__background">
-          <div className="login__box">
-            <h1>Login</h1>
-            {this.state.error ? <p>{this.state.error}</p> : undefined}
-            <form onSubmit={this.submit} className="boxed-view__form">
-              <Input
-                title="Usuário:"
-                type="text"
-                name="username"
-                value={this.state.username}
-                onChange={this.onChange}
-              />
-              <Input
-                title="Senha:"
-                type="password"
-                name="password"
-                value={this.state.password}
-                onChange={this.onChange}
-              />
-              <FooterButtons buttons={[
-                {text: "Login", type: "submit"}
-              ]}/>
-            </form>
-          </div>
+    return (
+      <div className="login__background">
+        <div className="login__box">
+          <h1>Login</h1>
+          {this.state.error ? <p>{this.state.error}</p> : undefined}
+          <form onSubmit={this.submit} className="boxed-view__form">
+            <Input
+              title="Usuário:"
+              type="text"
+              name="username"
+              value={this.state.username}
+              onChange={this.onChange}
+            />
+            <Input
+              title="Senha:"
+              type="password"
+              name="password"
+              value={this.state.password}
+              onChange={this.onChange}
+            />
+            <FooterButtons buttons={[
+              {text: "Login", type: "submit"}
+            ]}/>
+          </form>
         </div>
-      )
-    } else return <Redirect to="/database/contracts"/>
+      </div>
+    )
   }
 }

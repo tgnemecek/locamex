@@ -9,6 +9,20 @@ Version: 1.1.0
 
 ## Changelog:
 
+### Version 1.1.5
+
+-AppHeader: Removed 'logged' functionality;
+-App:
+  -Blocked URL navigation for unauthorized users;
+  -Fixed redirect bugs;
+-Dashboard: created new scene;
+-Structure: added Test to gitignore;
+-Documents:
+  -Now only visible contacts appear;
+  -Title changed from 'Emitir Documentos' to 'Emitir Contrato';
+  -Fixed only additional contacts appearing;
+-Api/create-pdf: created differences for 'person' type of client;
+
 ### Version 1.1.0
 
 -Structure: App is now a scene;
@@ -33,32 +47,31 @@ Version: 1.1.0
 
 ### Urgent Priority:
 
+
 -Online: review Users Collection for who can access Dashboard, Users and Services;
--Set correct categories, ask which and create the db;
--Billing: make equalValue bool start as true;
--Enable temporarily the field 'id' for fixed containers (create meteor method for handling this temporary case);
--Fix table in RegisterPacks where it divides the table randomly;
--Create confirmation message for unmounting pack: "Desmontar pacote e retornar os componentes para o estoque?";
--Create new scene: Dashboard that is accessed by any logged user, redirect from login;
 -Contract, ProductSelection: when selecting containers, the packs should appear, create functionality;
 -Add 'person' version of contract;
 -Fix Contract/Documents: when type == 'person', it should read the info from outside client/contacts[];
 
 ### High Priority:
 
+-Enable temporarily the field 'id' for fixed containers (create meteor method for handling this temporary case);
+-Create confirmation message for unmounting pack: "Desmontar pacote e retornar os componentes para o estoque?";
 -Check for bugs and errors (bugsnag);
+-Billing: make equalValue bool start as true;
 -Add server-side security for meteor methods (simple-schema, required fields);
--Block URL navigation for unauthorized users (current method stops links, but not direct URL);
 -Add 'events' version of contract;
 -When trying to change page, warn of losing non-saved information;
 
 ### Medium Priority:
 
+-Fix table in RegisterPacks where it divides the table randomly;
 -Create better security for unauthorized users (like checking for userId in meteor methods);
 -Fix MenuItem inconsistencies inside AppHeader (sometimes they don't appear);
 -Fix trim() tool and apply to Register classes (currently empty spaces count as filled);
 -Add CategoryTable and PlacesTable in Database for future implementations;
 -Change order of ContractsTable, recent first, adding date to the table;
+-Remove category from AccessoriesTable;
 
 ### Low Priority: (future implementations)
 
@@ -69,6 +82,7 @@ Version: 1.1.0
 -Add name field for users;
 -Add the possibility for accessories to be "qualitative" allowing only quantity of 1;
 -Make Documents save representatives in Contract;
+-Create tag functionality to replace categories;
 
 
 
