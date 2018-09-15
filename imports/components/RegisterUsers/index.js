@@ -23,7 +23,7 @@ export default class RegisterUsers extends React.Component {
       username: this.props.item.username || '',
       emails,
       password: '',
-      pages: this.props.item.profile.pages || [],
+      pages: this.props.item.profile ? this.props.item.profile.pages : [],
 
       pagesDatabase: [],
 
@@ -60,7 +60,7 @@ export default class RegisterUsers extends React.Component {
     if (!this.state.username.trim()) {
       errorKeys.push("username");
     }
-    if (!this.state.password.trim()) {
+    if (!this.state.password.trim() && !this.props.item._id) {
       errorKeys.push("password");
     }
     if (!this.state.emails || !tools.checkEmail(this.state.emails)) {
