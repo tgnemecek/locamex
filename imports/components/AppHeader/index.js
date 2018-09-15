@@ -1,7 +1,7 @@
 import React from 'react';
 import { Accounts } from 'meteor/accounts-base';
 import { Link, Redirect } from 'react-router-dom';
-import { Pages } from '/imports/api/pages/index';
+import { appStructure } from '/imports/api/appStructure/index';
 import MenuItem from './MenuItem/index'
 
 export default class AppHeader extends React.Component {
@@ -9,71 +9,53 @@ export default class AppHeader extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      title: undefined,
-      pagesDatabase: [],
-      ready: false
+      allowedPages: [],
+      title: undefined
     }
-    this.dashboard = ["0000"];
-    this.administrative = ["0006", "0001"];
-    this.clients = ["0002"];
-    this.products = ["0004", "0005", "0008", "0003"];
-    this.contracts = ["0007"];
   };
 
   componentDidMount() {
     this.updateLocation();
-    this.tracker = Tracker.autorun(() => {
-      Meteor.subscribe('pagesPub');
-      const pagesDatabase = Pages.find().fetch();
-      const ready = pagesDatabase.length ? true : false;
-      this.setState({ pagesDatabase, ready });
-    })
-  }
-
-  componentWillUnmount = () => {
-    this.tracker.stop();
+    this.checkUserPages();
   }
 
   componentDidUpdate = (prevProps) => {
-    if (this.props !== prevProps) this.updateLocation();
+    if (this.props !== prevProps) {
+      this.updateLocation();
+      this.checkUserPages();
+    }
+  }
+
+  checkUserPages = () => {
+    if (this.props.user) {
+      Meteor.call('users.get.pages', this.props.user._id, (err, res) => {
+        if (err) console.log(err);
+        else if (res) this.setState({ allowedPages: res })
+      });
+    }
   }
 
   updateLocation = () => {
     var pathname = this.props.location.pathname;
-    if (pathname.includes('contracts')) {
-      this.setState({ title: "Contratos" });
-      return;
-    } else if (pathname.includes('contract')) {
-      this.setState({ title: "Contrato" });
-      return;
-    } else if (pathname.includes('containers')) {
-      this.setState({ title: "Containers" });
-      return;
-    } else if (pathname.includes('users')) {
-      this.setState({ title: "Usuários" });
-      return;
-    } else if (pathname.includes('services')) {
-      this.setState({ title: "Serviços" });
-      return;
-    } else if (pathname.includes('accessories')) {
-      this.setState({ title: "Acessórios" });
-      return;
-    } else if (pathname.includes('clients')) {
-      this.setState({ title: "Clientes" });
-      return;
-    } else if (pathname.includes('modules')) {
-      this.setState({ title: "Componentes" });
-      return;
-    } else if (pathname.includes('packs')) {
-      this.setState({ title: "Pacotes" });
-      return;
-    } else if (pathname.includes('dashboard')) {
-      this.setState({ title: "Início" });
-      return;
-    } else {
-      this.setState({ title: undefined });
-      return;
+    for (var i = 0; i < appStructure.length; i++) {
+      for (var j = 0; j < appStructure[i].pages.length; j++) {
+        if (pathname == appStructure[i].pages[j].link) {
+          this.setState({ title: appStructure[i].pages[j].title });
+          return;
+        }
+      }
     }
+  }
+
+  renderMenuItems = () => {
+    if (!this.state.allowedPages.length) return null;
+    return appStructure.map((group, i) => {
+      return <MenuItem
+        key={i}
+        name={group.groupTitle}
+        pages={group.pages}
+        allowedPages={!i ? ["dashboard"] : this.state.allowedPages}/>
+    })
   }
 
   render() {
@@ -82,35 +64,7 @@ export default class AppHeader extends React.Component {
         <div className="header">
           <h1 className="header__title">{this.state.title}</h1>
           <div className="header__menu">
-          {this.state.ready ?
-              <>
-              <MenuItem
-                name="Início"
-                user={this.props.user}
-                pagesDatabase={this.state.pagesDatabase}
-                pages={this.dashboard}/>
-              <MenuItem
-                name="Administrativo"
-                user={this.props.user}
-                pagesDatabase={this.state.pagesDatabase}
-                pages={this.administrative}/>
-              <MenuItem
-                name="Clientes"
-                user={this.props.user}
-                pagesDatabase={this.state.pagesDatabase}
-                pages={this.clients}/>
-              <MenuItem
-                name="Produtos"
-                user={this.props.user}
-                pagesDatabase={this.state.pagesDatabase}
-                pages={this.products}/>
-              <MenuItem
-                name="Contratos"
-                user={this.props.user}
-                pagesDatabase={this.state.pagesDatabase}
-                pages={this.contracts}/>
-              </>
-          : null}
+          {this.renderMenuItems()}
           <button className="header__logout" onClick={() => Meteor.logout()}>Sair</button>
           </div>
         </div>

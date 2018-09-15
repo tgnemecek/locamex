@@ -2,7 +2,6 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import tools from '/imports/startup/tools/index';
-import { Pages } from '/imports/api/pages/index';
 import Block from '/imports/components/Block/index';
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
@@ -23,25 +22,13 @@ export default class RegisterUsers extends React.Component {
       username: this.props.item.username || '',
       emails,
       password: '',
-      pages: this.props.item.profile ? this.props.item.profile.pages : [],
-
-      pagesDatabase: [],
+      pages: this.props.item.pages ? this.props.item.pages : [],
 
       errorMsg: '',
       errorKeys: [],
 
       confirmationWindow: false
     }
-  }
-  componentDidMount = () => {
-    this.tracker = Tracker.autorun(() => {
-      Meteor.subscribe('pagesPub');
-      var pagesDatabase = Pages.find({ visible: true }).fetch();
-      this.setState({ pagesDatabase });
-    })
-  }
-  componentWillUnmount = () => {
-    this.tracker.stop();
   }
   onChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
@@ -77,9 +64,10 @@ export default class RegisterUsers extends React.Component {
     }
     if (errorKeys.length === 0) {
       if (this.props.item._id) {
-        Meteor.call('users.update', this.state);
+        Meteor.call('users.update', this.state, () => {
+          if (this.props.item._id === Meteor.userId()) window.location.reload();
+        });
       } else {
-        if (!this.state.password) throw new Meteor.Error('password empty');
         Meteor.call('users.insert', this.state);
       }
       this.props.toggleWindow();
@@ -119,7 +107,7 @@ export default class RegisterUsers extends React.Component {
                 onChange={this.onChange}
               />
             </Block>
-            <PageSelection onChange={this.onChange} item={this.state} pagesDatabase={this.state.pagesDatabase}/>
+            <PageSelection onChange={this.onChange} item={this.state}/>
             {this.state.confirmationWindow ?
               <Box
                 title="Aviso:"

@@ -11,7 +11,8 @@ Version: 1.2.1
 
 ### Version 1.2.1
 
-
+-UserTable: temporary fix: if I'm updating the current user, the subscription won't update, instead it will unsubscribe.
+  The workaround is to check if the edited user is the one logged in and forcing the page to refresh.
 
 ### Version 1.2.0
 
@@ -86,8 +87,6 @@ Version: 1.2.1
 
 ### Medium Priority:
 
--Pages are stored insinde 'profile' key in user object. The profile key is not safe and can be edited, fix this.
-  The problem is that apparently publishing Meteor.users.find() won't cause Tracker.autorun to react (old way).
 -Test Billing with broken values and long remainders, possible to encounter NaN.
 -Add server-side security for meteor methods (simple-schema, required fields);
 -Fix table in RegisterPacks where it divides the table randomly;

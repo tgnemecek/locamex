@@ -24,10 +24,10 @@ export default class DatabaseSide extends React.Component {
       if (!item.added && item.available != 0) {
         return (
           <tr key={i} className="product-selection__db-item">
-            <td>{item.serial || "-"}</td>
+            <td className="small-column">{item.serial || "-"}</td>
             <td>{item.description + this.packSuffix(item.type)}</td>
-            {this.props.databaseType != 'accessories' ? null : <td>{item.available}</td>}
-            <td><button { ...buttonProps }>►</button></td>
+            {this.props.databaseType != 'accessories' ? null : <td className="small-column">{item.available}</td>}
+            <td className="buttom-column"><button { ...buttonProps }>►</button></td>
           </tr>
         )
       }
@@ -47,13 +47,13 @@ export default class DatabaseSide extends React.Component {
             hiddenOption="description"
             database={this.props.fullDatabase}
             searchReturn={this.props.searchReturn}/>
-          <table className="table table--product-selection--database">
+          <table className="table product-selection__table">
             <thead>
               <tr>
-                <th>Série</th>
+                <th className="small-column">Série</th>
                 <th>Descrição</th>
-                {this.props.databaseType != 'accessories' ? null : <th>Disp.</th>}
-                <th style={{visibility: "hidden"}}></th>
+                {this.props.databaseType != 'accessories' ? null : <th className="small-column">Disp.</th>}
+                <th className="buttom-column" style={{visibility: "hidden"}}></th>
               </tr>
             </thead>
             <tbody>

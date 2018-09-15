@@ -40,38 +40,37 @@ export default class AddedItemsSide extends React.Component {
 
       return (
         <tr key={i} className="product-selection__db-item">
-          <td>{item.serial || "-"}</td>
+          <td className="small-column">{item.serial || "-"}</td>
           <td>{item.description + this.packSuffix(item.type)}</td>
-          <td><Input type="currency" name={i} value={item.price} onChange={this.props.changePrice}/></td>
-          <td>
+          <td className="medium-column"><Input type="currency" name={i} value={item.price} onChange={this.props.changePrice}/></td>
+          <td className="small-column">
             <Input
               type="number"
               name={i}
+              style={{width: "40px"}}
               readOnly={item.type == 'fixed' || item.type == 'pack'}
               value={item.quantity || 1}
               max={item.available || item.type == 'pack'}
               onChange={this.props.changeQuantity}/>
           </td>
-          <td><button {... buttonProps }>{buttonIcon}</button></td>
+          <td className="buttom-column"><button {... buttonProps }>{buttonIcon}</button></td>
         </tr>
       )
     })
   }
 
   render() {
-    var className = "table table--added-items--5rows";
-    if (this.props.database == 'containers') className = "table table--added-items--4rows";
       return (
-        <div className="added-items">
+        <div className="product-selection__added-items">
           <label>Itens Adicionados no Contrato:</label>
-          <table className={className}>
+          <table className="table product-selection__table">
             <thead>
               <tr>
-                <th>Série</th>
+                <th className="small-column">Série</th>
                 <th>Descrição</th>
-                <th>Valor</th>
-                <th>Qtd.</th>
-                <th style={{visibility: "hidden"}}>✖</th>
+                <th className="medium-column">Valor</th>
+                <th className="small-column">Qtd.</th>
+                <th className="buttom-column" style={{visibility: "hidden"}}>✖</th>
               </tr>
             </thead>
             <tbody>

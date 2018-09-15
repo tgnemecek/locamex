@@ -9,13 +9,14 @@ var userNameMaxLength = 40;
 
 if (Meteor.isServer) {
   Meteor.publish('usersPub', function () {
-    if (this.userId) {
-      return Meteor.users.find({ _id: this.userId }, {
-        fields: { visible: 1 }
-      });
-    } else {
-      this.ready();
-    }
+    return Meteor.users.find();
+    // if (this.userId) {
+    //   return Meteor.users.find({}, {
+    //     fields: { username: 1, visible: 1, pages: 1 }
+    //   });
+    // } else {
+    //   this.ready();
+    // }
   });
 
   Meteor.methods({
@@ -23,7 +24,8 @@ if (Meteor.isServer) {
       var username = state.username;
       var password = state.password;
       var emails = [{address: state.emails, verified: false}];
-      var profile = {pages: state.pages}
+      var pages = state.pages;
+      if (!pages.includes('dashboard')) pages.unshift('dashboard');
 
       if (!username || !emails) {
         throw new Meteor.Error('required-fields-empty');
@@ -43,7 +45,7 @@ if (Meteor.isServer) {
         _id,
         username,
         emails,
-        profile,
+        pages,
         visible: true
       };
       Meteor.users.update({ _id }, { $set: data });
@@ -64,7 +66,8 @@ if (Meteor.isServer) {
       var username = state.username;
       var password = state.password;
       var emails = [{address: state.emails, verified: false}];
-      var profile = {pages: state.pages}
+      var pages = state.pages;
+      if (!pages.includes('dashboard')) pages.unshift('dashboard');
 
       if (!username || !emails) {
         throw new Meteor.Error('required-fields-empty');
@@ -79,17 +82,19 @@ if (Meteor.isServer) {
         throw new Meteor.Error('name-too-long');
       };
       const data = {
-        _id,
         username,
         emails,
-        profile,
+        pages,
         visible: true
       }
       Meteor.users.update({ _id }, { $set: data });
-      console.log(Meteor.userId());
+      data._id = _id;
       Meteor.call('history.insert', data, 'users');
       password ? Accounts.setPassword(_id, password) : null;
-      console.log(Meteor.userId());
+    },
+    'users.get.pages' (_id) {
+      var user = Meteor.users.findOne({_id});
+      return user.pages;
     }
   })
 }

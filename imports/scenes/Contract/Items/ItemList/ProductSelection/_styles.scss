@@ -1,8 +1,38 @@
-@import './AddedItemsSide/styles';
-@import './DatabaseSide/styles';
 @import './ModularScreen/styles';
 
 .product-selection {
   display: flex;
   justify-content: space-between;
+}
+.product-selection__edit-button {
+  padding: ($space /4);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.product-selection__table {
+  .medium-column {
+    text-align: center;
+    width: 120px;
+  }
+  .small-column {
+    text-align: center;
+    width: 1px;
+    white-space: nowrap;
+  }
+  .buttom-column {
+    text-align: center;
+    width: 42px;
+  }
+}
+.product-selection__database {
+  flex-grow: .8;
+  flex-basis: 1px;
+  margin-right: $space;
+}
+.product-selection__added-items {
+  flex-grow: 1;
+  flex-basis: 1px;
+  margin: 56px 0 0 $space;
+  label {margin-bottom: 10px;}
 }

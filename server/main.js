@@ -9,7 +9,7 @@ import '../imports/api/contracts/index';
 import '../imports/api/history/index';
 import '../imports/api/modules/index';
 import '../imports/api/packs/index';
-import '../imports/api/pages/index';
+import '../imports/api/appStructure/index';
 import '../imports/api/places/index';
 import '../imports/api/services/index';
 import '../imports/api/users/index';

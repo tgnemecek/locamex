@@ -365,7 +365,7 @@ export default class ProductSelection extends React.Component {
       <Box
         title={this.title}
         closeBox={this.props.closeProductSelection}
-        width="1000px">
+        width="1200px">
           <Block columns={2}>
             <DatabaseSide
               database={this.state.filteredDatabase}

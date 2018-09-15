@@ -19,7 +19,6 @@ export default class App extends React.Component {
       ready: 0
     }
   }
-
   componentDidMount() {
     this.tracker = Tracker.autorun(() => {
       Meteor.subscribe('usersPub');
@@ -35,6 +34,7 @@ export default class App extends React.Component {
       return (
         <div id="app">
           <Route path="/" render={ props => <AppHeader {...props} user={this.state.user}/> }/>
+
           <Switch>
             <Route path="/dashboard" render={(props) => <Dashboard {...props} user={this.state.user}/>}/>
             <Route path="/contract/:contractId" render={(props) => <Contract {...props} user={this.state.user}/>}/>
