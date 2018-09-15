@@ -1,6 +1,11 @@
 import { Meteor } from 'meteor/meteor';
+import { Mongo } from 'meteor/mongo';
 
 export default class tools {
+
+  static translate = (str) => {
+    return null
+  }
 
   static format = (value, type, externalOptions) => {
     if (value == undefined) return undefined;
@@ -193,8 +198,10 @@ export default class tools {
     } else return [input];
   }
 
-  static generateId = (Database) => {
-    return Database.find().count().toString().padStart(4, '0');
+  static generateId = (prefix) => {
+    return prefix + "_" + new Meteor.Collection.ObjectID()._str;
+    // Old method:
+    // return Database.find().count().toString().padStart(4, '0');
   }
 
   static getRef = (object, i) => {

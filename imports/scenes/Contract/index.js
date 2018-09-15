@@ -16,7 +16,6 @@ import Items from './Items/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
 export default class Contract extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -31,7 +30,7 @@ export default class Contract extends React.Component {
           street: '',
           cep: '',
           city: '',
-          state: '',
+          state: 'SP',
           number: '',
           additional: ''
         },

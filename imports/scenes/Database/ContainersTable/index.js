@@ -81,7 +81,7 @@ export default class ContainersTable extends React.Component {
       }
       return (
         <tr key={i}>
-          <td className="small-column">{item._id}</td>
+          <td className="small-column">{item.serial || "-"}</td>
           <td>{item.description}</td>
           <td className="small-column">{translate(item.type)}</td>
           <td className="small-column">{translate(item.status) || "Montados: " + item.assembled}</td>

@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.1.7
+Version: 1.2.0
 
 ## Information:
 
@@ -8,6 +8,18 @@ Version: 1.1.7
 -To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.2.0
+
+-App: Restructured subscription to usersPub to fix AppHeader bug;
+-Structure:
+  -Restructured all collections, ids are now generated via ObjectID, with collections prefixes;
+  -All tables now won't show the item's id, containers now have "Série" (serial);
+  -Serial isn't unique yet, but it is created by the user and a required field;
+-Contract/ProductSelection:
+  -Now packs appear when selecting products to add to the contract;
+  -Now packs can be correctly re-rented;
+-AccessoriesTable: removed category column;
 
 ### Version 1.1.7
 
@@ -56,41 +68,37 @@ Version: 1.1.7
 
 ### Urgent Priority:
 
-
--Online: review Users Collection for who can access Dashboard, Users and Services;
--Contract, ProductSelection: when selecting containers, the packs should appear, create functionality;
+-Check if cancelling the contract returns the items (should be able to cancel an active one? ask);
+-Mongodb uses indexes and only shows the first 20 documents, see how to work with this!
 
 ### High Priority:
 
--Enable temporarily the field 'id' for fixed containers (create meteor method for handling this temporary case);
+-Add 'events' version of contract;
+-Contract is not verifying CEP on activation;
 -Create confirmation message for unmounting pack: "Desmontar pacote e retornar os componentes para o estoque?";
 -Check for bugs and errors (bugsnag);
 -Billing: make equalValue bool start as true;
--Add server-side security for meteor methods (simple-schema, required fields);
--Add 'events' version of contract;
 -When trying to change page, warn of losing non-saved information;
 
 ### Medium Priority:
 
+-Test Billing with broken values and long remainders, possible to encounter NaN.
+-Add server-side security for meteor methods (simple-schema, required fields);
 -Fix table in RegisterPacks where it divides the table randomly;
 -Create better security for unauthorized users (like checking for userId in meteor methods);
--Fix MenuItem inconsistencies inside AppHeader (sometimes they don't appear);
--Fix trim() tool and apply to Register classes (currently empty spaces count as filled);
--Add CategoryTable and PlacesTable in Database for future implementations;
+-Create Tag Database;
+-Add PlacesTable in Database for future implementations;
 -Change order of ContractsTable, recent first, adding date to the table;
--Remove category from AccessoriesTable;
 
 ### Low Priority: (future implementations)
 
 -Insert Logo on Login scene;
 -Add Settings scene for global changes (like the billing charges text);
--Remove display of "Código" from tables (especially UsersTable);
 -Add colors to tables for the different statuses (contracts and products);
 -Add name field for users;
 -Add the possibility for accessories to be "qualitative" allowing only quantity of 1;
 -Make Documents save representatives in Contract;
--Create tag functionality to replace categories;
--Change bug that makes Login appear on F5;
+-Fix trim() tool and apply to Register classes (currently empty spaces count as filled);
 
 
 

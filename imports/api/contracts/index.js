@@ -53,9 +53,16 @@ if (Meteor.isServer) {
             var stillAvailable = Meteor.call('containers.check', data.containers[i]._id);
             if (!stillAvailable) {
               throw new Meteor.Error ("container-not-available",
-              "O container " + data.containers[i]._id + " não está mais disponível na quantidade desejada.");
+              "O container " + data.containers[i]._id + " não está mais disponível.");
             }
             Meteor.call('containers.status', data.containers[i]._id, "rented");
+          } else if (data.containers[i].type === 'pack') {
+            var stillAvailable = Meteor.call('packs.check', data.containers[i]._id);
+            if (!stillAvailable) {
+              throw new Meteor.Error ("container-not-available",
+              "O container " + data.containers[i]._id + " não está mais disponível.");
+            }
+            Meteor.call('packs.rent', data.containers[i]._id);
           }
         }
         for (var i = 0; i < data.accessories.length; i++) {
@@ -83,7 +90,7 @@ if (Meteor.isServer) {
       }
       var modules = [];
       for (var i = 0; i < containers.length; i++) {
-        if (containers[i].type === 'modular') {
+        if (containers[i].type !== 'fixed') {
           if (containers[i].selectedAssembled > 0) {
             Meteor.call('packs.insert', containers[i]);
           }
@@ -91,7 +98,7 @@ if (Meteor.isServer) {
             module.quantity = module.quantity * (containers[i].quantity - containers[i].selectedAssembled);
           })
           modules = modules.concat(containers[i].modules);
-        } else if (containers[i].type === 'fixed') {
+        } else {
           Meteor.call('containers.status', containers[i]._id, "available");
         }
       }

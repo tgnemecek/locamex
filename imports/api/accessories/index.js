@@ -9,7 +9,7 @@ if (Meteor.isServer) {
   })
   Meteor.methods({
     'accessories.insert'(state) {
-      const _id = tools.generateId(Accessories);
+      const _id = tools.generateId("accessories");
       const data = {
         _id,
         description: state.description,

@@ -42,7 +42,6 @@ export default class ClientsTable extends React.Component {
     }
     return (
       <tr>
-        <th className="small-column">Código</th>
         <th>Nome Fantasia</th>
         <th className="small-column">Tipo</th>
         <th className="small-column"><button onClick={toggleWindow} className="database__table__button">+</button></th>
@@ -57,7 +56,6 @@ export default class ClientsTable extends React.Component {
       }
       return (
         <tr key={i}>
-          <td className="small-column">{item._id}</td>
           <td>{item.description}</td>
           <td className="small-column">{item.type === 'company' ? "PJ" : "PF"}</td>
           <td className="small-column"><button className="database__table__button" onClick={toggleWindow}>✎</button></td>

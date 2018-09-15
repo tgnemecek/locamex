@@ -46,7 +46,6 @@ export default class PacksTable extends React.Component {
     }
     return (
       <tr>
-        <th className="small-column">Código</th>
         <th>Descrição</th>
         <th className="small-column">Pátio</th>
         <th className="small-column"></th>
@@ -69,7 +68,6 @@ export default class PacksTable extends React.Component {
       }
       return (
         <tr key={i}>
-          <td className="small-column">{item._id}</td>
           <td>{item.description}</td>
           <td className="small-column">{translatePlaces(item.place)}</td>
           <td className="small-column"><button className="database__table__button" onClick={toggleWindow}>✎</button></td>

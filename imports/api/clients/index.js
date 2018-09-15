@@ -9,7 +9,7 @@ if (Meteor.isServer) {
   })
   Meteor.methods({
     'clients.insert'(state) {
-      const _id = tools.generateId(Clients);
+      const _id = tools.generateId("clients");
       var data = {};
       if (state.type == 'company') {
         data = {

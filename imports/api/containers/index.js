@@ -10,13 +10,14 @@ if (Meteor.isServer) {
   })
   Meteor.methods({
     'containers.insert'(state) {
-      const _id = tools.generateId(Containers);
+      const _id = tools.generateId(state.type);
       var data;
       if (state.type == 'fixed') {
         data = {
           _id,
           description: state.description,
           type: state.type,
+          serial: state.serial,
           place: state.place || "0000",
           status: state.status || "available",
           price: state.price || 0,
@@ -69,6 +70,7 @@ if (Meteor.isServer) {
           type: state.type,
           place: state.place,
           status: state.status,
+          serial: state.serial,
           price: state.price,
           restitution: state.restitution,
           observations: state.observations,

@@ -47,7 +47,7 @@ export default class Finalize extends React.Component {
       }
       return (
         <tr key={i}>
-          <td>{container._id}</td>
+          <td>{container.serial || "-"}</td>
           <td>{container.description}</td>
           <td>
             <Input
@@ -85,7 +85,7 @@ export default class Finalize extends React.Component {
   renderHeader = () => {
     return (
       <tr>
-        <th>Código</th>
+        <th>Série</th>
         <th>Descrição</th>
         <th>Pátio</th>
         <th className="contract__finalize__center-column">Manter Montado?</th>

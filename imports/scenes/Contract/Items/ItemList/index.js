@@ -11,16 +11,21 @@ export default class ItemList extends React.Component {
     }
   }
 
-  renderModular = (item) => {
-    var str = "(";
-    item.modules.forEach((module, i, array) => {
-      if (module.quantity) {
-        if (i < (array.length - 1)) {
-          str += module.description + ": " + module.quantity + ". ";
-        } else str += module.description + ": " + module.quantity;
-      }
-    });
-    return str + ")";
+  renderDescripton = (item) => {
+    if (item.type === 'fixed' || this.props.database === 'accessories' || this.props.database === 'services'){
+      return <td>{item.description}</td>
+    } else if (item.type === 'modular' || item.type === 'pack') {
+      var suffix = "(";
+      item.modules.forEach((module, i, array) => {
+        if (module.quantity) {
+          if (i < (array.length - 1)) {
+            suffix += module.description + ": " + module.quantity + ". ";
+          } else suffix += module.description + ": " + module.quantity;
+        }
+      });
+      suffix = suffix + ")";
+      return <td>{item.description} {suffix}</td>
+    }
   }
 
   toggleWindow = () => {
@@ -36,8 +41,8 @@ export default class ItemList extends React.Component {
     return this.props.contract[this.props.database].map((item, i) => {
       return (
         <tr key={i}>
-          <td className="small-column">{item._id}</td>
-          <td>{item.description} {item.type == 'modular' ? this.renderModular(item) : null}</td>
+          <td className="small-column">{item.serial || "-"}</td>
+          {this.renderDescripton(item)}
           <td className="small-column">{tools.format(item.price, "currency")}</td>
           <td className="small-column">{item.quantity}</td>
         </tr>
@@ -62,7 +67,7 @@ export default class ItemList extends React.Component {
             <table className="table contract__item-list__table">
               <tbody>
                 <tr>
-                  <th className="small-column">Código</th>
+                  <th className="small-column">Série</th>
                   <th>Descrição</th>
                   <th className="small-column">Valor</th>
                   <th className="small-column">Qtd.</th>

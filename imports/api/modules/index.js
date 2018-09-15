@@ -9,7 +9,7 @@ if (Meteor.isServer) {
   })
   Meteor.methods({
     'modules.insert'(state) {
-      const _id = tools.generateId(Modules);
+      const _id = tools.generateId("modules");
       const data = {
         _id,
         description: state.description,

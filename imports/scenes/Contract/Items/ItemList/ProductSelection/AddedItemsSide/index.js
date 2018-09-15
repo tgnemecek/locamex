@@ -14,28 +14,45 @@ export default class AddedItemsSide extends React.Component {
     }
   }
 
+  packSuffix = (type) => {
+    if (type === 'pack') {
+      return "* (Pacote Montado)"
+    } else return '';
+  }
+
   renderAddedItems = () => {
     return this.props.addedItems.map((item, i, array) => {
+      var buttonProps = {
+        name: "addedItems",
+        value: item._id,
+        className: "product-selection__edit-button"
+      };
+      var buttonIcon = "✎";
+      if (item.type === 'fixed' || this.props.databaseType === 'accessories' || this.props.databaseType === 'services') {
+        buttonIcon = "✖";
+        buttonProps.onClick = this.props.removeItem;
+        buttonProps.className = "button--table-x";
+      } else if (item.type === 'modular') {
+        buttonProps.onClick = this.props.toggleModularScreen;
+      } else if (item.type === 'pack') {
+        buttonProps.onClick = this.props.togglePackScreen;
+      }
+
       return (
         <tr key={i} className="product-selection__db-item">
-          <td>{item._id}</td>
-          <td>{item.description}</td>
+          <td>{item.serial || "-"}</td>
+          <td>{item.description + this.packSuffix(item.type)}</td>
           <td><Input type="currency" name={i} value={item.price} onChange={this.props.changePrice}/></td>
-          {this.props.database != 'containers' ?
-            <td>
-              <Input
-                type="number"
-                name={i}
-                value={item.quantity}
-                max={item.available}
-                onChange={this.props.changeQuantity}/>
-            </td> : null
-          }
-          <td>{item.type == 'modular' ?
-            <button name="addedItems" value={i} className="product-selection__edit-button" onClick={this.props.toggleModularScreen}>✎</button>
-            :
-            <button value={item._id} className="button--table-x" onClick={this.props.removeItem}>✖</button>
-            }</td>
+          <td>
+            <Input
+              type="number"
+              name={i}
+              readOnly={item.type == 'fixed' || item.type == 'pack'}
+              value={item.quantity || 1}
+              max={item.available || item.type == 'pack'}
+              onChange={this.props.changeQuantity}/>
+          </td>
+          <td><button {... buttonProps }>{buttonIcon}</button></td>
         </tr>
       )
     })
@@ -50,10 +67,10 @@ export default class AddedItemsSide extends React.Component {
           <table className={className}>
             <thead>
               <tr>
-                <th>Código</th>
+                <th>Série</th>
                 <th>Descrição</th>
                 <th>Valor</th>
-                {this.props.database != 'containers' ? <th>Qtd.</th> : null}
+                <th>Qtd.</th>
                 <th style={{visibility: "hidden"}}>✖</th>
               </tr>
             </thead>

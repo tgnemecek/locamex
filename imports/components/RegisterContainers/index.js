@@ -17,6 +17,7 @@ export default class RegisterContainers extends React.Component {
     super(props);
     this.state = {
       _id: this.props.item._id || '',
+      serial: this.props.item.serial || '',
       description: this.props.item.description || '',
       price: this.props.item.price || '',
       type: this.props.item.type || 'fixed',
@@ -68,6 +69,9 @@ export default class RegisterContainers extends React.Component {
     if (!this.state.description.trim()) {
       errorKeys.push("description");
       this.setState({ errorMsg: "Favor informar uma descrição.", errorKeys });
+    } else if (!this.state.serial.trim()) {
+      errorKeys.push("serial");
+      this.setState({ errorMsg: "Favor informar uma série.", errorKeys });
     } else {
       if (this.props.item._id) {
         Meteor.call('containers.update', this.state);
@@ -85,11 +89,11 @@ export default class RegisterContainers extends React.Component {
           <Block columns={6} options={[
             {block: 1, span: 2}]}>
             <Input
-              title="Código:"
+              title="Série:"
               type="text"
-              name="_id"
-              readOnly={true}
-              value={this.state._id}
+              name="serial"
+              readOnly={this.state.type === 'modular'}
+              value={this.state.serial}
               onChange={this.onChange}
             />
             <Input

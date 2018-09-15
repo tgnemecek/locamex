@@ -46,9 +46,7 @@ export default class AccessoriesTable extends React.Component {
     }
     return (
       <tr>
-        <th className="small-column">Código</th>
         <th>Descrição</th>
-        <th className="small-column">Categoria</th>
         <th className="small-column">Disponíveis</th>
         <th className="small-column">Locados</th>
         <th className="small-column">Manutenção</th>
@@ -73,9 +71,7 @@ export default class AccessoriesTable extends React.Component {
       }
       return (
         <tr key={i}>
-          <td className="small-column">{item._id}</td>
           <td>{item.description}</td>
-          <td className="small-column">{category}</td>
           <td className="small-column">{item.available}</td>
           <td className="small-column">{item.rented}</td>
           <td className="small-column">{item.maintenance}</td>

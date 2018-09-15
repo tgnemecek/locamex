@@ -8,23 +8,36 @@ export default class DatabaseSide extends React.Component {
 
   renderDatabase = () => {
     return this.props.database.map((item, i, array) => {
+      var buttonProps = {
+        name: "database",
+        value: item._id,
+        className: "product-selection__edit-button"
+      };
+      if (item.type === 'fixed' || this.props.databaseType === 'accessories' || this.props.databaseType === 'services') {
+        buttonProps.onClick = this.props.addItem;
+      } else if (item.type === 'modular') {
+        buttonProps.onClick = this.props.toggleModularScreen;
+      } else if (item.type === 'pack') {
+        buttonProps.onClick = this.props.togglePackScreen;
+      }
+
       if (!item.added && item.available != 0) {
         return (
           <tr key={i} className="product-selection__db-item">
-            <td>{item._id}</td>
-            <td>{item.description}</td>
-            {this.props.database != 'accessories' ? null : <td>{item.available}/{item.total}</td>}
-            <td><button
-              name="database"
-              value={i}
-              className="product-selection__edit-button"
-              onClick={item.type !== 'modular' ? this.props.addItem : this.props.toggleModularScreen}>
-              ►
-            </button></td>
+            <td>{item.serial || "-"}</td>
+            <td>{item.description + this.packSuffix(item.type)}</td>
+            {this.props.databaseType != 'accessories' ? null : <td>{item.available}</td>}
+            <td><button { ...buttonProps }>►</button></td>
           </tr>
         )
       }
     })
+  }
+
+  packSuffix = (type) => {
+    if (type === 'pack') {
+      return "* (Pacote Montado)"
+    } else return '';
   }
 
   render() {
@@ -37,9 +50,9 @@ export default class DatabaseSide extends React.Component {
           <table className="table table--product-selection--database">
             <thead>
               <tr>
-                <th>Código</th>
+                <th>Série</th>
                 <th>Descrição</th>
-                {this.props.database != 'accessories' ? null : <th>Disp.</th>}
+                {this.props.databaseType != 'accessories' ? null : <th>Disp.</th>}
                 <th style={{visibility: "hidden"}}></th>
               </tr>
             </thead>

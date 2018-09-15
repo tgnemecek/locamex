@@ -17,6 +17,7 @@ import Input from '/imports/components/Input/index';
 import DatabaseSide from './DatabaseSide/index';
 import AddedItemsSide from './AddedItemsSide/index';
 import ModularScreen from './ModularScreen/index';
+import PackScreen from './PackScreen/index';
 
 export default class ProductSelection extends React.Component {
   constructor(props) {
@@ -29,7 +30,8 @@ export default class ProductSelection extends React.Component {
       addedItems: this.props.addedItems ? tools.deepCopy(this.props.addedItems) : [],
       moduleDatabase: [],
       modularScreenOpen: 0,
-      modularContainer: '',
+      packScreenOpen: 0,
+      containerInFocus: '',
       modularCount: 0
     }
     switch (this.props.database) {
@@ -50,6 +52,8 @@ export default class ProductSelection extends React.Component {
         break;
     }
   }
+
+  // GENERAL -------------------------------------------------------------------
 
   componentDidMount() {
     this.tracker = Tracker.autorun(() => {
@@ -76,7 +80,7 @@ export default class ProductSelection extends React.Component {
         fullDatabase,
         filteredDatabase: fullDatabase,
         moduleDatabase
-      }, () => { this.initialCalculations() });
+      }, () => { this.calculations() });
     })
   }
 
@@ -84,13 +88,13 @@ export default class ProductSelection extends React.Component {
     this.tracker.stop();
   }
 
-  initialCalculations = () => {
+  calculations = () => {
     var modularCount = 0;
     var addedItems = tools.deepCopy(this.state.addedItems);
     var moduleDatabase = tools.deepCopy(this.state.moduleDatabase);
     var filteredDatabase = tools.deepCopy(this.state.filteredDatabase);
     addedItems.forEach((pack) => {
-      if (pack.type !== 'fixed') {
+      if (pack.type !== 'fixed' && this.props.database === 'containers') {
         var usedModules = pack.modules;
         modularCount++;
         for (var i = 0; i < usedModules.length; i++) {
@@ -118,57 +122,6 @@ export default class ProductSelection extends React.Component {
         moduleDatabase[i].quantity += quantity;
       }
     }
-  }
-
-  addItem = (e) => {
-    var index = e.target.value;
-    var filteredDatabase = tools.deepCopy(this.state.filteredDatabase);
-    var addedItems = tools.deepCopy(this.state.addedItems);
-    filteredDatabase[index].added = true;
-    filteredDatabase[index].quantity = 1;
-    addedItems.push(filteredDatabase[index]);
-    this.setState({ addedItems, filteredDatabase });
-  }
-
-  toggleModularScreen = (e) => {
-    var modularScreenOpen = 0;
-    var modularContainer = '';
-    if (!e) {
-      this.setState({ modularScreenOpen, modularContainer });
-      return;
-    }
-    var index = e.target.value;
-    var requestFrom = e.target.name;
-    var filteredDatabase = this.state.filteredDatabase;
-    var addedItems = this.state.addedItems;
-    if (this.state.modularScreenOpen == 0) {
-      if (requestFrom == "database") {
-        modularScreenOpen = 1;
-        modularContainer = filteredDatabase[index];
-      } else if (requestFrom == "addedItems") {
-        modularScreenOpen = 2;
-        modularContainer = addedItems[index];
-      }
-    }
-    this.setState({ modularScreenOpen, modularContainer });
-  }
-
-  removeItem = (e) => {
-    var _id = e.target.value;
-    var filteredDatabase = this.state.filteredDatabase;
-    var addedItems = this.state.addedItems;
-
-    for (var i = 0; i < addedItems.length; i++) {
-      if (addedItems[i]._id == _id) {
-        addedItems.splice(i, 1);
-      }
-    }
-    for (var i = 0; i < filteredDatabase.length; i++) {
-      if (filteredDatabase[i]._id == _id) {
-        filteredDatabase[i].added = false;
-      }
-    }
-    this.setState({ addedItems, filteredDatabase });
   }
 
   changePrice = (e) => {
@@ -199,19 +152,85 @@ export default class ProductSelection extends React.Component {
     this.props.closeProductSelection();
   }
 
-  addModular = (pack) => {
+  // FIXED ---------------------------------------------------------------------
+
+  addItem = (e) => {
+    var _id = e.target.value;
+    var filteredDatabase = tools.deepCopy(this.state.filteredDatabase);
+    var addedItems = tools.deepCopy(this.state.addedItems);
+    for (var i = 0; i < filteredDatabase.length; i++) {
+      if (filteredDatabase[i]._id === _id) {
+        filteredDatabase[i].added = true;
+        filteredDatabase[i].quantity = 1;
+        addedItems.push(filteredDatabase[i]);
+        break;
+      }
+    }
+    this.setState({ addedItems, filteredDatabase });
+  }
+
+  removeItem = (e) => {
+    var _id = e.target.value;
+    var filteredDatabase = tools.deepCopy(this.state.filteredDatabase);
+    var addedItems = tools.deepCopy(this.state.addedItems);
+
+    for (var i = 0; i < addedItems.length; i++) {
+      if (addedItems[i]._id == _id) {
+        addedItems.splice(i, 1);
+      }
+    }
+    for (var i = 0; i < filteredDatabase.length; i++) {
+      if (filteredDatabase[i]._id == _id) {
+        filteredDatabase[i].added = false;
+      }
+    }
+    this.setState({ addedItems, filteredDatabase });
+  }
+
+  // MODULAR -------------------------------------------------------------------
+
+  toggleModularScreen = (e) => {
+    var modularScreenOpen = 0;
+    var containerInFocus = '';
+    if (!e) {
+      this.setState({ modularScreenOpen, containerInFocus });
+      return;
+    }
+    var _id = e.target.value;
+    var requestFrom = e.target.name;
+    var filteredDatabase = this.state.filteredDatabase;
+    var addedItems = this.state.addedItems;
+    var databaseToSearch;
+    if (requestFrom == "database") {
+      databaseToSearch = filteredDatabase;
+      modularScreenOpen = 1;
+    } else if (requestFrom == "addedItems") {
+      databaseToSearch = addedItems;
+      modularScreenOpen = 2;
+    }
+    for (var i = 0; i < databaseToSearch.length; i++) {
+      if (this.state.modularScreenOpen == 0) {
+        if (databaseToSearch[i]._id === _id) {
+          containerInFocus = databaseToSearch[i];
+        }
+      } else break;
+    }
+    this.setState({ modularScreenOpen, containerInFocus });
+  }
+
+  addModular = (modular) => {
     var addedItems = tools.deepCopy(this.state.addedItems);
     var moduleDatabase = tools.deepCopy(this.state.moduleDatabase);
-    var usedModules = pack.modules;
+    var usedModules = modular.modules;
     var modularCount = this.state.modularCount;
     var _id = "P" + (modularCount.toString().padStart(3, '0'));
     modularCount++;
-    pack._id = _id;
-    addedItems.push(pack);
+    modular._id = _id;
+    addedItems.push(modular);
     for (var i = 0; i < usedModules.length; i++) {
       for (var j = 0; j < moduleDatabase.length; j++) {
         if (moduleDatabase[j]._id == usedModules[i]._id) {
-          moduleDatabase[j].available -= usedModules[i].quantity * pack.quantity;
+          moduleDatabase[j].available -= usedModules[i].quantity * modular.quantity;
           break;
         }
       }
@@ -220,25 +239,25 @@ export default class ProductSelection extends React.Component {
     this.toggleModularScreen();
   }
 
-  editModular = (pack) => {
+  editModular = (modular) => {
     var addedItems = tools.deepCopy(this.state.addedItems);
     var moduleDatabase = tools.deepCopy(this.state.moduleDatabase);
     var oldModules;
     var oldQuantity;
     for (var i = 0; i < addedItems.length; i++) {
-      if (addedItems[i]._id == pack._id && addedItems[i].type !== 'fixed') {
+      if (addedItems[i]._id == modular._id && addedItems[i].type !== 'fixed') {
         oldModules = tools.deepCopy(addedItems[i].modules);
         oldQuantity = addedItems[i].quantity;
-        addedItems[i] = {...pack};
+        addedItems[i] = {...modular};
         break;
       }
     }
-    var usedModules = pack.modules;
+    var usedModules = modular.modules;
     for (var i = 0; i < usedModules.length; i++) {
       for (var j = 0; j < moduleDatabase.length; j++) {
         if (moduleDatabase[j]._id == usedModules[i]._id) {
           moduleDatabase[j].available += oldModules[i].quantity * oldQuantity;
-          moduleDatabase[j].available -= usedModules[i].quantity * pack.quantity;
+          moduleDatabase[j].available -= usedModules[i].quantity * modular.quantity;
           break;
         }
       }
@@ -247,12 +266,12 @@ export default class ProductSelection extends React.Component {
     this.toggleModularScreen();
   }
 
-  removeModular = (pack) => {
+  removeModular = (modular) => {
     var addedItems = tools.deepCopy(this.state.addedItems);
     var moduleDatabase = tools.deepCopy(this.state.moduleDatabase);
     var oldModules;
     for (var i = 0; i < addedItems.length; i++) {
-      if (addedItems[i]._id == pack._id && addedItems[i].type !== 'fixed') {
+      if (addedItems[i]._id == modular._id) {
         oldModules = tools.deepCopy(addedItems[i].modules);
         addedItems.splice(i, 1);
         break;
@@ -266,8 +285,79 @@ export default class ProductSelection extends React.Component {
         }
       }
     }
-    this.setState({ addedItems, moduleDatabase });
-    this.toggleModularScreen();
+    this.setState({ addedItems, moduleDatabase }, () => {
+      this.toggleModularScreen();
+    });
+  }
+
+  // PACK ----------------------------------------------------------------------
+
+  togglePackScreen = (e) => {
+    var packScreenOpen = 0;
+    var containerInFocus = '';
+    if (!e) {
+      this.setState({ packScreenOpen, containerInFocus });
+      return;
+    }
+    var _id = e.target.value;
+    var requestFrom = e.target.name;
+    var filteredDatabase = this.state.filteredDatabase;
+    var addedItems = this.state.addedItems;
+    var databaseToSearch;
+    if (requestFrom == "database") {
+      databaseToSearch = filteredDatabase;
+      packScreenOpen = 1;
+    } else if (requestFrom == "addedItems") {
+      databaseToSearch = addedItems;
+      packScreenOpen = 2;
+    }
+    for (var i = 0; i < databaseToSearch.length; i++) {
+      if (this.state.modularScreenOpen == 0) {
+        if (databaseToSearch[i]._id === _id) {
+          containerInFocus = databaseToSearch[i];
+          break;
+        }
+      } else break;
+    }
+    this.setState({ packScreenOpen, containerInFocus });
+  }
+
+  addPack = () => {
+    var pack = this.state.containerInFocus;
+    var filteredDatabase = tools.deepCopy(this.state.filteredDatabase);
+    var addedItems = tools.deepCopy(this.state.addedItems);
+    for (var i = 0; i < filteredDatabase.length; i++) {
+      if (filteredDatabase[i]._id === pack._id) {
+        filteredDatabase[i].added = true;
+        filteredDatabase[i].quantity = 1;
+        addedItems.push(filteredDatabase[i]);
+        break
+      }
+    }
+    this.setState({ addedItems, filteredDatabase });
+    this.togglePackScreen();
+  }
+
+  removePack = () => {
+    var containerInFocus = this.state.containerInFocus;
+    var _id = containerInFocus._id;
+    var filteredDatabase = tools.deepCopy(this.state.filteredDatabase);
+    var addedItems = tools.deepCopy(this.state.addedItems);
+
+    for (var i = 0; i < addedItems.length; i++) {
+      if (addedItems[i]._id == _id) {
+        addedItems.splice(i, 1);
+        break;
+      }
+    }
+    for (var i = 0; i < filteredDatabase.length; i++) {
+      if (filteredDatabase[i]._id == _id) {
+        filteredDatabase[i].added = false;
+      }
+    }
+    this.setState({ addedItems, filteredDatabase }, () => {
+      this.togglePackScreen();
+    });
   }
 
   render() {
@@ -279,28 +369,40 @@ export default class ProductSelection extends React.Component {
           <Block columns={2}>
             <DatabaseSide
               database={this.state.filteredDatabase}
+              databaseType={this.props.database}
               addItem={this.addItem}
               fullDatabase={this.state.fullDatabase}
               searchReturn={this.searchReturn}
+              togglePackScreen={this.togglePackScreen}
               toggleModularScreen={this.toggleModularScreen}/>
             <AddedItemsSide
               database={this.props.database}
+              databaseType={this.props.database}
               changePrice={this.changePrice}
               changeQuantity={this.changeQuantity}
               addedItems={this.state.addedItems}
               removeItem={this.removeItem}
+              togglePackScreen={this.togglePackScreen}
               toggleModularScreen={this.toggleModularScreen}/>
           </Block>
           {this.state.modularScreenOpen > 0 ?
             <ModularScreen
               modularScreenType={this.state.modularScreenOpen}
-              pack={this.state.modularContainer}
+              pack={this.state.containerInFocus}
               moduleDatabase={this.state.moduleDatabase}
               addModular={this.addModular}
               editModular={this.editModular}
               removeModular={this.removeModular}
               toggleModularScreen={this.toggleModularScreen}
             />
+          : null}
+          {this.state.packScreenOpen ?
+            <PackScreen
+              packScreenType={this.state.packScreenOpen}
+              item={this.state.containerInFocus}
+              toggleWindow={this.togglePackScreen}
+              removePack={this.removePack}
+              addPack={this.addPack}/>
           : null}
           <FooterButtons buttons={[
             {text: "Voltar", className: "button--secondary", onClick: () => this.props.closeProductSelection()},

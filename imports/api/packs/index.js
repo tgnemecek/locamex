@@ -12,23 +12,38 @@ if (Meteor.isServer) {
     'packs.insert' (packInfo) {
       var maxIterations = packInfo.selectedAssembled;
       for (var i = 0; i < maxIterations; i++) {
-        var _id = tools.generateId(Packs);
+        var _id = tools.generateId("packs");
         var modules = [];
         packInfo.modules.forEach((module) => {
           if (module.quantity) modules.push(module);
         })
         var data = {
-          ...packInfo,
           _id,
-          modules,
+          description: packInfo.description,
           type: 'pack',
-          selectedAssembled: undefined,
+          status: "available",
+          modules,
+          place: packInfo.place,
+          price: packInfo.defaultPrice,
+          restitution: packInfo.restitution,
+          assembled: packInfo.assembled,
           visible: true
         }
         Packs.insert(data);
         Meteor.call('containers.update.assembled', packInfo.containerId, 1);
         Meteor.call('history.insert', data, 'packs.insert');
       }
+    },
+    'packs.check'(_id) {
+      const item = Packs.findOne(_id);
+      if (!item) throw new Meteor.Error("_id-not-found", "Erro de banco de dados", arguments);
+      if (item.status == 'available') {
+        return true;
+      } else return false;
+    },
+    'packs.rent' (_id) {
+      Packs.remove({ _id });
+      Meteor.call('history.insert', _id, 'packs.rent');
     },
     'packs.unmount' (pack) {
       var _id = pack._id;

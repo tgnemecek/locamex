@@ -1,11 +1,10 @@
 import React from 'react';
-import { withRouter } from 'react-router'
 import { Accounts } from 'meteor/accounts-base';
 import { Link, Redirect } from 'react-router-dom';
 import { Pages } from '/imports/api/pages/index';
 import MenuItem from './MenuItem/index'
 
-class AppHeader extends React.Component {
+export default class AppHeader extends React.Component {
 
   constructor(props) {
     super(props);
@@ -25,7 +24,6 @@ class AppHeader extends React.Component {
     this.updateLocation();
     this.tracker = Tracker.autorun(() => {
       Meteor.subscribe('pagesPub');
-      Meteor.subscribe('usersPub');
       const pagesDatabase = Pages.find().fetch();
       const ready = pagesDatabase.length ? true : false;
       this.setState({ pagesDatabase, ready });
@@ -84,7 +82,7 @@ class AppHeader extends React.Component {
         <div className="header">
           <h1 className="header__title">{this.state.title}</h1>
           <div className="header__menu">
-          {this.props.user ?
+          {this.state.ready ?
               <>
               <MenuItem
                 name="Início"
@@ -120,4 +118,3 @@ class AppHeader extends React.Component {
     )
   }
 }
-export default withRouter(AppHeader);

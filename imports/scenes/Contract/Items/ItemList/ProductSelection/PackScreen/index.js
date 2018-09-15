@@ -11,18 +11,12 @@ import FooterButtons from '/imports/components/FooterButtons/index';
 import Input from '/imports/components/Input/index';
 import ModulesTable from './ModulesTable/index';
 
-export default class RegisterPacks extends React.Component {
+export default class PackScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      _id: this.props.item._id,
-      place: this.props.item.place || '',
-      modules: this.props.item.modules,
-
       modulesDatabase: [],
-      placesDatabase: [],
-
-      confirmationWindow: false
+      placesDatabase: []
     }
   }
   componentDidMount = () => {
@@ -42,35 +36,18 @@ export default class RegisterPacks extends React.Component {
       return <option key={i} value={item._id}>{item.description}</option>
     })
   }
-  onChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
-  }
-  toggleConfirmationWindow = () => {
-    var confirmationWindow = !this.state.confirmationWindow;
-    this.setState({ confirmationWindow });
-  }
-  saveEdits = () => {
-    Meteor.call('packs.update', this.state);
-    this.props.toggleWindow();
-  }
   renderPlaces = (database) => {
     return this.state.placesDatabase.map((item, i) => {
       return <option key={i} value={item._id}>{item.description}</option>
     })
   }
-  unmountPack = () => {
-    Meteor.call('packs.unmount', {
-      ...this.props.item,
-      ...this.state
-    });
-    this.props.toggleWindow();
-  }
+
   render() {
     return (
       <Box
         title="Editar Pacote"
         closeBox={this.props.toggleWindow}
-        width="700px">
+        width="550px">
           <Block columns={2.5} options={[{block: 0, span: 0.5}]}>
             <Input
               title="Código:"
@@ -92,30 +69,28 @@ export default class RegisterPacks extends React.Component {
               title="Pátio:"
               type="select"
               name="place"
-              disabled={this.props.readOnly}
-              value={this.state.place}
+              disabled={true}
+              value={this.props.item.place}
               onChange={this.onChange}>
                 <option> </option>
                 {this.renderPlaces()}
             </Input>
           </Block>
           <ModulesTable
-            item={this.state}
+            item={this.props.item}
             modulesDatabase={this.state.modulesDatabase}/>
-          {this.props.readOnly ?
+          {this.props.packScreenType === 1 ?
             <FooterButtons buttons={[
               {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
-              {text: "Salvar", onClick: () => this.props.addPack(this.props.item)}
+              {text: "Adicionar", onClick: () => this.props.addPack()}
             ]}/>
             :
-            <>
-            <button className="button button--danger" style={{width: "100%"}} onClick={this.unmountPack}>Desmontar Pacote</button>
             <FooterButtons buttons={[
               {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
-              {text: "Salvar", onClick: () => this.saveEdits()}
+              {text: "Remover", className: "button--danger", onClick: () => this.props.removePack()}
             ]}/>
-            </>
-           }
+          }
+
       </Box>
     )
   }

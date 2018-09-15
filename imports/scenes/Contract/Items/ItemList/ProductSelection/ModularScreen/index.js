@@ -20,6 +20,7 @@ export default class ModularScreen extends React.Component {
         description: this.props.pack.description,
         containerId: this.props.pack._id,
         price: this.props.pack.price,
+        defaultPrice: this.props.pack.price,
         restitution: this.props.pack.restitution,
         quantity: 1
       };
@@ -61,7 +62,7 @@ export default class ModularScreen extends React.Component {
     return this.state.pack.modules.map((module, i) => {
       return (
         <tr key={i}>
-          <td>{module._id}</td>
+          <td>{module.serial || "-"}</td>
           <td>{module.description}</td>
           <td><Input
                 type="number"
@@ -120,11 +121,16 @@ export default class ModularScreen extends React.Component {
     }
   }
 
+  toggleModularScreen = () => {
+    this.props.toggleModularScreen();
+  }
+
   render() {
     return(
       <Box
         title="Montagem de Container Modular"
-        closeBox={this.props.toggleModularScreen}>
+        width="550px"
+        closeBox={this.toggleModularScreen}>
         <Block columns={2}>
           <Input title="Montando:" type="text" readOnly={true} value={this.props.pack.description}/>
           <Input title="Quantidade:" type="number" min={1} max={this.calculateMax()} value={this.state.pack.quantity} onChange={this.changeQuantity}/>
@@ -132,7 +138,7 @@ export default class ModularScreen extends React.Component {
         <table className="table table--modular-screen">
           <thead>
             <tr>
-              <th>Código</th>
+              <th>Série</th>
               <th>Componentes</th>
               <th>Qtd.</th>
               <th>Disp.</th>
@@ -142,10 +148,17 @@ export default class ModularScreen extends React.Component {
             {this.renderBody()}
           </tbody>
         </table>
-        <FooterButtons buttons={[
-          {text: "Remover", className: "button--danger", onClick: () => this.props.removeModular(this.state.pack)},
-          {text: "Salvar", onClick: () => this.saveEdits()}
-        ]}/>
+        {this.props.modularScreenType === 1 ?
+          <FooterButtons buttons={[
+            {text: "Voltar", className: "button--secondary", onClick: () => this.toggleModularScreen()},
+            {text: "Adicionar", onClick: () => this.saveEdits()}
+          ]}/>
+          :
+          <FooterButtons buttons={[
+            {text: "Remover", className: "button--danger", onClick: () => this.props.removeModular(this.state.pack)},
+            {text: "Salvar", onClick: () => this.saveEdits()}
+          ]}/>
+        }
       </Box>
     )
   }

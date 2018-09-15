@@ -45,7 +45,6 @@ export default class ServicesTable extends React.Component {
     }
     return (
       <tr>
-        <th className="small-column">Código</th>
         <th>Descrição</th>
         <th className="small-column">Valor</th>
         <th className="small-column"><button onClick={toggleWindow} className="database__table__button">+</button></th>
@@ -60,7 +59,6 @@ export default class ServicesTable extends React.Component {
       }
       return (
         <tr key={i}>
-          <td className="small-column">{item._id}</td>
           <td>{item.description}</td>
           <td className="small-column">{tools.format(item.price, 'currency')}</td>
           <td className="small-column"><button className="database__table__button" onClick={toggleWindow}>✎</button></td>

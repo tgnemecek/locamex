@@ -21,33 +21,38 @@ export default class App extends React.Component {
   }
 
   componentDidMount() {
-    Tracker.autorun(() => {
-      Meteor.subscribe('usersPub');
-      const user = Meteor.user();
-      const ready = user === false ? false : true;
+    this.tracker = Tracker.autorun(() => {
+      var user = false;
+      var ready = false;
+      Meteor.subscribe('usersPub', () => {
+        ready = true;
+      });
+      user = Meteor.user();
       this.setState({ user, ready });
     })
   }
 
   render() {
-    if (this.state.ready) {
-      if (this.state.user) {
-        return (
-          <div id="app">
-            <Route path="/" render={ props => <AppHeader {...props} user={this.state.user}/> }/>
-            <Switch>
-              <Route path="/dashboard" render={(props) => <Dashboard {...props} user={this.state.user}/>}/>
-              <Route path="/contract/:contractId" render={(props) => <Contract {...props} user={this.state.user}/>}/>
-              <Route path="/database/:database" render={(props) => <Database {...props} user={this.state.user}/>}/>
-              <Route path="/test" component={Test}/>
-              <Route exact path="/" render={() => <Redirect to="/dashboard"/>}/>
-              <Route path="*" component={NotFound}/>
-            </Switch>
-            <Route path="/" component={AppVersion}/>
-          </div>
-        )
-      } else return <Route path="*" render={(props) => <Login {...props} user={this.state.user}/>}/>
-    } else return null;
+    if (this.state.ready && this.state.user) {
+      return (
+        <div id="app">
+          <Route path="/" render={ props => <AppHeader {...props} user={this.state.user}/> }/>
+          <Switch>
+            <Route path="/dashboard" render={(props) => <Dashboard {...props} user={this.state.user}/>}/>
+            <Route path="/contract/:contractId" render={(props) => <Contract {...props} user={this.state.user}/>}/>
+            <Route path="/database/:database" render={(props) => <Database {...props} user={this.state.user}/>}/>
+            <Route path="/test" component={Test}/>
+            <Route exact path="/" render={() => <Redirect to="/dashboard"/>}/>
+            <Route path="*" component={NotFound}/>
+          </Switch>
+          <Route path="/" component={AppVersion}/>
+        </div>
+      )
+    } else if (this.state.ready && this.state.user === null) {
+      return <Route path="*" render={(props) => <Login {...props} user={this.state.user}/>}/>
+    } else if (!this.state.ready) {
+      return null
+    }
   }
 }
 

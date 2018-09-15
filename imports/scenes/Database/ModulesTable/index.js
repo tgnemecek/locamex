@@ -44,7 +44,6 @@ export default class ModulesTable extends React.Component {
     }
     return (
       <tr>
-        <th className="small-column">Código</th>
         <th>Descrição</th>
         <th className="small-column">Disponíveis</th>
         <th className="small-column">Locados</th>
@@ -61,7 +60,6 @@ export default class ModulesTable extends React.Component {
       }
       return (
         <tr key={i}>
-          <td className="small-column">{item._id}</td>
           <td>{item.description}</td>
           <td className="small-column">{item.available}</td>
           <td className="small-column">{item.rented}</td>
