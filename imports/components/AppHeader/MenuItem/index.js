@@ -12,7 +12,7 @@ export default class MenuItem extends React.Component {
     var pagesDatabase = this.props.pagesDatabase;
     var pages = this.props.pages;
 
-    var allowedPages = this.props.user.pages || [];
+    var allowedPages = this.props.user.profile.pages || [];
     for (var i = 0; i < allowedPages.length; i++) {
       for (var j = 0; j < pagesDatabase.length; j++) {
         if (allowedPages[i] == pagesDatabase[j]._id && pages.includes(pagesDatabase[j]._id)) {

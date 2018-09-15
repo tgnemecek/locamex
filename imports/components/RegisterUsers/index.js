@@ -23,7 +23,7 @@ export default class RegisterUsers extends React.Component {
       username: this.props.item.username || '',
       emails,
       password: '',
-      pages: this.props.item.pages || [],
+      pages: this.props.item.profile.pages || [],
 
       pagesDatabase: [],
 

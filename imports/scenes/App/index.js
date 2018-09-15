@@ -15,25 +15,23 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      user: false,
-      ready: false
+      user: undefined,
+      ready: 0
     }
   }
 
   componentDidMount() {
     this.tracker = Tracker.autorun(() => {
-      var user = false;
-      var ready = false;
-      Meteor.subscribe('usersPub', () => {
-        ready = true;
-      });
-      user = Meteor.user();
-      this.setState({ user, ready });
+      Meteor.subscribe('usersPub');
+      var user = Meteor.user();
+      if (user) {
+        this.setState({ user, ready: 1 });
+      } else if (user === null) this.setState({ user, ready: -1 });
     })
   }
 
   render() {
-    if (this.state.ready && this.state.user) {
+    if (this.state.ready === 1) {
       return (
         <div id="app">
           <Route path="/" render={ props => <AppHeader {...props} user={this.state.user}/> }/>
@@ -48,9 +46,9 @@ export default class App extends React.Component {
           <Route path="/" component={AppVersion}/>
         </div>
       )
-    } else if (this.state.ready && this.state.user === null) {
+    } else if (this.state.ready === -1) {
       return <Route path="*" render={(props) => <Login {...props} user={this.state.user}/>}/>
-    } else if (!this.state.ready) {
+    } else if (this.state.ready === 0) {
       return null
     }
   }

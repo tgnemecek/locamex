@@ -8,16 +8,22 @@ var userNameMinLength = 3;
 var userNameMaxLength = 40;
 
 if (Meteor.isServer) {
-  Meteor.publish('usersPub', () => {
-    return Meteor.users.find();
-  })
+  Meteor.publish('usersPub', function () {
+    if (this.userId) {
+      return Meteor.users.find({ _id: this.userId }, {
+        fields: { visible: 1 }
+      });
+    } else {
+      this.ready();
+    }
+  });
 
   Meteor.methods({
     'users.insert'(state) {
       var username = state.username;
       var password = state.password;
       var emails = [{address: state.emails, verified: false}];
-      var pages = state.pages;
+      var profile = {pages: state.pages}
 
       if (!username || !emails) {
         throw new Meteor.Error('required-fields-empty');
@@ -37,7 +43,7 @@ if (Meteor.isServer) {
         _id,
         username,
         emails,
-        pages,
+        profile,
         visible: true
       };
       Meteor.users.update({ _id }, { $set: data });
@@ -58,7 +64,7 @@ if (Meteor.isServer) {
       var username = state.username;
       var password = state.password;
       var emails = [{address: state.emails, verified: false}];
-      var pages = state.pages;
+      var profile = {pages: state.pages}
 
       if (!username || !emails) {
         throw new Meteor.Error('required-fields-empty');
@@ -76,13 +82,14 @@ if (Meteor.isServer) {
         _id,
         username,
         emails,
-        pages,
+        profile,
         visible: true
       }
       Meteor.users.update({ _id }, { $set: data });
+      console.log(Meteor.userId());
       Meteor.call('history.insert', data, 'users');
       password ? Accounts.setPassword(_id, password) : null;
-
+      console.log(Meteor.userId());
     }
   })
 }

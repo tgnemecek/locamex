@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.2.0
+Version: 1.2.1
 
 ## Information:
 
@@ -8,6 +8,10 @@ Version: 1.2.0
 -To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.2.1
+
+
 
 ### Version 1.2.0
 
@@ -82,6 +86,8 @@ Version: 1.2.0
 
 ### Medium Priority:
 
+-Pages are stored insinde 'profile' key in user object. The profile key is not safe and can be edited, fix this.
+  The problem is that apparently publishing Meteor.users.find() won't cause Tracker.autorun to react (old way).
 -Test Billing with broken values and long remainders, possible to encounter NaN.
 -Add server-side security for meteor methods (simple-schema, required fields);
 -Fix table in RegisterPacks where it divides the table randomly;
