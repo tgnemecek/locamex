@@ -7,6 +7,7 @@ if (Meteor.isServer) {
   Meteor.publish('modulesPub', () => {
     return Modules.find();
   })
+
   Meteor.methods({
     'modules.insert'(state) {
       const _id = tools.generateId("modules");

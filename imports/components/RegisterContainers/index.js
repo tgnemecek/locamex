@@ -27,7 +27,8 @@ export default class RegisterContainers extends React.Component {
       restitution: this.props.item.restitution || '',
       observations: this.props.item.observations || '',
 
-      modulesDatabase: [],
+      modulesDatabaseFull: [],
+      modulesDatabaseFiltered: [],
       placesDatabase: [],
 
       errorMsg: '',
@@ -40,13 +41,19 @@ export default class RegisterContainers extends React.Component {
     this.tracker = Tracker.autorun(() => {
       Meteor.subscribe('modulesPub');
       Meteor.subscribe('placesPub');
-      var modulesDatabase = Modules.find({ visible: true }).fetch();
+      var modulesDatabaseFull = Modules.find({ visible: true }).fetch();
+      var modulesDatabaseFiltered = modulesDatabaseFull;
       var placesDatabase = Places.find({ visible: true }).fetch();
-      this.setState({ modulesDatabase, placesDatabase });
+      this.setState({ modulesDatabaseFull, modulesDatabaseFiltered, placesDatabase });
     })
   }
   componentWillUnmount = () => {
     this.tracker.stop();
+  }
+  searchReturn = (modulesDatabaseFiltered) => {
+    if (modulesDatabaseFiltered) {
+      this.setState({ modulesDatabaseFiltered });
+    } else this.setState({ modulesDatabaseFiltered: this.state.modulesDatabaseFull });
   }
   renderOptions = (database) => {
     return this.state[database].map((item, i) => {
@@ -69,7 +76,7 @@ export default class RegisterContainers extends React.Component {
     if (!this.state.description.trim()) {
       errorKeys.push("description");
       this.setState({ errorMsg: "Favor informar uma descrição.", errorKeys });
-    } else if (!this.state.serial.trim()) {
+    } else if (!this.state.serial.trim() && this.state.type === 'fixed') {
       errorKeys.push("serial");
       this.setState({ errorMsg: "Favor informar uma série.", errorKeys });
     } else {
@@ -130,7 +137,11 @@ export default class RegisterContainers extends React.Component {
             />
           </Block>
           {this.state.type === 'modular' ?
-            <Modular item={this.state} onChange={this.onChange} modulesDatabase={this.state.modulesDatabase}/>
+            <Modular
+              item={this.state}
+              onChange={this.onChange}
+              searchReturn={this.searchReturn}
+              modulesDatabase={this.state.modulesDatabaseFiltered}/>
             :
             <Fixed item={this.state} onChange={this.onChange} placesDatabase={this.state.placesDatabase}/>
           }

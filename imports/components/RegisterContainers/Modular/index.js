@@ -1,18 +1,19 @@
-import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import ErrorBoundary from '/imports/components/ErrorBoundary/index';
-import tools from '/imports/startup/tools/index';
-import Block from '/imports/components/Block/index';
-import Box from '/imports/components/Box/index';
-import FooterButtons from '/imports/components/FooterButtons/index';
-import Input from '/imports/components/Input/index';
+import { Modules } from '/imports/api/modules/index';
 
-export default function Modular (props) {
-  var numberOfRows = 4;
-  var onChange = (e) => {
+import tools from '/imports/startup/tools/index';
+import SearchBar from '/imports/components/SearchBar/index';
+
+import Input from '/imports/components/Input/index';
+import RegisterModules from '/imports/components/RegisterModules/index';
+import Loading from '/imports/components/Loading/index';
+import NotFound from '/imports/components/NotFound/index';
+
+export default class Modular extends React.Component {
+  onChange = (e) => {
     var value = e.target.value;
     var key = e.target.name;
-    var allowedModules = tools.deepCopy(props.item.modules);
+    var allowedModules = tools.deepCopy(this.props.item.modules);
     (() => {
       if (value === true) {
         if (allowedModules.includes(key)) return
@@ -33,28 +34,49 @@ export default function Modular (props) {
       }
     })();
     var exportValue = {target: {value: allowedModules, name: "modules"}};
-    props.onChange(exportValue);
+    this.props.onChange(exportValue);
   }
 
-  var renderArray = () => {
-    return props.modulesDatabase.map((module, i) => {
-      return <Input
+  renderBody = () => {
+    return this.props.modulesDatabase.map((item, i) => {
+      return (
+        <tr key={i}>
+          <td>{item.description}</td>
+          <td className="small-column">
+            <Input
               key={i}
               type="checkbox"
               id={"module--" + i}
-              name={module._id}
-              className="register-containers__module__checkbox"
-              title={module.description}
-              value={props.item.modules.includes(module._id)}
-              onChange={onChange}/>
+              name={item._id}
+              className="register-containers__module-block__checkbox"
+              value={this.props.item.modules.includes(item._id)}
+              onChange={this.onChange}/>
+          </td>
+        </tr>
+      )
     })
   }
-  return (
-    <div className="register-containers__module-block">
-      <h4 className="register-containers__transaction__title">Componentes Permitidos:</h4>
-      <Block columns={Math.floor(props.modulesDatabase.length / numberOfRows)}>
-        {renderArray()}
-      </Block>
-    </div>
-  )
+
+  render () {
+    return (
+      <div className="register-containers__module-block">
+        <h4 className="register-containers__module-block__title">Componentes Permitidos:</h4>
+        <SearchBar
+          database={this.props.modulesDatabase}
+          options={this.props.searchOptions}
+          searchReturn={this.props.searchReturn}
+        />
+        <table className="table database__table">
+          <thead>
+            <tr>
+              <th>Descrição</th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.renderBody()}
+          </tbody>
+        </table>
+      </div>
+    )
+  }
 }

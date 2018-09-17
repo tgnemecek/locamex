@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.2.1
+Version: 1.2.2
 
 ## Information:
 
@@ -8,6 +8,11 @@ Version: 1.2.1
 -To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.2.2
+
+-RegisterContainers: layout now uses a table with a scroll and all modules now appear.
+-MongoDB: replaced old ids with new ObjectID generated strings;
 
 ### Version 1.2.1
 
@@ -74,7 +79,6 @@ Version: 1.2.1
 ### Urgent Priority:
 
 -Check if cancelling the contract returns the items (should be able to cancel an active one? ask);
--Mongodb uses indexes and only shows the first 20 documents, see how to work with this!
 
 ### High Priority:
 

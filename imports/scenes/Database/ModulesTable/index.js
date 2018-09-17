@@ -79,7 +79,7 @@ export default class ModulesTable extends React.Component {
             options={this.searchOptions}
             searchReturn={this.searchReturn}
           />
-          <table className="table database__table database__table--clients">
+          <table className="table database__table">
             <thead>
               {this.renderHeader()}
             </thead>
