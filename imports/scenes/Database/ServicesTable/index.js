@@ -23,6 +23,7 @@ export default class ServicesTable extends React.Component {
     this.tracker = Tracker.autorun(() => {
       Meteor.subscribe('servicesPub');
       fullDatabase = Services.find({ visible: true }).fetch();
+      fullDatabase = tools.sortObjects(fullDatabase, 'description');
       filteredDatabase = fullDatabase;
       if (fullDatabase) this.setState({ fullDatabase, filteredDatabase, ready: 1 });
     })

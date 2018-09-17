@@ -3,8 +3,25 @@ import { Mongo } from 'meteor/mongo';
 
 export default class tools {
 
-  static translate = (str) => {
-    return null
+  static sortObjects = (arr, key, options) => {
+    if (!options) options = {};
+
+    var options = {
+      reverseOrder: false,
+      ...options
+    }
+
+    arr.sort(function (a, b) {
+      if (a[key] < b[key]) {
+        return options.reverseOrder ? 1 : -1;
+      }
+      if (a[key] > b[key]) {
+        return options.reverseOrder ? -1 : 1;
+      }
+      return 0;
+    })
+
+    return arr;
   }
 
   static format = (value, type, externalOptions) => {

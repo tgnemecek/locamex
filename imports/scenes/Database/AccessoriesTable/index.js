@@ -24,6 +24,7 @@ export default class AccessoriesTable extends React.Component {
       Meteor.subscribe('accessoriesPub');
       Meteor.subscribe('categoriesPub');
       var fullDatabase = Accessories.find({visible: true}).fetch();
+      fullDatabase = tools.sortObjects(fullDatabase, 'description');
       var filteredDatabase = fullDatabase;
       var categoriesDb = Categories.find({visible: true}).fetch();
       if (fullDatabase) this.setState({ fullDatabase, filteredDatabase, categoriesDb, ready: 1 });

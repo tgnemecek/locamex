@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.2.2
+Version: 1.2.5
 
 ## Information:
 
@@ -9,9 +9,17 @@ Version: 1.2.2
 
 ## Changelog:
 
+### Version 1.2.5
+
+-Database:
+  -All tables are now alphabetically sorted by default using the description field as reference;
+  -ContractsTable is the exception, being sorted in reverse order using the id field;
+
 ### Version 1.2.2
 
--RegisterContainers: layout now uses a table with a scroll and all modules now appear.
+-RegisterContainers:
+  -Layout now uses a table with a scroll and all modules now appear;
+  -Fixed error that required modular containers to have a Serial;
 -MongoDB: replaced old ids with new ObjectID generated strings;
 
 ### Version 1.2.1
@@ -91,6 +99,8 @@ Version: 1.2.2
 
 ### Medium Priority:
 
+-Make RegisterContainers/Modular SearchBar to be outside the scrolling div;
+-Make All lists sort by description, contracts sorts by id (or date);
 -Test Billing with broken values and long remainders, possible to encounter NaN.
 -Add server-side security for meteor methods (simple-schema, required fields);
 -Fix table in RegisterPacks where it divides the table randomly;
