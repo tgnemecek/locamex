@@ -5,7 +5,7 @@ export const Places = new Mongo.Collection('places');
 
 if (Meteor.isServer) {
   Meteor.publish('placesPub', () => {
-    return Places.find();
+    return Places.find({ visible: true });
   })
     Places.remove({});
     Places.insert({

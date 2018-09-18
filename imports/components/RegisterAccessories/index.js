@@ -42,8 +42,8 @@ export default class RegisterAccessories extends React.Component {
     this.tracker = Tracker.autorun(() => {
       Meteor.subscribe('categoriesPub');
       Meteor.subscribe('placesPub');
-      var categoriesDatabase = Categories.find({ visible: true }).fetch();
-      var placesDatabase = Places.find({ visible: true }).fetch();
+      var categoriesDatabase = Categories.find().fetch();
+      var placesDatabase = Places.find().fetch();
       this.setState({ categoriesDatabase, placesDatabase });
     })
   }

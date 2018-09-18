@@ -20,8 +20,7 @@ export default class UsersTable extends React.Component {
     var filteredDatabase;
     this.tracker = Tracker.autorun(() => {
       Meteor.subscribe('usersPub');
-      fullDatabase = Meteor.users.find({ visible: true }).fetch();
-      fullDatabase = tools.sortObjects(fullDatabase, 'username');
+      fullDatabase = Meteor.users.find().fetch();
       filteredDatabase = fullDatabase;
       if (fullDatabase) this.setState({ fullDatabase, filteredDatabase, ready: 1 });
     })

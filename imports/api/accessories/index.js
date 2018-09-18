@@ -5,7 +5,7 @@ export const Accessories = new Mongo.Collection('accessories');
 
 if (Meteor.isServer) {
   Meteor.publish('accessoriesPub', () => {
-    return Accessories.find();
+    return Accessories.find({ visible: true }, {sort: { description: 1 }});
   })
   Meteor.methods({
     'accessories.insert'(state) {
@@ -59,8 +59,15 @@ if (Meteor.isServer) {
       }
     },
     'accessories.check'(_id, quantity) {
-      const item = Accessories.findOne(_id);
-      if (!item) throw new Meteor.Error("_id-not-found", "Erro de banco de dados", arguments);
+      const item = Accessories.findOne(
+        {
+          $and: [
+            { _id },
+            { visible: true }
+          ]
+        }
+      );
+      if (!item) throw new Meteor.Error("_id-not-found", "Um dos acessórios locados não está mais disponível ou foi excluído.", arguments);
       if (item.available < quantity) {
         return false;
       } else return true;

@@ -23,8 +23,8 @@ export default class PackScreen extends React.Component {
     this.tracker = Tracker.autorun(() => {
       Meteor.subscribe('modulesPub');
       Meteor.subscribe('placesPub');
-      var modulesDatabase = Modules.find({ visible: true }).fetch();
-      var placesDatabase = Places.find({ visible: true }).fetch();
+      var modulesDatabase = Modules.find().fetch();
+      var placesDatabase = Places.find().fetch();
       this.setState({ modulesDatabase, placesDatabase });
     })
   }

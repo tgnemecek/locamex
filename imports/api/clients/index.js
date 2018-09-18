@@ -5,7 +5,7 @@ export const Clients = new Mongo.Collection('clients');
 
 if (Meteor.isServer) {
   Meteor.publish('clientsPub', () => {
-    return Clients.find();
+    return Clients.find({ visible: true }, {sort: { description: 1 }});
   })
   Meteor.methods({
     'clients.insert'(state) {

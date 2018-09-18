@@ -22,7 +22,7 @@ export default class Finalize extends React.Component {
   componentDidMount = () => {
     this.tracker = Tracker.autorun(() => {
       Meteor.subscribe('placesPub');
-      var places = Places.find({ visible: true }).fetch();
+      var places = Places.find().fetch();
       this.setState({ places });
     })
   }

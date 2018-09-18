@@ -6,7 +6,7 @@ export const Services = new Mongo.Collection('services');
 
 if (Meteor.isServer) {
   Meteor.publish('servicesPub', () => {
-    return Services.find();
+    return Services.find({ visible: true }, {sort: { description: 1 }});
   })
 
   Meteor.methods({

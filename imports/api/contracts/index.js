@@ -5,7 +5,7 @@ export const Contracts = new Mongo.Collection('contracts');
 
 if (Meteor.isServer) {
   Meteor.publish('contractsPub', () => {
-    return Contracts.find();
+    return Contracts.find({ visible: true }, {sort: { _id: -1 }});
   })
   Meteor.methods({
     'contracts.insert'(state) {

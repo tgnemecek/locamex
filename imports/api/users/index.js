@@ -9,7 +9,7 @@ var userNameMaxLength = 40;
 
 if (Meteor.isServer) {
   Meteor.publish('usersPub', function () {
-    return Meteor.users.find();
+    return Meteor.users.find({ visible: true }, {sort: { username: 1 }});
     // if (this.userId) {
     //   return Meteor.users.find({}, {
     //     fields: { username: 1, visible: 1, pages: 1 }

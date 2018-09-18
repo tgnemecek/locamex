@@ -23,9 +23,8 @@ export default class PacksTable extends React.Component {
     this.tracker = Tracker.autorun(() => {
       Meteor.subscribe('placesPub');
       Meteor.subscribe('packsPub');
-      var placesDatabase = Places.find({ visible: true }).fetch();
-      var fullDatabase = Packs.find({ visible: true }).fetch();
-      fullDatabase = tools.sortObjects(fullDatabase, 'description');
+      var placesDatabase = Places.find().fetch();
+      var fullDatabase = Packs.find().fetch();
       var filteredDatabase = fullDatabase;
       if (fullDatabase) this.setState({ fullDatabase, filteredDatabase, placesDatabase, ready: 1 });
     })

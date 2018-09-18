@@ -41,9 +41,9 @@ export default class RegisterContainers extends React.Component {
     this.tracker = Tracker.autorun(() => {
       Meteor.subscribe('modulesPub');
       Meteor.subscribe('placesPub');
-      var modulesDatabaseFull = Modules.find({ visible: true }).fetch();
+      var modulesDatabaseFull = Modules.find().fetch();
       var modulesDatabaseFiltered = modulesDatabaseFull;
-      var placesDatabase = Places.find({ visible: true }).fetch();
+      var placesDatabase = Places.find().fetch();
       this.setState({ modulesDatabaseFull, modulesDatabaseFiltered, placesDatabase });
     })
   }

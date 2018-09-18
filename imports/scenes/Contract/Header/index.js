@@ -78,7 +78,7 @@ export default class Header extends React.Component {
                                               updateContract={this.props.updateContract}
                                               errorKeys={this.props.errorKeys}
                                               /> : null}
-            {this.props.contract.status !== "finalized" ?
+            {this.props.contract.status === "inactive" ?
               <button onClick={this.props.toggleCancelWindow}>✖</button>
             : null}
           </div>

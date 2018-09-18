@@ -62,7 +62,7 @@ export default class ProductSelection extends React.Component {
       var fullDatabase = this.state.dbName.find().fetch();
       if (this.props.database == 'containers') {
         Meteor.subscribe('packsPub');
-        var packsDatabase = Packs.find({ visible: true }).fetch();
+        var packsDatabase = Packs.find().fetch();
         fullDatabase = fullDatabase.concat(packsDatabase);
       }
 

@@ -6,7 +6,7 @@ export const Packs = new Mongo.Collection('packs');
 
 if (Meteor.isServer) {
   Meteor.publish('packsPub', () => {
-    return Packs.find();
+    return Packs.find({ visible: true }, {sort: { description: 1 }});
   })
   Meteor.methods({
     'packs.insert' (packInfo) {
@@ -35,8 +35,15 @@ if (Meteor.isServer) {
       }
     },
     'packs.check'(_id) {
-      const item = Packs.findOne(_id);
-      if (!item) throw new Meteor.Error("_id-not-found", "Erro de banco de dados", arguments);
+      const item = Packs.findOne(
+        {
+          $and: [
+            { _id },
+            { visible: true }
+          ]
+        }
+      );
+      if (!item) throw new Meteor.Error("_id-not-found", "Um dos pacotes locados não está mais disponível ou foi excluído.", arguments);
       if (item.status == 'available') {
         return true;
       } else return false;

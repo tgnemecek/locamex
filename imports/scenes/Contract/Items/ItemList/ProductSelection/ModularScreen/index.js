@@ -135,19 +135,21 @@ export default class ModularScreen extends React.Component {
           <Input title="Montando:" type="text" readOnly={true} value={this.props.pack.description}/>
           <Input title="Quantidade:" type="number" min={1} max={this.calculateMax()} value={this.state.pack.quantity} onChange={this.changeQuantity}/>
         </Block>
-        <table className="table table--modular-screen">
-          <thead>
-            <tr>
-              <th>Série</th>
-              <th>Componentes</th>
-              <th>Qtd.</th>
-              <th>Disp.</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.renderBody()}
-          </tbody>
-        </table>
+        <div className="modular-screen__body">
+          <table className="table table--modular-screen">
+            <thead>
+              <tr>
+                <th>Série</th>
+                <th>Componentes</th>
+                <th>Qtd.</th>
+                <th>Disp.</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.renderBody()}
+            </tbody>
+          </table>
+        </div>
         {this.props.modularScreenType === 1 ?
           <FooterButtons buttons={[
             {text: "Voltar", className: "button--secondary", onClick: () => this.toggleModularScreen()},

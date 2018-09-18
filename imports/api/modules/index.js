@@ -5,7 +5,7 @@ export const Modules = new Mongo.Collection('modules');
 
 if (Meteor.isServer) {
   Meteor.publish('modulesPub', () => {
-    return Modules.find();
+    return Modules.find({ visible: true }, {sort: { description: 1 }});
   })
 
   Meteor.methods({
@@ -31,8 +31,15 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', data, 'modules');
     },
     'modules.check'(_id, quantity) {
-      const item = Modules.findOne(_id);
-      if (!item) throw new Meteor.Error("_id-not-found", "Erro de banco de dados", arguments);
+      const item = Modules.findOne(
+        {
+          $and: [
+            { _id },
+            { visible: true }
+          ]
+        }
+      );
+      if (!item) throw new Meteor.Error("_id-not-found", "Um dos componentes locados não está mais disponível ou foi excluído.", arguments);
       if (item.available < quantity) {
         return false;
       } else return true;

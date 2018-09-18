@@ -20,8 +20,7 @@ export default class ClientsTable extends React.Component {
   componentDidMount = () => {
     this.tracker = Tracker.autorun(() => {
       Meteor.subscribe('clientsPub');
-      var fullDatabase = Clients.find({ visible: true }).fetch();
-      fullDatabase = tools.sortObjects(fullDatabase, 'description');
+      var fullDatabase = Clients.find().fetch();
       var filteredDatabase = fullDatabase;
       if (fullDatabase) this.setState({ fullDatabase, filteredDatabase, ready: 1 });
     })

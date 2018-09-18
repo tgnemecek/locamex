@@ -21,8 +21,7 @@ export default class ModulesTable extends React.Component {
     var filteredDatabase;
     this.tracker = Tracker.autorun(() => {
       Meteor.subscribe('modulesPub');
-      fullDatabase = Modules.find({ visible: true }).fetch();
-      fullDatabase = tools.sortObjects(fullDatabase, 'description');
+      fullDatabase = Modules.find().fetch();
       filteredDatabase = fullDatabase;
       if (fullDatabase) this.setState({ fullDatabase, filteredDatabase, ready: 1 });
     })

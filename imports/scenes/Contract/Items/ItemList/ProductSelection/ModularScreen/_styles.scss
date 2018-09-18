@@ -1,5 +1,9 @@
+.modular-screen__body {
+  height: 400px;
+  overflow-y: auto;
+}
+
 .table--modular-screen {
-  width: 500px;
   input {
     width: 50px;
   }

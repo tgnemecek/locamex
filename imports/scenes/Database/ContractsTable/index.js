@@ -22,9 +22,8 @@ export default class ContractsTable extends React.Component {
     this.tracker = Tracker.autorun(() => {
       Meteor.subscribe('clientsPub');
       Meteor.subscribe('contractsPub');
-      var clientsDb = Clients.find({ visible: true }).fetch();
-      var fullDatabase = Contracts.find({ visible: true }).fetch();
-      fullDatabase = tools.sortObjects(fullDatabase, '_id', {reverseOrder: true});
+      var clientsDb = Clients.find().fetch();
+      var fullDatabase = Contracts.find().fetch();
       var filteredDatabase = fullDatabase;
       if (fullDatabase) this.setState({ fullDatabase, filteredDatabase, clientsDb, ready: 1 });
     })

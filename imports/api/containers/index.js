@@ -6,7 +6,7 @@ export const Containers = new Mongo.Collection('containers');
 
 if (Meteor.isServer) {
   Meteor.publish('containersPub', () => {
-    return Containers.find();
+    return Containers.find({ visible: true }, {sort: { description: 1 }});
   })
   Meteor.methods({
     'containers.insert'(state) {
@@ -56,8 +56,15 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', data, 'containers');
     },
     'containers.check'(_id) {
-      const item = Containers.findOne(_id);
-      if (!item) throw new Meteor.Error("_id-not-found", "Erro de banco de dados", arguments);
+      const item = Containers.findOne(
+        {
+          $and: [
+            { _id },
+            { visible: true }
+          ]
+        }
+      );
+      if (!item) throw new Meteor.Error("_id-not-found", "Um dos containers locados não está mais disponível ou foi excluído.", arguments);
       if (item.status == 'available') {
         return true;
       } else return false;
