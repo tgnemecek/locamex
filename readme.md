@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.3.5
+Version: 1.3.6
 
 ## Information:
 
@@ -9,37 +9,42 @@ Version: 1.3.5
 
 ## Changelog:
 
+### Version 1.3.6
+
+- Readme: added correct indentation using double tabs;
+- App: changed logos to better quality ones (and without clipping corners);
+
 ### Version 1.3.5
 
 - Readme: Re-styled lists and removed double spaces;
 - App:
-  - Created and configured AWS S3;
-  - Created and added a logo for the system (AppHeader and Login);
+    - Created and configured AWS S3;
+    - Created and added a logo for the system (AppHeader and Login);
 - Database/MaintenanceTable: Created a temporary table for printing purposes only (no functionality);
 
 
 ### Version 1.3.0
 
 - Api:
-  - All Apis now check for visible = true when finding in the db (except History);
-  - All Apis now sort the database before sending, removed sorting in client;
-  - Apis now check for visible = true on db.check() and throw error if item is not visible anymore;
+    - All Apis now check for visible = true when finding in the db (except History);
+    - All Apis now sort the database before sending, removed sorting in client;
+    - Apis now check for visible = true on db.check() and throw error if item is not visible anymore;
 - Contract:
-  - ModularScreen: div is now scrolling;
-  - Header: client now only shows Cancel button if contract is inactive;
+    - ModularScreen: div is now scrolling;
+    - Header: client now only shows Cancel button if contract is inactive;
 - Readme: added double spaces as return;
 
 ### Version 1.2.5
 
 - Database:
-  - All tables are now alphabetically sorted by default using the description field as reference;
-  - ContractsTable is the exception, being sorted in reverse order using the id field;
+    - All tables are now alphabetically sorted by default using the description field as reference;
+    - ContractsTable is the exception, being sorted in reverse order using the id field;
 
 ### Version 1.2.2
 
 - RegisterContainers:
-  - Layout now uses a table with a scroll and all modules now appear;
-  - Fixed error that required modular containers to have a Serial;
+    - Layout now uses a table with a scroll and all modules now appear;
+    - Fixed error that required modular containers to have a Serial;
 - MongoDB: replaced old ids with new ObjectID generated strings;
 
 ### Version 1.2.1
@@ -51,12 +56,12 @@ The workaround is to check if the edited user is the one logged in and forcing t
 
 - App: Restructured subscription to usersPub to fix AppHeader bug;
 - Structure:
-  - Restructured all collections, ids are now generated via ObjectID, with collections prefixes;
-  - All tables now won't show the item's id, containers now have "Série" (serial);
-  - Serial isn't unique yet, but it is created by the user and a required field;
+    - Restructured all collections, ids are now generated via ObjectID, with collections prefixes;
+    - All tables now won't show the item's id, containers now have "Série" (serial);
+    - Serial isn't unique yet, but it is created by the user and a required field;
 - Contract/ProductSelection:
-  - Now packs appear when selecting products to add to the contract;
-  - Now packs can be correctly re-rented;
+    - Now packs appear when selecting products to add to the contract;
+    - Now packs can be correctly re-rented;
 - AccessoriesTable: removed category column;
 
 ### Version 1.1.7
@@ -72,14 +77,14 @@ The workaround is to check if the edited user is the one logged in and forcing t
 
 - AppHeader: Removed 'logged' functionality;
 - App:
-  - Blocked URL navigation for unauthorized users;
-  - Fixed redirect bugs;
+    - Blocked URL navigation for unauthorized users;
+    - Fixed redirect bugs;
 - Dashboard: created new scene;
 - Structure: added Test to gitignore;
 - Documents:
-  - Now only visible contacts appear;
-  - Title changed from 'Emitir Documentos' to 'Emitir Contrato';
-  - Fixed only additional contacts appearing;
+    - Now only visible contacts appear;
+    - Title changed from 'Emitir Documentos' to 'Emitir Contrato';
+    - Fixed only additional contacts appearing;
 - Api/create-pdf: created differences for 'person' type of client;
 
 ### Version 1.1.0
@@ -88,8 +93,8 @@ The workaround is to check if the edited user is the one logged in and forcing t
 - App: added version number to bottom of page;
 - AppHeader/MenuItem: fixed bug in constructor, allowedPages was getting set to undefined;
 - Contract:
-  - Removed 'min' for duration (but blocked 0 time);
-  - Restitution is now being saved and printing for modular containers;
+    - Removed 'min' for duration (but blocked 0 time);
+    - Restitution is now being saved and printing for modular containers;
 - Contract/Documents: Set as requirement for pdf export Legal Representative and Contact;
 - Contract, Database/Contracts, Database/Billing: Total Value fixed and now considers duration;
 - RegisterPacks: Added 'blank' default option for place;
@@ -97,9 +102,9 @@ The workaround is to check if the edited user is the one logged in and forcing t
 - RegisterAccessories, RegisterModules: set as default destination "available", and put "-" as last;
 - Api/pages: fixed Services page being saved twice;
 - Api/create-pdf:
-  - Filename now set correctly and contains contract id;
-  - Improved margins;
-  - Added footer with contract id and page count;
+    - Filename now set correctly and contains contract id;
+    - Improved margins;
+    - Added footer with contract id and page count;
 
 ## To Dos: (in order of priority)
 
@@ -107,8 +112,8 @@ The workaround is to check if the edited user is the one logged in and forcing t
 
 - SearchBar is not looking for 'place' key, check options argument and allow for this option;
 - RegisterContainers:
-  - Add 'select all' toggle in modular header;
-  - Put SearchBar out of scroll div;
+    - Add 'select all' toggle in modular header;
+    - Put SearchBar out of scroll div;
 - Tables: put them inside scroll div (SearchBar outside);
 
 ### High Priority:
@@ -145,7 +150,7 @@ The workaround is to check if the edited user is the one logged in and forcing t
 ### Server security:
 
 - Contract:
-  - Block cancelling of contract if status !== from inactive;
+    - Block cancelling of contract if status !== from inactive;
 - Everything that writes in database (meteor methods) should check for userId, and if the user has access to that functionality;
 
 
