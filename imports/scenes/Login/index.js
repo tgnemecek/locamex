@@ -37,6 +37,7 @@ export default class Login extends React.Component {
     return (
       <div className="login__background">
         <div className="login__box">
+          <img src="https://s3-sa-east-1.amazonaws.com/locamex-app/app-required/logo-sistema_321x100_20-09-2018.png" class="login__logo"/>
           <h1>Login</h1>
           {this.state.error ? <p>{this.state.error}</p> : undefined}
           <form onSubmit={this.submit} className="boxed-view__form">

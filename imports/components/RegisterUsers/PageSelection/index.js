@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import { appStructure } from '/imports/api/appStructure/index';
+import { appStructure } from '/imports/startup/app-structure/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import tools from '/imports/startup/tools/index';
 import Block from '/imports/components/Block/index';

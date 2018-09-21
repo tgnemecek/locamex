@@ -60,6 +60,11 @@ export const appStructure = [
         name: "packs",
         title: "Pacotes",
         link: "/database/packs"
+      },
+      {
+        name: "maintenance",
+        title: "Manutenção",
+        link: "/database/maintenance"
       }
     ]
   },

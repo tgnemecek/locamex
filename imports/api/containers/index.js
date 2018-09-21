@@ -23,6 +23,7 @@ if (Meteor.isServer) {
           price: state.price || 0,
           restitution: state.restitution || 0,
           observations: state.observations,
+          images: state.images,
           visible: true
         }
       } else if (state.type == 'modular') {
@@ -81,6 +82,7 @@ if (Meteor.isServer) {
           price: state.price,
           restitution: state.restitution,
           observations: state.observations,
+          images: state.images,
           visible: true
         };
       } else if (state.type == 'modular') {

@@ -7,6 +7,7 @@ import AccessoriesTable from './AccessoriesTable/index';
 import ClientsTable from './ClientsTable/index';
 import ContainersTable from './ContainersTable/index';
 import ContractsTable from './ContractsTable/index';
+import MaintenanceTable from './MaintenanceTable/index';
 import ModulesTable from './ModulesTable/index';
 import PacksTable from './PacksTable/index';
 import ServicesTable from './ServicesTable/index';
@@ -34,6 +35,7 @@ export default class Database extends React.Component {
     if (this.props.match.params.database === 'containers') Table = ContainersTable;
     if (this.props.match.params.database === 'contracts') Table = ContractsTable;
     if (this.props.match.params.database === 'clients') Table = ClientsTable;
+    if (this.props.match.params.database === 'maintenance') Table = MaintenanceTable;
     if (this.props.match.params.database === 'modules') Table = ModulesTable;
     if (this.props.match.params.database === 'packs') Table = PacksTable;
     if (this.props.match.params.database === 'services') Table = ServicesTable;

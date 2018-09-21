@@ -1,15 +1,21 @@
 @import './MenuItem/styles';
 
 .header__background {
-  background: $header-bg;
+  background: $brand-primary;
   width: 100%;
 }
 
+.header__logo {
+  margin-left: $space;
+  position: absolute;
+  height: 40px;
+}
+
 .header {
-  color: $header-color;
   max-width: ($site-max-width /1.5);
   margin: 0 auto;
   padding: 0 $space;
+  h1 { color: white }
 }
 
 .header__menu {
