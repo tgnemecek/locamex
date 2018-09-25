@@ -1,4 +1,5 @@
 import React from 'react';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Accessories } from '/imports/api/accessories/index';
 import { Categories } from '/imports/api/categories/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
@@ -8,36 +9,27 @@ import RegisterAccessories from '/imports/components/RegisterAccessories/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
-export default class AccessoriesTable extends React.Component {
+class AccessoriesTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      fullDatabase: [],
       filteredDatabase: [],
-      categoriesDb: [],
-      ready: 0
+      searchOptions: {
+        onlySearchHere: ['description']
+      }
     }
   }
 
-  componentDidMount() {
-    this.tracker = Tracker.autorun(() => {
-      Meteor.subscribe('accessoriesPub');
-      Meteor.subscribe('categoriesPub');
-      var fullDatabase = Accessories.find().fetch();
-      var filteredDatabase = fullDatabase;
-      var categoriesDb = Categories.find().fetch();
-      if (fullDatabase) this.setState({ fullDatabase, filteredDatabase, categoriesDb, ready: 1 });
-    })
-  }
-
-  componentWillUnmount = () => {
-    this.tracker.stop();
+  componentDidUpdate(prevProps) {
+    if (prevProps !== this.props) {
+      this.setState({ filteredDatabase: this.props.fullDatabase });
+    }
   }
 
   searchReturn = (filteredDatabase) => {
     if (filteredDatabase) {
       this.setState({ filteredDatabase });
-    } else this.setState({ filteredDatabase: this.state.fullDatabase });
+    } else this.setState({ filteredDatabase: this.props.fullDatabase });
   }
 
   renderHeader = () => {
@@ -63,9 +55,9 @@ export default class AccessoriesTable extends React.Component {
       const toggleWindow = () => {
         this.props.toggleWindow(item);
       }
-      for (var j = 0; j < this.state.categoriesDb.length; j++) {
-        if (this.state.categoriesDb[j]._id === item.category) {
-          category = this.state.categoriesDb[j].description;
+      for (var j = 0; j < this.props.categoriesDatabase.length; j++) {
+        if (this.props.categoriesDatabase[j]._id === item.category) {
+          category = this.props.categoriesDatabase[j].description;
           break;
         }
       }
@@ -84,22 +76,24 @@ export default class AccessoriesTable extends React.Component {
   }
 
   render () {
-    if (this.state.ready === 1) {
+    if (this.props.ready) {
       return (
         <ErrorBoundary>
           <SearchBar
-            database={this.state.fullDatabase}
-            options={this.searchOptions}
+            database={this.props.fullDatabase}
+            options={this.state.searchOptions}
             searchReturn={this.searchReturn}
           />
-          <table className="table database__table database__table--accessories">
-            <thead>
-              {this.renderHeader()}
-            </thead>
-            <tbody>
-              {this.renderBody()}
-            </tbody>
-          </table>
+          <div className="database__scroll-div">
+            <table className="table database__table database__table--accessories">
+              <thead>
+                {this.renderHeader()}
+              </thead>
+              <tbody>
+                {this.renderBody()}
+              </tbody>
+            </table>
+          </div>
           {this.props.item ?
             <RegisterAccessories
               item={this.props.item}
@@ -108,10 +102,21 @@ export default class AccessoriesTable extends React.Component {
           : null}
         </ErrorBoundary>
       )
-    } else if (this.state.ready === 0) {
-      return <Loading/>
-    } else if (this.state.ready === -1) {
-      return <NotFound/>
+    } else if (!this.props.ready) {
+      return null;
     }
   }
 }
+
+export default AccessoriesTableWrapper = withTracker((props) => {
+  Meteor.subscribe('accessoriesPub');
+  Meteor.subscribe('categoriesPub');
+  var fullDatabase = Accessories.find().fetch();
+  var categoriesDatabase = Categories.find().fetch();
+  var ready = !!fullDatabase.length;
+  return {
+    fullDatabase,
+    categoriesDatabase,
+    ready
+  }
+})(AccessoriesTable);

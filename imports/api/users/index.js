@@ -21,6 +21,8 @@ if (Meteor.isServer) {
 
   Meteor.methods({
     'users.insert'(state) {
+      var firstName = state.firstName;
+      var lastName = state.lastName;
       var username = state.username;
       var password = state.password;
       var emails = [{address: state.emails, verified: false}];
@@ -43,6 +45,8 @@ if (Meteor.isServer) {
       if (!_id) {throw new Meteor.Error('user-not-created');}
       const data = {
         _id,
+        firstName,
+        lastName,
         username,
         emails,
         pages,
@@ -63,6 +67,8 @@ if (Meteor.isServer) {
 
     'users.update'(state) {
       var _id = state._id;
+      var firstName = state.firstName;
+      var lastName = state.lastName;
       var username = state.username;
       var password = state.password;
       var emails = [{address: state.emails, verified: false}];
@@ -82,6 +88,8 @@ if (Meteor.isServer) {
         throw new Meteor.Error('name-too-long');
       };
       const data = {
+        firstName,
+        lastName,
         username,
         emails,
         pages,

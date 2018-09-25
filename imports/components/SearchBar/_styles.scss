@@ -1,30 +1,13 @@
-.search-bar {
+.search-bar__search-block {
   display: flex;
-  align-items: flex-end;
-  margin-bottom: $space;
+  flex-wrap: wrap;
+  padding : $space /2;
 }
 
-.search-bar input {
-  width: 100%;
-}
-
-.search-bar__block {
-  display: inline-block;
-  padding: ($space /2);
-  text-align: left;
-}
-
-.search-bar__block label {
-  display: block;
-  margin-left: ($space /2);
-  font-size: inherit;
-}
-
-.search-bar__block--main {
+.search-bar__search-input {
   flex-grow: 1;
 }
 
 .search-bar__button {
-  margin: 0 0 8px 0;
-  width: 60px !important;
+  margin: 17px -2px 0 5px;
 }

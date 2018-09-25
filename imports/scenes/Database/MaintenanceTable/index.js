@@ -1,4 +1,5 @@
 import React from 'react';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Places } from '/imports/api/places/index';
 import { Containers } from '/imports/api/containers/index';
 import tools from '/imports/startup/tools/index';
@@ -7,36 +8,48 @@ import SearchBar from '/imports/components/SearchBar/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
-export default class MaintenanceTable extends React.Component {
+class MaintenanceTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      fullDatabase: [],
       filteredDatabase: [],
-      placesDatabase: [],
-      ready: 0
+      searchOptions: {
+        onlySearchHere: ['description', 'observations'],
+        filters: [
+          {
+            label: "Pátio:",
+            key: "place",
+            selected: "",
+            options: []
+          }
+        ]
+      }
     }
   }
 
-  componentDidMount = () => {
-    this.tracker = Tracker.autorun(() => {
-      Meteor.subscribe('placesPub');
-      Meteor.subscribe('containersPub');
-      var placesDatabase = Places.find().fetch();
-      var fullDatabase = Containers.find({ status: "maintenance", type: "fixed" }).fetch();
-      var filteredDatabase = fullDatabase;
-      if (fullDatabase) this.setState({ fullDatabase, filteredDatabase, placesDatabase, ready: 1 });
-    })
+  componentDidMount() {
+    this.updateDatabases();
   }
 
-  componentWillUnmount = () => {
-    this.tracker.stop();
+  componentDidUpdate(prevProps) {
+    if (prevProps !== this.props) {
+      this.updateDatabases();
+    }
+  }
+
+  updateDatabases = () => {
+    var searchOptions = { ...this.state.searchOptions };
+    var placesOptions = this.props.placesDatabase.map((place) => {
+      return {value: place._id, label: place.description}
+    })
+    searchOptions.filters[0].options = placesOptions;
+    this.setState({ searchOptions, filteredDatabase: this.props.fullDatabase });
   }
 
   searchReturn = (filteredDatabase) => {
     if (filteredDatabase) {
       this.setState({ filteredDatabase });
-    } else this.setState({ filteredDatabase: this.state.fullDatabase });
+    } else this.setState({ filteredDatabase: this.props.fullDatabase });
   }
 
   renderHeader = () => {
@@ -54,9 +67,9 @@ export default class MaintenanceTable extends React.Component {
     return this.state.filteredDatabase.map((item, i) => {
       const translatePlaces = (place) => {
         if (!place) return "-";
-        for (var i = 0; i < this.state.placesDatabase.length; i++) {
-          if (this.state.placesDatabase[i]._id === place) {
-            return this.state.placesDatabase[i].description;
+        for (var i = 0; i < this.props.placesDatabase.length; i++) {
+          if (this.props.placesDatabase[i]._id === place) {
+            return this.props.placesDatabase[i].description;
           }
         } return "-";
       }
@@ -72,28 +85,42 @@ export default class MaintenanceTable extends React.Component {
   }
 
   render () {
-    if (this.state.ready === 1) {
+    if (this.props.ready) {
       return (
         <ErrorBoundary>
           <SearchBar
-            database={this.state.fullDatabase}
-            options={this.searchOptions}
+            database={this.props.fullDatabase}
+            options={this.state.searchOptions}
             searchReturn={this.searchReturn}
           />
-          <table className="table database__table database__table--accessories">
-            <thead>
-              {this.renderHeader()}
-            </thead>
-            <tbody>
-              {this.renderBody()}
-            </tbody>
-          </table>
+          <div className="database__scroll-div">
+            <table className="table database__table database__table--accessories">
+              <thead>
+                {this.renderHeader()}
+              </thead>
+              <tbody>
+                {this.renderBody()}
+              </tbody>
+            </table>
+          </div>
         </ErrorBoundary>
       )
-    } else if (this.state.ready === 0) {
-      return <Loading/>
-    } else if (this.state.ready === -1) {
-      return <NotFound/>
+    } else if (!this.props.ready) {
+      return null;
     }
   }
 }
+
+export default MaintenanceTableWrapper = withTracker((props) => {
+  Meteor.subscribe('placesPub');
+  Meteor.subscribe('containersPub');
+  var fullDatabase = Containers.find({ status: "maintenance", type: "fixed" }).fetch();
+  fullDatabase = tools.sortObjects(fullDatabase, 'place');
+  var placesDatabase = Places.find().fetch();
+  var ready = !!fullDatabase.length;
+  return {
+    fullDatabase,
+    placesDatabase,
+    ready
+  }
+})(MaintenanceTable);

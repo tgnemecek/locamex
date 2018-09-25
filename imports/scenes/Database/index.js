@@ -44,7 +44,6 @@ export default class Database extends React.Component {
       <>
         <div className="page-content">
           <Table
-            key={this.key}
             item={this.state.item}
             toggleWindow={this.toggleWindow}
           />

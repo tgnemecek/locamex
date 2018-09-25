@@ -1,4 +1,5 @@
 import React from 'react';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Places } from '/imports/api/places/index';
 import { Containers } from '/imports/api/containers/index';
 import tools from '/imports/startup/tools/index';
@@ -8,36 +9,64 @@ import RegisterContainers from '/imports/components/RegisterContainers/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
-export default class ContainersTable extends React.Component {
+class ContainersTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      fullDatabase: [],
       filteredDatabase: [],
-      placesDatabase: [],
-      ready: 0
+      searchOptions: {
+        onlySearchHere: ['description'],
+        filters: [
+          {
+            label: "Status: (Containers Fixos)",
+            key: "status",
+            selected: "",
+            options: [
+              {value: "available", label: "Disponível"},
+              {value: "rented", label: "Locado"},
+              {value: "maintenance", label: "Manutenção"},
+              {value: "inactive", label: "Inativo"}
+            ]
+          },
+          {
+            label: "Pátio: (Containers Fixos)",
+            key: "place",
+            selected: "",
+            options: []
+          }
+        ]
+      }
     }
   }
 
-  componentDidMount = () => {
-    this.tracker = Tracker.autorun(() => {
-      Meteor.subscribe('placesPub');
-      Meteor.subscribe('containersPub');
-      var placesDatabase = Places.find().fetch();
-      var fullDatabase = Containers.find().fetch();
-      var filteredDatabase = fullDatabase;
-      if (fullDatabase) this.setState({ fullDatabase, filteredDatabase, placesDatabase, ready: 1 });
-    })
+  componentDidMount() {
+    this.updateDatabases();
   }
 
-  componentWillUnmount = () => {
-    this.tracker.stop();
+  componentDidUpdate(prevProps) {
+    if (prevProps !== this.props) {
+      this.updateDatabases();
+    }
+  }
+
+  updateDatabases = () => {
+    var searchOptions = { ...this.state.searchOptions };
+    var placesOptions = this.props.placesDatabase.map((place) => {
+      return {value: place._id, label: place.description}
+    })
+    searchOptions.filters[1].options = placesOptions;
+    this.setState({ searchOptions, filteredDatabase: this.props.fullDatabase });
+  }
+
+  componentWillUnmount() {
+    this.props.handler1.stop();
+    this.props.handler2.stop();
   }
 
   searchReturn = (filteredDatabase) => {
     if (filteredDatabase) {
       this.setState({ filteredDatabase });
-    } else this.setState({ filteredDatabase: this.state.fullDatabase });
+    } else this.setState({ filteredDatabase: this.props.fullDatabase });
   }
 
   renderHeader = () => {
@@ -73,9 +102,9 @@ export default class ContainersTable extends React.Component {
       }
       const translatePlaces = (place) => {
         if (!place) return "-";
-        for (var i = 0; i < this.state.placesDatabase.length; i++) {
-          if (this.state.placesDatabase[i]._id === place) {
-            return this.state.placesDatabase[i].description;
+        for (var i = 0; i < this.props.placesDatabase.length; i++) {
+          if (this.props.placesDatabase[i]._id === place) {
+            return this.props.placesDatabase[i].description;
           }
         } return "-";
       }
@@ -94,22 +123,24 @@ export default class ContainersTable extends React.Component {
   }
 
   render () {
-    if (this.state.ready === 1) {
+    if (this.props.ready) {
       return (
         <ErrorBoundary>
           <SearchBar
-            database={this.state.fullDatabase}
-            options={this.searchOptions}
+            database={this.props.fullDatabase}
+            options={this.state.searchOptions}
             searchReturn={this.searchReturn}
           />
-          <table className="table database__table database__table--accessories">
-            <thead>
-              {this.renderHeader()}
-            </thead>
-            <tbody>
-              {this.renderBody()}
-            </tbody>
-          </table>
+          <div className="database__scroll-div">
+            <table className="table database__table database__table--accessories">
+              <thead>
+                {this.renderHeader()}
+              </thead>
+              <tbody>
+                {this.renderBody()}
+              </tbody>
+            </table>
+          </div>
           {this.props.item ?
             <RegisterContainers
               item={this.props.item}
@@ -118,10 +149,23 @@ export default class ContainersTable extends React.Component {
           : null}
         </ErrorBoundary>
       )
-    } else if (this.state.ready === 0) {
-      return <Loading/>
-    } else if (this.state.ready === -1) {
-      return <NotFound/>
+    } else if (!this.props.ready) {
+      return null;
     }
   }
 }
+
+export default ContainersTableWrapper = withTracker((props) => {
+  var handler1 = Meteor.subscribe('placesPub');
+  var handler2 = Meteor.subscribe('containersPub');
+  var placesDatabase = Places.find().fetch();
+  var fullDatabase = Containers.find().fetch();
+  var ready = !!fullDatabase.length;
+  return {
+    handler1,
+    handler2,
+    fullDatabase,
+    placesDatabase,
+    ready
+  }
+})(ContainersTable);

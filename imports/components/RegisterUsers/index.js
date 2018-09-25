@@ -19,6 +19,8 @@ export default class RegisterUsers extends React.Component {
     } else emails = '';
     this.state = {
       _id: this.props.item._id || '',
+      firstName: this.props.item.firstName || '',
+      lastName: this.props.item.lastName || '',
       username: this.props.item.username || '',
       emails,
       password: '',
@@ -47,6 +49,12 @@ export default class RegisterUsers extends React.Component {
     if (!this.state.username.trim()) {
       errorKeys.push("username");
     }
+    if (!this.state.firstName.trim()) {
+      errorKeys.push("firstName");
+    }
+    if (!this.state.lastName.trim()) {
+      errorKeys.push("lastName");
+    }
     if (!this.state.password.trim() && !this.props.item._id) {
       errorKeys.push("password");
     }
@@ -64,9 +72,7 @@ export default class RegisterUsers extends React.Component {
     }
     if (errorKeys.length === 0) {
       if (this.props.item._id) {
-        Meteor.call('users.update', this.state, () => {
-          if (this.props.item._id === Meteor.userId()) window.location.reload();
-        });
+        Meteor.call('users.update', this.state);
       } else {
         Meteor.call('users.insert', this.state);
       }
@@ -81,7 +87,23 @@ export default class RegisterUsers extends React.Component {
           closeBox={this.props.toggleWindow}
           width="800px">
             <div className="error-message">{this.state.errorMsg}</div>
-            <Block columns={5} options={[{block: 0, span: 2}, {block: 1, span: 2}]}>
+            <Block columns={3} options={[{block: 0, span: 1.5}, {block: 1, span: 1.5}]}>
+              <Input
+                title="Nome:"
+                type="text"
+                name="firstName"
+                style={this.state.errorKeys.includes("firstName") ? {borderColor: "red"} : null}
+                value={this.state.firstName}
+                onChange={this.onChange}
+              />
+              <Input
+                title="Sobrenome:"
+                type="text"
+                name="lastName"
+                style={this.state.errorKeys.includes("lastName") ? {borderColor: "red"} : null}
+                value={this.state.lastName}
+                onChange={this.onChange}
+              />
               <Input
                 title="Usuário:"
                 type="text"

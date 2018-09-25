@@ -1,4 +1,5 @@
 import React from 'react';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Link } from 'react-router-dom';
 import { Clients } from '/imports/api/clients/index';
 import { Contracts } from '/imports/api/contracts/index';
@@ -8,35 +9,32 @@ import tools from '/imports/startup/tools/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
-export default class ContractsTable extends React.Component {
+class ContractsTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      fullDatabase: [],
-      filteredDatabase: [],
-      clientsDb: [],
-      ready: 0
+      filteredDatabase: []
     }
   }
+
   componentDidMount() {
-    this.tracker = Tracker.autorun(() => {
-      Meteor.subscribe('clientsPub');
-      Meteor.subscribe('contractsPub');
-      var clientsDb = Clients.find().fetch();
-      var fullDatabase = Contracts.find().fetch();
-      var filteredDatabase = fullDatabase;
-      if (fullDatabase) this.setState({ fullDatabase, filteredDatabase, clientsDb, ready: 1 });
-    })
+    this.updateDatabases();
   }
 
-  componentWillUnmount = () => {
-    this.tracker.stop();
+  componentDidUpdate(prevProps) {
+    if (prevProps !== this.props) {
+      this.updateDatabases();
+    }
+  }
+
+  updateDatabases = () => {
+    this.setState({ filteredDatabase: this.props.fullDatabase });
   }
 
   searchReturn = (filteredDatabase) => {
     if (filteredDatabase) {
       this.setState({ filteredDatabase });
-    } else this.setState({ filteredDatabase: this.state.fullDatabase });
+    } else this.setState({ filteredDatabase: this.props.fullDatabase });
   }
   renderHeader = () => {
     const toggleWindow = () => {
@@ -69,9 +67,9 @@ export default class ContractsTable extends React.Component {
         return input;
       }
       var clientName = () => {
-        for (var j = 0; j < this.state.clientsDb.length; j++) {
-          if (this.state.clientsDb[j]._id === item.clientId) {
-            return this.state.clientsDb[j].description;
+        for (var j = 0; j < this.props.clientsDatabase.length; j++) {
+          if (this.props.clientsDatabase[j]._id === item.clientId) {
+            return this.props.clientsDatabase[j].description;
           }
         }
       }
@@ -105,28 +103,40 @@ export default class ContractsTable extends React.Component {
     })
   }
   render () {
-    if (this.state.ready === 1) {
+    if (this.props.ready) {
       return (
         <ErrorBoundary>
           <SearchBar
-            database={this.state.fullDatabase}
-            options={this.searchOptions}
+            database={this.props.fullDatabase}
             searchReturn={this.searchReturn}
           />
-          <table className="table database__table">
-            <thead>
-              {this.renderHeader()}
-            </thead>
-            <tbody>
-              {this.renderBody()}
-            </tbody>
-          </table>
+          <div className="database__scroll-div">
+            <table className="table database__table">
+              <thead>
+                {this.renderHeader()}
+              </thead>
+              <tbody>
+                {this.renderBody()}
+              </tbody>
+            </table>
+          </div>
         </ErrorBoundary>
       )
-    } else if (this.state.ready === 0) {
-      return <Loading/>
-    } else if (this.state.ready === -1) {
-      return <NotFound/>
+    } else if (!this.props.ready) {
+      return null
     }
   }
 }
+
+export default ContractsTableWrapper = withTracker((props) => {
+  Meteor.subscribe('clientsPub');
+  Meteor.subscribe('contractsPub');
+  var fullDatabase = Contracts.find().fetch();
+  var clientsDatabase = Clients.find().fetch();
+  var ready = !!fullDatabase.length;
+  return {
+    fullDatabase,
+    clientsDatabase,
+    ready
+  }
+})(ContractsTable);

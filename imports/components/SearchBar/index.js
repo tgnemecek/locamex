@@ -2,12 +2,21 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 
 import tools from '/imports/startup/tools/index';
+import Input from '/imports/components/Input/index';
+import Block from '/imports/components/Block/index';
 
 export default class SearchBar extends React.Component {
   constructor(props) {
     super(props);
+    var options = {
+      filters: [],
+      dontSearchHere: [],
+      onlySearchHere: [],
+      ...this.props.options
+    }
+    options.dontSearchHere.push("_id");
     this.state = {
-      options: this.props.hiddenOption ? this.props.hiddenOption : 'all',
+      options,
       value: ''
     }
   }
@@ -27,34 +36,64 @@ export default class SearchBar extends React.Component {
   }
 
   runSearch = (e) => {
-    e.stopPropagation();
-    e.preventDefault();
-
-    if (!this.state.value) {
-      this.props.searchReturn(false);
-      return;
-    }
+    e ? e.stopPropagation() : null;
+    e ? e.preventDefault() : null;
 
     var value = makeEqual(this.state.value);
     var database = this.props.database;
     var options = this.state.options;
     var result = [];
 
+    const filterArray = (array, filters) => {
+      var array = tools.deepCopy(array);
+
+      if (filters.length) {
+        for (var i = 0; i < array.length; i++) {
+          for (var j = 0; j < filters.length; j++) {
+            if (filters[j].selected !== "") {
+              if (array[i][filters[j].key]) {
+                if (array[i][filters[j].key] !== filters[j].selected) {
+                  array[i] = undefined;
+                  break;
+                }
+              } else {
+                array[i] = undefined;
+                break;
+              }
+            }
+          }
+        }
+      } else return array;
+
+      var exportArray = [];
+      array.forEach((item) => {
+        if (item) exportArray.push(item);
+      })
+      return exportArray;
+    }
+
+    if (!this.state.value) {
+      result = filterArray(this.props.database, this.state.options.filters);
+      this.props.searchReturn(result);
+      return;
+    }
+
     function makeEqual(str) {
       return tools.removeSpecialChars(str, /[\.\/\-\(\) ]/g).toUpperCase();
     }
 
     function compareOption(key) {
-      var res = false;
-      if (options == 'all') return true;
-      if (typeof(options) == 'string') {
-        res = options == key ? true : false;
-      } else if (Array.isArray(options)) {
-        for (var i = 0; i < options.length; i++) {
-          if (options[i] == key) return true;
+      for (var i = 0; i < options.dontSearchHere.length; i++) {
+        if (options.dontSearchHere[i] === key) {
+          return false;
         }
       }
-      return res;
+      for (var i = 0; i < options.onlySearchHere.length; i++) {
+        if (options.onlySearchHere[i] === key) {
+          return true;
+        }
+      }
+      return options.onlySearchHere.length ? false : true;
     }
 
     function compare(keyValue) {
@@ -87,33 +126,58 @@ export default class SearchBar extends React.Component {
         result.push(database[i]);
       }
     }
-    this.filterVisible(result);
+    result = filterArray(result, this.state.options.filters);
+    this.props.searchReturn(result);
   }
 
-  filterVisible = (inputArray) => {
-    var exportArray = [];
-    inputArray.forEach((item) => {
-      if (item.visible) exportArray.push(item);
+  renderFilters = () => {
+    const onChange = (e) => {
+      var options = tools.deepCopy(this.state.options);
+      var value = e.target.value;
+      var i = e.target.name;
+      options.filters[i].selected = value;
+      this.setState({ options }, () => {
+        this.runSearch();
+      });
+    }
+    return this.state.options.filters.map((filter, i) => {
+      const renderOptions = () => {
+        return filter.options.map((option, i) => {
+          return <option key={i} value={option.value}>{option.label}</option>
+        })
+      }
+      return <Input
+              key={i}
+              type="select"
+              name={i}
+              className=""
+              title={filter.label}
+              value={filter.selected}
+              onChange={onChange}>
+              <option>Tudo</option>
+              {renderOptions()}
+            </Input>
     })
-    this.props.searchReturn(exportArray);
   }
 
   render() {
     return (
       <form className="search-bar">
-        {this.props.options ? <div className="search-bar__block">
-          <select value={this.state.options} onChange={this.onSelect}>
-            <options value="all">Todos</options>
-            {this.renderOptions()}
-          </select>
-        </div> : null}
-        <div className="search-bar__block search-bar__block--main">
-          <label>Pesquisa:</label>
-          <input value={this.state.value} onChange={this.onChange} type="text"/>
-        </div>
-        <div className="search-bar__block">
+        <div className="search-bar__search-block">
+          <Input
+            title="Pesquisa:"
+            type="text"
+            className="search-bar__search-input"
+            value={this.state.value}
+            onChange={this.onChange}
+          />
           <button className="button--pill search-bar__button" onClick={this.runSearch}>Buscar</button>
         </div>
+        {this.state.options.filters ?
+          <Block columns={this.state.options.filters.length}>
+            {this.renderFilters()}
+          </Block>
+        : null}
       </form>
     )
   }

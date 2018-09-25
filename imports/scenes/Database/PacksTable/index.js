@@ -1,4 +1,5 @@
 import React from 'react';
+import { withTracker } from 'meteor/react-meteor-data';
 import { Places } from '/imports/api/places/index';
 import { Packs } from '/imports/api/packs/index';
 import tools from '/imports/startup/tools/index';
@@ -8,36 +9,35 @@ import RegisterPacks from '/imports/components/RegisterPacks/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
-export default class PacksTable extends React.Component {
+class PacksTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      fullDatabase: [],
       filteredDatabase: [],
-      placesDatabase: [],
-      ready: 0
+      searchOptions: {
+        onlySearchHere: ['description']
+      }
     }
   }
 
-  componentDidMount = () => {
-    this.tracker = Tracker.autorun(() => {
-      Meteor.subscribe('placesPub');
-      Meteor.subscribe('packsPub');
-      var placesDatabase = Places.find().fetch();
-      var fullDatabase = Packs.find().fetch();
-      var filteredDatabase = fullDatabase;
-      if (fullDatabase) this.setState({ fullDatabase, filteredDatabase, placesDatabase, ready: 1 });
-    })
+  componentDidMount() {
+    this.updateDatabases();
   }
 
-  componentWillUnmount = () => {
-    this.tracker.stop();
+  componentDidUpdate(prevProps) {
+    if (prevProps !== this.props) {
+      this.updateDatabases();
+    }
+  }
+
+  updateDatabases = () => {
+    this.setState({ filteredDatabase: this.props.fullDatabase });
   }
 
   searchReturn = (filteredDatabase) => {
     if (filteredDatabase) {
       this.setState({ filteredDatabase });
-    } else this.setState({ filteredDatabase: this.state.fullDatabase });
+    } else this.setState({ filteredDatabase: this.props.fullDatabase });
   }
 
   renderHeader = () => {
@@ -60,9 +60,9 @@ export default class PacksTable extends React.Component {
       }
       const translatePlaces = (place) => {
         if (!place) return "-";
-        for (var i = 0; i < this.state.placesDatabase.length; i++) {
-          if (this.state.placesDatabase[i]._id === place) {
-            return this.state.placesDatabase[i].description;
+        for (var i = 0; i < this.props.placesDatabase.length; i++) {
+          if (this.props.placesDatabase[i]._id === place) {
+            return this.props.placesDatabase[i].description;
           }
         } return "-";
       }
@@ -77,22 +77,24 @@ export default class PacksTable extends React.Component {
   }
 
   render () {
-    if (this.state.ready === 1) {
+    if (this.props.ready) {
       return (
         <ErrorBoundary>
           <SearchBar
-            database={this.state.fullDatabase}
-            options={this.searchOptions}
+            database={this.props.fullDatabase}
+            options={this.state.searchOptions}
             searchReturn={this.searchReturn}
           />
-          <table className="table database__table">
-            <thead>
-              {this.renderHeader()}
-            </thead>
-            <tbody>
-              {this.renderBody()}
-            </tbody>
-          </table>
+          <div className="database__scroll-div">
+            <table className="table database__table">
+              <thead>
+                {this.renderHeader()}
+              </thead>
+              <tbody>
+                {this.renderBody()}
+              </tbody>
+            </table>
+          </div>
           {this.props.item ?
             <RegisterPacks
               item={this.props.item}
@@ -101,10 +103,21 @@ export default class PacksTable extends React.Component {
           : null}
         </ErrorBoundary>
       )
-    } else if (this.state.ready === 0) {
-      return <Loading/>
-    } else if (this.state.ready === -1) {
-      return <NotFound/>
+    } else if (!this.props.ready) {
+      return null;
     }
   }
 }
+
+export default PacksTableWrapper = withTracker((props) => {
+  Meteor.subscribe('placesPub');
+  Meteor.subscribe('packsPub');
+  var fullDatabase = Packs.find().fetch();
+  var placesDatabase = Places.find().fetch();
+  var ready = !!fullDatabase.length;
+  return {
+    fullDatabase,
+    placesDatabase,
+    ready
+  }
+})(PacksTable);

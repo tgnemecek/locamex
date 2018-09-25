@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.3.6
+Version: 1.3.7
 
 ## Information:
 
@@ -8,6 +8,17 @@ Version: 1.3.6
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.3.7
+
+- Database: all tables now use withTracker and have consistent database tracking;
+- SearchBar: 
+    - Added filter option, and including/excluding options;
+    - Added Input component, fixed style;
+- RegisterUsers:
+    - Users now have two extra fields: firstName and lastName;
+    - Table reorganized;
+- MaintenanceTable: now sorted by place (not alphabetically, but in order of place index);
 
 ### Version 1.3.6
 
@@ -110,7 +121,8 @@ The workaround is to check if the edited user is the one logged in and forcing t
 
 ### Urgent Priority:
 
-- SearchBar is not looking for 'place' key, check options argument and allow for this option;
+- SearchBar: create better options, making it NOT look for fields that have english strings (eg place, status...),
+and add to it an optional dropbox part, with places and status (for containers, ask for other lists);
 - RegisterContainers:
     - Add 'select all' toggle in modular header;
     - Put SearchBar out of scroll div;
@@ -118,6 +130,7 @@ The workaround is to check if the edited user is the one logged in and forcing t
 
 ### High Priority:
 
+- Replace all trackers with withTracker;
 - Add 'events' version of contract;
 - Contract is not verifying CEP on activation;
 - Create confirmation message for unmounting pack: "Desmontar pacote e retornar os componentes para o estoque?";
