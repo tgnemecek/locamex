@@ -36,7 +36,11 @@ p {
 }
 
 a {
-  color: black;
+  color: $black;
+}
+
+ul, ol {
+  padding-left: $space;
 }
 
 button {

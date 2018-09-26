@@ -2,7 +2,6 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 
 import tools from '/imports/startup/tools/index';
-import SearchBar from '/imports/components/SearchBar/index';
 
 export default class DatabaseSide extends React.Component {
 
@@ -43,23 +42,21 @@ export default class DatabaseSide extends React.Component {
   render() {
       return (
         <div className="product-selection__database">
-          <SearchBar
-            hiddenOption="description"
-            database={this.props.fullDatabase}
-            searchReturn={this.props.searchReturn}/>
-          <table className="table product-selection__table">
-            <thead>
-              <tr>
-                <th className="small-column">Série</th>
-                <th>Descrição</th>
-                {this.props.databaseType != 'accessories' ? null : <th className="small-column">Disp.</th>}
-                <th className="buttom-column" style={{visibility: "hidden"}}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.renderDatabase()}
-            </tbody>
-          </table>
+          <div className="product-selection__scroll-block">
+            <table className="table product-selection__table">
+              <thead>
+                <tr>
+                  <th className="small-column">Série</th>
+                  <th>Descrição</th>
+                  {this.props.databaseType != 'accessories' ? null : <th className="small-column">Disp.</th>}
+                  <th className="buttom-column" style={{visibility: "hidden"}}></th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.renderDatabase()}
+              </tbody>
+            </table>
+          </div>
         </div>
       )
   }

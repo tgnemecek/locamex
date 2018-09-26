@@ -13,6 +13,7 @@ import Block from '/imports/components/Block/index';
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 import Input from '/imports/components/Input/index';
+import SearchBar from '/imports/components/SearchBar/index';
 
 import DatabaseSide from './DatabaseSide/index';
 import AddedItemsSide from './AddedItemsSide/index';
@@ -367,12 +368,18 @@ export default class ProductSelection extends React.Component {
         closeBox={this.props.closeProductSelection}
         width="1200px">
           <Block columns={2}>
+            <SearchBar
+              database={this.state.fullDatabase}
+              options={{onlySearchHere: ['description']}}
+              searchReturn={this.searchReturn}/>
+            <div style={{marginTop: "30px"}}>
+              <label>Itens Adicionados no Contrato:</label>
+            </div>
             <DatabaseSide
               database={this.state.filteredDatabase}
               databaseType={this.props.database}
               addItem={this.addItem}
               fullDatabase={this.state.fullDatabase}
-              searchReturn={this.searchReturn}
               togglePackScreen={this.togglePackScreen}
               toggleModularScreen={this.toggleModularScreen}/>
             <AddedItemsSide

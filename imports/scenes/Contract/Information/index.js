@@ -88,7 +88,7 @@ export default class Information extends React.Component {
               {this.clientOptions()}
             </Input>
             <Input
-              title="Rua:"
+              title="Endereço de Entrega:"
               name="street"
               type="text"
               extra="deliveryAddress"

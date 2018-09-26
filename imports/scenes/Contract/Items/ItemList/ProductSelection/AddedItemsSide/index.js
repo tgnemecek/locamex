@@ -62,21 +62,22 @@ export default class AddedItemsSide extends React.Component {
   render() {
       return (
         <div className="product-selection__added-items">
-          <label>Itens Adicionados no Contrato:</label>
-          <table className="table product-selection__table">
-            <thead>
-              <tr>
-                <th className="small-column">Série</th>
-                <th>Descrição</th>
-                <th className="medium-column">Valor</th>
-                <th className="small-column">Qtd.</th>
-                <th className="buttom-column" style={{visibility: "hidden"}}>✖</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.renderAddedItems()}
-            </tbody>
-          </table>
+          <div className="product-selection__scroll-block">
+            <table className="table product-selection__table">
+              <thead>
+                <tr>
+                  <th className="small-column">Série</th>
+                  <th>Descrição</th>
+                  <th className="medium-column">Valor</th>
+                  <th className="small-column">Qtd.</th>
+                  <th className="buttom-column" style={{visibility: "hidden"}}>✖</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.renderAddedItems()}
+              </tbody>
+            </table>
+          </div>
         </div>
       )
   }

@@ -25,14 +25,16 @@
     width: 42px;
   }
 }
+.product-selection__scroll-block {
+  height: 500px;
+  overflow-y: auto;
+}
 .product-selection__database {
   flex-grow: .8;
   flex-basis: 1px;
-  margin-right: $space;
 }
 .product-selection__added-items {
   flex-grow: 1;
   flex-basis: 1px;
-  margin: 56px 0 0 $space;
   label {margin-bottom: 10px;}
 }

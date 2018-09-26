@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.3.7
+Version: 1.3.8
 
 ## Information:
 
@@ -9,16 +9,27 @@ Version: 1.3.7
 
 ## Changelog:
 
+### Version 1.3.8
+
+- Readme:
+    - Updated 1.3.7 changes;
+    - Updated to-dos;
+- RegisterClients, Contract: changed "Rua:" to "Endereço:";
+- Dashboard: changed p tags to li;
+- App: general CSS adjustments;
+- Contract/ProductSelection: items are now inside scroll div, reorganized div blocks;
+
 ### Version 1.3.7
 
 - Database: all tables now use withTracker and have consistent database tracking;
-- SearchBar: 
+- SearchBar:
     - Added filter option, and including/excluding options;
     - Added Input component, fixed style;
 - RegisterUsers:
     - Users now have two extra fields: firstName and lastName;
     - Table reorganized;
 - MaintenanceTable: now sorted by place (not alphabetically, but in order of place index);
+- Database: Tables now scroll;
 
 ### Version 1.3.6
 
@@ -121,12 +132,9 @@ The workaround is to check if the edited user is the one logged in and forcing t
 
 ### Urgent Priority:
 
-- SearchBar: create better options, making it NOT look for fields that have english strings (eg place, status...),
-and add to it an optional dropbox part, with places and status (for containers, ask for other lists);
 - RegisterContainers:
     - Add 'select all' toggle in modular header;
     - Put SearchBar out of scroll div;
-- Tables: put them inside scroll div (SearchBar outside);
 
 ### High Priority:
 
@@ -134,31 +142,29 @@ and add to it an optional dropbox part, with places and status (for containers, 
 - Add 'events' version of contract;
 - Contract is not verifying CEP on activation;
 - Create confirmation message for unmounting pack: "Desmontar pacote e retornar os componentes para o estoque?";
-- Check for bugs and errors (bugsnag);
 - Billing: make equalValue bool start as true;
 - When trying to change page, warn of losing non-saved information;
 
 ### Medium Priority:
 
+- Implement images;
 - Make RegisterContainers/Modular SearchBar to be outside the scrolling div;
-- Make All lists sort by description, contracts sorts by id (or date);
 - Test Billing with broken values and long remainders, possible to encounter NaN.
 - Add server-side security for meteor methods (simple-schema, required fields);
 - Fix table in RegisterPacks where it divides the table randomly;
 - Create better security for unauthorized users (like checking for userId in meteor methods);
 - Create Tag Database;
 - Add PlacesTable in Database for future implementations;
-- Change order of ContractsTable, recent first, adding date to the table;
 
 ### Low Priority: (future implementations)
 
-- Insert Logo on Login scene;
 - Add Settings scene for global changes (like the billing charges text);
 - Add colors to tables for the different statuses (contracts and products);
-- Add name field for users;
 - Add the possibility for accessories to be "qualitative" allowing only quantity of 1;
 - Make Documents save representatives in Contract;
 - Fix trim() tool and apply to Register classes (currently empty spaces count as filled);
+- Make the app responsive and mobile friendly;
+- Make the app compatible to other browsers;
 
 ### Server security:
 

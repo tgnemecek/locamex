@@ -38,7 +38,7 @@ export default function AddressTab (props) {
       columns={3}
       options={[{block: 0, span: 2}, {block: 3, span: 0.5}, {block: 4, span: 0.5}]}>
       <Input
-        title="Rua:"
+        title="Endereço:"
         name="street"
         type="text"
         style={props.item.errorKeys.includes("street") ? {borderColor: "red"} : null}
