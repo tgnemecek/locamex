@@ -54,7 +54,6 @@ class ContractsTable extends React.Component {
   }
   renderBody = () => {
     return this.state.filteredDatabase.map((item, i) => {
-      var clientName;
       const toggleWindow = () => {
         this.props.toggleWindow(item);
       }
@@ -66,25 +65,31 @@ class ContractsTable extends React.Component {
         if (input === 'prorogation') return 'Em Prorrogação';
         return input;
       }
-      var clientName = () => {
+      const clientName = () => {
         for (var j = 0; j < this.props.clientsDatabase.length; j++) {
           if (this.props.clientsDatabase[j]._id === item.clientId) {
             return this.props.clientsDatabase[j].description;
           }
         }
       }
-      var totalValue = () => {
-        var containers = item.containers || [];
-        var services = item.services || [];
-        var accessories = item.accessories || [];
-        var all = [].concat(containers, services, accessories);
+      const totalValue = () => {
         var duration = item.dates.duration;
-        if (all.length == 0) return "-";
-        var value = all.reduce((acc, current) => {
+
+        var containers = item.containers || [];
+        var accessories = item.accessories || [];
+        var products = containers.concat(accessories);
+        var productsValue = products.reduce((acc, current) => {
           var quantity = current.quantity ? current.quantity : 1;
           return acc + (current.price * quantity * duration)
         }, 0);
-        return tools.format(value, "currency");
+
+        var services = item.services || [];
+        var servicesValue = services.reduce((acc, current) => {
+          var quantity = current.quantity ? current.quantity : 1;
+          return acc + (current.price * quantity)
+        }, 0);
+
+        return tools.format((productsValue + servicesValue), "currency");
       }
       return (
         <tr key={i}>

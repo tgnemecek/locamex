@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.3.8
+Version: 1.3.9
 
 ## Information:
 
@@ -8,6 +8,11 @@ Version: 1.3.8
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.3.9
+
+- Contract, Database/Contracts: fixed totalValue that multiplied services for duration;
+- Added warning in Documents component to let users know there's no support for pdf-export for person type of client;
 
 ### Version 1.3.8
 
@@ -132,12 +137,18 @@ The workaround is to check if the edited user is the one logged in and forcing t
 
 ### Urgent Priority:
 
-- RegisterContainers:
-    - Add 'select all' toggle in modular header;
-    - Put SearchBar out of scroll div;
+- CONTRACT-PDF IS NOT READY FOR PERSON TYPE:
+    - Contract should get and SAVE the client info in some way (but update when the user changes the registry of it);
+    - Currently it is only saving the ID, which is good for updating, but after saving it is bad because the info will update later;
+    - Fix when using client of person type with NO additional contacts (it is currently checking it wrong);
+    - Find a way that representatives are saved in some way (because if the user decides to print a contract later they have to remember who were the reps);
 
 ### High Priority:
 
+- RegisterContainers:
+    - Add 'select all' toggle in modular header;
+    - Put SearchBar out of scroll div;
+- Remove id fields from view;
 - Replace all trackers with withTracker;
 - Add 'events' version of contract;
 - Contract is not verifying CEP on activation;

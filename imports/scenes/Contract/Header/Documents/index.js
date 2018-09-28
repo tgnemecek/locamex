@@ -126,6 +126,7 @@ export default class Documents extends React.Component {
           title="Emitir Contrato:"
           closeBox={this.props.toggleWindow}>
             <div className="documents">
+              <h3 style={{color: "red"}}>AVISO: A emissão de PDF não está pronta para Pessoa Física na versão atual!</h3>
               <Input
                 title="Contato:"
                 type="select"

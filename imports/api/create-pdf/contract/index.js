@@ -22,6 +22,10 @@ export default function createPdf(contract, client, mainContact, representatives
   const officialName = client.type == 'company' ? client.officialName: client.description;
   const registryLabel = client.registryMU ? 'Inscrição Municipal': 'Inscrição Estadual';
 
+  // const client = client.type === 'person' ? {
+  //
+  // } : client;
+
   const products = contract.containers.concat(contract.accessories).map((item) => {
     item.monthlyPrice = item.quantity * item.price;
     item.finalPrice = item.monthlyPrice * contract.dates.duration;
@@ -99,13 +103,13 @@ export default function createPdf(contract, client, mainContact, representatives
   }
   const tableProducts = () => {
     const renderBody = () => {
-      var header = [ ['Item', 'Descrição', {text: 'Valor Unit. Mensal', alignment: 'left'}, {text: 'Qtd.', alignment: 'center'}, {text: 'Meses', alignment: 'center'}, {text: 'Valor Total', alignment: 'right'}] ];
+      var header = [ ['Item', {text: 'Valor Unit. Mensal', alignment: 'left'}, {text: 'Qtd.', alignment: 'center'}, {text: 'Meses', alignment: 'center'}, {text: 'Valor Total', alignment: 'right'}] ];
       var body = products ? products.map((product) => {
-        return [product._id, product.description, tools.format(product.price, 'currency'), {text: product.quantity.toString(), alignment: 'center'}, {text: contract.dates.duration.toString(), alignment: 'center'}, {text: tools.format(product.finalPrice, 'currency'), alignment: 'right'} ];
+        return [product.description, tools.format(product.price, 'currency'), {text: product.quantity.toString(), alignment: 'center'}, {text: contract.dates.duration.toString(), alignment: 'center'}, {text: tools.format(product.finalPrice, 'currency'), alignment: 'right'} ];
       }) : [[ {text: '', colSpan: 6}, '', '', '', '', '' ]];
       var footer = [
-        [ {text: 'Valor Mensal de Prorrogação:', colSpan: 5, alignment: 'right', bold: true}, '', '', '', '', resultFormat(totalValueProrogation) ],
-        [ {text: 'Valor Total da Locação:', colSpan: 5, alignment: 'right', bold: true}, '', '', '', '', resultFormat(totalValueProducts)]
+        [ {text: 'Valor Mensal de Prorrogação:', colSpan: 4, alignment: 'right', bold: true}, '', '', '', '', resultFormat(totalValueProrogation) ],
+        [ {text: 'Valor Total da Locação:', colSpan: 4, alignment: 'right', bold: true}, '', '', '', '', resultFormat(totalValueProducts)]
       ];
       return header.concat(body, footer);
     }
@@ -118,12 +122,12 @@ export default function createPdf(contract, client, mainContact, representatives
   }
   const tableServices = () => {
     const renderBody = () => {
-      var header = [ ['Item', 'Descrição', {text: 'Valor Unitário', alignment: 'left'}, {text: 'Qtd.', alignment: 'center'}, {text: 'Valor Total', alignment: 'right'}] ];
+      var header = [ ['Serviço', {text: 'Valor Unitário', alignment: 'left'}, {text: 'Qtd.', alignment: 'center'}, {text: 'Valor Total', alignment: 'right'}] ];
       var body = contract.services.map((service) => {
-        return [ service._id, service.description, tools.format(service.price, 'currency'), {text: service.quantity, alignment: 'center'}, resultFormat(service.finalPrice)];
+        return [ service.description, tools.format(service.price, 'currency'), {text: service.quantity, alignment: 'center'}, resultFormat(service.finalPrice)];
       });
       var footer = [
-        [ {text: 'Valor Total do Pacote de Serviços:', colSpan: 4, alignment: 'right', bold: true}, '', '', '', resultFormat(totalValueServices)]
+        [ {text: 'Valor Total do Pacote de Serviços:', colSpan: 3, alignment: 'right', bold: true}, '', '', '', resultFormat(totalValueServices)]
       ];
       return header.concat(body, footer);
     }
@@ -178,9 +182,9 @@ export default function createPdf(contract, client, mainContact, representatives
   }
   const tableRestitution = () => {
     const renderBody = () => {
-      var header = [ ['Item', 'Descrição', {text:'Valor Unitário de Indenização', alignment: 'right'}] ];
+      var header = [ ['Item', {text:'Valor Unitário de Indenização', alignment: 'right'}] ];
       var body = products ? products.map((product) => {
-        return [ product._id, product.description, resultFormat(product.restitution) ]
+        return [ product.description, resultFormat(product.restitution) ]
       }) : [[ {text: '', colSpan: 3}, '', '' ]];
       return header.concat(body);
     }

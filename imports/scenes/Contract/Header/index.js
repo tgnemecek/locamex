@@ -37,9 +37,8 @@ export default class Header extends React.Component {
     if (e) {
       e.stopPropagation();
       var windowOpen = e.target.value;
-      if (windowOpen == 'documents' && this.props.contract.clientId == '') {
-        alert("Escolha antes um cliente.")
-        return;
+      if (windowOpen == 'documents') {
+        if (this.props.contract.clientId == '') return alert("Escolha antes um cliente.");
       }
       this.setState({ windowOpen });
     } else this.setState({ windowOpen: false });
