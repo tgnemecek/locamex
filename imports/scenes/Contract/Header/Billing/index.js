@@ -23,13 +23,19 @@ export default class Billing extends React.Component {
       errorKeys: [],
       errorMsg: ''
     }
-    var containers = this.props.contract.containers ? this.props.contract.containers : [];
-    var accessories = this.props.contract.accessories ? this.props.contract.accessories : [];
-    var services = this.props.contract.services ? this.props.contract.services : [];
-    var all = this.props.contract.containers.concat(this.props.contract.accessories, this.props.contract.services);
+    var duration = this.props.contract.dates.duration || 1;
+    var containers = this.props.contract.containers || [];
+    var accessories = this.props.contract.accessories || [];
+    var services = this.props.contract.services || [];
+
+    var containersValue = calcTotalValue(containers, duration);
+    var accessoriesValue = calcTotalValue(accessories, duration);
+    var servicesValue = calcTotalValue(services, 1);
+    var totalValue = containersValue + accessoriesValue + servicesValue;
+
     var charges = tools.deepCopy(this.state.charges);
     var equalDivision = calcIfEqualDivision(charges);
-    var totalValue = calcTotalValue(all, this.props.contract.dates.duration);
+
     function calcTotalValue (arr, duration) {
       if (arr.length == 0) return 0;
       return arr.reduce((acc, current) => {

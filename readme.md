@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.3.9
+Version: 1.4.0
 
 ## Information:
 
@@ -8,6 +8,10 @@ Version: 1.3.9
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.4.0
+
+- Contract/Billing: fixed totalValue multiplying services by duration;
 
 ### Version 1.3.9
 
