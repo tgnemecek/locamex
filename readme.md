@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.4.0
+Version: 1.4.1
 
 ## Information:
 
@@ -8,6 +8,11 @@ Version: 1.4.0
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.4.1
+
+- Api/Contracts: fixed server error;
+- Api/create-pdf: fixed bug caused in tables (wrong columns number after removing id field);
 
 ### Version 1.4.0
 

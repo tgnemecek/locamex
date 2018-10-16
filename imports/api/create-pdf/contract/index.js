@@ -22,10 +22,6 @@ export default function createPdf(contract, client, mainContact, representatives
   const officialName = client.type == 'company' ? client.officialName: client.description;
   const registryLabel = client.registryMU ? 'Inscrição Municipal': 'Inscrição Estadual';
 
-  // const client = client.type === 'person' ? {
-  //
-  // } : client;
-
   const products = contract.containers.concat(contract.accessories).map((item) => {
     item.monthlyPrice = item.quantity * item.price;
     item.finalPrice = item.monthlyPrice * contract.dates.duration;
@@ -35,7 +31,6 @@ export default function createPdf(contract, client, mainContact, representatives
     item.finalPrice = item.quantity * item.price;
     return item;
   })
-
   const totalValueProducts = products.length ? products.reduce((acc, current) => {
     return acc + current.finalPrice;
   }, 0) : 0;
@@ -89,51 +84,52 @@ export default function createPdf(contract, client, mainContact, representatives
   const tableRepresentative = () => {
     if (client.type == 'person' && representatives.length == 1 && representatives[0].name == officialName) return null;
     const renderBody = () => {
-      var title = {text: `Representada neste ato por:`, style: 'p'};
-      var body = representatives.map((rep) => {
+      return representatives.map((rep) => {
         return [ 'Nome', rep.name, 'CPF', tools.format(rep.cpf, 'cpf'), 'RG', tools.format(rep.rg, 'rg') ]
       });
-      return body.unshift(title);
     }
-    return {table: {
-      widths: ['auto', '*', 30, 80, 30, 80],
-      heights: styleGlobals.cellheight,
-      body: renderBody(),
-    }, style: 'table'}
+    return [
+      {text: `Representada neste ato por:`, style: 'p'},
+      {table: {
+        widths: ['auto', '*', 30, 80, 30, 80],
+        heights: styleGlobals.cellheight,
+        body: renderBody(),
+      }, style: 'table'}
+    ]
   }
   const tableProducts = () => {
     const renderBody = () => {
-      var header = [ ['Item', {text: 'Valor Unit. Mensal', alignment: 'left'}, {text: 'Qtd.', alignment: 'center'}, {text: 'Meses', alignment: 'center'}, {text: 'Valor Total', alignment: 'right'}] ];
+      var header = [ ['Descrição', {text: 'Valor Unit. Mensal', alignment: 'left'}, {text: 'Qtd.', alignment: 'center'}, {text: 'Meses', alignment: 'center'}, {text: 'Valor Total', alignment: 'right'}] ];
       var body = products ? products.map((product) => {
         return [product.description, tools.format(product.price, 'currency'), {text: product.quantity.toString(), alignment: 'center'}, {text: contract.dates.duration.toString(), alignment: 'center'}, {text: tools.format(product.finalPrice, 'currency'), alignment: 'right'} ];
       }) : [[ {text: '', colSpan: 6}, '', '', '', '', '' ]];
       var footer = [
-        [ {text: 'Valor Mensal de Prorrogação:', colSpan: 4, alignment: 'right', bold: true}, '', '', '', '', resultFormat(totalValueProrogation) ],
-        [ {text: 'Valor Total da Locação:', colSpan: 4, alignment: 'right', bold: true}, '', '', '', '', resultFormat(totalValueProducts)]
+        [ {text: 'Valor Mensal de Prorrogação:', colSpan: 4, alignment: 'right', bold: true}, '', '', '', resultFormat(totalValueProrogation) ],
+        [ {text: 'Valor Total da Locação:', colSpan: 4, alignment: 'right', bold: true}, '', '', '', resultFormat(totalValueProducts)]
       ];
       return header.concat(body, footer);
     }
     return {table: {
       headerRows: 1,
-      widths: [30, '*', 90, 'auto', 40, 80],
+      widths: [ '*', 90, 'auto', 40, 80 ],
       heights: styleGlobals.cellheight,
       body: renderBody(),
     }, style: 'table'}
   }
   const tableServices = () => {
     const renderBody = () => {
-      var header = [ ['Serviço', {text: 'Valor Unitário', alignment: 'left'}, {text: 'Qtd.', alignment: 'center'}, {text: 'Valor Total', alignment: 'right'}] ];
+      var header = [ ['Descrição', {text: 'Valor Unitário', alignment: 'left'}, {text: 'Qtd.', alignment: 'center'}, {text: 'Valor Total', alignment: 'right'}] ];
       var body = contract.services.map((service) => {
         return [ service.description, tools.format(service.price, 'currency'), {text: service.quantity, alignment: 'center'}, resultFormat(service.finalPrice)];
       });
       var footer = [
-        [ {text: 'Valor Total do Pacote de Serviços:', colSpan: 3, alignment: 'right', bold: true}, '', '', '', resultFormat(totalValueServices)]
+        [ {text: 'Valor Total do Pacote de Serviços:', colSpan: 3, alignment: 'right', bold: true}, '', '', resultFormat(totalValueServices)]
       ];
       return header.concat(body, footer);
     }
     return {table: {
       headerRows: 1,
-      widths: [30, '*', 90, 'auto', 120],
+      widths: ['*', 90, 'auto', 120 ],
       heights: styleGlobals.cellheight,
       body: renderBody(),
     }, style: 'table'}
@@ -154,6 +150,7 @@ export default function createPdf(contract, client, mainContact, representatives
     function renderBody(charges) {
       var header = [ ['Número', 'Período', 'Vencimento', 'Descrição da Cobrança', 'Valor'] ];
       var body = charges.map((charge, i, array) => {
+
         var index = (i + 1) + "/" + array.length;
         var period = moment(charge.startDate).format("DD/MM/YYYY") + ' a ' +  moment(charge.endDate).format("DD/MM/YYYY");
         var endDate = moment(charge.endDate).format("DD/MM/YYYY");
@@ -182,7 +179,7 @@ export default function createPdf(contract, client, mainContact, representatives
   }
   const tableRestitution = () => {
     const renderBody = () => {
-      var header = [ ['Item', {text:'Valor Unitário de Indenização', alignment: 'right'}] ];
+      var header = [ ['Descrição', {text:'Valor Unitário de Indenização', alignment: 'right'}] ];
       var body = products ? products.map((product) => {
         return [ product.description, resultFormat(product.restitution) ]
       }) : [[ {text: '', colSpan: 3}, '', '' ]];
@@ -190,7 +187,7 @@ export default function createPdf(contract, client, mainContact, representatives
     }
     return {table: {
       headerRows: 1,
-      widths: [30, '*', 'auto'],
+      widths: ['*', 'auto'],
       heights: styleGlobals.cellheight,
       body: renderBody()
     }, style: 'table'}
