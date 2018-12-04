@@ -6,47 +6,56 @@ import Block from '/imports/components/Block/index';
 import { Clients } from '/imports/api/clients/index';
 
 export default class Test extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
-      str1: 'aaaa',
-      str2: 'AAAA',
-      str3: 'aAaA',
-      str4: 'aaaa bBbB',
-      str5: 'aaaa (aaaa) /aaaa 1aaaa ,aaaa .aaaa',
-      array: [0, 1, 2, 3, 4]
+      files: [],
+      url: 'no url found'
     }
   }
 
-  onClick = () => {
-    var array = this.state.array.map((a) => {
-      if (a == 1 || a == 3) return a;
-    })
-    this.setState({ array })
+  sendFile = (e) => {
+    e.preventDefault();
+    var uploader = new Slingshot.Upload("imageUploads");
+    Slingshot.fileRestrictions("imageUploads", {
+      allowedFileTypes: ["image/png", "image/jpeg", "image/gif"],
+      maxSize: 10 * 1024 * 1024 // 10 MB (use null for unlimited)
+    });
+    uploader.send(this.state.file, function (error, downloadUrl) {
+      if (error) {
+        // Log service detailed response
+        console.error('Error uploading');
+        alert (error);
+      }
+      else {
+        this.setState({ url: downloadUrl })
+      }
+    });
   }
 
-  // onClick = () => {
-  //   var state = {...this.state};
-  //   Object.keys(state).forEach((key) => {
-  //     state[key] = capitalizeFirstLetter(state[key]);
-  //   })
-  //   this.setState(state);
-  //   function capitalizeFirstLetter(string) {
-  //     return string.charAt(0).toUpperCase() + string.slice(1);
-  //   }
-  // }
+  selectFile = (e) => {
+    var files = tools.deepCopy(this.state.files);
+    var i = Number(e.target.name);
+
+    files[i] = e.target.value;
+
+    this.setState({ files })
+  }
+
 
   render() {
-    return (
-      <>
-      {this.state.str1}<br/>
-      {this.state.str2}<br/>
-      {this.state.str3}<br/>
-      {this.state.str4}<br/>
-      {this.state.str5}<br/>
-        <button onClick={this.onClick}>capitalize!!!!</button>
-      </>
-
+    return(
+      <form onSubmit={this.sendFile}>
+        <input type="file" name="0" onChange={this.selectFile}/>
+        <input type="file" name="1" onChange={this.selectFile}/>
+        <input type="file" name="2" onChange={this.selectFile}/>
+        <input type="file" name="3" onChange={this.selectFile}/>
+        <input type="file" name="4" onChange={this.selectFile}/>
+        <input type="file" name="5" onChange={this.selectFile}/>
+        <p id="status">Please select a file</p>
+        <button type="submit">Send</button>
+        <p>URL HERE: {this.state.url}</p>
+      </form>
     )
   }
 }

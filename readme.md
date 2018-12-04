@@ -146,6 +146,7 @@ The workaround is to check if the edited user is the one logged in and forcing t
 
 ### Urgent Priority:
 
+- Implement images;
 - CONTRACT-PDF IS NOT READY FOR PERSON TYPE:
     - Contract should get and SAVE the client info in some way (but update when the user changes the registry of it);
     - Currently it is only saving the ID, which is good for updating, but after saving it is bad because the info will update later;
@@ -154,6 +155,7 @@ The workaround is to check if the edited user is the one logged in and forcing t
 
 ### High Priority:
 
+- Put AWS keys in settings.json (safer), and remove from api/images;
 - RegisterContainers:
     - Add 'select all' toggle in modular header;
     - Put SearchBar out of scroll div;
@@ -167,7 +169,6 @@ The workaround is to check if the edited user is the one logged in and forcing t
 
 ### Medium Priority:
 
-- Implement images;
 - Make RegisterContainers/Modular SearchBar to be outside the scrolling div;
 - Test Billing with broken values and long remainders, possible to encounter NaN.
 - Add server-side security for meteor methods (simple-schema, required fields);

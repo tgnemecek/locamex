@@ -5,7 +5,6 @@ import { Packs } from '/imports/api/packs/index';
 import tools from '/imports/startup/tools/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
-import RegisterPacks from '/imports/components/RegisterPacks/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
@@ -95,12 +94,6 @@ class PacksTable extends React.Component {
               </tbody>
             </table>
           </div>
-          {this.props.item ?
-            <RegisterPacks
-              item={this.props.item}
-              toggleWindow={this.props.toggleWindow}
-            />
-          : null}
         </ErrorBoundary>
       )
     } else if (!this.props.ready) {

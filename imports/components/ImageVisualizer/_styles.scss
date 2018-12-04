@@ -1,0 +1,20 @@
+.image-visualizer__date {
+  text-align: left;
+  font-style: italic;
+}
+.image-visualizer__image-wrap {
+  min-height: 500px;
+  max-height: 700px;
+  overflow: hidden;
+}
+.image-visualizer__controls-wrap {
+  font-size: 2rem;
+  margin-top: ($space /2);
+
+  button {
+    margin: 0 10px;
+    background: none;
+    border: none;
+    font-size: 2rem;
+  }
+}

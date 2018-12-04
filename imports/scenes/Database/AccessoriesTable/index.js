@@ -5,7 +5,6 @@ import { Categories } from '/imports/api/categories/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import tools from '/imports/startup/tools/index';
 import SearchBar from '/imports/components/SearchBar/index';
-import RegisterAccessories from '/imports/components/RegisterAccessories/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
@@ -94,12 +93,6 @@ class AccessoriesTable extends React.Component {
               </tbody>
             </table>
           </div>
-          {this.props.item ?
-            <RegisterAccessories
-              item={this.props.item}
-              toggleWindow={this.props.toggleWindow}
-            />
-          : null}
         </ErrorBoundary>
       )
     } else if (!this.props.ready) {

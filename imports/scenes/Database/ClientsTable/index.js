@@ -4,7 +4,6 @@ import { Clients } from '/imports/api/clients/index';
 import tools from '/imports/startup/tools/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
-import RegisterClients from '/imports/components/RegisterClients/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
@@ -89,12 +88,6 @@ class ClientsTable extends React.Component {
               </tbody>
             </table>
           </div>
-          {this.props.item ?
-            <RegisterClients
-              item={this.props.item}
-              toggleWindow={this.props.toggleWindow}
-            />
-          : null}
         </ErrorBoundary>
       )
     } else if (!this.props.ready) {

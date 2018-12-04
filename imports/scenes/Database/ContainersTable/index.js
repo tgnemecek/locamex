@@ -5,7 +5,6 @@ import { Containers } from '/imports/api/containers/index';
 import tools from '/imports/startup/tools/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
-import RegisterContainers from '/imports/components/RegisterContainers/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
@@ -82,6 +81,7 @@ class ContainersTable extends React.Component {
         <th className="small-column">Pátio</th>
         <th className="small-column">Valor Mensal</th>
         <th className="small-column"><button onClick={toggleWindow} className="database__table__button">+</button></th>
+        <th className="small-column"><button onClick={toggleWindow} className="database__table__button"></button></th>
       </tr>
     )
   }
@@ -90,6 +90,9 @@ class ContainersTable extends React.Component {
     return this.state.filteredDatabase.map((item, i) => {
       const toggleWindow = () => {
         this.props.toggleWindow(item);
+      }
+      const toggleImageWindow = () => {
+        this.props.toggleImageWindow(item);
       }
       function translate (input) {
         if (input === 'available') return 'Disponível';
@@ -117,6 +120,7 @@ class ContainersTable extends React.Component {
           <td className="small-column">{item.status == "rented" ? "-" : translatePlaces(item.place)}</td>
           <td className="small-column">{tools.format(item.price, 'currency')}</td>
           <td className="small-column"><button className="database__table__button" onClick={toggleWindow}>✎</button></td>
+          <td className="small-column"><button className="database__table__button" onClick={toggleImageWindow}>🔍</button></td>
         </tr>
       )
     })
@@ -141,12 +145,6 @@ class ContainersTable extends React.Component {
               </tbody>
             </table>
           </div>
-          {this.props.item ?
-            <RegisterContainers
-              item={this.props.item}
-              toggleWindow={this.props.toggleWindow}
-            />
-          : null}
         </ErrorBoundary>
       )
     } else if (!this.props.ready) {

@@ -4,7 +4,6 @@ import { Services } from '/imports/api/services/index';
 import tools from '/imports/startup/tools/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
-import RegisterServices from '/imports/components/RegisterServices/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
@@ -86,12 +85,6 @@ class ServicesTable extends React.Component {
               </tbody>
             </table>
           </div>
-          {this.props.item ?
-            <RegisterServices
-              item={this.props.item}
-              toggleWindow={this.props.toggleWindow}
-            />
-          : null}
         </ErrorBoundary>
       )
     } else if (!this.props.ready) {

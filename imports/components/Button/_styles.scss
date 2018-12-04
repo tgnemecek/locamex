@@ -33,6 +33,10 @@
   color: $button-danger-color;
 }
 
+.button--green {
+  background: $green;
+}
+
 .button--table-x {
   padding: ($space /4);
   background: none;

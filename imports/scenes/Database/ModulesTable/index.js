@@ -4,7 +4,6 @@ import { Modules } from '/imports/api/modules/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import tools from '/imports/startup/tools/index';
-import RegisterModules from '/imports/components/RegisterModules/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
@@ -90,12 +89,6 @@ class ModulesTable extends React.Component {
               </tbody>
             </table>
           </div>
-          {this.props.item ?
-            <RegisterModules
-              item={this.props.item}
-              toggleWindow={this.props.toggleWindow}
-            />
-          : null}
         </ErrorBoundary>
       )
     } else if (!this.props.ready) {
