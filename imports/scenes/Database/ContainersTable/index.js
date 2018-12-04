@@ -81,7 +81,7 @@ class ContainersTable extends React.Component {
         <th className="small-column">Pátio</th>
         <th className="small-column">Valor Mensal</th>
         <th className="small-column"><button onClick={toggleWindow} className="database__table__button">+</button></th>
-        <th className="small-column"><button onClick={toggleWindow} className="database__table__button"></button></th>
+        <th className="small-column"></th>
       </tr>
     )
   }

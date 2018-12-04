@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.4.1
+Version: 1.5.0
 
 ## Information:
 
@@ -8,6 +8,11 @@ Version: 1.4.1
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.5.0
+
+- Implemented image visualizer/uploader using Amazon S3 for Modules, Containers and Acessories;
+- Fixed weird structure in Database + child components;
 
 ### Version 1.4.1
 

@@ -13,7 +13,7 @@ export default class FileUploader extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      files: [],
+      files: [null, null, null, null, null, null],
       errorMsg: false
     }
   }
@@ -34,29 +34,32 @@ export default class FileUploader extends React.Component {
 
     var formattedDate = moment().format("YYYY-MM-DD");
 
-    var uploads = sortedFiles.forEach((file, imageIndex) => {
+    if (areInvalid(sortedFiles, this.props.uploadDirective)) {
+      this.setState({ errorMsg: "Formato de arquivo inválido."});
+      return;
+    }
+
+    var successCount = 0
+
+    sortedFiles.forEach((file, imageIndex) => {
       var metaContext = {
+        filename: this.props.item.description,
         itemId: this.props.item._id,
         itemType: this.props.item.itemType,
         imageIndex,
         extension: file.name.split('.').pop(),
         formattedDate
       }
-      var uploader = new Slingshot.Upload("imageUploads", metaContext);
-      Slingshot.fileRestrictions("imageUploads", {
-        allowedFileTypes: ["image/png", "image/jpeg", "image/gif"],
-        maxSize: 10 * 1024 * 1024 // 10 MB (use null for unlimited)
-      });
+      var uploader = new Slingshot.Upload(this.props.uploadDirective, metaContext);
+
       uploader.send(file, (error, downloadUrl) => {
-        if (error) {
-          this.setState({ errorMsg: "Erro de servidor. Tente mais tarde." });
-        }
-        else {
+        if (!error) {
+          successCount++;
           urls.push(downloadUrl);
-          if (urls.length == sortedFiles.length) {
+          if ((imageIndex+1) == sortedFiles.length) {
             Meteor.call('snapshot.add', metaContext.itemType, metaContext.itemId, urls);
-            alert('Arquivos enviados com sucesso!');
-            this.props.toggleWindow();
+            alert(successCount + ' arquivo(s) enviado(s) com sucesso!');
+            this.props.toggleWindow(true);
           }
         }
       });
@@ -66,7 +69,7 @@ export default class FileUploader extends React.Component {
   selectFile = (e) => {
     var files = [];
     this.state.files.forEach((file) => {
-      if (file) files.push(file);
+      files.push(file);
     })
     var i = Number(e.target.name);
     var value = e.target.files[0];
@@ -79,17 +82,29 @@ export default class FileUploader extends React.Component {
   render() {
     return (
       <Box
-        title="Selecione as Imagens"
+        title="Selecione os arquivos para envio"
         width="600px"
         closeBox={this.props.toggleWindow}>
         <div className="error-message">{this.state.errorMsg}</div>
-        <div>
-          <input type="file" name="0" onChange={this.selectFile}/>
-          <input type="file" name="1" onChange={this.selectFile}/>
-          <input type="file" name="2" onChange={this.selectFile}/>
-          <input type="file" name="3" onChange={this.selectFile}/>
-          <input type="file" name="4" onChange={this.selectFile}/>
-          <input type="file" name="5" onChange={this.selectFile}/>
+        <div className="file-uploader__files-div">
+          <div>
+            <label>1.</label><input type="file" name="0" onChange={this.selectFile}/>
+          </div>
+          <div>
+            <label>2.</label><input type="file" name="1" onChange={this.selectFile}/>
+          </div>
+          <div>
+            <label>3.</label><input type="file" name="2" onChange={this.selectFile}/>
+          </div>
+          <div>
+            <label>4.</label><input type="file" name="3" onChange={this.selectFile}/>
+          </div>
+          <div>
+            <label>5.</label><input type="file" name="4" onChange={this.selectFile}/>
+          </div>
+          <div>
+            <label>6.</label><input type="file" name="5" onChange={this.selectFile}/>
+          </div>
         </div>
           <FooterButtons buttons={[
             {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
@@ -98,4 +113,18 @@ export default class FileUploader extends React.Component {
       </Box>
     )
   }
+}
+
+function areInvalid(files, uploadDirective) {
+  Slingshot.fileRestrictions(uploadDirective, {
+    allowedFileTypes: ["image/png", "image/jpeg"]
+  });
+  for (var i = 0; i < files.length; i++) {
+    var uploader = new Slingshot.Upload(uploadDirective);
+    var error = uploader.validate(files[i]);
+    if (error) {
+      return error;
+    }
+  }
+  return false;
 }

@@ -26,8 +26,13 @@ export default class ImageVisualizer extends React.Component {
     }
     this.state.maxIndex = this.state.lastRegistry.images ? this.state.lastRegistry.images.length-1 : 0;
   }
-  toggleUploadWindow = () => {
-    this.setState({ uploadWindow: !this.state.uploadWindow })
+  toggleUploadWindow = (fullClose) => {
+    if (fullClose) {
+      this.props.toggleWindow();
+    } else {
+      var uploadWindow = !this.state.uploadWindow;
+      this.setState({ uploadWindow })
+    }
   }
   indexUp = () => {
     var currentIndex = this.state.currentIndex;
@@ -66,7 +71,11 @@ export default class ImageVisualizer extends React.Component {
           {text: "Novo Registro", className: "button--green", onClick: () => this.toggleUploadWindow()}
         ]}/>
         {this.state.uploadWindow ?
-          <FileUploader item={this.props.item} toggleWindow={this.toggleUploadWindow}/>
+          <FileUploader
+            uploadDirective="imageUploads"
+            item={this.props.item}
+            toggleWindow={this.toggleUploadWindow}
+          />
         : null}
       </Box>
     )

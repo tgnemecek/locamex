@@ -44,6 +44,7 @@ class AccessoriesTable extends React.Component {
         <th className="small-column">Total</th>
         <th className="small-column">Valor</th>
         <th className="small-column"><button onClick={toggleWindow} className="database__table__button">+</button></th>
+        <th className="small-column"></th>
       </tr>
     )
   }
@@ -53,6 +54,9 @@ class AccessoriesTable extends React.Component {
       var category;
       const toggleWindow = () => {
         this.props.toggleWindow(item);
+      }
+      const toggleImageWindow = () => {
+        this.props.toggleImageWindow(item);
       }
       for (var j = 0; j < this.props.categoriesDatabase.length; j++) {
         if (this.props.categoriesDatabase[j]._id === item.category) {
@@ -69,6 +73,7 @@ class AccessoriesTable extends React.Component {
           <td className="small-column">{(item.available + item.rented + item.maintenance).toString()}</td>
           <td className="small-column">{tools.format(item.price, 'currency')}</td>
           <td className="small-column"><button className="database__table__button" onClick={toggleWindow}>✎</button></td>
+          <td className="small-column"><button className="database__table__button" onClick={toggleImageWindow}>🔍</button></td>
         </tr>
       )
     })

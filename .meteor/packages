@@ -24,3 +24,4 @@ underscore@1.0.10
 blaze-html-templates
 seba:minifiers-autoprefixer
 react-meteor-data
+edgee:slingshot

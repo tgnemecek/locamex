@@ -1,10 +1,24 @@
 import { Meteor } from 'meteor/meteor';
 var AWS = require('aws-sdk');
 
-var AWSAccessKeyId = Meteor.settings.AWSAccessKeyId;
-var AWSSecretAccessKey = Meteor.settings.AWSSecretAccessKey;
-var region = Meteor.settings.region;
+export var AWSAccessKeyId;
+export var AWSSecretAccessKey;
+export var AWSRegion = "sa-east-1";
+
+if (Meteor.isProduction) {
+
+  AWSAccessKeyId = process.env.AWS_ACCESS_KEY_ID;
+  AWSSecretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+
+} else {
+
+  AWSAccessKeyId = Meteor.settings.private.AWSAccessKeyId;
+  AWSSecretAccessKey = Meteor.settings.private.AWSSecretAccessKey;
+
+}
+
+
 
 AWS.config.AWSAccessKeyId = AWSAccessKeyId;
 AWS.config.AWSSecretAccessKey = AWSSecretAccessKey;
-AWS.config.region = region;
+AWS.config.region = AWSRegion;

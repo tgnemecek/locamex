@@ -3,8 +3,8 @@
   font-style: italic;
 }
 .image-visualizer__image-wrap {
-  min-height: 500px;
-  max-height: 700px;
+  height: 600px;
+  min-width: 400px;
   overflow: hidden;
 }
 .image-visualizer__controls-wrap {

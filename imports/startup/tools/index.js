@@ -217,8 +217,6 @@ export default class tools {
 
   static generateId = (prefix) => {
     return prefix + "_" + new Meteor.Collection.ObjectID()._str;
-    // Old method:
-    // return Database.find().count().toString().padStart(4, '0');
   }
 
   static getRef = (object, i) => {

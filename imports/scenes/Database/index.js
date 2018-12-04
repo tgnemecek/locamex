@@ -39,7 +39,7 @@ export default class Database extends React.Component {
         editWindow: !this.state.editWindow,
         item
       });
-    } else this.setState({ editWindow: false });
+    } else this.setState({ editWindow: false, item: null });
   }
 
   toggleImageWindow = (item) => {
@@ -48,7 +48,7 @@ export default class Database extends React.Component {
         imageWindow: !this.state.imageWindow,
         item
       });
-    } else this.setState({ imageWindow: false });
+    } else this.setState({ imageWindow: false, item: null });
   }
 
   render () {
