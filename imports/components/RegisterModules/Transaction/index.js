@@ -1,5 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
+import { withTracker } from 'meteor/react-meteor-data';
+import { Places } from '/imports/api/places/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import tools from '/imports/startup/tools/index';
 import Block from '/imports/components/Block/index';
@@ -7,7 +9,7 @@ import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 import Input from '/imports/components/Input/index';
 
-export default class Transaction extends React.Component {
+class Transaction extends React.Component {
   displayQuantities = (key) => {
     if (key === 'origin') {
       key = this.props.item.origin;
@@ -30,6 +32,14 @@ export default class Transaction extends React.Component {
     this.props.onChange(e);
   }
 
+  renderOptions = () => {
+    return this.props.database.map((place, i) => {
+      if (place.visible) {
+        return <option key={i} value={place._id}>{place.description}</option>
+      }
+    })
+  }
+
   onChangeTransaction = (e) => {
     var value = e.target.value;
     this.props.onChange({target: {name: "transaction", value}});
@@ -44,8 +54,8 @@ export default class Transaction extends React.Component {
           value={this.props.item.origin}
           onChange={this.onChangeEntryDestination}>
             <option value="-">Entrada (Compra)</option>
-            <option value="available">Disponíveis</option>
             <option value="maintenance">Manutenção</option>
+            {this.renderOptions()}
         </Input>
         <Input
           title="Origem:"
@@ -82,11 +92,21 @@ export default class Transaction extends React.Component {
           name="destination"
           value={this.props.item.destination}
           onChange={this.onChangeEntryDestination}>
-            <option value="available">Disponíveis</option>
+          <option value="-">Saída (Desmanche)</option>
             <option value="maintenance">Manutenção</option>
-            <option value="-">Saída (Desmanche)</option>
+            {this.renderOptions()}
         </Input>
       </Block>
     )
   }
 }
+
+export default TransactionWrapper = withTracker((props) => {
+  Meteor.subscribe('placesPub');
+  var database = Places.find().fetch();
+  var ready = !!database.length;
+  return {
+    database,
+    ready
+  }
+})(Transaction);
