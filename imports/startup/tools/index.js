@@ -24,6 +24,20 @@ export default class tools {
     return arr;
   }
 
+  static isPlaceMultiple = (object) => {
+    var populatedArray = [];
+    for (var key in object) {
+      if (key !== 'rented' || key !== 'maintenance' || key !== 'inactive') {
+        if (object[key] > 0) {
+          populatedArray.push(key);
+        }
+      }
+    }
+    if (populatedArray.length > 1) {
+      return populatedArray;
+    } else return populatedArray[0] || "";
+  }
+
   static format = (value, type, externalOptions) => {
     if (value == undefined) return undefined;
     var options = {
@@ -138,9 +152,38 @@ export default class tools {
         // value = allowNegative(value);
         return Number(value).toLocaleString('pt-br', realOptions);
 
+      case 'database':
+        if (value == 'accessories') {
+          return "Acessórios"
+        } else if (value == 'clients') {
+          return "Clientes"
+        } else if (value == 'containers') {
+          return "Containers"
+        } else if (value == 'history') {
+          return "Histórico"
+        } else if (value == 'maintenance') {
+          return "Manutenção"
+        } else if (value == 'modules') {
+          return "Componentes"
+        } else if (value == 'places') {
+          return "Pátios"
+        } else if (value == 'services') {
+          return "Serviços"
+        } else if (value == 'users') {
+          return "Usuários"
+        } else return value;
+
       default:
         return value;
     }
+  }
+
+  static findPlaceIndex = (array, value) => {
+    for (var i = 0; i < array.length; i++) {
+      if (array[i]._id === value) {
+        return i;
+      }
+    } return -1;
   }
 
   static unformat = (value, type, externalOptions) => {

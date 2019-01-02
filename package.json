@@ -1,12 +1,12 @@
 {
   "name": "locamex",
-  "version": "1.5.0",
+  "version": "1.5.2",
   "private": true,
   "scripts": {
     "local-aws": "meteor --settings settings.json"
   },
   "dependencies": {
-    "@babel/runtime": "^7.0.0-beta.47",
+    "@babel/runtime": "^7.2.0",
     "aws-sdk": "^2.369.0",
     "babel-runtime": "6.18.0",
     "bcrypt": "^3.0.0",

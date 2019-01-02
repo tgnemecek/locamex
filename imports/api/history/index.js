@@ -4,7 +4,7 @@ export const History = new Mongo.Collection('history');
 
 if (Meteor.isServer) {
   Meteor.publish('historyPub', () => {
-    return History.find();
+    return History.find({}, {sort: { insertionDate: -1 }});
   })
 
   Meteor.methods({

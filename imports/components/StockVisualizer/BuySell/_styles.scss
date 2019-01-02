@@ -1,0 +1,17 @@
+.stock-visualizer__buy-sell-wrapper {
+  display: inline-flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-bottom: ($space);
+}
+
+.stock-visualizer__buy-sell-ammounts {
+  width: 100%;
+}
+
+.stock-visualizer__buy-sell {
+  display: inline-flex;
+}
+.stock-visualizer__buy-sell__button {
+  margin: 17px 0 0 0;
+}

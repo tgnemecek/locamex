@@ -23,6 +23,16 @@ export const appStructure = [
         name: "services",
         title: "Serviços",
         link: "/database/services"
+      },
+      {
+        name: "places",
+        title: "Pátios",
+        link: "/database/places"
+      },
+      {
+        name: "history",
+        title: "Histórico",
+        link: "/database/history"
       }
     ]
   },

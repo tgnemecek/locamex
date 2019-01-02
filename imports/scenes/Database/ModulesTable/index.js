@@ -40,7 +40,7 @@ class ModulesTable extends React.Component {
 
   renderHeader = () => {
     const toggleWindow = () => {
-      this.props.toggleWindow();
+      this.props.toggleWindow({});
     }
     return (
       <tr>
@@ -56,6 +56,15 @@ class ModulesTable extends React.Component {
   }
   renderBody = () => {
     return this.state.filteredDatabase.map((item, i) => {
+      var available = 0;
+      var maintenance = 0;
+      var total = 0;
+      item.place.forEach((place) => {
+        available = available + place.available;
+        maintenance = maintenance + place.maintenance;
+      })
+      total = available + maintenance + item.rented;
+
       const toggleWindow = () => {
         this.props.toggleWindow(item);
       }
@@ -65,10 +74,10 @@ class ModulesTable extends React.Component {
       return (
         <tr key={i}>
           <td>{item.description}</td>
-          <td className="small-column">{item.available}</td>
+          <td className="small-column">{available}</td>
           <td className="small-column">{item.rented}</td>
-          <td className="small-column">{item.maintenance}</td>
-          <td className="small-column">{(item.available + item.rented + item.maintenance).toString()}</td>
+          <td className="small-column">{maintenance}</td>
+          <td className="small-column">{total}</td>
           <td className="small-column"><button className="database__table__button" onClick={toggleWindow}>✎</button></td>
           <td className="small-column"><button className="database__table__button" onClick={toggleImageWindow}>🔍</button></td>
         </tr>

@@ -45,7 +45,7 @@ class UsersTable extends React.Component {
 
   renderHeader = () => {
     const toggleWindow = () => {
-      this.props.toggleWindow();
+      this.props.toggleWindow({});
     }
     return (
       <tr>

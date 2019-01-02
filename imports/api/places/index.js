@@ -7,50 +7,54 @@ if (Meteor.isServer) {
   Meteor.publish('placesPub', () => {
     return Places.find({ visible: true });
   })
-    Places.remove({});
-    Places.insert({
-      _id: "0000",
-      description: "Monsenhor Antônio Pepe 52",
-      visible: true
-    })
-    Places.insert({
-      _id: "0001",
-      description: "Monsenhor Antônio Pepe 123",
-      visible: true
-    })
-    Places.insert({
-      _id: "0002",
-      description: "Lacedemônia",
-      visible: true
-    })
-    Places.insert({
-      _id: "0003",
-      description: "Carmen Miranda",
-      visible: true
-    })
-    Places.insert({
-      _id: "0004",
-      description: "Fernando Pessoa (Galpão)",
-      visible: true
-    })
-    Places.insert({
-      _id: "0005",
-      description: "Fernando Pessoa (Terreno)",
-      visible: true
-    })
-    Places.insert({
-      _id: "0006",
-      description: "Niterói",
-      visible: true
-    })
-    Places.insert({
-      _id: "0007",
-      description: "Paulínia",
-      visible: true
-    })
-    Places.insert({
-      _id: "0008",
-      description: "Fábrica",
-      visible: true
-    })
-  }
+
+  Meteor.methods({
+    'places.insert'(description) {
+      const _id = tools.generateId("places");
+      const data = {
+        _id,
+        description,
+        items: [],
+        visible: true
+      }
+      Places.insert(data);
+      Meteor.call('history.insert', data, 'places');
+    },
+    'places.hide'(_id) {
+      const data = {
+        _id,
+        visible: false
+      };
+      Places.update({ _id }, { $set: data });
+      Meteor.call('history.insert', data, 'places');
+    },
+    'places.update'(_id, description) {
+      const data = {
+        _id,
+        description
+      };
+      Places.update({ _id }, { $set: {description} });
+      Meteor.call('history.insert', data, 'places');
+    }
+
+    // 'places.transfer'(itemId, itemType, originId, transaction, destinationId) {
+    //
+    //   var origin = Places.findOne({_id: originId});
+    //   origin[itemType] = origin[itemType] - transaction;
+    //   if (origin[itemType] < 0) throw new Meteor.Error("Value can't be negative.");
+    //
+    //   var destination = Places.findOne({_id: destinationId});
+    //   destination[itemType] = destination[itemType] + transaction;
+    //
+    //
+    //
+    //
+    //   const data = {
+    //     _id,
+    //     description
+    //   };
+    //   Places.update({ _id }, { $set: {description} });
+    //   Meteor.call('history.insert', data, 'places.transfer');
+    // }
+  });
+}

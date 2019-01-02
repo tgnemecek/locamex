@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.5.0
+Version: 1.5.2
 
 ## Information:
 
@@ -8,6 +8,11 @@ Version: 1.5.0
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.5.2
+
+- Added PlacesTable and places api functionality;
+- Added HistoryTable and RegisterHistory;
 
 ### Version 1.5.0
 

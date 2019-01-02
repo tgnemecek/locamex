@@ -17,6 +17,7 @@ import '../imports/api/packs/index';
 import '../imports/api/places/index';
 import '../imports/api/services/index';
 import '../imports/api/snapshots/index';
+import '../imports/api/test/index';
 import '../imports/api/users/index';
 
 Meteor.startup(() => {

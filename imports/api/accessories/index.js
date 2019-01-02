@@ -14,7 +14,7 @@ if (Meteor.isServer) {
         _id,
         description: state.description,
         category: state.category,
-        place: state.place,
+        place: state.place || [],
         available: state.available || 0,
         rented: state.rented || 0,
         maintenance: state.maintenance || 0,
@@ -76,7 +76,7 @@ if (Meteor.isServer) {
       const data = {
         description: state.description,
         category: state.category,
-        place: state.place,
+        place: state.place || {},
         available: state.available || 0,
         rented: state.rented || 0,
         maintenance: state.maintenance || 0,

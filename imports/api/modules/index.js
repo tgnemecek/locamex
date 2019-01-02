@@ -14,9 +14,8 @@ if (Meteor.isServer) {
       const data = {
         _id,
         description: state.description,
-        available: state.available || 0,
-        rented: state.rented || 0,
-        maintenance: state.maintenance || 0,
+        place: state.place || [],
+        quantitative: true,
         visible: true
       };
       Modules.insert(data);
@@ -74,9 +73,8 @@ if (Meteor.isServer) {
       const data = {
         _id: state._id,
         description: state.description,
-        available: state.available || 0,
-        rented: state.rented || 0,
-        maintenance: state.maintenance || 0,
+        place: state.place || [],
+        quantitative: true,
         visible: true
       };
       Modules.update({ _id: state._id }, { $set: data });

@@ -1,21 +1,18 @@
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
-import { Places } from '/imports/api/places/index';
-import { Packs } from '/imports/api/packs/index';
+import { History } from '/imports/api/history/index';
+import moment from 'moment';
 import tools from '/imports/startup/tools/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
-class PacksTable extends React.Component {
+class HistoryTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filteredDatabase: [],
-      searchOptions: {
-        onlySearchHere: ['description']
-      }
+      filteredDatabase: []
     }
   }
 
@@ -33,17 +30,17 @@ class PacksTable extends React.Component {
     this.setState({ filteredDatabase: this.props.fullDatabase });
   }
 
-  searchReturn = (filteredDatabase) => {
-    if (filteredDatabase) {
-      this.setState({ filteredDatabase });
-    } else this.setState({ filteredDatabase: this.props.fullDatabase });
-  }
-
   renderHeader = () => {
+    const toggleWindow = () => {
+      this.props.toggleWindow({});
+    }
     return (
       <tr>
-        <th>Descrição</th>
-        <th className="small-column">Pátio</th>
+        <th>Dia</th>
+        <th>Horário</th>
+        <th>Usuário</th>
+        <th>Banco de Dados</th>
+        <th>Item</th>
         <th className="small-column"></th>
       </tr>
     )
@@ -54,19 +51,14 @@ class PacksTable extends React.Component {
       const toggleWindow = () => {
         this.props.toggleWindow(item);
       }
-      const translatePlaces = (place) => {
-        if (!place) return "-";
-        for (var i = 0; i < this.props.placesDatabase.length; i++) {
-          if (this.props.placesDatabase[i]._id === place) {
-            return this.props.placesDatabase[i].description;
-          }
-        } return "-";
-      }
       return (
         <tr key={i}>
-          <td>{item.description}</td>
-          <td className="small-column">{translatePlaces(item.place)}</td>
-          <td className="small-column"><button className="database__table__button" onClick={toggleWindow}>✎</button></td>
+          <td>{moment(item.insertionDate).format("DD-MM-YYYY")}</td>
+          <td>{moment(item.insertionDate).format("HH:mm:ss")}</td>
+          <td>{item.user.firstName}</td>
+          <td>{tools.format(item.type, "database")}</td>
+          <td>{item.data.description}</td>
+          <td className="small-column"><button className="database__table__button" onClick={toggleWindow}>🔍</button></td>
         </tr>
       )
     })
@@ -76,11 +68,6 @@ class PacksTable extends React.Component {
     if (this.props.ready) {
       return (
         <ErrorBoundary>
-          <SearchBar
-            database={this.props.fullDatabase}
-            options={this.state.searchOptions}
-            searchReturn={this.searchReturn}
-          />
           <div className="database__scroll-div">
             <table className="table database__table">
               <thead>
@@ -94,20 +81,25 @@ class PacksTable extends React.Component {
         </ErrorBoundary>
       )
     } else if (!this.props.ready) {
-      return null;
+      return (
+        <div className="database__scroll-div">
+          <table className="table database__table">
+            <thead>
+              {this.renderHeader()}
+            </thead>
+          </table>
+        </div>
+      )
     }
   }
 }
 
-export default PacksTableWrapper = withTracker((props) => {
-  Meteor.subscribe('placesPub');
-  Meteor.subscribe('packsPub');
-  var fullDatabase = Packs.find().fetch();
-  var placesDatabase = Places.find().fetch();
+export default HistoryTableWrapper = withTracker((props) => {
+  Meteor.subscribe('historyPub');
+  var fullDatabase = History.find().fetch();
   var ready = !!fullDatabase.length;
   return {
     fullDatabase,
-    placesDatabase,
     ready
   }
-})(PacksTable);
+})(HistoryTable);

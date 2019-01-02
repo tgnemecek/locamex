@@ -9,17 +9,21 @@ import AccessoriesTable from './AccessoriesTable/index';
 import ClientsTable from './ClientsTable/index';
 import ContainersTable from './ContainersTable/index';
 import ContractsTable from './ContractsTable/index';
+import HistoryTable from './HistoryTable/index';
 import MaintenanceTable from './MaintenanceTable/index';
 import ModulesTable from './ModulesTable/index';
 import PacksTable from './PacksTable/index';
+import PlacesTable from './PlacesTable/index';
 import ServicesTable from './ServicesTable/index';
 import UsersTable from './UsersTable/index';
 
 import RegisterAccessories from '/imports/components/RegisterAccessories/index';
 import RegisterClients from '/imports/components/RegisterClients/index';
 import RegisterContainers from '/imports/components/RegisterContainers/index';
+import RegisterHistory from '/imports/components/RegisterHistory/index';
 import RegisterModules from '/imports/components/RegisterModules/index';
 import RegisterPacks from '/imports/components/RegisterPacks/index';
+import RegisterPlaces from '/imports/components/RegisterPlaces/index';
 import RegisterServices from '/imports/components/RegisterServices/index';
 import RegisterUsers from '/imports/components/RegisterUsers/index';
 
@@ -65,6 +69,9 @@ export default class Database extends React.Component {
     } else if (this.props.match.params.database === 'clients') {
       Table = ClientsTable;
       Register = RegisterClients;
+    } else if (this.props.match.params.database === 'history') {
+      Table = HistoryTable;
+      Register = RegisterHistory;
     } else if (this.props.match.params.database === 'maintenance') {
       Table = MaintenanceTable;
     } else if (this.props.match.params.database === 'modules') {
@@ -73,6 +80,9 @@ export default class Database extends React.Component {
     } else if (this.props.match.params.database === 'packs') {
       Table = PacksTable;
       Register = RegisterPacks;
+    } else if (this.props.match.params.database === 'places') {
+      Table = PlacesTable;
+      Register = RegisterPlaces;
     } else if (this.props.match.params.database === 'services') {
       Table = ServicesTable;
       Register = RegisterServices;
