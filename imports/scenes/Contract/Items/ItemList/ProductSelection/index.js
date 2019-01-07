@@ -30,9 +30,9 @@ export default class ProductSelection extends React.Component {
       dbName: '',
       addedItems: this.props.addedItems ? tools.deepCopy(this.props.addedItems) : [],
       moduleDatabase: [],
-      modularScreenOpen: 0,
+      modularScreenOpen: false,
       packScreenOpen: 0,
-      containerInFocus: '',
+      containerInFocus: null,
       modularCount: 0
     }
     switch (this.props.database) {
@@ -191,7 +191,7 @@ export default class ProductSelection extends React.Component {
   // MODULAR -------------------------------------------------------------------
 
   toggleModularScreen = (e) => {
-    var modularScreenOpen = 0;
+    var modularScreenOpen = false;
     var containerInFocus = '';
     if (!e) {
       this.setState({ modularScreenOpen, containerInFocus });
@@ -210,7 +210,7 @@ export default class ProductSelection extends React.Component {
       modularScreenOpen = 2;
     }
     for (var i = 0; i < databaseToSearch.length; i++) {
-      if (this.state.modularScreenOpen == 0) {
+      if (!this.state.modularScreenOpen) {
         if (databaseToSearch[i]._id === _id) {
           containerInFocus = databaseToSearch[i];
         }
@@ -224,7 +224,7 @@ export default class ProductSelection extends React.Component {
     var moduleDatabase = tools.deepCopy(this.state.moduleDatabase);
     var usedModules = modular.modules;
     var modularCount = this.state.modularCount;
-    var _id = "P" + (modularCount.toString().padStart(3, '0'));
+    var _id = modularCount.toString().padStart(3, '0');
     modularCount++;
     modular._id = _id;
     addedItems.push(modular);
@@ -313,7 +313,7 @@ export default class ProductSelection extends React.Component {
       packScreenOpen = 2;
     }
     for (var i = 0; i < databaseToSearch.length; i++) {
-      if (this.state.modularScreenOpen == 0) {
+      if (!this.state.modularScreenOpen) {
         if (databaseToSearch[i]._id === _id) {
           containerInFocus = databaseToSearch[i];
           break;
@@ -394,8 +394,8 @@ export default class ProductSelection extends React.Component {
           </Block>
           {this.state.modularScreenOpen > 0 ?
             <ModularScreen
-              modularScreenType={this.state.modularScreenOpen}
-              pack={this.state.containerInFocus}
+              isPackNew={this.state.modularScreenOpen === 1}
+              item={this.state.containerInFocus}
               moduleDatabase={this.state.moduleDatabase}
               addModular={this.addModular}
               editModular={this.editModular}

@@ -45,18 +45,10 @@ export default class PackScreen extends React.Component {
   render() {
     return (
       <Box
-        title="Editar Pacote"
+        title="Visualizar Pacote"
         closeBox={this.props.toggleWindow}
-        width="550px">
-          <Block columns={2.5} options={[{block: 0, span: 0.5}]}>
-            <Input
-              title="Código:"
-              type="text"
-              name="_id"
-              readOnly={true}
-              value={this.props.item._id}
-              onChange={this.onChange}
-            />
+        width="700px">
+          <Block columns={2.5} options={[{block: 2, span: 0.5}]}>
             <Input
               title="Descrição:"
               type="text"
@@ -70,11 +62,17 @@ export default class PackScreen extends React.Component {
               type="select"
               name="place"
               disabled={true}
-              value={this.props.item.place}
-              onChange={this.onChange}>
+              value={this.props.item.place}>
                 <option> </option>
                 {this.renderPlaces()}
             </Input>
+            <Input
+              title="Valor:"
+              type="currency"
+              name="price"
+              readOnly={true}
+              value={this.props.item.price}
+            />
           </Block>
           <ModulesTable
             item={this.props.item}

@@ -35,7 +35,7 @@ if (Meteor.isServer) {
           place: undefined,
           price: state.price || 0,
           restitution: state.restitution || 0,
-          modules: state.modules || [],
+          allowedModules: state.allowedModules || [],
           visible: true
         };
       }
@@ -92,7 +92,7 @@ if (Meteor.isServer) {
           assembled: state.assembled,
           price: state.price,
           restitution: state.restitution,
-          modules: state.modules,
+          allowedModules: state.allowedModules,
           visible: true
         };
       }

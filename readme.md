@@ -16,7 +16,7 @@ Version: 1.5.2
 
 ### Version 1.5.0
 
-- Implemented image visualizer/uploader using Amazon S3 for Modules, Containers and Acessories;
+- Implemented image visualizer/uploader using Amazon S3 for Modules, Containers and Accessories;
 - Fixed weird structure in Database + child components;
 
 ### Version 1.4.1

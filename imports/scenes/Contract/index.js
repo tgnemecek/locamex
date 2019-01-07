@@ -9,11 +9,14 @@ import Checkmark from '/imports/components/Checkmark/index';
 import AppHeader from '/imports/components/AppHeader/index';
 import NotFound from '/imports/components/NotFound/index';
 import Loading from '/imports/components/Loading/index';
+import FooterButtons from '/imports/components/FooterButtons/index';
+
+import Activate from './Activate/index';
 import Finalize from './Finalize/index';
 import Header from './Header/index';
 import Information from './Information/index';
 import Items from './Items/index';
-import FooterButtons from '/imports/components/FooterButtons/index';
+
 
 export default class Contract extends React.Component {
   constructor(props) {
@@ -259,15 +262,10 @@ export default class Contract extends React.Component {
                 </Box>
               : null}
               {this.state.toggleActivateWindow ?
-                <Box
-                  title="Aviso:"
-                  closeBox={this.toggleActivateWindow}>
-                  <p>Deseja ativar este contrato e locar os itens?</p>
-                  <FooterButtons buttons={[
-                    {text: "Não", className: "button--secondary", onClick: () => this.toggleActivateWindow()},
-                    {text: "Sim", onClick: () => this.activateContract()}
-                  ]}/>
-                </Box>
+                <Activate
+                  contract={this.state.contract}
+                  toggleWindow={this.toggleActivateWindow}
+                  activateContract={this.activateContract}/>
               : null}
               {this.state.toggleFinalizeWindow ?
                 <Finalize

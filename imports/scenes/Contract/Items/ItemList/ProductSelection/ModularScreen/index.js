@@ -9,115 +9,106 @@ import Input from '/imports/components/Input/index';
 export default class ModularScreen extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      pack: this.props.pack
-    }
-    var pack = {};
-    var moduleDatabase = this.props.moduleDatabase;
-    if (this.props.modularScreenType == 1) { //Add New
-      pack = {
-        type: "modular",
-        description: this.props.pack.description,
-        containerId: this.props.pack._id,
-        price: this.props.pack.price,
-        defaultPrice: this.props.pack.price,
-        restitution: this.props.pack.restitution,
-        quantity: 1
-      };
-      pack.modules = this.props.pack.modules.map((module, i) => {
-        var quantity;
-        var available;
-        var description;
+    const setModules = () => {
+      var moduleDatabase = this.props.moduleDatabase;
+      return this.props.item.allowedModules.map((_id, i) => {
+        var available = 0;
+        var description = "";
         for (var i = 0; i < moduleDatabase.length; i++) {
-          if (moduleDatabase[i]._id == module) {
-            available = moduleDatabase[i].available;
-            if (!quantity) quantity = 0;
+          if (moduleDatabase[i]._id == _id) {
+            available = tools.countAvailableItems(moduleDatabase[i].place);
             description = moduleDatabase[i].description;
           }
         }
-        return {_id: module, available, quantity, description}
-      });
-    } else if (this.props.modularScreenType == 2) { //Edit
-      pack = {...this.props.pack};
-      pack.modules = this.props.pack.modules.map((module, i) => {
-        var quantity;
-        var available;
-        var description;
-        for (var i = 0; i < moduleDatabase.length; i++) {
-          if (moduleDatabase[i]._id == module._id) {
-            quantity = module.quantity;
-            available = Number(moduleDatabase[i].available) + (module.quantity * pack.quantity);
-            description = moduleDatabase[i].description;
-            return {_id: module._id, available, quantity, description};
-          }
-        }
+        return {
+          _id,
+          description,
+          available,
+          selected: 0
+        };
       });
     }
-    this.state.pack = pack;
+
+    if (this.props.isPackNew) { // Setting state for a new Pack
+      this.state = {
+        pack: {
+          _id: undefined,
+          containerId: this.props.isPackNew ? this.props.item._id : this.props.item.containerId,
+          description: this.props.item.description,
+          type: "pack",
+          status: "rented",
+          price: this.props.item.price,
+          restitution: this.props.item.restitution,
+          visible: true,
+          place: '',
+          modules: setModules(),
+          quantity: 1
+        },
+        errorMsg: null,
+        errorKeys: []
+      }
+    } else { // Setting state from a previous Pack (editing)
+      this.state = { pack: {...this.props.item} }
+    }
   }
 
-
   renderBody = () => {
-    if (!this.state.pack.modules) return null;
     return this.state.pack.modules.map((module, i) => {
+      const changeModuleQuantity = (e) => {
+        var pack = { ...this.state.pack };
+
+        var selected = Number(e.target.value);
+        var max = this.calculateMax();
+        var quantity = this.state.pack.quantity;
+        if (quantity > max) quantity = max;
+
+        pack.modules[i].selected = selected;
+        pack.quantity = quantity;
+        this.setState({ pack });
+      }
       return (
         <tr key={i}>
-          <td>{module.serial || "-"}</td>
           <td>{module.description}</td>
           <td><Input
                 type="number"
                 max={module.available}
                 name={i}
-                value={module.quantity}
-                onChange={this.onChange}/></td>
+                value={module.selected}
+                onChange={changeModuleQuantity}/></td>
           <td>{module.available}</td>
         </tr>
       )
     })
   }
 
-  changeQuantity = (e) => {
+  changePackQuantity = (e) => {
     var quantity = e.target.value;
-    var pack = {...this.state.pack, quantity}
-    this.setState({ pack });
-  }
-
-  onChange = (e) => {
-    var value = Number(e.target.value);
-    var index = e.target.name;
-    var max = this.calculateMax();
-    var quantity = Number(this.state.pack.quantity);
-    if (quantity > max) quantity = max;
-    var pack = {
-      ...this.state.pack,
-      quantity
-    }
-    pack.modules[index].quantity = value;
+    var pack = {...this.state.pack, quantity }
     this.setState({ pack });
   }
 
   calculateMax = () => {
     var modules = this.state.pack.modules;
-    if (!modules) return 1;
+    if (!modules) return 0;
     var minorDivisible = 999;
     var division;
     for (var i = 0; i < modules.length; i++) {
-      if (!modules[i].quantity) continue;
-      division = Number(modules[i].available) / Number(modules[i].quantity);
+      if (!modules[i].selected) continue;
+      division = Number(modules[i].available) / Number(modules[i].selected);
       if (division < minorDivisible) minorDivisible = division;
     }
     return Math.floor(minorDivisible);
   }
 
   saveEdits = () => {
-    var pack = {
-      ...this.state.pack,
-      available: undefined
+    if (this.state.pack.quantity === 0) {
+      this.setState({ errorMsg: "Quantidade não permitida.", errorKeys: ["quantity"] });
+      return;
     }
-    if (this.props.modularScreenType == 1) {
-      this.props.addModular(pack);
+    if (this.props.isPackNew) {
+      this.props.addModular(this.state.pack);
     } else {
-      this.props.editModular(pack);
+      this.props.editModular(this.state.pack);
     }
   }
 
@@ -131,15 +122,23 @@ export default class ModularScreen extends React.Component {
         title="Montagem de Container Modular"
         width="550px"
         closeBox={this.toggleModularScreen}>
+        <div className="error-message">{this.state.errorMsg}</div>
         <Block columns={2}>
-          <Input title="Montando:" type="text" readOnly={true} value={this.props.pack.description}/>
-          <Input title="Quantidade:" type="number" min={1} max={this.calculateMax()} value={this.state.pack.quantity} onChange={this.changeQuantity}/>
+          <Input title="Montando:" type="text" readOnly={true} value={this.state.pack.description}/>
+          <Input
+            title="Quantidade:"
+            type="number"
+            name="quantity"
+            style={this.state.errorKeys.includes("quantity") ? {borderColor: "red"} : null}
+            min={0}
+            max={this.calculateMax()}
+            value={this.state.pack.quantity}
+            onChange={this.changePackQuantity}/>
         </Block>
         <div className="modular-screen__body">
           <table className="table table--modular-screen">
             <thead>
               <tr>
-                <th>Série</th>
                 <th>Componentes</th>
                 <th>Qtd.</th>
                 <th>Disp.</th>
@@ -150,7 +149,7 @@ export default class ModularScreen extends React.Component {
             </tbody>
           </table>
         </div>
-        {this.props.modularScreenType === 1 ?
+        {this.props.isPackNew ?
           <FooterButtons buttons={[
             {text: "Voltar", className: "button--secondary", onClick: () => this.toggleModularScreen()},
             {text: "Adicionar", onClick: () => this.saveEdits()}

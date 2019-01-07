@@ -97,6 +97,11 @@ class StockVisualizer extends React.Component {
     var newTotal = totalItems + increment;
     this.props.onChange({target: {value: newTotal, name: "totalItems"}})
   }
+  contractView = () => {
+    return(
+      <button>CONTRACT</button>
+    )
+  }
   render() {
     return (
       <>
@@ -107,12 +112,16 @@ class StockVisualizer extends React.Component {
         :
         this.renderNotQuantitative()
         }
-        <BuySell
-          item={this.props.item}
-          totalItems={this.props.totalItems}
-          changeTotal={this.changeTotal}
-          sumItems={this.props.sumItems}
-        />
+        {this.props.isContract
+        ?
+          this.contractView()
+        :
+          <BuySell
+            item={this.props.item}
+            totalItems={this.props.totalItems}
+            changeTotal={this.changeTotal}
+            sumItems={this.props.sumItems}/>
+        }
       </>
     )
   }

@@ -186,6 +186,14 @@ export default class tools {
     } return -1;
   }
 
+  static countAvailableItems = (array) => {
+    var count = 0;
+    array.forEach((item) => {
+      count = count + item.available;
+    })
+    return count;
+  }
+
   static unformat = (value, type, externalOptions) => {
     if (value == undefined) return undefined;
     value = value.toString();

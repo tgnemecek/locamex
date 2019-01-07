@@ -14,12 +14,6 @@ export default class AddedItemsSide extends React.Component {
     }
   }
 
-  packSuffix = (type) => {
-    if (type === 'pack') {
-      return "* (Pacote Montado)"
-    } else return '';
-  }
-
   renderAddedItems = () => {
     return this.props.addedItems.map((item, i, array) => {
       var buttonProps = {
@@ -38,10 +32,16 @@ export default class AddedItemsSide extends React.Component {
         buttonProps.onClick = this.props.togglePackScreen;
       }
 
+      const suffix = () => {
+        if (item.type === 'pack') {
+          return ` #${item._id}`
+        }
+      }
+
       return (
         <tr key={i} className="product-selection__db-item">
           <td className="small-column">{item.serial || "-"}</td>
-          <td>{item.description + this.packSuffix(item.type)}</td>
+          <td>{item.description + suffix()}</td>
           <td className="medium-column"><Input type="currency" name={i} value={item.price} onChange={this.props.changePrice}/></td>
           <td className="small-column">
             <Input

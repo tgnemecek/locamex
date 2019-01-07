@@ -13,7 +13,7 @@ export default class Modular extends React.Component {
   onChange = (e) => {
     var value = e.target.value;
     var key = e.target.name;
-    var allowedModules = tools.deepCopy(this.props.item.modules);
+    var allowedModules = tools.deepCopy(this.props.item.allowedModules);
     (() => {
       if (value === true) {
         if (allowedModules.includes(key)) return
@@ -49,7 +49,7 @@ export default class Modular extends React.Component {
               id={"module--" + i}
               name={item._id}
               className="register-containers__module-block__checkbox"
-              value={this.props.item.modules.includes(item._id)}
+              value={this.props.item.allowedModules.includes(item._id)}
               onChange={this.onChange}/>
           </td>
         </tr>

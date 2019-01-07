@@ -17,10 +17,10 @@ export default class ItemList extends React.Component {
     } else if (item.type === 'modular' || item.type === 'pack') {
       var suffix = "(";
       item.modules.forEach((module, i, array) => {
-        if (module.quantity) {
+        if (module.selected) {
           if (i < (array.length - 1)) {
-            suffix += module.description + ": " + module.quantity + ". ";
-          } else suffix += module.description + ": " + module.quantity;
+            suffix += module.description + ": " + module.selected + ". ";
+          } else suffix += module.description + ": " + module.selected;
         }
       });
       suffix = suffix + ")";

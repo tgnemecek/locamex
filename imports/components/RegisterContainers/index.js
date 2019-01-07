@@ -23,7 +23,7 @@ export default class RegisterContainers extends React.Component {
       type: this.props.item.type || 'fixed',
       place: this.props.item.place || '0000',
       status: this.props.item.status || 'available',
-      modules: this.props.item.modules || [],
+      allowedModules: this.props.item.allowedModules || [],
       restitution: this.props.item.restitution || '',
       observations: this.props.item.observations || '',
 
