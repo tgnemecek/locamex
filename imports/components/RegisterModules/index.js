@@ -8,7 +8,6 @@ import Block from '/imports/components/Block/index';
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 import Input from '/imports/components/Input/index';
-import StockVisualizer from '/imports/components/StockVisualizer/index';
 
 export default class RegisterModules extends React.Component {
   constructor(props) {
@@ -88,11 +87,6 @@ export default class RegisterModules extends React.Component {
               value={this.state.description}
               onChange={this.onChange}/>
           </Block>
-          <StockVisualizer
-            item={this.state}
-            totalItems={this.state.totalItems}
-            sumItems={this.calculateTotalItems()}
-            onChange={this.onChange}/>
           {this.state.confirmationWindow ?
             <Box
               title="Aviso:"
