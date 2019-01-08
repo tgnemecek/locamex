@@ -65,8 +65,8 @@ export default class RegisterPlaces extends React.Component {
             <ConfirmationWindow
               title="Aviso:"
               message="Deseja mesmo excluir este item do banco de dados?"
-              leftButton={{description: "Não", className: "button--secondary", method: this.toggleConfirmationWindow}}
-              rightButton={{description: "Sim", className: "button--danger", method: this.removeItem}}
+              leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
+              rightButton={{text: "Sim", className: "button--danger", onClick: this.removeItem}}
               closeBox={this.toggleConfirmationWindow}/>
           : null}
           {this.props.item._id ?

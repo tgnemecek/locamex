@@ -10,7 +10,7 @@ if (Meteor.isServer) {
 
   Meteor.methods({
     'places.insert'(description) {
-      const _id = tools.generateId("places");
+      const _id = tools.generateId();
       const data = {
         _id,
         description,

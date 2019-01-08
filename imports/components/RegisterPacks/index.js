@@ -71,34 +71,14 @@ export default class RegisterPacks extends React.Component {
         title="Editar Pacote"
         closeBox={this.props.toggleWindow}
         width="700px">
-          <Block columns={2.5} options={[{block: 0, span: 0.5}]}>
-            <Input
-              title="Código:"
-              type="text"
-              name="_id"
-              readOnly={true}
-              value={this.props.item._id}
-              onChange={this.onChange}
-            />
-            <Input
-              title="Descrição:"
-              type="text"
-              name="description"
-              readOnly={true}
-              value={this.props.item.description}
-              onChange={this.onChange}
-            />
-            <Input
-              title="Pátio:"
-              type="select"
-              name="place"
-              disabled={this.props.readOnly}
-              value={this.state.place}
-              onChange={this.onChange}>
-                <option> </option>
-                {this.renderPlaces()}
-            </Input>
-          </Block>
+        <Input
+          title="Descrição:"
+          type="text"
+          name="description"
+          readOnly={true}
+          value={this.props.item.description}
+          onChange={this.onChange}
+        />
           <ModulesTable
             item={this.state}
             modulesDatabase={this.state.modulesDatabase}/>

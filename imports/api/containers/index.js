@@ -10,7 +10,7 @@ if (Meteor.isServer) {
   })
   Meteor.methods({
     'containers.insert'(state) {
-      const _id = tools.generateId(state.type);
+      const _id = tools.generateId();
       var data;
       if (state.type == 'fixed') {
         data = {
@@ -47,6 +47,15 @@ if (Meteor.isServer) {
         visible: false
       };
       Containers.update({ _id }, { $set: data });
+      Meteor.call('history.insert', data, 'containers');
+    },
+    'containers.transaction.fixed'(state) {
+      const data = {
+        _id: state._id,
+        status: state.status,
+        place: state.place
+      }
+      Containers.update({ _id: state._id }, { $set: data });
       Meteor.call('history.insert', data, 'containers');
     },
     'containers.status' (_id, status) {

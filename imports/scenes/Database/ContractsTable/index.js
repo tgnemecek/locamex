@@ -128,7 +128,15 @@ class ContractsTable extends React.Component {
         </ErrorBoundary>
       )
     } else if (!this.props.ready) {
-      return null
+      return (
+        <div className="database__scroll-div">
+          <table className="table database__table">
+            <thead>
+              {this.renderHeader()}
+            </thead>
+          </table>
+        </div>
+      )
     }
   }
 }

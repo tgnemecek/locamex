@@ -69,8 +69,8 @@ class ContainersTable extends React.Component {
   }
 
   renderHeader = () => {
-    const toggleWindow = () => {
-      this.props.toggleWindow({});
+    const toggleEditWindow = () => {
+      this.props.toggleEditWindow({});
     }
     return (
       <tr>
@@ -80,16 +80,18 @@ class ContainersTable extends React.Component {
         <th className="small-column">Status</th>
         <th className="small-column">Pátio</th>
         <th className="small-column">Valor Mensal</th>
-        <th className="small-column"><button onClick={toggleWindow} className="database__table__button">+</button></th>
-        <th className="small-column"></th>
+        <th className="small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
       </tr>
     )
   }
 
   renderBody = () => {
     return this.state.filteredDatabase.map((item, i) => {
-      const toggleWindow = () => {
-        this.props.toggleWindow(item);
+      const toggleEditWindow = () => {
+        this.props.toggleEditWindow(item);
+      }
+      const toggleTransactionWindow = () => {
+        this.props.toggleTransactionWindow(item);
       }
       const toggleImageWindow = () => {
         this.props.toggleImageWindow(item);
@@ -111,6 +113,11 @@ class ContainersTable extends React.Component {
           }
         } return "-";
       }
+      const renderTransactionButton = () => {
+        if (item.type === 'fixed') {
+          return <button className="database__table__button" onClick={toggleTransactionWindow}>⟳</button>
+        } else return null
+      }
       return (
         <tr key={i}>
           <td className="small-column">{item.serial || "-"}</td>
@@ -119,7 +126,8 @@ class ContainersTable extends React.Component {
           <td className="small-column">{translate(item.status) || "Montados: " + item.assembled}</td>
           <td className="small-column">{item.status == "rented" ? "-" : translatePlaces(item.place)}</td>
           <td className="small-column">{tools.format(item.price, 'currency')}</td>
-          <td className="small-column"><button className="database__table__button" onClick={toggleWindow}>✎</button></td>
+          <td className="small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
+          <td className="small-column">{renderTransactionButton()}</td>
           <td className="small-column"><button className="database__table__button" onClick={toggleImageWindow}>🔍</button></td>
         </tr>
       )
@@ -136,7 +144,7 @@ class ContainersTable extends React.Component {
             searchReturn={this.searchReturn}
           />
           <div className="database__scroll-div">
-            <table className="table database__table database__table--accessories">
+            <table className="table database__table">
               <thead>
                 {this.renderHeader()}
               </thead>
@@ -148,7 +156,15 @@ class ContainersTable extends React.Component {
         </ErrorBoundary>
       )
     } else if (!this.props.ready) {
-      return null;
+      return (
+        <div className="database__scroll-div">
+          <table className="table database__table">
+            <thead>
+              {this.renderHeader()}
+            </thead>
+          </table>
+        </div>
+      )
     }
   }
 }

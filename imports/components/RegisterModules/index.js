@@ -1,13 +1,12 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import { withTracker } from 'meteor/react-meteor-data';
-
 import tools from '/imports/startup/tools/index';
 
-import Block from '/imports/components/Block/index';
 import Box from '/imports/components/Box/index';
-import FooterButtons from '/imports/components/FooterButtons/index';
+import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
+import FooterButtons from '/imports/components/FooterButtons/index';
+import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 
 export default class RegisterModules extends React.Component {
   constructor(props) {
@@ -15,10 +14,6 @@ export default class RegisterModules extends React.Component {
     this.state = {
       _id: this.props.item._id || '',
       description: this.props.item.description || '',
-      place: this.props.item.place || [],
-      quantitative: true,
-
-      totalItems: 0,
 
       errorMsg: '',
       errorKeys: [],
@@ -26,27 +21,8 @@ export default class RegisterModules extends React.Component {
       confirmationWindow: false
     }
   }
-  componentDidMount() {
-    this.setState({ totalItems: this.calculateTotalItems() })
-  }
   onChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
-  }
-  calculateTotalItems = () => {
-    if (this.props.item.quantitative) {
-      var totalAvailable = 0;
-      var totalMaintenance = 0;
-
-      var placesInItem = tools.deepCopy(this.state.place);
-
-      placesInItem.forEach((place) => {
-        // Calculate totals
-        totalAvailable = totalAvailable + place.available;
-        totalMaintenance = totalMaintenance + place.maintenance;
-      })
-      // Calculate grand total
-      return totalAvailable + totalMaintenance;
-    }
   }
   toggleConfirmationWindow = () => {
     var confirmationWindow = !this.state.confirmationWindow;
@@ -61,9 +37,6 @@ export default class RegisterModules extends React.Component {
     if (!this.state.description.trim()) {
       errorKeys.push("description");
       this.setState({ errorMsg: "Favor informar uma descrição.", errorKeys });
-    } else if (this.calculateTotalItems() !== this.state.totalItems) {
-      errorKeys.push("totalItems");
-      this.setState({ errorMsg: "As quantidades somadas devem equivaler ao total.", errorKeys });
     } else {
       if (this.props.item._id) {
         Meteor.call('modules.update', this.state);
@@ -71,7 +44,6 @@ export default class RegisterModules extends React.Component {
       this.props.toggleWindow();
     }
   }
-
   render() {
     return (
       <Box
@@ -85,18 +57,16 @@ export default class RegisterModules extends React.Component {
               type="text"
               name="description"
               value={this.state.description}
-              onChange={this.onChange}/>
+              onChange={this.onChange}
+            />
           </Block>
           {this.state.confirmationWindow ?
-            <Box
+            <ConfirmationWindow
               title="Aviso:"
-              closeBox={this.toggleConfirmationWindow}>
-              <p>Deseja mesmo excluir este item do banco de dados?</p>
-              <FooterButtons buttons={[
-                {text: "Não", className: "button--secondary", onClick: () => this.toggleConfirmationWindow()},
-                {text: "Sim", className: "button--danger", onClick: () => this.removeItem()}
-              ]}/>
-            </Box>
+              closeBox={this.toggleConfirmationWindow}
+              message="Deseja mesmo excluir este item do banco de dados?"
+              leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
+              rightButton={{text: "Sim", className: "button--danger", onClick: this.removeItem}}/>
           : null}
           {this.props.item._id ?
             <button className="button button--danger" style={{width: "100%"}} onClick={this.toggleConfirmationWindow}>Excluir Registro</button>

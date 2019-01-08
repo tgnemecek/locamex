@@ -39,15 +39,15 @@ class ClientsTable extends React.Component {
   }
 
   renderHeader = () => {
-    const toggleWindow = () => {
-      this.props.toggleWindow({});
+    const toggleEditWindow = () => {
+      this.props.toggleEditWindow({});
     }
     return (
       <tr>
         <th>Nome Fantasia</th>
         <th className="small-column">CNPJ/CPF</th>
         <th className="small-column">Tipo</th>
-        <th className="small-column"><button onClick={toggleWindow} className="database__table__button">+</button></th>
+        <th className="small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
       </tr>
     )
   }
@@ -55,15 +55,15 @@ class ClientsTable extends React.Component {
   renderBody = () => {
     return this.state.filteredDatabase.map((item, i) => {
       var formatType = item.type === 'company' ? 'cnpj' : 'cpf';
-      const toggleWindow = () => {
-        this.props.toggleWindow(item);
+      const toggleEditWindow = () => {
+        this.props.toggleEditWindow(item);
       }
       return (
         <tr key={i}>
           <td>{item.description}</td>
           <td className="small-column">{tools.format(item.registry, formatType)}</td>
           <td className="small-column">{item.type === 'company' ? "PJ" : "PF"}</td>
-          <td className="small-column"><button className="database__table__button" onClick={toggleWindow}>✎</button></td>
+          <td className="small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
         </tr>
       )
     })
@@ -91,7 +91,15 @@ class ClientsTable extends React.Component {
         </ErrorBoundary>
       )
     } else if (!this.props.ready) {
-      return null;
+      return (
+        <div className="database__scroll-div">
+          <table className="table database__table">
+            <thead>
+              {this.renderHeader()}
+            </thead>
+          </table>
+        </div>
+      )
     }
   }
 }

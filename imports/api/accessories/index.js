@@ -9,21 +9,44 @@ if (Meteor.isServer) {
   })
   Meteor.methods({
     'accessories.insert'(state) {
-      const _id = tools.generateId("accessories");
+      const _id = tools.generateId();
       const data = {
         _id,
+        type: "accessory",
         description: state.description,
-        category: state.category,
-        place: state.place || [],
-        available: state.available || 0,
-        rented: state.rented || 0,
-        maintenance: state.maintenance || 0,
+        price: state.price,
+        restitution: state.restitution,
+        observations: state.observations,
+
+        rented: 0,
+        available: 0,
+        maintenance: 0,
+        inactive: 0,
+
+        visible: true
+      }
+      Accessories.insert(data);
+      Meteor.call('history.insert', data, 'accessories');
+    },
+    'accessories.update'(state) {
+      const data = {
+        description: state.description,
         price: state.price,
         restitution: state.restitution,
         observations: state.observations,
         visible: true
       }
-      Accessories.insert(data);
+      Accessories.update({ _id: state._id }, { $set: data });
+      Meteor.call('history.insert', data, 'accessories');
+    },
+    'accessories.transaction'(state) {
+      const data = {
+        _id: state._id,
+        available: state.available,
+        maintenance: state.maintenance,
+        inactive: state.inactive
+      }
+      Accessories.update({ _id: state._id }, { $set: data });
       Meteor.call('history.insert', data, 'accessories');
     },
     'accessories.hide'(_id) {
@@ -42,7 +65,7 @@ if (Meteor.isServer) {
         }
         Accessories.update({ _id: accessories[i]._id }, { $inc: changes });
         if (!data.includes(accessories[i])) data.push(accessories[i]);
-        Meteor.call('history.insert', data, 'accessories.rent');
+        Meteor.call('history.insert', data, 'accessories');
       }
     },
     'accessories.receive' (accessories) {
@@ -71,22 +94,6 @@ if (Meteor.isServer) {
       if (item.available < quantity) {
         return false;
       } else return true;
-    },
-    'accessories.update'(state) {
-      const data = {
-        description: state.description,
-        category: state.category,
-        place: state.place || {},
-        available: state.available || 0,
-        rented: state.rented || 0,
-        maintenance: state.maintenance || 0,
-        price: state.price,
-        restitution: state.restitution,
-        observations: state.observations,
-        visible: true
-      }
-      Accessories.update({ _id: state._id }, { $set: data });
-      Meteor.call('history.insert', data, 'accessories');
     }
   })
 }

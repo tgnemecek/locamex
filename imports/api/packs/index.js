@@ -12,7 +12,7 @@ if (Meteor.isServer) {
     'packs.insert' (packInfo) {
       var maxIterations = packInfo.selectedAssembled;
       for (var i = 0; i < maxIterations; i++) {
-        var _id = tools.generateId("packs");
+        var _id = tools.generateId();
         var modules = [];
         packInfo.modules.forEach((module) => {
           if (module.quantity) modules.push(module);
@@ -33,6 +33,15 @@ if (Meteor.isServer) {
         Meteor.call('containers.update.assembled', packInfo.containerId, 1);
         Meteor.call('history.insert', data, 'packs.insert');
       }
+    },
+    'packs.transaction'(state) {
+      const data = {
+        _id: state._id,
+        status: state.status,
+        place: state.place
+      }
+      Packs.update({ _id: state._id }, { $set: data });
+      Meteor.call('history.insert', data, 'packs');
     },
     'packs.check'(_id) {
       const item = Packs.findOne(

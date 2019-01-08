@@ -3,6 +3,7 @@ import React from 'react';
 import moment from 'moment';
 import tools from '/imports/startup/tools/index';
 
+import Transaction from '/imports/components/Transaction/index';
 import ImageVisualizer from '/imports/components/ImageVisualizer/index';
 
 import AccessoriesTable from './AccessoriesTable/index';
@@ -33,6 +34,7 @@ export default class Database extends React.Component {
     this.state = {
       item: null,
       editWindow: false,
+      transactionWindow: false,
       imageWindow: false
     }
   }
@@ -44,6 +46,15 @@ export default class Database extends React.Component {
         item
       });
     } else this.setState({ editWindow: false, item: null });
+  }
+
+  toggleTransactionWindow = (item) => {
+    if (item) {
+      this.setState({
+        transactionWindow: !this.state.transactionWindow,
+        item
+      });
+    } else this.setState({ transactionWindow: false, item: null });
   }
 
   toggleImageWindow = (item) => {
@@ -96,10 +107,17 @@ export default class Database extends React.Component {
         <div className="page-content">
           <Table
             item={this.state.item}
-            toggleWindow={this.toggleEditWindow}
+            toggleEditWindow={this.toggleEditWindow}
+            toggleTransactionWindow={this.toggleTransactionWindow}
             toggleImageWindow={this.toggleImageWindow}
           />
         </div>
+        {this.state.transactionWindow ?
+          <Transaction
+            item={this.state.item}
+            toggleWindow={this.toggleTransactionWindow}
+          />
+        : null}
         {this.state.imageWindow ?
           <ImageVisualizer
             item={{...this.state.item, itemType: this.props.match.params.database}}
