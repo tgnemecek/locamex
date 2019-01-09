@@ -3,6 +3,13 @@
   overflow: visible;
 }
 
+.suggestion-bar__input--button {
+  input {
+    background-color: $grey !important;
+    cursor: pointer;
+  }
+}
+
 .suggestion-bar__dropbox {
   position: absolute;
   width: 100%;

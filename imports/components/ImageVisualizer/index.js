@@ -54,7 +54,7 @@ export default class ImageVisualizer extends React.Component {
         title="Visualizador de Imagens"
         closeBox={this.props.toggleWindow}>
         <div className="image-visualizer__date">
-          <p>Fotos enviadas dia: {moment(this.state.lastRegistry.date).format('DD-MM-YYYY')}</p>
+          {this.state.lastRegistry.date ? <p>Fotos enviadas dia: {moment(this.state.lastRegistry.date).format('DD-MM-YYYY')}</p> : null}
         </div>
         <div className="image-visualizer__image-wrap">
           {this.state.snapshots.length ?

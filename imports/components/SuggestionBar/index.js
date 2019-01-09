@@ -9,6 +9,7 @@ export default class SuggestionBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      buttonMode: false,
       query: '',
       results: []
     }
@@ -53,7 +54,7 @@ export default class SuggestionBar extends React.Component {
       const onClick = (e) => {
         this.props.onClick(e);
 
-        this.setState({ query: item.description }, () => {
+        this.setState({ query: item.description, buttonMode: true }, () => {
           this.hideDropbox();
         })
       }
@@ -72,6 +73,13 @@ export default class SuggestionBar extends React.Component {
     }, 0);
   }
 
+  buttonClick = () => {
+    var buttonMode = this.state.buttonMode;
+    if (!buttonMode) return;
+
+    this.setState({ buttonMode: false, query: '' });
+  }
+
   onChange = (e) => {
     this.setState({ query: e.target.value }, () => {
       if (this.state.query.length > 1) {
@@ -85,9 +93,11 @@ export default class SuggestionBar extends React.Component {
       <div className="suggestion-bar" onBlur={this.onBlur}>
         <Input
           title={this.props.title}
+          className={this.state.buttonMode ? "suggestion-bar__input--button" : ""}
           type="text"
           style={this.props.style}
           onChange={this.onChange}
+          buttonClick={this.buttonClick}
           value={this.state.query}/>
         {this.state.results.length > 0 ?
           <div className="suggestion-bar__dropbox">
