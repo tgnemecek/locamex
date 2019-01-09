@@ -14,7 +14,7 @@ if (Meteor.isServer) {
       const _id = prefix + "-" + suffix;
       const data = {
         _id,
-        clientId: state.clientId,
+        client: state.client,
         status: state.status,
         createdBy: state.createdBy,
         dates: state.dates,
@@ -119,7 +119,7 @@ if (Meteor.isServer) {
     'contracts.update'(state) {
       const data = {
         _id: state._id,
-        clientId: state.clientId,
+        client: state.client,
         status: state.status,
         createdBy: state.createdBy,
         dates: state.dates,

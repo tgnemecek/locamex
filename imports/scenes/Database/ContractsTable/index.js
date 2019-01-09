@@ -67,7 +67,7 @@ class ContractsTable extends React.Component {
       }
       const clientName = () => {
         for (var j = 0; j < this.props.clientsDatabase.length; j++) {
-          if (this.props.clientsDatabase[j]._id === item.clientId) {
+          if (this.props.clientsDatabase[j]._id === item.client) {
             return this.props.clientsDatabase[j].description;
           }
         }

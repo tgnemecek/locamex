@@ -47,19 +47,11 @@ export default class RegisterServices extends React.Component {
   render() {
     return (
       <Box
-        title={this.props.item._id ? "Editar Registro" : "Criar Novo Registro"}
+        title={this.props.item._id ? "Editar Serviço" : "Criar Novo Serviço"}
         closeBox={this.props.toggleWindow}
         width="800px">
           <div className="error-message">{this.state.errorMsg}</div>
-          <Block columns={6} options={[{block: 1, span: 4}]}>
-            <Input
-              title="Código:"
-              type="text"
-              readOnly={true}
-              name="_id"
-              value={this.state._id}
-              onChange={this.onChange}
-            />
+          <Block columns={4} options={[{block: 0, span: 3}]}>
             <Input
               title="Descrição:"
               type="text"

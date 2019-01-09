@@ -1,0 +1,21 @@
+.suggestion-bar {
+  position: relative;
+  overflow: visible;
+}
+
+.suggestion-bar__dropbox {
+  position: absolute;
+  width: 100%;
+  z-index: 999;
+  button {
+    background-color: $light-grey;
+    border: 1px solid $grey;
+    text-align: left;
+    padding: ($space /2) 1rem;
+    width: 100%;
+    opacity: 0.9;
+  }
+  button:hover {
+    background-color: $brand-primary-light;
+  }
+}

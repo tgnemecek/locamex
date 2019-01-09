@@ -37,7 +37,7 @@ export default class Documents extends React.Component {
   componentDidMount() {
     this.tracker = Tracker.autorun(() => {
       Meteor.subscribe('clientsPub');
-      var client = Clients.findOne(this.props.contract.clientId);
+      var client = Clients.findOne(this.props.contract.client);
       var contacts = [];
       client.contacts.forEach((contact) => {
         if (contact.visible) contacts.push(contact)

@@ -23,7 +23,7 @@ export default class Contract extends React.Component {
         createdBy: Meteor.user() || {username: "Anônimo"},
         status: "inactive",
 
-        clientId: '',
+        client: '',
 
         billing: [],
         deliveryAddress: {
@@ -95,7 +95,7 @@ export default class Contract extends React.Component {
       var errorKeys = [];
       var errorMsg = 'Campos obrigatórios não preenchidos/inválidos.';
 
-      if (!this.state.contract.clientId) errorKeys.push("clientId");
+      if (!this.state.contract.client) errorKeys.push("client");
 
       if (!this.state.contract.dates.duration) errorKeys.push("duration");
 
