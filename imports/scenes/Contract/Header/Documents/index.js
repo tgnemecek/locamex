@@ -158,7 +158,7 @@ export default class Documents extends React.Component {
               </Input>
             </div>
             <FooterButtons buttons={[
-              {text: "Gerar", className: "button--primary", onClick: () => this.generate()},
+              {text: "Gerar", className: "button--primary", onClick: this.generate},
             ]}/>
         </Box>
       )

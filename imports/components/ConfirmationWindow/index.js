@@ -4,6 +4,7 @@ import FooterButtons from '/imports/components/FooterButtons/index';
 
 export default function ConfirmationWindow (props) {
   // Props:
+  // isOpen (bool)
   // title (string)
   // closeBox (function)
   // message (string)
@@ -11,15 +12,17 @@ export default function ConfirmationWindow (props) {
   //    .text (string)
   //    .className (string)
   //    .onClick (function)
-  return (
-    <Box
-      title={props.title}
-      closeBox={props.closeBox}>
-      <p>{props.message}</p>
-      <FooterButtons buttons={[
-        {text: props.leftButton.text, className: props.leftButton.className, onClick: props.leftButton.onClick},
-        {text: props.rightButton.text, className: props.rightButton.className, onClick: props.rightButton.onClick}
-      ]}/>
-    </Box>
-  )
+  if (props.isOpen) {
+    return (
+      <Box
+        title={props.title || "Aviso:"}
+        closeBox={props.closeBox}>
+        <p>{props.message || null}</p>
+        <FooterButtons buttons={[
+          {text: props.leftButton.text, className: props.leftButton.className, onClick: props.leftButton.onClick},
+          {text: props.rightButton.text, className: props.rightButton.className, onClick: props.rightButton.onClick}
+        ]}/>
+      </Box>
+    )
+  } else return null;
 }

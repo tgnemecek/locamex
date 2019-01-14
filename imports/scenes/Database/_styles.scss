@@ -19,4 +19,9 @@
     width: 1px;
     white-space: nowrap;
   }
+  .small-column--wrap {
+    text-align: center;
+    min-width: 300px;
+    white-space: normal;
+  }
 }

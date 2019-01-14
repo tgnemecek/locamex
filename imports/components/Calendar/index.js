@@ -107,8 +107,8 @@ export default class Calendar extends React.Component {
             </tbody>
           </table>
           <FooterButtons buttons={[
-            {text: "Voltar", className: "button--secondary", onClick: () => { this.props.closeCalendar() }},
-            {text: "OK", className: "button--primary", onClick: () => { this.saveEdits() }},
+            {text: "Voltar", className: "button--secondary", onClick: this.props.closeCalendar},
+            {text: "OK", className: "button--primary", onClick: this.saveEdits},
           ]}/>
         </Box>
       )

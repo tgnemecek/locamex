@@ -3,30 +3,62 @@ import { Link, Route } from 'react-router-dom';
 
 export default class FooterButtons extends React.Component {
 
-  renderButtons = () => {
+  selectNumber = () => {
+    var length = this.props.buttons.length;
+    switch (length) {
+      case 2:
+        return this.renderTwoButtons();
+      case 3:
+        return this.renderThreeButtons();
+      default:
+        return null;
+    }
+  }
+
+  renderTwoButtons = () => {
     var style = {};
+    var buttons = this.props.buttons;
 
-    if (!this.props.buttons) return null;
+    if (!buttons) return null;
 
-    return this.props.buttons.map((button, i) => {
+    return buttons.map((button, i) => {
       if (i == 0) {
-        style = {marginLeft: "0"}
+        style = {}
       } else style = {marginLeft: "1%"}
       var className = "button ";
       className += button.className || '';
       var text = button.text;
       var onClick = button.onClick || null;
       var type = button.type || "button";
-      if (type == 'route') {
-        return <Route render={({ history }) => (
-          <button
-            key={i}
-            type="button"
-            style={style}
-            className={className}
-            onClick={() => { history.push(button.location) }}>{text}</button>
-        )}/>
-      } else return <button
+      return <button
+                  key={i}
+                  type={type}
+                  style={style}
+                  className={className}
+                  onClick={onClick}>{text}</button>
+    })
+  }
+
+  renderThreeButtons = () => {
+    var style = {};
+    var buttons = this.props.buttons;
+
+    if (!buttons) return null;
+
+    return buttons.map((button, i) => {
+      if (i === 0) {
+        style = {flexBasis: "100%"};
+      } else if (i === 1) {
+        style = {};
+      } else if (i === 2) {
+        style = {marginLeft: "1%"};
+      }
+      var className = "button ";
+      className += button.className || '';
+      var text = button.text;
+      var onClick = button.onClick || null;
+      var type = button.type || "button";
+      return <button
                   key={i}
                   type={type}
                   style={style}
@@ -38,7 +70,7 @@ export default class FooterButtons extends React.Component {
   render() {
       return (
         <div className="footer-buttons">
-          {this.renderButtons()}
+          {this.selectNumber()}
         </div>
       )
   }

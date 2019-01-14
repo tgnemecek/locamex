@@ -128,8 +128,8 @@ export default class Quantitative extends React.Component {
           </Input>
         </Block>
         <FooterButtons buttons={[
-          {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
-          {text: "Realizar Movimentação", onClick: () => this.saveEdits()}
+          {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+          {text: "Realizar Movimentação", onClick: this.saveEdits}
         ]}/>
       </Box>
     )

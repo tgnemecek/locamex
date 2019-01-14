@@ -1,9 +1,9 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import moment from 'moment';
-
 import { Contracts } from '/imports/api/contracts/index';
 import tools from '/imports/startup/tools/index';
+
 import Box from '/imports/components/Box/index';
 import Checkmark from '/imports/components/Checkmark/index';
 import AppHeader from '/imports/components/AppHeader/index';
@@ -13,6 +13,7 @@ import Finalize from './Finalize/index';
 import Header from './Header/index';
 import Information from './Information/index';
 import Items from './Items/index';
+import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
 export default class Contract extends React.Component {
@@ -237,44 +238,33 @@ export default class Contract extends React.Component {
               </div>
               {this.state.contract.status === 'inactive' ?
               <FooterButtons buttons={[
-                {text: "Salvar Edições", className: "button--secondary", onClick: () => this.saveEdits()},
-                {text: "Ativar Contrato", className: "button--primary", onClick: () => this.toggleActivateWindow()},
+                {text: "Salvar Edições", className: "button--secondary", onClick: this.saveEdits},
+                {text: "Ativar Contrato", className: "button--primary", onClick: this.toggleActivateWindow},
               ]}/>
               : null}
               {this.state.contract.status === 'active' ?
               <FooterButtons buttons={[
-                {text: "Finalizar Contrato", onClick: () => this.toggleFinalizeWindow()},
+                {text: "Finalizar Contrato", onClick: this.toggleFinalizeWindow},
               ]}/>
               : null}
               <div className="contract__footer-text">Contrato criado dia {moment(this.state.contract.dates.creationDate).format("DD/MM/YYYY")}</div>
-              {this.state.toggleCancelWindow ?
-                <Box
-                  title="Aviso:"
-                  closeBox={this.toggleCancelWindow}>
-                  <p>Deseja mesmo cancelar este contrato? Ele não poderá ser reativado.</p>
-                  <FooterButtons buttons={[
-                    {text: "Não", className: "button--secondary", onClick: () => this.toggleCancelWindow()},
-                    {text: "Sim", className: "button--danger", onClick: () => this.cancelContract()}
-                  ]}/>
-                </Box>
-              : null}
-              {this.state.toggleActivateWindow ?
-                <Box
-                  title="Aviso:"
-                  closeBox={this.toggleActivateWindow}>
-                  <p>Deseja ativar este contrato e locar os itens?</p>
-                  <FooterButtons buttons={[
-                    {text: "Não", className: "button--secondary", onClick: () => this.toggleActivateWindow()},
-                    {text: "Sim", onClick: () => this.activateContract()}
-                  ]}/>
-                </Box>
-              : null}
-              {this.state.toggleFinalizeWindow ?
-                <Finalize
-                  contract={this.state.contract}
-                  toggleWindow={this.toggleFinalizeWindow}
-                  finalizeContract={this.finalizeContract}/>
-              : null}
+              <ConfirmationWindow
+                isOpen={this.state.toggleCancelWindow}
+                closeBox={this.toggleCancelWindow}
+                message="Deseja mesmo cancelar este contrato? Ele não poderá ser reativado."
+                leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleCancelWindow}}
+                rightButton={{text: "Sim", className: "button--danger", onClick: this.cancelContract}}/>
+              <ConfirmationWindow
+                isOpen={this.state.toggleActivateWindow}
+                closeBox={this.toggleActivateWindow}
+                message="Deseja ativar este contrato e locar os itens?"
+                leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleActivateWindow}}
+                rightButton={{text: "Sim", className: "button--danger", onClick: this.activateContract}}/>
+              <Finalize
+                isOpen={this.state.toggleFinalizeWindow}
+                contract={this.state.contract}
+                toggleWindow={this.toggleFinalizeWindow}
+                finalizeContract={this.finalizeContract}/>
             </div>
           </div>
         </div>

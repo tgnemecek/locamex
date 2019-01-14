@@ -5,8 +5,8 @@ import tools from '/imports/startup/tools/index';
 import Box from '/imports/components/Box/index';
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
-import FooterButtons from '/imports/components/FooterButtons/index';
 import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
+import FooterButtons from '/imports/components/FooterButtons/index';
 
 export default class RegisterAccessories extends React.Component {
   constructor(props) {
@@ -93,20 +93,19 @@ export default class RegisterAccessories extends React.Component {
               onChange={this.onChange}
             />
           </Block>
-          {this.state.confirmationWindow ?
-            <ConfirmationWindow
-              title="Aviso:"
-              closeBox={this.toggleConfirmationWindow}
-              message="Deseja mesmo excluir este item do banco de dados?"
-              leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
-              rightButton={{text: "Sim", className: "button--danger", onClick: this.removeItem}}/>
-          : null}
-          {this.props.item._id ?
-            <button className="button button--danger" style={{width: "100%"}} onClick={this.toggleConfirmationWindow}>Excluir Registro</button>
-          : null}
-          <FooterButtons buttons={[
-            {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
-            {text: "Salvar", onClick: () => this.saveEdits()}
+          <ConfirmationWindow
+            isOpen={this.state.confirmationWindow}
+            closeBox={this.toggleConfirmationWindow}
+            message="Deseja mesmo excluir este item do banco de dados?"
+            leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
+            rightButton={{text: "Sim", className: "button--danger", onClick: this.removeItem}}/>
+          <FooterButtons buttons={this.props.item._id ? [
+            {text: "Excluir Registro", className: "button--danger", onClick: this.toggleConfirmationWindow},
+            {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+            {text: "Salvar", onClick: this.saveEdits}
+          ] : [
+            {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+            {text: "Salvar", onClick: this.saveEdits}
           ]}/>
       </Box>
     )

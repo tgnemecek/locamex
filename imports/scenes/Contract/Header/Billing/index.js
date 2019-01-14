@@ -257,7 +257,7 @@ export default class Billing extends React.Component {
                 </tfoot>
               </table>
               {this.props.contract.status == 'inactive' ?
-                <FooterButtons buttons={[{text: "Salvar", onClick: () => this.saveEdits()}]}/>
+                <FooterButtons buttons={[{text: "Salvar", onClick: this.saveEdits}]}/>
               : null}
           </div>
         </Box>

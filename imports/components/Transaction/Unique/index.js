@@ -65,11 +65,12 @@ class Unique extends React.Component {
               <option value="available">Disponível</option>
               <option value="maintenance">Manutenção</option>
               <option value="inactive">Inativo</option>
+              <option value="rented">Locado</option>
           </Input>
         </Block>
         <FooterButtons buttons={[
-          {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
-          {text: "Realizar Movimentação", onClick: () => this.saveEdits()}
+          {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+          {text: "Realizar Movimentação", onClick: this.saveEdits}
         ]}/>
       </Box>
     )

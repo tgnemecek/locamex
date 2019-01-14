@@ -77,7 +77,9 @@ export default class SuggestionBar extends React.Component {
     var buttonMode = this.state.buttonMode;
     if (!buttonMode) return;
 
-    this.setState({ buttonMode: false, query: '' });
+    this.setState({ buttonMode: false, query: '' }, () => {
+      this.props.onClick({target: {value: '', name: this.props.name}});
+    });
   }
 
   onChange = (e) => {

@@ -78,7 +78,7 @@ class MaintenanceTable extends React.Component {
           <td className="small-column">{item.serial}</td>
           <td>{item.description}</td>
           <td className="small-column">{translatePlaces(item.place)}</td>
-          <td className="small-column">{item.observations}</td>
+          <td className="small-column--wrap">{item.observations}</td>
         </tr>
       )
     })

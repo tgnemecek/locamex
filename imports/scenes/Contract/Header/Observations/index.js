@@ -32,7 +32,7 @@ export default class Observations extends React.Component {
                 <textarea value={this.state.observations} onChange={this.onChange}/>
               </div>
               {this.props.contract.status == 'inactive' ?
-                <FooterButtons buttons={[{text: "Salvar Edições", onClick: () => this.saveEdits()}]}/>
+                <FooterButtons buttons={[{text: "Salvar Edições", onClick: this.saveEdits}]}/>
               : null}
             </div>
         </Box>
