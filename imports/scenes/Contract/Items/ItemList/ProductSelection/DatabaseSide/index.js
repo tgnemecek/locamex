@@ -23,10 +23,10 @@ export default class DatabaseSide extends React.Component {
       if (!item.added && item.available != 0) {
         return (
           <tr key={i} className="product-selection__db-item">
-            <td className="small-column">{item.serial || "-"}</td>
+            <td className="table__small-column">{item.serial || "-"}</td>
             <td>{item.description + this.packSuffix(item.type)}</td>
-            {this.props.databaseType !== 'containers' ? null : <th className="small-column">{item.place || '-'}</th>}
-            {this.props.databaseType !== 'accessories' ? null : <td className="small-column">{item.available}</td>}
+            {this.props.databaseType !== 'containers' ? null : <th className="table__small-column">{item.place || '-'}</th>}
+            {this.props.databaseType !== 'accessories' ? null : <td className="table__small-column">{item.available}</td>}
             <td className="buttom-column"><button { ...buttonProps }>►</button></td>
           </tr>
         )
@@ -47,10 +47,10 @@ export default class DatabaseSide extends React.Component {
             <table className="table product-selection__table">
               <thead>
                 <tr>
-                  <th className="small-column">Série</th>
+                  <th className="table__small-column">Série</th>
                   <th>Descrição</th>
-                  {this.props.databaseType !== 'containers' ? null : <th className="small-column">Pátio</th>}
-                  {this.props.databaseType !== 'accessories' ? null : <th className="small-column">Disp.</th>}
+                  {this.props.databaseType !== 'containers' ? null : <th className="table__small-column">Pátio</th>}
+                  {this.props.databaseType !== 'accessories' ? null : <th className="table__small-column">Disp.</th>}
                   <th className="buttom-column" style={{visibility: "hidden"}}></th>
                 </tr>
               </thead>

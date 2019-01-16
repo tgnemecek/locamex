@@ -55,10 +55,10 @@ class MaintenanceTable extends React.Component {
   renderHeader = () => {
     return (
       <tr>
-        <th className="small-column">Série</th>
+        <th className="table__small-column">Série</th>
         <th>Descrição</th>
-        <th className="small-column">Pátio</th>
-        <th className="small-column">Observações</th>
+        <th className="table__small-column">Pátio</th>
+        <th className="table__small-column">Observações</th>
       </tr>
     )
   }
@@ -75,10 +75,10 @@ class MaintenanceTable extends React.Component {
       }
       return (
         <tr key={i}>
-          <td className="small-column">{item.serial}</td>
+          <td className="table__small-column">{item.serial}</td>
           <td>{item.description}</td>
-          <td className="small-column">{translatePlaces(item.place)}</td>
-          <td className="small-column--wrap">{item.observations}</td>
+          <td className="table__small-column">{translatePlaces(item.place)}</td>
+          <td className="table__small-column--wrap">{item.observations}</td>
         </tr>
       )
     })

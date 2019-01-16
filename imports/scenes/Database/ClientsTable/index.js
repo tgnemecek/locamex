@@ -45,9 +45,9 @@ class ClientsTable extends React.Component {
     return (
       <tr>
         <th>Nome Fantasia</th>
-        <th className="small-column">CNPJ/CPF</th>
-        <th className="small-column">Tipo</th>
-        <th className="small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
+        <th className="table__small-column">CNPJ/CPF</th>
+        <th className="table__small-column">Tipo</th>
+        <th className="table__small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
       </tr>
     )
   }
@@ -61,9 +61,9 @@ class ClientsTable extends React.Component {
       return (
         <tr key={i}>
           <td>{item.description}</td>
-          <td className="small-column">{tools.format(item.registry, formatType)}</td>
-          <td className="small-column">{item.type === 'company' ? "PJ" : "PF"}</td>
-          <td className="small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
+          <td className="table__small-column">{tools.format(item.registry, formatType)}</td>
+          <td className="table__small-column">{item.type === 'company' ? "PJ" : "PF"}</td>
+          <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
         </tr>
       )
     })

@@ -41,7 +41,7 @@ class HistoryTable extends React.Component {
         <th>Usuário</th>
         <th>Banco de Dados</th>
         <th>Item</th>
-        <th className="small-column"></th>
+        <th className="table__small-column"></th>
       </tr>
     )
   }
@@ -58,7 +58,7 @@ class HistoryTable extends React.Component {
           <td>{item.user.firstName}</td>
           <td>{tools.translateDatabase(item.type)}</td>
           <td>{item.data._id.toString()}</td>
-          <td className="small-column"><button className="database__table__button" onClick={toggleEditWindow}>🔍</button></td>
+          <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>🔍</button></td>
         </tr>
       )
     })

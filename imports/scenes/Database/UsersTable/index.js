@@ -50,9 +50,9 @@ class UsersTable extends React.Component {
     return (
       <tr>
         <th>Nome</th>
-        <th className="small-column">Login</th>
-        <th className="small-column">Email</th>
-        <th className="small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
+        <th className="table__small-column">Login</th>
+        <th className="table__small-column">Email</th>
+        <th className="table__small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
       </tr>
     )
   }
@@ -65,8 +65,8 @@ class UsersTable extends React.Component {
         <tr key={i}>
           <td>{item.firstName + " " + item.lastName}</td>
           <td>{item.username}</td>
-          <td className="small-column">{item.emails[0].address}</td>
-          <td className="small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
+          <td className="table__small-column">{item.emails[0].address}</td>
+          <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
         </tr>
       )
     })

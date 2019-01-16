@@ -8,17 +8,25 @@ import Calendar from '/imports/components/Calendar/index';
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
+import ChargesNumber from './ChargesNumber/index';
+import EqualCharges from './EqualCharges/index';
+import ProductsSection from './ProductsSection/index';
+import ServicesSection from './ServicesSection/index';
+
 export default class Billing extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      charges: this.props.contract.billing || [],
-      totalValue: 0,
-      equalDivision: false,
+      billingProducts: this.props.contract.billing || [],
+      billingServices: this.props.contract.billingServices || [],
+
+      inss: this.props.contract.inss || 11,
+      iss: this.props.contract.iss || 5,
+
+      masterValue: 0,
+      productsValue: 0,
+      servicesValue: 0,
       difference: 0,
-      valid: false,
-      calendarOpen: false,
-      startDate: new Date(),
 
       errorKeys: [],
       errorMsg: ''
@@ -31,10 +39,10 @@ export default class Billing extends React.Component {
     var containersValue = calcTotalValue(containers, duration);
     var accessoriesValue = calcTotalValue(accessories, duration);
     var servicesValue = calcTotalValue(services, 1);
-    var totalValue = containersValue + accessoriesValue + servicesValue;
+    var productsValue = containersValue + accessoriesValue;
+    var masterValue = productsValue + servicesValue;
 
-    var charges = tools.deepCopy(this.state.charges);
-    var equalDivision = calcIfEqualDivision(charges);
+    var billingProducts = tools.deepCopy(this.state.billingProducts);
 
     function calcTotalValue (arr, duration) {
       if (arr.length == 0) return 0;
@@ -43,99 +51,75 @@ export default class Billing extends React.Component {
         return acc + (current.price * quantity * duration)
       }, 0);
     }
-    function calcIfEqualDivision(charges) {
-      if (!charges.length) return false;
-      for (var i = 0; i < charges.length; i++) {
-        if ((i+1) == charges.length) {
-          return true;
-        }
-        if (charges[i].value !== charges[i+1].value) {
-          return false;
-        }
-      }
-    }
-    this.state = {...this.state, totalValue, equalDivision, charges};
+    this.state = {...this.state, masterValue, productsValue, servicesValue, billingProducts};
   }
 
-  representativesOnChange = (e) => {
-    var representatives = e.target.value;
-    this.setState({ representatives });
-  }
+  // divisionChange = (e) => {
+  //   var equalDivision = e.target.value;
+  //   if (equalDivision) this.setEqualValues();
+  //   this.setState({ equalDivision });
+  // }
 
-  divisionChange = (e) => {
-    var equalDivision = e.target.value;
-    if (equalDivision) this.setEqualValues();
-    this.setState({ equalDivision });
-  }
+  // setEqualValues = (charges) => {
+  //   var charges = charges || tools.deepCopy(this.state.charges);
+  //   var equalValue = tools.round(this.state.totalValue / charges.length, 2);
+  //   var rest = tools.round(this.state.totalValue - (equalValue * charges.length), 2);
+  //   charges.forEach((charge, i) => {
+  //     if (i == 0) charge.value = (equalValue + rest);
+  //     else charge.value = equalValue;
+  //   })
+  //   return charges;
+  // }
 
-  setEqualValues = (charges) => {
-    var charges = charges || tools.deepCopy(this.state.charges);
-    var equalValue = tools.round(this.state.totalValue / charges.length, 2);
-    var rest = tools.round(this.state.totalValue - (equalValue * charges.length), 2);
-    charges.forEach((charge, i) => {
-      if (i == 0) charge.value = (equalValue + rest);
-      else charge.value = equalValue;
-    })
-    return charges;
-  }
+  // updateChargesDates = (input) => {
+  //   var array = input || this.state.charges;
+  //   var charges = array.map((charge, i) => {
+  //     return {
+  //       ...charge,
+  //       startDate: moment(this.state.startDate).add((30 * i + i), 'days').toDate(),
+  //       endDate: moment(this.state.startDate).add((30 * i + 30 + i), 'days').toDate(),
+  //     }
+  //   })
+  //   return charges;
+  // }
 
-  updateChargesDates = (input) => {
-    var array = input || this.state.charges;
-    var charges = array.map((charge, i) => {
-      return {
-        ...charge,
-        startDate: moment(this.state.startDate).add((30 * i + i), 'days').toDate(),
-        endDate: moment(this.state.startDate).add((30 * i + 30 + i), 'days').toDate(),
-      }
-    })
-    return charges;
-  }
-
-  updateTableLength = (e) => {
-    var value = Number(e.target.value);
-    var charges = tools.deepCopy(this.state.charges);
-    var newCharges = [];
-    var difference = Math.abs(charges.length - value);
-    if (value > charges.length) {
-      for (var i = 0; i < difference; i++) {
-        var chargeValue = this.state.charges[0] ? this.state.charges[0].value : '';
-        newCharges.push({
-          description: `Cobrança #${i +  charges.length + 1} referente ao Valor Total do Contrato`
-        })
-      }
-      charges = charges.concat(newCharges);
-      charges = this.setEqualValues(charges);
-    } else if (value < charges.length) {
-      for (var i = 0; i < value; i++) {
-        newCharges.push(charges[i]);
-      }
-      charges = this.setEqualValues(newCharges);
-    }
-    charges = this.updateChargesDates(charges);
-    this.setState({ charges });
-  }
+  // updateTableLength = (e) => {
+  //   var value = Number(e.target.value);
+  //   var charges = tools.deepCopy(this.state.charges);
+  //   var newCharges = [];
+  //   var difference = Math.abs(charges.length - value);
+  //   if (value > charges.length) {
+  //     for (var i = 0; i < difference; i++) {
+  //       var chargeValue = this.state.charges[0] ? this.state.charges[0].value : '';
+  //       newCharges.push({
+  //         description: `Cobrança #${i +  charges.length + 1} referente ao Valor Total do Contrato`
+  //       })
+  //     }
+  //     charges = charges.concat(newCharges);
+  //     charges = this.setEqualValues(charges);
+  //   } else if (value < charges.length) {
+  //     for (var i = 0; i < value; i++) {
+  //       newCharges.push(charges[i]);
+  //     }
+  //     charges = this.setEqualValues(newCharges);
+  //   }
+  //   charges = this.updateChargesDates(charges);
+  //   this.setState({ charges });
+  // }
 
   onChange = (e) => {
     var value = e.target.value;
-    var charges = this.state.charges;
-    charges[e.target.name].value = value;
-    var total = charges.reduce((acc, current) => {
-      return {
-          value: acc.value + Number(current.value)
-        }
-      }).value;
-    var difference = total - this.state.totalValue;
+    var name = e.target.name;
+    var billingProducts = tools.deepCopy(this.state.billingProducts);
+    billingProducts[name].value = value;
+    var total = billingProducts.reduce((acc, current) => {
+      return acc + current + current.value;
+      }, 0);
+    var difference = total - this.state.masterValue;
     this.setState({
-      charges,
-      difference,
-      valid: !difference
+      billingProducts,
+      difference
     });
-  }
-
-  updateDescription = (e) => {
-    var charges = this.state.charges;
-    charges[e.target.name].description = e.target.value;
-    this.setState({ charges });
   }
 
   renderBody = () => {
@@ -143,11 +127,11 @@ export default class Billing extends React.Component {
       var equalValueStr = tools.format(charge.value, "currency");
       return (
         <tr key={i}>
-          <td className="small-column">{(i + 1) + '/' + array.length}</td>
-          <td className="small-column">{moment(charge.startDate).format("DD/MM/YY") + ' a ' +  moment(charge.endDate).format("DD/MM/YY")}</td>
-          <td className="small-column">{moment(charge.endDate).format("DD/MM/YY")}</td>
+          <td className="table__small-column">{(i + 1) + '/' + array.length}</td>
+          <td className="table__small-column">{moment(charge.startDate).format("DD/MM/YY") + ' a ' +  moment(charge.endDate).format("DD/MM/YY")}</td>
+          <td className="table__small-column">{moment(charge.endDate).format("DD/MM/YY")}</td>
           <td><textarea name={i} value={charge.description} onChange={this.updateDescription}/></td>
-          <td className="small-column">{this.state.equalDivision ? equalValueStr : <Input name={i} type="currency"
+          <td className="table__small-column">{this.state.equalDivision ? equalValueStr : <Input name={i} type="currency"
                                                               onChange={this.onChange}
                                                               value={charge.value}
                                                               placeholder={equalValueStr}
@@ -157,38 +141,36 @@ export default class Billing extends React.Component {
     })
   }
 
-  calcDifference = () => {
-    var value = tools.format(this.state.difference, 'currency');
-    var className = this.state.difference !== 0 ? "billing__difference--danger" : "billing__difference--zero";
-    return <span className={className}>{value}</span>
+  updateState = (key, value) => {
+    this.setState({ [key]: value })
   }
 
-  toggleCalendar = (e) => {
-    e ? e.stopPropagation() : null;
-    var calendarOpen = !this.state.calendarOpen;
-    this.setState({ calendarOpen });
-  }
+  // toggleCalendar = (e) => {
+  //   e ? e.stopPropagation() : null;
+  //   var calendarOpen = !this.state.calendarOpen;
+  //   this.setState({ calendarOpen });
+  // }
 
-  changeDate = (e) => {
-    var startDate = e.target.value;
-    this.setState({ startDate }, () => {
-      var charges = this.updateChargesDates();
-      this.setState({ charges });
-      this.toggleCalendar();
-    });
-  }
+  // changeDate = (e) => {
+  //   var startDate = e.target.value;
+  //   this.setState({ startDate }, () => {
+  //     var charges = this.updateChargesDates();
+  //     this.setState({ charges });
+  //     this.toggleCalendar();
+  //   });5
+  // }
 
   saveEdits = () => {
     if (this.state.difference !== 0) {
       this.setState({ errorMsg: 'O valor resultante das parcelas não coincide com o Valor Total do Contrato.' });
-    } else if (this.state.totalValue === 0) {
+    } else if (this.state.masterValue === 0) {
       this.setState({
-        errorKeys: ["totalValue"],
+        errorKeys: ["masterValue"],
         errorMsg: 'O Valor Total do Contrato não pode ser zero. Adicione produtos antes.'
       });
     } else {
-      for (var i = 0; i < this.state.charges.length; i++) {
-        if (this.state.charges[i].value <= 0) {
+      for (var i = 0; i < this.state.billingProducts.length; i++) {
+        if (this.state.billingProducts[i].value <= 0) {
           this.setState({
             errorKeys: ["zeroCharges"],
             errorMsg: 'Não deve haver cobranças com valor zero.'
@@ -196,7 +178,7 @@ export default class Billing extends React.Component {
           return;
         }
       }
-      this.props.updateContract(this.state.charges, "billing");
+      this.props.updateContract(this.state.billingProducts, "billing");
       this.props.toggleWindow();
     }
   }
@@ -209,37 +191,14 @@ export default class Billing extends React.Component {
           closeBox={this.props.toggleWindow}>
           <div className={this.props.contract.status !== 'inactive' ? "contract--disabled" : null}>
             <div className="error-message">{this.state.errorMsg}</div>
-              <Block columns={3}>
-                <Input
-                  title="Número de Cobranças:"
-                  type="number"
-                  value={this.state.charges.length}
-                  onChange={this.updateTableLength}
-                />
-                <Input
-                  title="Início da Cobrança:"
-                  type="calendar"
-                  calendarOpen={this.state.calendarOpen}
-                  toggleCalendar={this.toggleCalendar}
-                  onChange={this.changeDate}
-                  value={this.state.startDate}
-                />
-                <Input
-                  title="Cobranças iguais:"
-                  type="checkbox"
-                  id="contract__billing__equalValue"
-                  onChange={this.divisionChange}
-                  value={this.state.equalDivision}
-                />
-              </Block>
-              <table className="table table--billing">
+              {/* <table className="table table--billing">
                 <thead>
                   <tr>
-                    <th className="small-column">Número</th>
-                    <th className="small-column">Período</th>
-                    <th className="small-column">Vencimento</th>
+                    <th className="table__small-column">Número</th>
+                    <th className="table__small-column">Período</th>
+                    <th className="table__small-column">Vencimento</th>
                     <th>Descrição da Cobrança</th>
-                    <th className="small-column">Valor</th>
+                    <th className="table__small-column">Valor</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -248,14 +207,35 @@ export default class Billing extends React.Component {
                 <tfoot>
                   <tr style={this.state.equalDivision ? {display: 'none'} : {display: 'inherit'}}>
                     <td colSpan="4" style={{fontStyle: "italic"}}>Diferença:</td>
-                    <td>{this.calcDifference()}</td>
+                    <td>{this.displayDifference()}</td>
                   </tr>
                   <tr>
                     <th colSpan="4" ><b>Valor Total do Contrato:</b></th>
                     <th>{tools.format(this.state.totalValue, "currency")}</th>
                   </tr>
                 </tfoot>
-              </table>
+              </table> */}
+              <ProductsSection
+                // General Use
+                productsValue={this.state.productsValue}
+                charges={this.state.billingProducts}
+                updateBilling={this.updateState}
+                // Left Side
+                ChargesNumber={ChargesNumber}
+                // Right Side
+                EqualCharges={EqualCharges}/>
+              <ServicesSection
+                // General Use
+                servicesValue={this.state.servicesValue}
+                charges={this.state.billingServices}
+                updateBilling={this.updateState}
+                // Left Side
+                ChargesNumber={ChargesNumber}
+                // Middle
+                inss={this.state.inss}
+                iss={this.state.iss}
+                // Right Side
+                EqualCharges={EqualCharges}/>
               {this.props.contract.status == 'inactive' ?
                 <FooterButtons buttons={[{text: "Salvar", onClick: this.saveEdits}]}/>
               : null}

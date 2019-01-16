@@ -43,8 +43,8 @@ class PacksTable extends React.Component {
     return (
       <tr>
         <th>Descrição</th>
-        <th className="small-column">Status</th>
-        <th className="small-column">Pátio</th>
+        <th className="table__small-column">Status</th>
+        <th className="table__small-column">Pátio</th>
       </tr>
     )
   }
@@ -68,10 +68,10 @@ class PacksTable extends React.Component {
       return (
         <tr key={i}>
           <td>{item.description}</td>
-          <td className="small-column">{tools.translateStatus(item.status, false)}</td>
-          <td className="small-column">{translatePlaces(item.place)}</td>
-          <td className="small-column"><button className="database__table__button" onClick={toggleEditWindow}>🔍</button></td>
-          <td className="small-column"><button className="database__table__button" onClick={toggleTransactionWindow}>⟳</button></td>
+          <td className="table__small-column">{tools.translateStatus(item.status, false)}</td>
+          <td className="table__small-column">{translatePlaces(item.place)}</td>
+          <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>🔍</button></td>
+          <td className="table__small-column"><button className="database__table__button" onClick={toggleTransactionWindow}>⟳</button></td>
         </tr>
       )
     })

@@ -36,7 +36,7 @@ class PlacesTable extends React.Component {
     return (
       <tr>
         <th>Pátio</th>
-        <th className="small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
+        <th className="table__small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
       </tr>
     )
   }
@@ -57,7 +57,7 @@ class PlacesTable extends React.Component {
       return (
         <tr key={i}>
           <td>{item.description}</td>
-          <td className="small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
+          <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
         </tr>
       )
     })

@@ -74,13 +74,13 @@ class ContainersTable extends React.Component {
     }
     return (
       <tr>
-        <th className="small-column">Série</th>
+        <th className="table__small-column">Série</th>
         <th>Descrição</th>
-        <th className="small-column">Tipo</th>
-        <th className="small-column">Status</th>
-        <th className="small-column">Pátio</th>
-        <th className="small-column">Valor Mensal</th>
-        <th className="small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
+        <th className="table__small-column">Tipo</th>
+        <th className="table__small-column">Status</th>
+        <th className="table__small-column">Pátio</th>
+        <th className="table__small-column">Valor Mensal</th>
+        <th className="table__small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
       </tr>
     )
   }
@@ -120,15 +120,15 @@ class ContainersTable extends React.Component {
       }
       return (
         <tr key={i}>
-          <td className="small-column">{item.serial || "-"}</td>
+          <td className="table__small-column">{item.serial || "-"}</td>
           <td>{item.description}</td>
-          <td className="small-column">{translate(item.type)}</td>
-          <td className="small-column">{translate(item.status) || "Montados: " + item.assembled}</td>
-          <td className="small-column">{item.status == "rented" ? "-" : translatePlaces(item.place)}</td>
-          <td className="small-column">{tools.format(item.price, 'currency')}</td>
-          <td className="small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
-          <td className="small-column">{renderTransactionButton()}</td>
-          <td className="small-column"><button className="database__table__button" onClick={toggleImageWindow}>🔍</button></td>
+          <td className="table__small-column">{translate(item.type)}</td>
+          <td className="table__small-column">{translate(item.status) || "Montados: " + item.assembled}</td>
+          <td className="table__small-column">{item.status == "rented" ? "-" : translatePlaces(item.place)}</td>
+          <td className="table__small-column">{tools.format(item.price, 'currency')}</td>
+          <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
+          <td className="table__small-column">{renderTransactionButton()}</td>
+          <td className="table__small-column"><button className="database__table__button" onClick={toggleImageWindow}>🔍</button></td>
         </tr>
       )
     })

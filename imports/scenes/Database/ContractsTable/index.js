@@ -42,11 +42,11 @@ class ContractsTable extends React.Component {
     }
     return (
       <tr>
-        <th className="small-column">Código</th>
+        <th className="table__small-column">Código</th>
         <th>Nome da Empresa</th>
-        <th className="small-column">Status</th>
-        <th className="small-column">Valor Total do Contrato</th>
-        <th className="small-column">
+        <th className="table__small-column">Status</th>
+        <th className="table__small-column">Valor Total do Contrato</th>
+        <th className="table__small-column">
           <Link className="button--link database__table__button" to="/contract/new">+</Link>
         </th>
       </tr>
@@ -93,11 +93,11 @@ class ContractsTable extends React.Component {
       }
       return (
         <tr key={i}>
-          <td className="small-column">{item._id}</td>
+          <td className="table__small-column">{item._id}</td>
           <td>{clientName()}</td>
-          <td className="small-column">{translate(item.status)}</td>
-          <td className="small-column">{totalValue()}</td>
-          <td className="small-column">
+          <td className="table__small-column">{translate(item.status)}</td>
+          <td className="table__small-column">{totalValue()}</td>
+          <td className="table__small-column">
             <Link
               className="button--link database__table__button"
               key={i}

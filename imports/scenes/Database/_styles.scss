@@ -12,16 +12,3 @@
   overflow-y: auto;
   height: 70vh;
 }
-
-.database__table {
-  .small-column {
-    text-align: center;
-    width: 1px;
-    white-space: nowrap;
-  }
-  .small-column--wrap {
-    text-align: center;
-    min-width: 300px;
-    white-space: normal;
-  }
-}

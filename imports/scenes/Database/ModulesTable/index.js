@@ -46,12 +46,12 @@ class ModulesTable extends React.Component {
     return (
       <tr>
         <th>Descrição</th>
-        <th className="small-column">Disponíveis</th>
-        <th className="small-column">Locados</th>
-        <th className="small-column">Manutenção</th>
-        <th className="small-column">Inativos</th>
-        <th className="small-column">Total</th>
-        <th className="small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
+        <th className="table__small-column">Disponíveis</th>
+        <th className="table__small-column">Locados</th>
+        <th className="table__small-column">Manutenção</th>
+        <th className="table__small-column">Inativos</th>
+        <th className="table__small-column">Total</th>
+        <th className="table__small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
       </tr>
     )
   }
@@ -70,14 +70,14 @@ class ModulesTable extends React.Component {
       return (
         <tr key={i}>
           <td>{item.description}</td>
-          <td className="small-column">{item.available}</td>
-          <td className="small-column">{item.rented}</td>
-          <td className="small-column">{item.maintenance}</td>
-          <td className="small-column">{item.inactive}</td>
-          <td className="small-column">{total}</td>
-          <td className="small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
-          <td className="small-column"><button className="database__table__button" onClick={toggleTransactionWindow}>⟳</button></td>
-          <td className="small-column"><button className="database__table__button" onClick={toggleImageWindow}>🔍</button></td>
+          <td className="table__small-column">{item.available}</td>
+          <td className="table__small-column">{item.rented}</td>
+          <td className="table__small-column">{item.maintenance}</td>
+          <td className="table__small-column">{item.inactive}</td>
+          <td className="table__small-column">{total}</td>
+          <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
+          <td className="table__small-column"><button className="database__table__button" onClick={toggleTransactionWindow}>⟳</button></td>
+          <td className="table__small-column"><button className="database__table__button" onClick={toggleImageWindow}>🔍</button></td>
         </tr>
       )
     })
