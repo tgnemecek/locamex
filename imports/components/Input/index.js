@@ -77,20 +77,21 @@ export default class Input extends React.Component {
           <label style={this.props.labelStyle}>{this.props.title}</label>
         : null}
         <ChosenComponent
+          {...this.props}
           value={this.state.value}
           onChange={this.onChange}
-
-          style={this.props.style}
-          type={this.props.type}
-          id={this.props.id}
-
-          readOnly={this.props.readOnly}
-          placeholder={this.props.placeholder}
-          disabled={this.props.disabled}
-          buttonClick={this.props.buttonClick}
-          min={this.props.min}
-          max={this.props.max}
-          options={this.props.options}>
+          // style={this.props.style}
+          // type={this.props.type}
+          // id={this.props.id}
+          //
+          // readOnly={this.props.readOnly}
+          // placeholder={this.props.placeholder}
+          // disabled={this.props.disabled}
+          // buttonClick={this.props.buttonClick}
+          // min={this.props.min}
+          // max={this.props.max}
+          // options={this.props.options}
+          >
           {this.props.children}
         </ChosenComponent>
       </div>

@@ -88,13 +88,13 @@ export default class ProductsSection extends React.Component {
         var value = e.target.value;
         var newCharges = tools.deepCopy(array);
         newCharges[i].value = value;
-        this.props.updateBilling('billingServices', newCharges);
+        this.props.updateBilling('billingProducts', newCharges);
       }
       const onChangeDescription = (e) => {
         var value = e.target.value;
         var newCharges = tools.deepCopy(array);
         newCharges[i].description = value;
-        this.props.updateBilling('billingServices', newCharges);
+        this.props.updateBilling('billingProducts', newCharges);
       }
       const changeDate = (e) => {
         var endDate = e.target.value;
@@ -105,7 +105,7 @@ export default class ProductsSection extends React.Component {
           }
         })
         this.toggleCalendar();
-        this.props.updateBilling('billingServices', array);
+        this.props.updateBilling('billingProducts', array);
       }
       return (
         <tr key={i}>
@@ -114,6 +114,7 @@ export default class ProductsSection extends React.Component {
           <td>
             <Input
               type="calendar"
+              style={{textAlign: 'center'}}
               calendarOpen={this.state.calendarOpen}
               toggleCalendar={this.toggleCalendar}
               onChange={changeDate}
@@ -124,6 +125,7 @@ export default class ProductsSection extends React.Component {
           </td>
           <td>
             <Input name={i} type="currency"
+              style={{textAlign: 'right'}}
               name="value"
               onChange={onChangePrice}
               value={charge.value}/>
@@ -139,8 +141,8 @@ export default class ProductsSection extends React.Component {
 
     if (this.props.productsValue) {
       return (
-        <Block title="Mensalidade:" columns={1}>
-          <Block columns={3}>
+        <Block title="Mensalidade:" columns={1} style={{marginTop: "10px"}}>
+          <Block columns={3} options={[{block: 2, span: 1, className: "billing__equal-charges"}]}>
             <ChargesNumber
               masterValue={this.props.productsValue}
               stateKey="billingProducts"
@@ -163,11 +165,11 @@ export default class ProductsSection extends React.Component {
           <table className="table table--billing--products">
             <thead>
               <tr>
-                <th className="table__small-column">Número</th>
-                <th className="billing__table__end-date">Período</th>
-                <th className="billing__table__end-date">Vencimento</th>
+                <th>Número</th>
+                <th>Período</th>
+                <th>Vencimento</th>
                 <th>Descrição da Cobrança</th>
-                <th className="billing__table__brute-price-column">Valor</th>
+                <th>Valor</th>
               </tr>
             </thead>
             <tbody>

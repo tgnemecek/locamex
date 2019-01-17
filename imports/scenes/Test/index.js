@@ -4,16 +4,29 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { Containers } from '/imports/api/containers/index';
 
 import SuggestionBar from '/imports/components/SuggestionBar/index';
+import Input from '/imports/components/Input/index';
 
 class TestPage extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      a: "Alo, como vai? Qual é o seu nome? Prazer em conhecer."
+    }
+  }
 
-  onClick = (e) => {
-    console.log("_id: " + e.target.value);
+  onChange = (e) => {
+    console.log(e.target.value);
   }
 
   render() {
     return (
-      <SuggestionBar database={this.props.database} title="Pátio" onClick={this.onClick} />
+      <div style={{width: "50px"}}>
+        <Input
+          type="textarea"
+          value={this.state.a}
+          onChange={this.onChange}
+        />
+      </div>
     )
   }
 }

@@ -4,26 +4,27 @@ import moment from 'moment';
 import tools from '/imports/startup/tools/index';
 import Input from '/imports/components/Input/index';
 
-export default function ChargesNumber (props) {
-
+// This has to be a class because we are using it more than once, requring different instances
+export default class ChargesNumber extends React.Component {
   onChange = (e) => {
     var value = Number(e.target.value);
-    var charges = tools.deepCopy(props.charges);
+    var charges = tools.deepCopy(this.props.charges);
     var newCharges = [];
     var difference = Math.abs(charges.length - value);
 
-    function updateChargesDates (charges) {
+    const updateChargesInformation = (charges) => {
       return charges.map((charge, i) => {
         var startDate = charges[0] ? charges[0].startDate : new Date();
         return {
           ...charge,
           startDate: moment(startDate).add((30 * i + i), 'days').toDate(),
           endDate: moment(startDate).add((30 * i + 30 + i), 'days').toDate(),
+          description: `Parcela ${i + 1} de ${value} ${this.props.description}`
         }
       })
     }
     const setEqualValues = (charges) => {
-      var totalValue = props.masterValue;
+      var totalValue = this.props.masterValue;
       var equalValue = tools.round(totalValue / charges.length, 2);
       var rest = tools.round(totalValue - (equalValue * charges.length), 2);
       return charges.map((charge, i) => {
@@ -33,14 +34,10 @@ export default function ChargesNumber (props) {
         return charge;
       })
     }
-
-
     if (value > charges.length) {
       for (var i = 0; i < difference; i++) {
-        var chargeValue = props.charges[0] ? props.charges[0].value : '';
-        newCharges.push({
-          description: `Parcela ${i +  charges.length + 1} de ${charges.length+1} ${props.description}`
-        })
+        var chargeValue = this.props.charges[0] ? this.props.charges[0].value : '';
+        newCharges.push({});
       }
       charges = charges.concat(newCharges);
       charges = setEqualValues(charges);
@@ -50,15 +47,16 @@ export default function ChargesNumber (props) {
       }
       charges = setEqualValues(newCharges);
     }
-    charges = updateChargesDates(charges);
-    props.updateBilling(props.stateKey, charges);
+    charges = updateChargesInformation(charges);
+    this.props.updateBilling(this.props.stateKey, charges);
   }
-
-  return (
-    <Input
-      title="Número de Cobranças:"
-      type="number"
-      value={props.charges.length}
-      onChange={onChange}/>
-  )
+  render() {
+    return (
+      <Input
+        title="Número de Cobranças:"
+        type="number"
+        value={this.props.charges.length}
+        onChange={this.onChange}/>
+    )
+  }
 }

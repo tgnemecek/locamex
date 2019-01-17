@@ -4,19 +4,23 @@ import { Meteor } from 'meteor/meteor';
 export default class TextArea extends React.Component {
   constructor(props) {
     super(props);
-    var style = this.props.style ? {...this.props.style, height: "5px"} : {height: "5px"};
-    this.state = {
-      style
+    this.ref = React.createRef();
+  }
+  componentDidMount() {
+    this.setHeight(this.ref.current);
+  }
+  componentDidUpdate(prevProps) {
+    if (prevProps.value !== this.props.value) {
+      this.setHeight(this.ref.current);
     }
   }
-  onKeyUp = (e) => {
-    var node = e.currentTarget;
-    var height = node.scrollHeight + "px";
-    var style = this.props.style ? {...this.props.style, height} : {height};
-    this.setState({ style });
+  setHeight = (node) => {
+    if (!this.props.manualHeight) {
+      node.style.height = "5px";
+      node.style.height = (node.scrollHeight)+"px";
+    }
   }
   onChange = (e) => {
-    this.onKeyUp(e);
     if (e) {
       var value = e.target.value;
       this.props.onChange(value);
@@ -25,7 +29,8 @@ export default class TextArea extends React.Component {
   render() {
     return (
       <textarea
-        // onKeyUp={this.onKeyUp}
+        ref={this.ref}
+
         value={this.props.value}
         onChange={this.onChange}
 
@@ -33,7 +38,7 @@ export default class TextArea extends React.Component {
         placeholder={this.props.placeholder}
         disabled={this.props.disabled}
 
-        style={this.state.style}/>
+        style={this.props.style}/>
     )
   }
 }

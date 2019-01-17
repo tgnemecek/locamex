@@ -1,38 +1,21 @@
 @import './ProductsSection/styles';
 @import './ServicesSection/styles';
 
+.billing__difference--zero {
+  color: $green !important;
+}
 .billing__difference--danger {
   color: $red !important;
 }
-
 .billing__equal-charges {
-  margin: auto;
-}
-
-.billing__table__end-date {
-  text-align: center;
-  width: 180px;
-  input {
-    text-align: center;
+  display: inline-flex;
+  height: 61px;
+  width: 100%;
+  justify-content: center;
+  align-items: flex-end;
+  button {
+    height: 35px;
+    width: 100%;
+    margin: 0;
   }
-}
-
-.billing__table__brute-price-column {
-  text-align: center;
-  width: 120px;
-  input {
-    text-align: right;
-  }
-}
-
-.billing__table__liquid-price-column {
-  text-align: center;
-  font-style: italic;
-  color: $dark-grey;
-  width: 1px;
-  white-space: nowrap;
-}
-
-.billing__table__footer {
-  text-align: right;
 }

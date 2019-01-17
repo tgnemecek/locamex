@@ -79,21 +79,23 @@ export default class ServicesSection extends React.Component {
       }
       return (
         <tr key={i}>
-          <td className="table__small-column">{(i + 1) + '/' + array.length}</td>
-          <td className="billing__table__end-date">
+          <td>{(i + 1) + '/' + array.length}</td>
+          <td>
             <Input
               type="calendar"
+              style={{textAlign: 'center'}}
               calendarOpen={this.state.calendarOpen}
               toggleCalendar={this.toggleCalendar}
               onChange={changeDate}
               value={charge.endDate}/>
           </td>
-          <td className="billing__table__description">
+          <td>
             <Input name={i} value={charge.description} onChange={onChangeDescription} type="textarea"/>
           </td>
-          <td className="billing__table__liquid-price-column">{calculateLiquid()}</td>
-          <td className="billing__table__brute-price-column">
+          <td>{calculateLiquid()}</td>
+          <td>
             <Input name={i} type="currency"
+              style={{textAlign: 'right'}}
               name="value"
               onChange={onChangePrice}
               value={charge.value}/>
@@ -109,8 +111,8 @@ export default class ServicesSection extends React.Component {
 
     if (this.props.servicesValue) {
       return (
-        <Block title="Pacote de Serviços:" columns={1}>
-          <Block columns={3} options={[{block: 1, span: 0.5}, {block: 2, span: 0.5}]}>
+        <Block title="Pacote de Serviços:" columns={1} style={{marginTop: "10px"}}>
+          <Block columns={3} options={[{block: 1, span: 0.5}, {block: 2, span: 0.5}, {block: 3, span: 1, className: "billing__equal-charges"}]}>
             <ChargesNumber
               masterValue={this.props.servicesValue}
               stateKey="billingServices"
@@ -138,11 +140,11 @@ export default class ServicesSection extends React.Component {
           <table className="table table--billing--services">
             <thead>
               <tr>
-                <th className="table__small-column">Número</th>
-                <th className="billing__table__end-date">Vencimento</th>
+                <th>Número</th>
+                <th>Vencimento</th>
                 <th>Descrição da Cobrança</th>
-                <th className="billing__table__liquid-price-column">Valor Líquido</th>
-                <th className="billing__table__brute-price-column">Valor Bruto</th>
+                <th>Valor Líquido</th>
+                <th>Valor Bruto</th>
               </tr>
             </thead>
             <tbody>

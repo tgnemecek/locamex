@@ -38,7 +38,7 @@ export default class Block extends React.Component {
     // Main function
     return children.map((child, i, array) => {
 
-      function definePaddings(i, columns) {
+      // function definePaddings(i, columns) {
         // This almost works, the problem is that I need to consider the span element in options
         // // Initial filter if there's just one column
         // if (columns === 1) return "5px 0";
@@ -55,13 +55,15 @@ export default class Block extends React.Component {
         // } else if ((index - 1) % columns === 0) {
         //   return leftColumn;
         // } else return middleColumns;
-      }
+      // }
 
       var style = {width: (1 / this.props.columns * 100) + "%"};
       if (options) {
         for (var j = 0; j < options.length; j++) {
           if (options[j].block === i) {
             style = {width: (1 / this.props.columns * 100 * options[j].span) + "%"}
+            if (options[j].style) style = {...style, ...options[j].style};
+            if (options[j].className) className = className + " " + options[j].className;
           }
         }
       }

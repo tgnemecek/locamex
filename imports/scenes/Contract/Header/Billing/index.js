@@ -107,39 +107,39 @@ export default class Billing extends React.Component {
   //   this.setState({ charges });
   // }
 
-  onChange = (e) => {
-    var value = e.target.value;
-    var name = e.target.name;
-    var billingProducts = tools.deepCopy(this.state.billingProducts);
-    billingProducts[name].value = value;
-    var total = billingProducts.reduce((acc, current) => {
-      return acc + current + current.value;
-      }, 0);
-    var difference = total - this.state.masterValue;
-    this.setState({
-      billingProducts,
-      difference
-    });
-  }
+  // onChange = (e) => {
+  //   var value = e.target.value;
+  //   var name = e.target.name;
+  //   var billingProducts = tools.deepCopy(this.state.billingProducts);
+  //   billingProducts[name].value = value;
+  //   var total = billingProducts.reduce((acc, current) => {
+  //     return acc + current + current.value;
+  //     }, 0);
+  //   var difference = total - this.state.masterValue;
+  //   this.setState({
+  //     billingProducts,
+  //     difference
+  //   });
+  // }
 
-  renderBody = () => {
-    return this.state.charges.map((charge, i, array) => {
-      var equalValueStr = tools.format(charge.value, "currency");
-      return (
-        <tr key={i}>
-          <td className="table__small-column">{(i + 1) + '/' + array.length}</td>
-          <td className="table__small-column">{moment(charge.startDate).format("DD/MM/YY") + ' a ' +  moment(charge.endDate).format("DD/MM/YY")}</td>
-          <td className="table__small-column">{moment(charge.endDate).format("DD/MM/YY")}</td>
-          <td><textarea name={i} value={charge.description} onChange={this.updateDescription}/></td>
-          <td className="table__small-column">{this.state.equalDivision ? equalValueStr : <Input name={i} type="currency"
-                                                              onChange={this.onChange}
-                                                              value={charge.value}
-                                                              placeholder={equalValueStr}
-                                                              />}</td>
-        </tr>
-      )
-    })
-  }
+  // renderBody = () => {
+  //   return this.state.charges.map((charge, i, array) => {
+  //     var equalValueStr = tools.format(charge.value, "currency");
+  //     return (
+  //       <tr key={i}>
+  //         <td className="table__small-column">{(i + 1) + '/' + array.length}</td>
+  //         <td className="table__small-column">{moment(charge.startDate).format("DD/MM/YY") + ' a ' +  moment(charge.endDate).format("DD/MM/YY")}</td>
+  //         <td className="table__small-column">{moment(charge.endDate).format("DD/MM/YY")}</td>
+  //         <td><textarea name={i} value={charge.description} onChange={this.updateDescription}/></td>
+  //         <td className="table__small-column">{this.state.equalDivision ? equalValueStr : <Input name={i} type="currency"
+  //                                                             onChange={this.onChange}
+  //                                                             value={charge.value}
+  //                                                             placeholder={equalValueStr}
+  //                                                             />}</td>
+  //       </tr>
+  //     )
+  //   })
+  // }
 
   updateState = (key, value) => {
     this.setState({ [key]: value })
@@ -160,24 +160,42 @@ export default class Billing extends React.Component {
   //   });5
   // }
 
+  anyZeroBills = () => {
+    var charges = this.state.billingProducts.concat(this.state.billingServices);
+    for (var i = 0; i < charges.length; i++) {
+      if (charges[i].value <= 0) {
+        return true
+        // this.setState({
+        //   errorKeys: ["zeroCharges"],
+        //   errorMsg: 'Não deve haver cobranças com valor zero.'
+        // })
+
+      }
+    }
+    return false;
+  }
+
+  differenceIsZero = () => {
+    var billingProducts = this.state.billingProducts;
+    var billingServices = this.state.billingServices;
+    var masterValue = this.state.masterValue;
+    var billingAll = billingProducts.concat(billingServices);
+    var total = billingAll.reduce((acc, cur) => {
+      return acc = acc + Number(cur.value);
+    }, 0);
+    if (masterValue - total === 0) {
+      return true;
+    } else return false;
+  }
+
   saveEdits = () => {
-    if (this.state.difference !== 0) {
+    if (this.anyZeroBills()) {
+      this.setState({ errorMsg: 'Não devem haver cobranças com valor zero.' });
+    } else if (!this.differenceIsZero()) {
       this.setState({ errorMsg: 'O valor resultante das parcelas não coincide com o Valor Total do Contrato.' });
     } else if (this.state.masterValue === 0) {
-      this.setState({
-        errorKeys: ["masterValue"],
-        errorMsg: 'O Valor Total do Contrato não pode ser zero. Adicione produtos antes.'
-      });
+      this.setState({ errorMsg: 'O Valor Total do Contrato não pode ser zero. Adicione produtos antes.' });
     } else {
-      for (var i = 0; i < this.state.billingProducts.length; i++) {
-        if (this.state.billingProducts[i].value <= 0) {
-          this.setState({
-            errorKeys: ["zeroCharges"],
-            errorMsg: 'Não deve haver cobranças com valor zero.'
-          })
-          return;
-        }
-      }
       this.props.updateContract(this.state.billingProducts, "billing");
       this.props.toggleWindow();
     }

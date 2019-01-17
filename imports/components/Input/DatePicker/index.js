@@ -10,7 +10,7 @@ export default class DatePicker extends React.Component {
       displayValue: moment(this.props.value).format("DD-MMMM-YYYY"),
       exportValue: this.props.value || new Date(),
       toggleCalendar: false,
-      style: {cursor: 'pointer'}
+      style: this.props.style ? {...this.props.style, cursor: 'pointer'} : {cursor: 'pointer'}
     }
   }
   toggleCalendar = () => {
