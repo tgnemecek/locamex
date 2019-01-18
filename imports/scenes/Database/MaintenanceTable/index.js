@@ -122,7 +122,7 @@ class MaintenanceTable extends React.Component {
 export default MaintenanceTableWrapper = withTracker((props) => {
   Meteor.subscribe('placesPub');
   Meteor.subscribe('containersPub');
-  var fullDatabase = Containers.find({ status: "maintenance", type: "fixed" }).fetch();
+  var fullDatabase = Containers.find({ type: "fixed" }).fetch();
   fullDatabase = tools.sortObjects(fullDatabase, 'place');
   var placesDatabase = Places.find().fetch();
   var ready = !!fullDatabase.length;

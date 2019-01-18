@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.6.0
+Version: 1.6.1
 
 ## Information:
 
@@ -8,6 +8,10 @@ Version: 1.6.0
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.6.1
+
+-  MaintenanceTable now shows all containers (not just status: maintenance);
 
 ### Version 1.6.0
 
