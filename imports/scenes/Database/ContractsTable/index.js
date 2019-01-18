@@ -74,6 +74,7 @@ class ContractsTable extends React.Component {
       }
       const totalValue = () => {
         var duration = item.dates.duration;
+        var discount = item.discount;
 
         var containers = item.containers || [];
         var accessories = item.accessories || [];
@@ -82,6 +83,7 @@ class ContractsTable extends React.Component {
           var quantity = current.quantity ? current.quantity : 1;
           return acc + (current.price * quantity * duration)
         }, 0);
+        productsValue = productsValue * (100 - discount) / 100;
 
         var services = item.services || [];
         var servicesValue = services.reduce((acc, current) => {

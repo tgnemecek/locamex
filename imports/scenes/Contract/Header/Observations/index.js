@@ -1,23 +1,32 @@
 import React from 'react';
 
 import Box from '/imports/components/Box/index';
+import Input from '/imports/components/Input/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
 export default class Observations extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      observations: this.props.contract.observations
+      annotations: this.props.contract.observations.annotations || '',
+      productsObs: this.props.contract.observations.productsObs || '',
+      servicesObs: this.props.contract.observations.servicesObs || ''
     }
   }
 
   onChange = (e) => {
-    var observations = e.target.value;
-    this.setState({ observations });
+    var value = e.target.value;
+    var key = e.target.name;
+    this.setState({ [key]: value });
   }
 
   saveEdits = () => {
-    this.props.contract.observations = this.state.observations;
+    var observations = {
+      generalObs: this.state.generalObs,
+      productsObs: this.state.productsObs,
+      servicesObs: this.state.servicesObs,
+    }
+    this.props.updateContract('observations', observations);
     this.props.toggleWindow();
   }
 
@@ -29,7 +38,30 @@ export default class Observations extends React.Component {
           width="400px">
             <div className={this.props.contract.status !== 'inactive' ? "contract--disabled" : null}>
               <div className="observations__body">
-                <textarea value={this.state.observations} onChange={this.onChange}/>
+                <Input
+                  title=""
+                  name=""
+                  type="textarea"
+                  value={this.state.observations}
+                  onChange={this.onChange}/>
+                <Input
+                  title=""
+                  name=""
+                  type="textarea"
+                  value={this.state.observations}
+                  onChange={this.onChange}/>
+                <Input
+                  title=""
+                  name=""
+                  type="textarea"
+                  value={this.state.observations}
+                  onChange={this.onChange}/>
+                <Input
+                  title=""
+                  name=""
+                  type="textarea"
+                  value={this.state.observations}
+                  onChange={this.onChange}/>
               </div>
               {this.props.contract.status == 'inactive' ?
                 <FooterButtons buttons={[{text: "Salvar Edições", onClick: this.saveEdits}]}/>

@@ -7,10 +7,7 @@ export default class DatePicker extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      displayValue: moment(this.props.value).format("DD-MMMM-YYYY"),
-      exportValue: this.props.value || new Date(),
-      toggleCalendar: false,
-      style: this.props.style ? {...this.props.style, cursor: 'pointer'} : {cursor: 'pointer'}
+      toggleCalendar: false
     }
   }
   toggleCalendar = () => {
@@ -18,24 +15,22 @@ export default class DatePicker extends React.Component {
     this.setState({ toggleCalendar });
   }
   changeDate = (exportValue) => {
-    var displayValue = moment(exportValue).format("DD-MMMM-YYYY");
     this.props.onChange(exportValue);
-    this.setState({ displayValue, exportValue });
   }
   render() {
     return (
       <>
         <input
-          value={this.state.displayValue}
+          value={moment(this.props.value).format("DD-MMMM-YYYY")}
           onClick={this.toggleCalendar}
 
           readOnly={true}
           disabled={this.props.disabled}
 
-          style={this.state.style}
+          style={this.props.style ? {...this.props.style, cursor: 'pointer'} : {cursor: 'pointer'}}
           />
           {this.state.toggleCalendar ?
-            <Calendar value={this.state.exportValue} closeCalendar={this.toggleCalendar} changeDate={this.changeDate}/>
+            <Calendar value={this.props.value || new Date()} closeCalendar={this.toggleCalendar} changeDate={this.changeDate}/>
           : null}
       </>
     )

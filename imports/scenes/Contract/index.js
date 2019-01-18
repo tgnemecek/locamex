@@ -26,6 +26,16 @@ export default class Contract extends React.Component {
 
         client: '',
 
+        proposal: '',
+        discount: 0,
+
+        observations: {
+          annotations: '',
+          generalObs: '',
+          productsObs: '',
+          servicesObs: ''
+        }
+
         billing: [],
         deliveryAddress: {
           street: '',
@@ -191,6 +201,7 @@ export default class Contract extends React.Component {
 
   totalValue = () => {
     var duration = this.state.contract.dates.duration;
+    var discount = this.state.contract.discount;
 
     var containers = this.state.contract.containers || [];
     var accessories = this.state.contract.accessories || [];
@@ -199,6 +210,7 @@ export default class Contract extends React.Component {
       var quantity = current.quantity ? current.quantity : 1;
       return acc + (current.price * quantity * duration)
     }, 0);
+    productsValue = productsValue * (100 - discount) / 100;
 
     var services = this.state.contract.services || [];
     var servicesValue = services.reduce((acc, current) => {

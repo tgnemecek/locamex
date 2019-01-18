@@ -22,6 +22,27 @@ class Information extends React.Component {
     this.setState({ calendarOpen });
   }
 
+  changeDuration = (e) => {
+    var months = e.target.value;
+    var discount = 0;
+    if (months === 1) {
+      discount = 0;
+    } else if (months > 1 && months <= 3) {
+      discount = 20;
+    } else if (months > 3 && months <= 6) {
+      discount = 25;
+    } else if (months > 6 && months <= 9) {
+      discount = 30;
+    } else if (months > 9 && months <= 12) {
+      discount = 35;
+    } else if (months > 12) {
+      discount = 40;
+    }
+    var obj = {...this.props.contract.dates};
+    obj.duration = months;
+    this.props.updateContract([obj, [], discount], ['dates', 'billing', 'discount']);
+  }
+
   handleChange = (e) => {
     var value = e.target.value;
     var name = e.target.name;
@@ -29,9 +50,7 @@ class Information extends React.Component {
     if (extra) {
       var obj = {...this.props.contract[extra]};
       obj[name] = value;
-      if (name == 'duration') {
-        this.props.updateContract([obj, []], [extra, 'billing']);
-      } else this.props.updateContract(obj, extra);
+      this.props.updateContract(obj, extra);
     } else this.props.updateContract(value, name);
   }
 
@@ -54,7 +73,11 @@ class Information extends React.Component {
           <Block
             className="contract__information"
             columns={6}
-            options={[{block: 0, span: 3}, {block: 1, span: 2}, {block: 3, span: 2}, {block: 6, span: 0.5}, {block: 7, span: 0.5}]}>
+            options={[
+              {block: 0, span: 2},
+              {block: 2, span: 2},
+              {block: 8, span: 0.5},
+              {block: 9, span: 0.5}]}>
             <SuggestionBar
               title="Cliente:"
               name="client"
@@ -63,6 +86,14 @@ class Information extends React.Component {
               value={this.props.contract.client}
               onClick={this.handleChange}>
             </SuggestionBar>
+            <Input
+              title="Nº de Proposta:"
+              name="proposal"
+              type="text"
+              style={this.props.errorKeys.includes("proposal") ? {borderColor: "red"} : null}
+              value={this.props.contract.proposal}
+              onChange={this.handleChange}
+            />
             <Input
               title="Endereço de Entrega:"
               name="street"
@@ -95,11 +126,21 @@ class Information extends React.Component {
             <Input
               title="Duração: (meses)"
               value={this.props.contract.dates.duration}
-              onChange={this.handleChange}
+              onChange={this.changeDuration}
               style={this.props.errorKeys.includes("duration") ? {borderColor: "red"} : null}
               name="duration"
               extra="dates"
-              type="number"/>
+              type="number"
+            />
+            <Input
+              title="Desconto: (%)"
+              name="discount"
+              type="number"
+              max={100}
+              style={this.props.errorKeys.includes("discount") ? {borderColor: "red"} : null}
+              value={this.props.contract.discount}
+              onChange={this.handleChange}
+            />
             <Input
               title="Cidade:"
               name="city"

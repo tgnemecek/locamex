@@ -36,7 +36,7 @@ export default class ProductsSection extends React.Component {
 
     this.setState({ startDate }, () => {
       var charges = updateChargesDates();
-      this.updateBilling('billingProducts', charges);
+      this.props.updateBilling('billingProducts', charges);
       this.toggleCalendar();
     });
   }
