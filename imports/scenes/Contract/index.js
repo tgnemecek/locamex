@@ -34,7 +34,7 @@ export default class Contract extends React.Component {
           generalObs: '',
           productsObs: '',
           servicesObs: ''
-        }
+        },
 
         billing: [],
         deliveryAddress: {

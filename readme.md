@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.6.1
+Version: 1.6.2
 
 ## Information:
 
@@ -8,6 +8,10 @@ Version: 1.6.1
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.6.2
+
+-  Fixed parsing error in Contract;
 
 ### Version 1.6.1
 
