@@ -107,6 +107,7 @@ export default class Contract extends React.Component {
       var errorMsg = 'Campos obrigatórios não preenchidos/inválidos.';
 
       if (!this.state.contract.client) errorKeys.push("client");
+      if (!this.state.contract.proposal) errorKeys.push("proposal");
 
       if (!this.state.contract.dates.duration) errorKeys.push("duration");
 
