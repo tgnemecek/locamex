@@ -43,16 +43,19 @@ class PacksTable extends React.Component {
     return (
       <tr>
         <th>Descrição</th>
-        <th className="small-column">Pátio</th>
-        <th className="small-column"></th>
+        <th className="table__small-column">Status</th>
+        <th className="table__small-column">Pátio</th>
       </tr>
     )
   }
 
   renderBody = () => {
     return this.state.filteredDatabase.map((item, i) => {
-      const toggleWindow = () => {
-        this.props.toggleWindow(item);
+      const toggleEditWindow = () => {
+        this.props.toggleEditWindow(item);
+      }
+      const toggleTransactionWindow = () => {
+        this.props.toggleTransactionWindow(item);
       }
       const translatePlaces = (place) => {
         if (!place) return "-";
@@ -65,8 +68,10 @@ class PacksTable extends React.Component {
       return (
         <tr key={i}>
           <td>{item.description}</td>
-          <td className="small-column">{translatePlaces(item.place)}</td>
-          <td className="small-column"><button className="database__table__button" onClick={toggleWindow}>✎</button></td>
+          <td className="table__small-column">{tools.translateStatus(item.status, false)}</td>
+          <td className="table__small-column">{translatePlaces(item.place)}</td>
+          <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>🔍</button></td>
+          <td className="table__small-column"><button className="database__table__button" onClick={toggleTransactionWindow}>⟳</button></td>
         </tr>
       )
     })
@@ -94,7 +99,15 @@ class PacksTable extends React.Component {
         </ErrorBoundary>
       )
     } else if (!this.props.ready) {
-      return null;
+      return (
+        <div className="database__scroll-div">
+          <table className="table database__table">
+            <thead>
+              {this.renderHeader()}
+            </thead>
+          </table>
+        </div>
+      )
     }
   }
 }

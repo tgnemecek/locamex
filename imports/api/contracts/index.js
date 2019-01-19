@@ -10,21 +10,29 @@ if (Meteor.isServer) {
   Meteor.methods({
     'contracts.insert'(state) {
       const prefix = new Date().getFullYear();
-      const suffix = Contracts.find().count().toString().padStart(3, '0');
+      const suffix = Contracts.find({ _id: { $regex: new RegExp(prefix)} }).count().toString().padStart(3, '0');
       const _id = prefix + "-" + suffix;
       const data = {
+        // System Information
         _id,
-        clientId: state.clientId,
         status: state.status,
         createdBy: state.createdBy,
-        dates: state.dates,
-        billing: state.billing,
-        observations: state.observations,
+        visible: true,
+        // Contract Information
+        client: state.client,
+        proposal: state.proposal,
         deliveryAddress: state.deliveryAddress,
+        dates: state.dates,
+        discount: state.discount,
+
+        billingProducts: state.billingProducts,
+        billingServices: state.billingServices,
+        observations: state.observations,
+
         containers: state.containers,
         accessories: state.accessories,
-        services: state.services,
-        visible: true
+        services: state.services
+
       };
       Contracts.insert(data);
       Meteor.call('history.insert', data, 'contracts');
@@ -118,19 +126,24 @@ if (Meteor.isServer) {
     },
     'contracts.update'(state) {
       const data = {
+        // System Information
         _id: state._id,
-        clientId: state.clientId,
-        status: state.status,
-        createdBy: state.createdBy,
-        dates: state.dates,
-        billing: state.billing,
-        observations: state.observations,
+        // Contract Information
+        client: state.client,
+        proposal: state.proposal,
         deliveryAddress: state.deliveryAddress,
+        dates: state.dates,
+        discount: state.discount,
+
+        billingProducts: state.billingProducts,
+        billingServices: state.billingServices,
+        observations: state.observations,
+
         containers: state.containers,
         accessories: state.accessories,
-        services: state.services,
-        visible: true
-      }
+        services: state.services
+
+      };
       Contracts.update({ _id: state._id }, { $set: data });
       Meteor.call('history.insert', data, 'contracts');
     }

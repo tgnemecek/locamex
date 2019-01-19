@@ -42,7 +42,7 @@ export default class Modular extends React.Component {
       return (
         <tr key={i}>
           <td>{item.description}</td>
-          <td className="small-column">
+          <td className="table__small-column">
             <Input
               key={i}
               type="checkbox"

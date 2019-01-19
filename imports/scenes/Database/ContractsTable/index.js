@@ -42,11 +42,11 @@ class ContractsTable extends React.Component {
     }
     return (
       <tr>
-        <th className="small-column">Código</th>
+        <th className="table__small-column">Código</th>
         <th>Nome da Empresa</th>
-        <th className="small-column">Status</th>
-        <th className="small-column">Valor Total do Contrato</th>
-        <th className="small-column">
+        <th className="table__small-column">Status</th>
+        <th className="table__small-column">Valor Total do Contrato</th>
+        <th className="table__small-column">
           <Link className="button--link database__table__button" to="/contract/new">+</Link>
         </th>
       </tr>
@@ -67,13 +67,14 @@ class ContractsTable extends React.Component {
       }
       const clientName = () => {
         for (var j = 0; j < this.props.clientsDatabase.length; j++) {
-          if (this.props.clientsDatabase[j]._id === item.clientId) {
+          if (this.props.clientsDatabase[j]._id === item.client) {
             return this.props.clientsDatabase[j].description;
           }
         }
       }
       const totalValue = () => {
         var duration = item.dates.duration;
+        var discount = item.discount;
 
         var containers = item.containers || [];
         var accessories = item.accessories || [];
@@ -82,6 +83,7 @@ class ContractsTable extends React.Component {
           var quantity = current.quantity ? current.quantity : 1;
           return acc + (current.price * quantity * duration)
         }, 0);
+        productsValue = productsValue * (100 - discount) / 100;
 
         var services = item.services || [];
         var servicesValue = services.reduce((acc, current) => {
@@ -93,11 +95,11 @@ class ContractsTable extends React.Component {
       }
       return (
         <tr key={i}>
-          <td className="small-column">{item._id}</td>
+          <td className="table__small-column">{item._id}</td>
           <td>{clientName()}</td>
-          <td className="small-column">{translate(item.status)}</td>
-          <td className="small-column">{totalValue()}</td>
-          <td className="small-column">
+          <td className="table__small-column">{translate(item.status)}</td>
+          <td className="table__small-column">{totalValue()}</td>
+          <td className="table__small-column">
             <Link
               className="button--link database__table__button"
               key={i}
@@ -128,7 +130,15 @@ class ContractsTable extends React.Component {
         </ErrorBoundary>
       )
     } else if (!this.props.ready) {
-      return null
+      return (
+        <div className="database__scroll-div">
+          <table className="table database__table">
+            <thead>
+              {this.renderHeader()}
+            </thead>
+          </table>
+        </div>
+      )
     }
   }
 }

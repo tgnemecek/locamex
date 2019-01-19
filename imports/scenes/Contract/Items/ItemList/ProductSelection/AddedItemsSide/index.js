@@ -43,7 +43,7 @@ export default class AddedItemsSide extends React.Component {
           <td className="small-column">{item.serial || "-"}</td>
           <td>{item.description + suffix()}</td>
           <td className="medium-column"><Input type="currency" name={i} value={item.price} onChange={this.props.changePrice}/></td>
-          <td className="small-column">
+          <td className="table__small-column">
             <Input
               type="number"
               name={i}
@@ -66,10 +66,10 @@ export default class AddedItemsSide extends React.Component {
             <table className="table product-selection__table">
               <thead>
                 <tr>
-                  <th className="small-column">Série</th>
+                  <th className="table__small-column">Série</th>
                   <th>Descrição</th>
                   <th className="medium-column">Valor</th>
-                  <th className="small-column">Qtd.</th>
+                  <th className="table__small-column">Qtd.</th>
                   <th className="buttom-column" style={{visibility: "hidden"}}>✖</th>
                 </tr>
               </thead>

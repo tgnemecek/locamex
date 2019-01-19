@@ -55,10 +55,10 @@ class MaintenanceTable extends React.Component {
   renderHeader = () => {
     return (
       <tr>
-        <th className="small-column">Série</th>
+        <th className="table__small-column">Série</th>
         <th>Descrição</th>
-        <th className="small-column">Pátio</th>
-        <th className="small-column">Observações</th>
+        <th className="table__small-column">Pátio</th>
+        <th className="table__small-column">Observações</th>
       </tr>
     )
   }
@@ -75,10 +75,10 @@ class MaintenanceTable extends React.Component {
       }
       return (
         <tr key={i}>
-          <td className="small-column">{item.serial}</td>
+          <td className="table__small-column">{item.serial}</td>
           <td>{item.description}</td>
-          <td className="small-column">{translatePlaces(item.place)}</td>
-          <td className="small-column">{item.observations}</td>
+          <td className="table__small-column">{translatePlaces(item.place)}</td>
+          <td className="table__small-column--wrap">{item.observations}</td>
         </tr>
       )
     })
@@ -94,7 +94,7 @@ class MaintenanceTable extends React.Component {
             searchReturn={this.searchReturn}
           />
           <div className="database__scroll-div">
-            <table className="table database__table database__table--accessories">
+            <table className="table database__table">
               <thead>
                 {this.renderHeader()}
               </thead>
@@ -106,7 +106,15 @@ class MaintenanceTable extends React.Component {
         </ErrorBoundary>
       )
     } else if (!this.props.ready) {
-      return null;
+      return (
+        <div className="database__scroll-div">
+          <table className="table database__table">
+            <thead>
+              {this.renderHeader()}
+            </thead>
+          </table>
+        </div>
+      )
     }
   }
 }
@@ -114,7 +122,7 @@ class MaintenanceTable extends React.Component {
 export default MaintenanceTableWrapper = withTracker((props) => {
   Meteor.subscribe('placesPub');
   Meteor.subscribe('containersPub');
-  var fullDatabase = Containers.find({ status: "maintenance", type: "fixed" }).fetch();
+  var fullDatabase = Containers.find({ type: "fixed" }).fetch();
   fullDatabase = tools.sortObjects(fullDatabase, 'place');
   var placesDatabase = Places.find().fetch();
   var ready = !!fullDatabase.length;

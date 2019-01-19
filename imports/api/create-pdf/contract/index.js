@@ -22,6 +22,8 @@ export default function createPdf(contract, client, mainContact, representatives
   const officialName = client.type == 'company' ? client.officialName: client.description;
   const registryLabel = client.registryMU ? 'Inscrição Municipal': 'Inscrição Estadual';
 
+  const discount = contract.discount;
+
   const products = contract.containers.concat(contract.accessories).map((item) => {
     item.monthlyPrice = item.quantity * item.price;
     item.finalPrice = item.monthlyPrice * contract.dates.duration;
@@ -31,9 +33,9 @@ export default function createPdf(contract, client, mainContact, representatives
     item.finalPrice = item.quantity * item.price;
     return item;
   })
-  const totalValueProducts = products.length ? products.reduce((acc, current) => {
+  const totalValueProducts = products.length ? (products.reduce((acc, current) => {
     return acc + current.finalPrice;
-  }, 0) : 0;
+  }, 0) * (100 - discount) / 100) : 0;
   const totalValueServices = services.length ? services.reduce((acc, current) => {
     return acc + current.finalPrice;
   }, 0) : 0;
@@ -146,7 +148,7 @@ export default function createPdf(contract, client, mainContact, representatives
         ]
     }, style: 'table'}
   }
-  const tableBilling = () => {
+  const tableBillingProducts = () => {
     function renderBody(charges) {
       var header = [ ['Número', 'Período', 'Vencimento', 'Descrição da Cobrança', 'Valor'] ];
       var body = charges.map((charge, i, array) => {
@@ -165,15 +167,39 @@ export default function createPdf(contract, client, mainContact, representatives
       headerRows: 1,
       widths: ['auto', 'auto', 'auto', '*', 'auto'],
       heights: styleGlobals.cellheight,
-      body: renderBody(contract.billing)
+      body: renderBody(contract.billingProducts)
     }, style: 'table'}
   }
+  // DO THIS!!! ASK HOW VALOR BRUTO/LIQUIDO SHOULD BE DISPLAYED (ORDER, NAMING)!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  // const tableBillingServices = () => {
+  //   function renderBody(charges) {
+  //     var header = [ ['Número', 'Vencimento', 'Descrição da Cobrança', 'Valor Bruto', 'Valor Líquido (- INSS, -ISS)'] ];
+  //     var body = charges.map((charge, i, array) => {
+  //
+  //       var index = (i + 1) + "/" + array.length;
+  //       var period = moment(charge.startDate).format("DD/MM/YYYY") + ' a ' +  moment(charge.endDate).format("DD/MM/YYYY");
+  //       var endDate = moment(charge.endDate).format("DD/MM/YYYY");
+  //       var description = charge.description;
+  //       var value = tools.format(charge.value, 'currency');
+  //       return [index, period, endDate, description, value];
+  //     });
+  //     var footer = [ [{text: 'Valor Total do Contrato:', colSpan: 4, alignment: 'right', bold: true}, '', '', '', resultFormat(totalValueContract)] ];
+  //     return header.concat(body, footer);
+  //   }
+  //   return {table: {
+  //     headerRows: 1,
+  //     widths: ['auto', 'auto', 'auto', '*', 'auto'],
+  //     heights: styleGlobals.cellheight,
+  //     body: renderBody(contract.billingProducts)
+  //   }, style: 'table'}
+  // }
   const tableAddress = () => {
+    var additional = contract.deliveryAddress.additional ? ` (${contract.deliveryAddress.additional})` : '';
     return {table: {
       widths: ['*'],
       heights: styleGlobals.cellheight,
       body: [
-          [ contract.deliveryAddress.street + ', ' + contract.deliveryAddress.number + ' - ' + contract.deliveryAddress.city + ', ' + contract.deliveryAddress.state ]
+          [ `${contract.deliveryAddress.street}, ${contract.deliveryAddress.number}${additional} - ${contract.deliveryAddress.city}, ${contract.deliveryAddress.state} - ${contract.deliveryAddress.cep}` ]
         ]
     }, style: 'table'}
   }
@@ -294,7 +320,7 @@ export default function createPdf(contract, client, mainContact, representatives
     {text: `§ 2º. Caso a LOCATÁRIA deseje devolver o Objeto da Locação antes do término do Prazo Mínimo de Locação, a LOCATÁRIA deverá notificar a LOCADORA e também efetuar a quitação do Valor Total do Contrato (Cláusula Primeira, § 3º) por completo.`, style: 'p'},
     {text: `CLÁUSULA TERCEIRA - DA COBRANÇA`, style: 'h2'},
     {text: `A LOCATÁRIA se obriga a pagar o Valor Total do Contrato (Cláusula PRIMEIRA, § 3º), da seguinte forma:`, style: 'p'},
-    tableBilling(),
+    tableBillingProducts(),
     {text: `§ 1º. Em caso de Prorrogação Automática (Cláusula Segunda, § 1º), a LOCADORA está autorizada a emitir cobranças mensais com vencimento no primeiro dia do mês equivalente ao Valor Mensal de Prorrogação (Cláusula Primeira, § 1º) enquanto as partes não se manifestarem para efeito de devolução.`, style: 'p'},
     {text: `§ 2º. Durante a Prorrogação Automática, caso a LOCATÁRIA decida devolver o Objeto da Locação, ela deve informar a LOCADORA com 15 dias de antecedência da próxima prorrogação. Caso expirado tal prazo, a LOCADORA está autorizada a emitir cobrança à LOCATÁRIA equivalente ao Valor Mensal de Prorrogação do mês seguinte.`, style: 'p'},
     {text: `§ 3º. A LOCADORA não permite, sob nenhuma circunstância, qualquer subdivisão, pró-rata ou proporcionalidade do Valor Mensal de Prorrogação, já que este já representa o valor mínimo relativo a qualquer período entre 1 e 30 dias de locação.`, style: 'p'},

@@ -392,28 +392,25 @@ export default class ProductSelection extends React.Component {
               togglePackScreen={this.togglePackScreen}
               toggleModularScreen={this.toggleModularScreen}/>
           </Block>
-          {this.state.modularScreenOpen > 0 ?
-            <ModularScreen
-              isPackNew={this.state.modularScreenOpen === 1}
-              item={this.state.containerInFocus}
-              moduleDatabase={this.state.moduleDatabase}
-              addModular={this.addModular}
-              editModular={this.editModular}
-              removeModular={this.removeModular}
-              toggleModularScreen={this.toggleModularScreen}
-            />
-          : null}
-          {this.state.packScreenOpen ?
-            <PackScreen
-              packScreenType={this.state.packScreenOpen}
-              item={this.state.containerInFocus}
-              toggleWindow={this.togglePackScreen}
-              removePack={this.removePack}
-              addPack={this.addPack}/>
-          : null}
+          <ModularScreen
+            isOpen={this.state.modularScreenOpen > 0}
+            modularScreenType={this.state.modularScreenOpen}
+            pack={this.state.containerInFocus}
+            moduleDatabase={this.state.moduleDatabase}
+            addModular={this.addModular}
+            editModular={this.editModular}
+            removeModular={this.removeModular}
+            toggleModularScreen={this.toggleModularScreen}/>
+          <PackScreen
+            isOpen={this.state.packScreenOpen}
+            packScreenType={this.state.packScreenOpen}
+            item={this.state.containerInFocus}
+            toggleWindow={this.togglePackScreen}
+            removePack={this.removePack}
+            addPack={this.addPack}/>
           <FooterButtons buttons={[
-            {text: "Voltar", className: "button--secondary", onClick: () => this.props.closeProductSelection()},
-            {text: "Salvar", onClick: () => this.saveEdits()}
+            {text: "Voltar", className: "button--secondary", onClick: this.props.closeProductSelection},
+            {text: "Salvar", onClick: this.saveEdits}
           ]}/>
       </Box>
     )

@@ -10,15 +10,39 @@ if (Meteor.isServer) {
 
   Meteor.methods({
     'modules.insert'(state) {
-      const _id = tools.generateId("modules");
+      const _id = tools.generateId();
       const data = {
         _id,
+        type: "module",
         description: state.description,
-        place: state.place || [],
+        rented: 0,
+        available: 0,
+        maintenance: 0,
+        inactive: 0,
+
         quantitative: true,
         visible: true
       };
       Modules.insert(data);
+      Meteor.call('history.insert', data, 'modules');
+    },
+    'modules.update'(state) {
+      const data = {
+        _id: state._id,
+        description: state.description,
+        visible: true
+      };
+      Modules.update({ _id: state._id }, { $set: data });
+      Meteor.call('history.insert', data, 'modules');
+    },
+    'modules.transaction'(state) {
+      const data = {
+        _id: state._id,
+        available: state.available,
+        maintenance: state.maintenance,
+        inactive: state.inactive
+      }
+      Modules.update({ _id: state._id }, { $set: data });
       Meteor.call('history.insert', data, 'modules');
     },
     'modules.hide'(_id) {
@@ -68,17 +92,6 @@ if (Meteor.isServer) {
         if (!data.includes(modules[i])) data.push(modules[i]);
         Meteor.call('history.insert', data, 'modules.receive');
       }
-    },
-    'modules.update'(state) {
-      const data = {
-        _id: state._id,
-        description: state.description,
-        place: state.place || [],
-        quantitative: true,
-        visible: true
-      };
-      Modules.update({ _id: state._id }, { $set: data });
-      Meteor.call('history.insert', data, 'modules');
     }
   })
 }

@@ -30,24 +30,21 @@ class PlacesTable extends React.Component {
   }
 
   renderHeader = () => {
-    const toggleWindow = () => {
-      this.props.toggleWindow({});
+    const toggleEditWindow = () => {
+      this.props.toggleEditWindow({});
     }
     return (
       <tr>
         <th>Pátio</th>
-        <td className="small-column">Containers</td>
-        <td className="small-column">Acessórios</td>
-        <td className="small-column">Componentes</td>
-        <th className="small-column"><button onClick={toggleWindow} className="database__table__button">+</button></th>
+        <th className="table__small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
       </tr>
     )
   }
 
   renderBody = () => {
     return this.state.filteredDatabase.map((item, i) => {
-      const toggleWindow = () => {
-        this.props.toggleWindow(item);
+      const toggleEditWindow = () => {
+        this.props.toggleEditWindow(item);
       }
       const translatePlaces = (place) => {
         if (!place) return "-";
@@ -60,10 +57,7 @@ class PlacesTable extends React.Component {
       return (
         <tr key={i}>
           <td>{item.description}</td>
-          <td className="small-column">{item.containers}</td>
-          <td className="small-column">{item.accessories}</td>
-          <td className="small-column">{item.modules}</td>
-          <td className="small-column"><button className="database__table__button" onClick={toggleWindow}>✎</button></td>
+          <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
         </tr>
       )
     })

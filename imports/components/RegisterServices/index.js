@@ -2,10 +2,12 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import tools from '/imports/startup/tools/index';
+
 import Block from '/imports/components/Block/index';
 import Box from '/imports/components/Box/index';
-import FooterButtons from '/imports/components/FooterButtons/index';
 import Input from '/imports/components/Input/index';
+import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
+import FooterButtons from '/imports/components/FooterButtons/index';
 
 export default class RegisterServices extends React.Component {
   constructor(props) {
@@ -47,19 +49,11 @@ export default class RegisterServices extends React.Component {
   render() {
     return (
       <Box
-        title={this.props.item._id ? "Editar Registro" : "Criar Novo Registro"}
+        title={this.props.item._id ? "Editar Serviço" : "Criar Novo Serviço"}
         closeBox={this.props.toggleWindow}
         width="800px">
           <div className="error-message">{this.state.errorMsg}</div>
-          <Block columns={6} options={[{block: 1, span: 4}]}>
-            <Input
-              title="Código:"
-              type="text"
-              readOnly={true}
-              name="_id"
-              value={this.state._id}
-              onChange={this.onChange}
-            />
+          <Block columns={4} options={[{block: 0, span: 3}]}>
             <Input
               title="Descrição:"
               type="text"
@@ -76,23 +70,19 @@ export default class RegisterServices extends React.Component {
               onChange={this.onChange}
             />
           </Block>
-          {this.state.confirmationWindow ?
-            <Box
-              title="Aviso:"
-              closeBox={this.toggleConfirmationWindow}>
-              <p>Deseja mesmo excluir este item do banco de dados?</p>
-              <FooterButtons buttons={[
-                {text: "Não", className: "button--secondary", onClick: () => this.toggleConfirmationWindow()},
-                {text: "Sim", className: "button--danger", onClick: () => this.removeItem()}
-              ]}/>
-            </Box>
-          : null}
-          {this.props.item._id ?
-            <button className="button button--danger" style={{width: "100%"}} onClick={this.toggleConfirmationWindow}>Excluir Registro</button>
-          : null}
-          <FooterButtons buttons={[
-            {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
-            {text: "Salvar", onClick: () => this.saveEdits()}
+          <ConfirmationWindow
+            isOpen={this.state.confirmationWindow}
+            message="Deseja mesmo excluir este item do banco de dados?"
+            leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
+            rightButton={{text: "Sim", className: "button--danger", onClick: this.removeItem}}
+            closeBox={this.toggleConfirmationWindow}/>
+          <FooterButtons buttons={this.props.item._id ? [
+            {text: "Excluir Registro", className: "button--danger", onClick: this.toggleConfirmationWindow},
+            {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+            {text: "Salvar", onClick: this.saveEdits}
+          ] : [
+            {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+            {text: "Salvar", onClick: this.saveEdits}
           ]}/>
       </Box>
     )

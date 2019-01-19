@@ -10,7 +10,7 @@ if (Meteor.isServer) {
   })
   Meteor.methods({
     'containers.insert'(state) {
-      const _id = tools.generateId(state.type);
+      const _id = tools.generateId();
       var data;
       if (state.type == 'fixed') {
         data = {
@@ -18,8 +18,7 @@ if (Meteor.isServer) {
           description: state.description,
           type: state.type,
           serial: state.serial,
-          place: state.place || "0000",
-          status: state.status || "available",
+          status: "available",
           price: state.price || 0,
           restitution: state.restitution || 0,
           observations: state.observations,
@@ -41,43 +40,13 @@ if (Meteor.isServer) {
       }
       Containers.insert(data);
       Meteor.call('history.insert', data, 'containers');
-    },
-    'containers.hide'(_id) {
-      const data = {
-        visible: false
-      };
-      Containers.update({ _id }, { $set: data });
-      Meteor.call('history.insert', data, 'containers');
-    },
-    'containers.status' (_id, status) {
-      var data = {
-        status
-      }
-      Containers.update({ _id }, { $set: data });
-      Meteor.call('history.insert', data, 'containers');
-    },
-    'containers.check'(_id) {
-      const item = Containers.findOne(
-        {
-          $and: [
-            { _id },
-            { visible: true }
-          ]
-        }
-      );
-      if (!item) throw new Meteor.Error("_id-not-found", "Um dos containers locados não está mais disponível ou foi excluído.", arguments);
-      if (item.status == 'available') {
-        return true;
-      } else return false;
-    },
+    }, // Marked (currently being used)
     'containers.update'(state) {
       var data;
       if (state.type == 'fixed') {
         data = {
           description: state.description,
           type: state.type,
-          place: state.place,
-          status: state.status,
           serial: state.serial,
           price: state.price,
           restitution: state.restitution,
@@ -98,7 +67,44 @@ if (Meteor.isServer) {
       }
       Containers.update({ _id: state._id }, { $set: data });
       Meteor.call('history.insert', data, 'containers');
-    },
+    }, // Marked (currently being used)
+    'containers.hide'(_id) {
+      const data = {
+        visible: false
+      };
+      Containers.update({ _id }, { $set: data });
+      Meteor.call('history.insert', data, 'containers');
+    }, // Marked (currently being used)
+    'containers.transaction.fixed'(state) {
+      const data = {
+        _id: state._id,
+        status: state.status,
+        place: state.place
+      }
+      Containers.update({ _id: state._id }, { $set: data });
+      Meteor.call('history.insert', data, 'containers');
+    }, // Marked (currently being used)
+    'containers.status' (_id, status) {
+      var data = {
+        status
+      }
+      Containers.update({ _id }, { $set: data });
+      Meteor.call('history.insert', data, 'containers');
+    }, // Unmarked (needs to be checked)
+    'containers.check'(_id) {
+      const item = Containers.findOne(
+        {
+          $and: [
+            { _id },
+            { visible: true }
+          ]
+        }
+      );
+      if (!item) throw new Meteor.Error("_id-not-found", "Um dos containers locados não está mais disponível ou foi excluído.", arguments);
+      if (item.status == 'available') {
+        return true;
+      } else return false;
+    }, // Unmarked (needs to be checked)
     'containers.update.assembled'(_id, quantity) {
       var data = {
         assembled: quantity
@@ -106,6 +112,6 @@ if (Meteor.isServer) {
       Containers.update({ _id }, { $inc: data });
       data._id = _id;
       Meteor.call('history.insert', data, 'containers.update.assembled');
-    }
+    } // Unmarked (needs to be checked)
   })
 }

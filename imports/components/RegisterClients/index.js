@@ -2,11 +2,13 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import tools from '/imports/startup/tools/index';
+
 import Block from '/imports/components/Block/index';
 import Box from '/imports/components/Box/index';
-import Tab from '/imports/components/Tab/index';
-import FooterButtons from '/imports/components/FooterButtons/index';
 import Input from '/imports/components/Input/index';
+import Tab from '/imports/components/Tab/index';
+import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
+import FooterButtons from '/imports/components/FooterButtons/index';
 
 import MainTab from './MainTab/index';
 import AddressTab from './AddressTab/index';
@@ -162,23 +164,18 @@ export default class RegisterClients extends React.Component {
             <ContactTab key={this.state.tab} onChange={this.onChange} item={this.state}/>
           : null}
           {this.state.tab === 'observations' ? <ObservationsTab onChange={this.onChange} item={this.state}/> : null}
-            {this.state.confirmationWindow ?
-              <Box
-                title="Aviso:"
-                closeBox={this.toggleConfirmationWindow}>
-                <p>Deseja mesmo excluir este item do banco de dados?</p>
-                <FooterButtons buttons={[
-                  {text: "Não", className: "button--secondary", onClick: () => this.toggleConfirmationWindow()},
-                  {text: "Sim", className: "button--danger", onClick: () => this.removeItem()}
-                ]}/>
-              </Box>
-            : null}
+          <ConfirmationWindow
+            isOpen={this.state.confirmationWindow}
+            closeBox={this.toggleConfirmationWindow}
+            message="Deseja mesmo excluir este item do banco de dados?"
+            leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
+            rightButton={{text: "Sim", className: "button--danger", onClick: this.removeItem}}/>
             {/* {this.state.tab > 1 ?
               <button className="button button--danger" style={{width: "100%"}} onClick={this.toggleConfirmationWindow}>Excluir Contato</button>
             : null} */}
             <FooterButtons buttons={[
-              {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
-              {text: "Salvar", onClick: () => this.saveEdits()}
+              {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+              {text: "Salvar", onClick: this.saveEdits}
             ]}/>
         </Box>
       </ErrorBoundary>

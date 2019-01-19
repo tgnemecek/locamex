@@ -6,7 +6,7 @@ import '../imports/startup/app-structure/index';
 import '../imports/startup/simple-schema-configuration/index';
 
 import '../imports/api/accessories/index';
-import '../imports/api/categories/index';
+import '../imports/api/batch/index';
 import '../imports/api/clients/index';
 import '../imports/api/containers/index';
 import '../imports/api/contracts/index';

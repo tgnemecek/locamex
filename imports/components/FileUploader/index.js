@@ -107,8 +107,8 @@ export default class FileUploader extends React.Component {
           </div>
         </div>
           <FooterButtons buttons={[
-            {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
-            {text: "Enviar Imagens", onClick: () => this.sendFiles()}
+            {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+            {text: "Enviar Imagens", onClick: this.sendFiles}
           ]}/>
       </Box>
     )

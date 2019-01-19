@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.5.2
+Version: 1.6.2
 
 ## Information:
 
@@ -8,6 +8,21 @@ Version: 1.5.2
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.6.2
+
+-  Fixed parsing error in Contract;
+
+### Version 1.6.1
+
+-  MaintenanceTable now shows all containers (not just status: maintenance);
+
+### Version 1.6.0
+
+-  Rollback from multiple places functionality (to be implemented later);
+-  Temporary enabling of setting 'rented' from the fixed-container edit window (to be removed later);
+-  Observations cell in MaintenanceTable now wraps for better visibility;
+-  Fixed Database not rendering table header when no item is returned from publication;
 
 ### Version 1.5.2
 

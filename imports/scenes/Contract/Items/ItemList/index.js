@@ -41,10 +41,10 @@ export default class ItemList extends React.Component {
     return this.props.contract[this.props.database].map((item, i) => {
       return (
         <tr key={i}>
-          <td className="small-column">{item.serial || "-"}</td>
+          <td className="table__small-column">{item.serial || "-"}</td>
           {this.renderDescripton(item)}
-          <td className="small-column">{tools.format(item.price, "currency")}</td>
-          <td className="small-column">{item.quantity}</td>
+          <td className="table__small-column">{tools.format(item.price, "currency")}</td>
+          <td className="table__small-column">{item.quantity}</td>
         </tr>
       )
     })
@@ -67,10 +67,10 @@ export default class ItemList extends React.Component {
             <table className="table contract__item-list__table">
               <tbody>
                 <tr>
-                  <th className="small-column">Série</th>
+                  <th className="table__small-column">Série</th>
                   <th>Descrição</th>
-                  <th className="small-column">Valor</th>
-                  <th className="small-column">Qtd.</th>
+                  <th className="table__small-column">Valor</th>
+                  <th className="table__small-column">Qtd.</th>
                 </tr>
                 {this.row()}
               </tbody>

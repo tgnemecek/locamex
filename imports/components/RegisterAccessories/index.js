@@ -1,15 +1,12 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import ErrorBoundary from '/imports/components/ErrorBoundary/index';
-import { Categories } from '/imports/api/categories/index';
-import { Places } from '/imports/api/places/index';
 import tools from '/imports/startup/tools/index';
 
-import Block from '/imports/components/Block/index';
 import Box from '/imports/components/Box/index';
-import FooterButtons from '/imports/components/FooterButtons/index';
+import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
-import Transaction from './Transaction/index';
+import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
+import FooterButtons from '/imports/components/FooterButtons/index';
 
 export default class RegisterAccessories extends React.Component {
   constructor(props) {
@@ -18,42 +15,14 @@ export default class RegisterAccessories extends React.Component {
       _id: this.props.item._id || '',
       description: this.props.item.description || '',
       price: this.props.item.price || 0,
-      category: this.props.item.category || '',
-      place: this.props.item.place || '',
-      available: this.props.item.available || '',
-      maintenance: this.props.item.maintenance || '',
       restitution: this.props.item.restitution || 0,
       observations: this.props.item.observations || '',
-
-      origin: '-',
-      transaction: 0,
-      destination: 'available',
-
-      categoriesDatabase: [],
-      placesDatabase: [],
 
       errorMsg: '',
       errorKeys: [],
 
       confirmationWindow: false
     }
-  }
-  componentDidMount = () => {
-    this.tracker = Tracker.autorun(() => {
-      Meteor.subscribe('categoriesPub');
-      Meteor.subscribe('placesPub');
-      var categoriesDatabase = Categories.find().fetch();
-      var placesDatabase = Places.find().fetch();
-      this.setState({ categoriesDatabase, placesDatabase });
-    })
-  }
-  componentWillUnmount = () => {
-    this.tracker.stop();
-  }
-  renderOptions = (database) => {
-    return this.state[database].map((item, i) => {
-      return <option key={i} value={item._id}>{item.description}</option>
-    })
   }
   onChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
@@ -100,18 +69,7 @@ export default class RegisterAccessories extends React.Component {
         closeBox={this.props.toggleWindow}
         width="800px">
           <div className="error-message">{this.state.errorMsg}</div>
-          <Block columns={6} options={[
-            {block: 1, span: 4},
-            {block: 3, span: 2},
-            {block: 4, span: 3}]}>
-            <Input
-              title="Código:"
-              type="text"
-              readOnly={true}
-              name="_id"
-              value={this.state._id}
-              onChange={this.onChange}
-            />
+          <Block columns={3}>
             <Input
               title="Descrição:"
               type="text"
@@ -128,25 +86,6 @@ export default class RegisterAccessories extends React.Component {
               onChange={this.onChange}
             />
             <Input
-              title="Categoria:"
-              type="select"
-              name="category"
-              disabled={true}
-              value={this.state.category}
-              onChange={this.onChange}>
-                <option> </option>
-                {this.renderOptions("categoriesDatabase")}
-            </Input>
-            <Input
-              title="Pátio:"
-              type="select"
-              name="place"
-              value={this.state.place}
-              onChange={this.onChange}>
-                <option> </option>
-                {this.renderOptions("placesDatabase")}
-            </Input>
-            <Input
               title="Indenização:"
               type="currency"
               name="restitution"
@@ -154,25 +93,19 @@ export default class RegisterAccessories extends React.Component {
               onChange={this.onChange}
             />
           </Block>
-          <h4 className="register-accessories__transaction__title">Movimentação de estoque:</h4>
-          <Transaction item={this.state} onChange={this.onChange}/>
-          {this.state.confirmationWindow ?
-            <Box
-              title="Aviso:"
-              closeBox={this.toggleConfirmationWindow}>
-              <p>Deseja mesmo excluir este item do banco de dados?</p>
-              <FooterButtons buttons={[
-                {text: "Não", className: "button--secondary", onClick: () => this.toggleConfirmationWindow()},
-                {text: "Sim", className: "button--danger", onClick: () => this.removeItem()}
-              ]}/>
-            </Box>
-          : null}
-          {this.props.item._id ?
-            <button className="button button--danger" style={{width: "100%"}} onClick={this.toggleConfirmationWindow}>Excluir Registro</button>
-          : null}
-          <FooterButtons buttons={[
-            {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
-            {text: "Salvar", onClick: () => this.saveEdits()}
+          <ConfirmationWindow
+            isOpen={this.state.confirmationWindow}
+            closeBox={this.toggleConfirmationWindow}
+            message="Deseja mesmo excluir este item do banco de dados?"
+            leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
+            rightButton={{text: "Sim", className: "button--danger", onClick: this.removeItem}}/>
+          <FooterButtons buttons={this.props.item._id ? [
+            {text: "Excluir Registro", className: "button--danger", onClick: this.toggleConfirmationWindow},
+            {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+            {text: "Salvar", onClick: this.saveEdits}
+          ] : [
+            {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+            {text: "Salvar", onClick: this.saveEdits}
           ]}/>
       </Box>
     )

@@ -1,87 +1,21 @@
-.billing {
-  > div {
-    margin-bottom: $space;
-  }
-  .billing__item {
-    display: inline-flex;
-    justify-content: space-between;
-    width: 50%;
-    flex-wrap: wrap;
-    input {
-      width: 500px;
-    }
-  }
-  .billing__difference--danger {
-    color: $red;
-  }
-  label {
-    cursor: pointer;
-  }
-}
+@import './ProductsSection/styles';
+@import './ServicesSection/styles';
 
-.table--billing {
-  font-size: $base-font-size;
-  th:nth-child(1),
-  td:nth-child(1) {
-    text-align: center !important;
-    min-width: 80px;
-  }
-  th:nth-child(2),
-  td:nth-child(2) {
-    text-align: center !important;
-    min-width: 140px;
-  }
-  th:nth-child(3),
-  td:nth-child(3) {
-    text-align: center !important;
-    min-width: 90px;
-  }
-  th:nth-child(4),
-  td:nth-child(4) {
-    text-align: left !important;
+.billing__difference--zero {
+  color: $green !important;
+}
+.billing__difference--danger {
+  color: $red !important;
+}
+.billing__equal-charges {
+  display: inline-flex;
+  height: 61px;
+  width: 100%;
+  justify-content: center;
+  align-items: flex-end;
+  button {
+    height: 35px;
     width: 100%;
-  }
-  th:nth-child(5),
-  td:nth-child(5) {
-    text-align: right !important;
-    min-width: 140px;
-  }
-  thead {
-    display: block;
-    margin-right: 17px;
-  }
-  tbody {
-    display: block;
-    max-height: 500px;
-    overflow-y: scroll;
-  }
-  tfoot {
-    display: block;
-    margin-right: 17px;
-    th {
-      font-weight: bold;
-    }
-    th:nth-child(1),
-    td:nth-child(1) {
-      text-align: right !important;
-      width: 100%;
-    }
-    th:nth-child(2),
-    td:nth-child(2) {
-      text-align: right !important;
-      min-width: 140px;
-    }
-  }
-  th, td {
-    padding: 5px 5px;
-  }
-  textarea {
-    min-height: 1px;
-  }
-  input {
-    font-size: $base-font-size;
-    width: 100%;
-    padding: 7px;
-    text-align: right;
+    margin: 0;
   }
 }

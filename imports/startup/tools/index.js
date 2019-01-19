@@ -3,6 +3,14 @@ import { Mongo } from 'meteor/mongo';
 
 export default class tools {
 
+  // Objects, Arrays
+
+  static deepCopy = (input) => {
+    if (Array.isArray(input) || typeof(input) == 'object') {
+      return JSON.parse(JSON.stringify(input));
+    } else return [input];
+  }
+
   static sortObjects = (arr, key, options) => {
     if (!options) options = {};
 
@@ -36,6 +44,53 @@ export default class tools {
     if (populatedArray.length > 1) {
       return populatedArray;
     } else return populatedArray[0] || "";
+  }
+
+  static findPlaceIndex = (array, value) => {
+    for (var i = 0; i < array.length; i++) {
+      if (array[i]._id === value) {
+        return i;
+      }
+    } return -1;
+  }
+
+  // Strings
+
+  static generateId = () => {
+    return new Meteor.Collection.ObjectID()._str;
+    // return prefix + "_" + new Meteor.Collection.ObjectID()._str;
+  }
+
+  static translateStatus = (status, plural) => {
+    if (status === 'available') return plural ? "Disponíveis" : "Disponível";
+    if (status === 'rented') return plural ? "Alugados" : "Alugado";
+    if (status === 'maintenance') return "Manutenção";
+    if (status === 'inactive') return plural ? "Inativos" : "Inativo";
+    return "";
+  }
+
+  static translateDatabase = (database) => {
+    if (database == 'accessories') {
+      return "Acessórios"
+    } else if (database == 'clients') {
+      return "Clientes"
+    } else if (database == 'containers') {
+      return "Containers"
+    } else if (database == 'history') {
+      return "Histórico"
+    } else if (database == 'maintenance') {
+      return "Manutenção"
+    } else if (database == 'modules') {
+      return "Componentes"
+    } else if (database == 'packs') {
+      return "Pacotes"
+    } else if (database == 'places') {
+      return "Pátios"
+    } else if (database == 'services') {
+      return "Serviços"
+    } else if (database == 'users') {
+      return "Usuários"
+    } else return database;
   }
 
   static format = (value, type, externalOptions) => {
@@ -152,27 +207,6 @@ export default class tools {
         // value = allowNegative(value);
         return Number(value).toLocaleString('pt-br', realOptions);
 
-      case 'database':
-        if (value == 'accessories') {
-          return "Acessórios"
-        } else if (value == 'clients') {
-          return "Clientes"
-        } else if (value == 'containers') {
-          return "Containers"
-        } else if (value == 'history') {
-          return "Histórico"
-        } else if (value == 'maintenance') {
-          return "Manutenção"
-        } else if (value == 'modules') {
-          return "Componentes"
-        } else if (value == 'places') {
-          return "Pátios"
-        } else if (value == 'services') {
-          return "Serviços"
-        } else if (value == 'users') {
-          return "Usuários"
-        } else return value;
-
       default:
         return value;
     }
@@ -218,68 +252,11 @@ export default class tools {
     }
   }
 
-  // Fix for version 2.0
-  // static trimStrings = (input) => {
-  //   if (Array.isArray(input)) {
-  //     return trimStringsInArray(input)
-  //   } else if (typeof input === 'object') {
-  //     return trimStringsInObject(input);
-  //   } else {
-  //     throw new Error('type-incorrect', 'tools.trimStrings only accepts arrays or objects, got: ' + typeof input);
-  //   }
-  //
-  //   function trimStringsInArray (array) {
-  //     var returnValue = array.map((item) => {
-  //       if (typeof item === 'string') {
-  //         item = item.trim();
-  //       } else if (Array.isArray(item)) {
-  //         item = trimStringsInArray(item);
-  //       } else if (typeof item === 'object') {
-  //         item = trimStringsInObject(item);
-  //       }
-  //     })
-  //     return returnValue;
-  //   }
-  //   function trimStringsInObject (object0) {
-  //     var object = {...object0};
-  //     Object.keys(object).forEach((key) => {
-  //       if (typeof object[key] === 'string') {
-  //         object[key] = object[key].trim();
-  //       } else if (Array.isArray(object[key])) {
-  //         object[key] = trimStringsInArray(object[key]);
-  //       } else if (typeof object[key] === 'object') {
-  //         object[key] = trimStringsInObject(object[key]);
-  //       }
-  //     })
-  //     return object;
-  //   }
-  // }
+  // Numbers, Calculations
 
   static round = (value, decimals) => {
     typeof(value) == 'string' ? value.replace(',', '.') : null;
     return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
-  }
-
-  static deepCopy = (input) => {
-    if (Array.isArray(input) || typeof(input) == 'object') {
-      return JSON.parse(JSON.stringify(input));
-    } else return [input];
-  }
-
-  static generateId = (prefix) => {
-    return prefix + "_" + new Meteor.Collection.ObjectID()._str;
-  }
-
-  static getRef = (object, i) => {
-    //This is used to get a specific Ref when there's more than one DOM element associated to a single Ref
-    //If i is undefined, it returns the whole array or the first element if the array has length == 1
-    if (typeof(object) !== 'object') {throw new Meteor.Error('wrong-type', 'First argument must be an Object');}
-    var values = Object.values(object);
-    if (i == undefined) {
-      return values.length == 1 ? values[0] : values;
-    }
-    if (typeof(i) !== 'number') {throw new Meteor.Error('wrong-type', 'Second argument must be a number');}
-    return values[i];
   }
 
   static checkPhone (arg) {
@@ -489,6 +466,8 @@ export default class tools {
     if (extras) str = str.replace(extras, "");
     return str;
   }
+
+  // Other
 
   static states = ["AC", "AL", "AM", "AP", "BA", "CE", "DF",
                     "ES", "GO", "MA", "MT", "MS", "MG", "PA",

@@ -7,8 +7,10 @@ import tools from '/imports/startup/tools/index';
 
 import Block from '/imports/components/Block/index';
 import Box from '/imports/components/Box/index';
-import FooterButtons from '/imports/components/FooterButtons/index';
 import Input from '/imports/components/Input/index';
+import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
+import FooterButtons from '/imports/components/FooterButtons/index';
+
 import ModulesTable from './ModulesTable/index';
 
 export default class RegisterPacks extends React.Component {
@@ -58,6 +60,9 @@ export default class RegisterPacks extends React.Component {
       return <option key={i} value={item._id}>{item.description}</option>
     })
   }
+  toggleConfirmationWindow = () => {
+    this.setState({ confirmationWindow: !this.state.confirmationWindow })
+  }
   unmountPack = () => {
     Meteor.call('packs.unmount', {
       ...this.props.item,
@@ -71,51 +76,27 @@ export default class RegisterPacks extends React.Component {
         title="Editar Pacote"
         closeBox={this.props.toggleWindow}
         width="700px">
-          <Block columns={2.5} options={[{block: 0, span: 0.5}]}>
-            <Input
-              title="Código:"
-              type="text"
-              name="_id"
-              readOnly={true}
-              value={this.props.item._id}
-              onChange={this.onChange}
-            />
-            <Input
-              title="Descrição:"
-              type="text"
-              name="description"
-              readOnly={true}
-              value={this.props.item.description}
-              onChange={this.onChange}
-            />
-            <Input
-              title="Pátio:"
-              type="select"
-              name="place"
-              disabled={this.props.readOnly}
-              value={this.state.place}
-              onChange={this.onChange}>
-                <option> </option>
-                {this.renderPlaces()}
-            </Input>
-          </Block>
-          <ModulesTable
-            item={this.state}
-            modulesDatabase={this.state.modulesDatabase}/>
-          {this.props.readOnly ?
-            <FooterButtons buttons={[
-              {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
-              {text: "Salvar", onClick: () => this.props.addPack(this.props.item)}
-            ]}/>
-            :
-            <>
-            <button className="button button--danger" style={{width: "100%"}} onClick={this.unmountPack}>Desmontar Pacote</button>
-            <FooterButtons buttons={[
-              {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
-              {text: "Salvar", onClick: () => this.saveEdits()}
-            ]}/>
-            </>
-           }
+        <Input
+          title="Descrição:"
+          type="text"
+          name="description"
+          readOnly={true}
+          value={this.props.item.description}
+          onChange={this.onChange}/>
+        <ModulesTable
+          item={this.state}
+          modulesDatabase={this.state.modulesDatabase}/>
+        <ConfirmationWindow
+          isOpen={this.state.confirmationWindow}
+          closeBox={this.toggleConfirmationWindow}
+          message="Deseja mesmo desmontar o container e retornar os componentes para o estoque?"
+          leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
+          rightButton={{text: "Sim", className: "button--danger", onClick: this.unmountPack}}/>
+        <FooterButtons buttons={[
+          {text: "Desmontar Pacote", className: "button--danger", onClick: this.toggleConfirmationWindow},
+          {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+          {text: "Salvar", onClick: this.saveEdits}
+        ]}/>
       </Box>
     )
   }

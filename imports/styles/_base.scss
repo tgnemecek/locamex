@@ -53,10 +53,11 @@ legend {
 }
 
 textarea {
-  font-family: inherit;;
-  min-height: 150px;
-  padding: ($space /2);
-  width: 100%;
+    font-family: inherit;
+    resize: none;
+    overflow: hidden;
+    padding: ($space /2);
+    width: 100%;
 }
 
 input, select {

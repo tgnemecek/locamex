@@ -14,25 +14,7 @@ export default function Fixed (props) {
     })
   }
   return (
-    <Block columns={3} className="register-containers__fixed-block">
-      <Input
-        title="Pátio:"
-        type="select"
-        name="place"
-        value={props.item.place}
-        onChange={props.onChange}>
-          {renderPlaces()}
-      </Input>
-      <Input
-        title="Status:"
-        type="select"
-        name="status"
-        value={props.item.status}
-        onChange={props.onChange}>
-          <option value="available">Disponível</option>
-          <option value="maintenance">Manutenção</option>
-          <option value="inactive">Inativo</option>
-      </Input>
+    <Block columns={1} className="register-containers__fixed-block">
       <Input
         title="Observações:"
         type="text"

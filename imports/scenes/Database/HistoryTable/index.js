@@ -31,8 +31,8 @@ class HistoryTable extends React.Component {
   }
 
   renderHeader = () => {
-    const toggleWindow = () => {
-      this.props.toggleWindow({});
+    const toggleEditWindow = () => {
+      this.props.toggleEditWindow({});
     }
     return (
       <tr>
@@ -41,24 +41,24 @@ class HistoryTable extends React.Component {
         <th>Usuário</th>
         <th>Banco de Dados</th>
         <th>Item</th>
-        <th className="small-column"></th>
+        <th className="table__small-column"></th>
       </tr>
     )
   }
 
   renderBody = () => {
     return this.state.filteredDatabase.map((item, i) => {
-      const toggleWindow = () => {
-        this.props.toggleWindow(item);
+      const toggleEditWindow = () => {
+        this.props.toggleEditWindow(item);
       }
       return (
         <tr key={i}>
           <td>{moment(item.insertionDate).format("DD-MM-YYYY")}</td>
           <td>{moment(item.insertionDate).format("HH:mm:ss")}</td>
           <td>{item.user.firstName}</td>
-          <td>{tools.format(item.type, "database")}</td>
-          <td>{item.data.description}</td>
-          <td className="small-column"><button className="database__table__button" onClick={toggleWindow}>🔍</button></td>
+          <td>{tools.translateDatabase(item.type)}</td>
+          <td>{item.data._id.toString()}</td>
+          <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>🔍</button></td>
         </tr>
       )
     })

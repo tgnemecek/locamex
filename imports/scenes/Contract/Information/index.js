@@ -1,47 +1,46 @@
 import React from 'react';
 import moment from 'moment';
-
+import { withTracker } from 'meteor/react-meteor-data';
 import { Clients } from '/imports/api/clients/index';
+import tools from '/imports/startup/tools/index';
 
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 import Calendar from '/imports/components/Calendar/index';
-import tools from '/imports/startup/tools/index';
+import SuggestionBar from '/imports/components/SuggestionBar/index';
 
-export default class Information extends React.Component {
+class Information extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      clientsDatabase: [],
       calendarOpen: false
     }
-  }
-
-  componentDidMount() {
-    this.tracker = Tracker.autorun(() => {
-      Meteor.subscribe('clientsPub');
-      var clientsDatabase = Clients.find().fetch();
-      this.setState({ clientsDatabase });
-    });
-  }
-
-  componentWillUnmount = () => {
-    this.tracker.stop();
-  }
-
-  selectClient = (e) => {
-    this.props.updateContract(e.target.value, 'clientId');
-  }
-
-  clientOptions = () => {
-    return this.state.clientsDatabase.map((client, i) => {
-      return <option key={i} value={client._id}>{client.description}</option>
-    })
   }
 
   toggleCalendar = (e) => {
     var calendarOpen = !this.state.calendarOpen;
     this.setState({ calendarOpen });
+  }
+
+  changeDuration = (e) => {
+    var months = e.target.value;
+    var discount = 0;
+    if (months === 1) {
+      discount = 0;
+    } else if (months > 1 && months <= 3) {
+      discount = 20;
+    } else if (months > 3 && months <= 6) {
+      discount = 25;
+    } else if (months > 6 && months <= 9) {
+      discount = 30;
+    } else if (months > 9 && months <= 12) {
+      discount = 35;
+    } else if (months > 12) {
+      discount = 40;
+    }
+    var obj = {...this.props.contract.dates};
+    obj.duration = months;
+    this.props.updateContract([obj, [], discount], ['dates', 'billing', 'discount']);
   }
 
   handleChange = (e) => {
@@ -51,9 +50,7 @@ export default class Information extends React.Component {
     if (extra) {
       var obj = {...this.props.contract[extra]};
       obj[name] = value;
-      if (name == 'duration') {
-        this.props.updateContract([obj, []], [extra, 'billing']);
-      } else this.props.updateContract(obj, extra);
+      this.props.updateContract(obj, extra);
     } else this.props.updateContract(value, name);
   }
 
@@ -76,17 +73,27 @@ export default class Information extends React.Component {
           <Block
             className="contract__information"
             columns={6}
-            options={[{block: 0, span: 3}, {block: 1, span: 2}, {block: 3, span: 2}, {block: 6, span: 0.5}, {block: 7, span: 0.5}]}>
-            <Input
+            options={[
+              {block: 0, span: 2},
+              {block: 2, span: 2},
+              {block: 8, span: 0.5},
+              {block: 9, span: 0.5}]}>
+            <SuggestionBar
               title="Cliente:"
-              type="select"
-              name="clientId"
-              style={this.props.errorKeys.includes("clientId") ? {borderColor: "red"} : null}
-              value={this.props.contract.clientId}
-              onChange={this.handleChange}>
-              <option> </option>
-              {this.clientOptions()}
-            </Input>
+              name="client"
+              database={this.props.clientsDatabase}
+              style={this.props.errorKeys.includes("client") ? {borderColor: "red"} : null}
+              value={this.props.contract.client}
+              onClick={this.handleChange}>
+            </SuggestionBar>
+            <Input
+              title="Nº de Proposta:"
+              name="proposal"
+              type="text"
+              style={this.props.errorKeys.includes("proposal") ? {borderColor: "red"} : null}
+              value={this.props.contract.proposal}
+              onChange={this.handleChange}
+            />
             <Input
               title="Endereço de Entrega:"
               name="street"
@@ -119,11 +126,21 @@ export default class Information extends React.Component {
             <Input
               title="Duração: (meses)"
               value={this.props.contract.dates.duration}
-              onChange={this.handleChange}
+              onChange={this.changeDuration}
               style={this.props.errorKeys.includes("duration") ? {borderColor: "red"} : null}
               name="duration"
               extra="dates"
-              type="number"/>
+              type="number"
+            />
+            <Input
+              title="Desconto: (%)"
+              name="discount"
+              type="number"
+              max={100}
+              style={this.props.errorKeys.includes("discount") ? {borderColor: "red"} : null}
+              value={this.props.contract.discount}
+              onChange={this.handleChange}
+            />
             <Input
               title="Cidade:"
               name="city"
@@ -166,3 +183,13 @@ export default class Information extends React.Component {
       )
   }
 }
+
+export default InformationWrapper = withTracker((props) => {
+  Meteor.subscribe('clientsPub');
+  var clientsDatabase = Clients.find().fetch({visible: true});
+  var ready = !!clientsDatabase.length;
+  return {
+    clientsDatabase,
+    ready
+  }
+})(Information)

@@ -18,6 +18,8 @@ export default class Text extends React.Component {
         placeholder={this.props.placeholder}
         disabled={this.props.disabled}
 
+        onClick={this.props.buttonClick}
+
         style={this.props.style}
         />
     )

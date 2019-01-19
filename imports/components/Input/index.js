@@ -16,7 +16,6 @@ export default class Input extends React.Component {
   constructor(props) {
     super(props);
     this.state = { value: this.props.value };
-    this.className = this.props.className || "";
   }
   componentDidUpdate(prevProps) {
     if (prevProps.value !== this.props.value) {
@@ -73,25 +72,26 @@ export default class Input extends React.Component {
         ChosenComponent = Text;
     }
     return (
-      <div className={"input " + "input--"+ this.props.type + " " + this.className}>
+      <div className={"input " + "input--"+ this.props.type + " " + this.props.className}>
         {this.props.title ?
           <label style={this.props.labelStyle}>{this.props.title}</label>
         : null}
         <ChosenComponent
+          {...this.props}
           value={this.state.value}
           onChange={this.onChange}
-
-          style={this.props.style}
-          type={this.props.type}
-          id={this.props.id}
-
-          readOnly={this.props.readOnly}
-          placeholder={this.props.placeholder}
-          disabled={this.props.disabled}
-          buttonClick={this.props.buttonClick}
-          min={this.props.min}
-          max={this.props.max}
-          options={this.props.options}>
+          // style={this.props.style}
+          // type={this.props.type}
+          // id={this.props.id}
+          //
+          // readOnly={this.props.readOnly}
+          // placeholder={this.props.placeholder}
+          // disabled={this.props.disabled}
+          // buttonClick={this.props.buttonClick}
+          // min={this.props.min}
+          // max={this.props.max}
+          // options={this.props.options}
+          >
           {this.props.children}
         </ChosenComponent>
       </div>

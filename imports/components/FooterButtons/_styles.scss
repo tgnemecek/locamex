@@ -1,9 +1,12 @@
 .footer-buttons {
   display: flex;
+  flex-wrap: wrap;
   margin-top: $space;
+  padding: 5px;
   width: 100%;
   button {
     flex-basis: 1px;
     flex-grow: 1;
+    margin-top: ($space /2);
   }
 }

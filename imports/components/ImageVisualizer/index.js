@@ -54,7 +54,7 @@ export default class ImageVisualizer extends React.Component {
         title="Visualizador de Imagens"
         closeBox={this.props.toggleWindow}>
         <div className="image-visualizer__date">
-          <p>Fotos enviadas dia: {moment(this.state.lastRegistry.date).format('DD-MM-YYYY')}</p>
+          {this.state.lastRegistry.date ? <p>Fotos enviadas dia: {moment(this.state.lastRegistry.date).format('DD-MM-YYYY')}</p> : null}
         </div>
         <div className="image-visualizer__image-wrap">
           {this.state.snapshots.length ?
@@ -67,8 +67,8 @@ export default class ImageVisualizer extends React.Component {
           <button onClick={this.indexDown}>◀</button> {this.state.currentIndex+1} de {this.state.maxIndex+1} <button onClick={this.indexUp}>▶</button>
         </div>
         <FooterButtons buttons={[
-          {text: "Voltar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
-          {text: "Novo Registro", className: "button--green", onClick: () => this.toggleUploadWindow()}
+          {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+          {text: "Novo Registro", className: "button--green", onClick: this.toggleUploadWindow}
         ]}/>
         {this.state.uploadWindow ?
           <FileUploader

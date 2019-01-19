@@ -94,24 +94,25 @@ export default class Finalize extends React.Component {
   }
 
   render () {
-    return (
-      <Box
-        title="Retorno dos Containers Locados:"
-        closeBox={this.props.toggleWindow}>
-        <table className="table">
-          <thead>
-            {this.renderHeader()}
-          </thead>
-          <tbody>
-            {this.renderContainers()}
-          </tbody>
-        </table>
-        <FooterButtons buttons={[
-          {text: "Cancelar", className: "button--secondary", onClick: () => this.props.toggleWindow()},
-          {text: "Confirmar", onClick: () => this.finalizeContract()}
-        ]}/>
-      </Box>
-    )
+    if (this.props.isOpen) {
+      return (
+        <Box
+          title="Retorno dos Containers Locados:"
+          closeBox={this.props.toggleWindow}>
+          <table className="table">
+            <thead>
+              {this.renderHeader()}
+            </thead>
+            <tbody>
+              {this.renderContainers()}
+            </tbody>
+          </table>
+          <FooterButtons buttons={[
+            {text: "Cancelar", className: "button--secondary", onClick: this.props.toggleWindow},
+            {text: "Confirmar", onClick: this.finalizeContract}
+          ]}/>
+        </Box>
+      )
+    } else return null;
   }
-
 }
