@@ -97,7 +97,7 @@ export default class Billing extends React.Component {
     } else if (this.state.masterValue === 0) {
       this.setState({ errorMsg: 'O Valor Total do Contrato não pode ser zero. Adicione produtos antes.' });
     } else {
-      this.props.updateContract([this.state.billingProducts, this.state.billingServices], ["billingProducts", "billingServices"]);
+      this.props.updateContract([this.state.billingProducts, this.state.billingServices, this.state.inss, this.state.iss], ["billingProducts", "billingServices", "inss", "iss"]);
       this.props.toggleWindow();
     }
   }

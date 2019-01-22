@@ -36,7 +36,6 @@ export default class ChargesNumber extends React.Component {
     }
     if (value > charges.length) {
       for (var i = 0; i < difference; i++) {
-        var chargeValue = this.props.charges[0] ? this.props.charges[0].value : '';
         newCharges.push({});
       }
       charges = charges.concat(newCharges);

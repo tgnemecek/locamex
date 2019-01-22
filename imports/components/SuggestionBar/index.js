@@ -15,6 +15,17 @@ export default class SuggestionBar extends React.Component {
     }
   }
 
+  componentDidMount() {
+    if (this.props.value) {
+      this.props.database.forEach((item) => {
+        if (item._id === this.props.value) {
+          this.props.onClick({target: {value: item._id, name: this.props.name}});
+          this.setState({ query: item.description, buttonMode: true })
+        }
+      })
+    }
+  }
+
   hideDropbox = () => {
     var results = [];
     this.setState({ results });

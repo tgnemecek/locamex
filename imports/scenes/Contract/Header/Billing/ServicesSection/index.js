@@ -32,7 +32,8 @@ export default class ServicesSection extends React.Component {
   // Changing States: ----------------------------------------------------------
 
   onChangeTaxes = (e) => {
-    this.props.updateBilling(e.target.name, e.target.value);
+    var value = Number(e.target.value);
+    this.props.updateBilling(e.target.name, value);
   }
 
   toggleCalendar = (e) => {
@@ -46,7 +47,7 @@ export default class ServicesSection extends React.Component {
   renderBody = () => {
     return this.props.charges.map((charge, i, array) => {
       const onChangePrice = (e) => {
-        var value = e.target.value;
+        var value = Number(e.target.value);
         var newCharges = tools.deepCopy(array);
         newCharges[i].value = value;
         this.props.updateBilling('billingServices', newCharges);

@@ -70,10 +70,6 @@ export default class ProductsSection extends React.Component {
 
   // Changing States: ----------------------------------------------------------
 
-  onChangeTaxes = (e) => {
-    this.props.updateBilling(e.target.name, e.target.value);
-  }
-
   toggleCalendar = (e) => {
     e ? e.stopPropagation() : null;
     var calendarOpen = !this.state.calendarOpen;
@@ -85,7 +81,7 @@ export default class ProductsSection extends React.Component {
   renderBody = () => {
     return this.props.charges.map((charge, i, array) => {
       const onChangePrice = (e) => {
-        var value = e.target.value;
+        var value = Number(e.target.value);
         var newCharges = tools.deepCopy(array);
         newCharges[i].value = value;
         this.props.updateBilling('billingProducts', newCharges);

@@ -4,7 +4,7 @@ import tools from '/imports/startup/tools/index';
 export const Clients = new Mongo.Collection('clients');
 
 if (Meteor.isServer) {
-  Meteor.publish('clientsPub', () => {
+  Meteor.publish('clientsPub', (_id) => {
     return Clients.find({ visible: true }, {sort: { description: 1 }});
   })
   Meteor.methods({

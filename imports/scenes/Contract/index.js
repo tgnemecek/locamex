@@ -9,6 +9,7 @@ import Checkmark from '/imports/components/Checkmark/index';
 import AppHeader from '/imports/components/AppHeader/index';
 import NotFound from '/imports/components/NotFound/index';
 import Loading from '/imports/components/Loading/index';
+import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
 import Activate from './Activate/index';
@@ -16,8 +17,6 @@ import Finalize from './Finalize/index';
 import Header from './Header/index';
 import Information from './Information/index';
 import Items from './Items/index';
-import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
-import FooterButtons from '/imports/components/FooterButtons/index';
 
 export default class Contract extends React.Component {
   constructor(props) {
@@ -29,6 +28,9 @@ export default class Contract extends React.Component {
 
         client: '',
 
+        negociator: '',
+        representatives: [],
+
         proposal: '',
         discount: 0,
 
@@ -39,7 +41,11 @@ export default class Contract extends React.Component {
           servicesObs: ''
         },
 
-        billing: [],
+        inss: 11,
+        iss: 5,
+        billingProducts: [],
+        billingServices: [],
+
         deliveryAddress: {
           street: '',
           cep: '',

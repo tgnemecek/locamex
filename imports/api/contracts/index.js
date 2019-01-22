@@ -25,8 +25,14 @@ if (Meteor.isServer) {
         dates: state.dates,
         discount: state.discount,
 
+        negociator: state.negociator,
+        representatives: state.representatives,
+
+        inss: state.inss,
+        iss: state.iss,
         billingProducts: state.billingProducts,
         billingServices: state.billingServices,
+
         observations: state.observations,
 
         containers: state.containers,
@@ -37,6 +43,35 @@ if (Meteor.isServer) {
       Contracts.insert(data);
       Meteor.call('history.insert', data, 'contracts');
       return _id;
+    },
+    'contracts.update'(state) {
+      const data = {
+        // System Information
+        _id: state._id,
+        // Contract Information
+        client: state.client,
+        proposal: state.proposal,
+        deliveryAddress: state.deliveryAddress,
+        dates: state.dates,
+        discount: state.discount,
+
+        negociator: state.negociator,
+        representatives: state.representatives,
+
+        inss: state.inss,
+        iss: state.iss,
+        billingProducts: state.billingProducts,
+        billingServices: state.billingServices,
+
+        observations: state.observations,
+
+        containers: state.containers,
+        accessories: state.accessories,
+        services: state.services
+
+      };
+      Contracts.update({ _id: state._id }, { $set: data });
+      Meteor.call('history.insert', data, 'contracts');
     },
     'contracts.activate'(state) {
       const activate = (_id) => {
@@ -123,29 +158,6 @@ if (Meteor.isServer) {
       }
       Contracts.update({ _id }, { $set: data });
       Meteor.call('history.insert', data, 'contracts.update.one');
-    },
-    'contracts.update'(state) {
-      const data = {
-        // System Information
-        _id: state._id,
-        // Contract Information
-        client: state.client,
-        proposal: state.proposal,
-        deliveryAddress: state.deliveryAddress,
-        dates: state.dates,
-        discount: state.discount,
-
-        billingProducts: state.billingProducts,
-        billingServices: state.billingServices,
-        observations: state.observations,
-
-        containers: state.containers,
-        accessories: state.accessories,
-        services: state.services
-
-      };
-      Contracts.update({ _id: state._id }, { $set: data });
-      Meteor.call('history.insert', data, 'contracts');
     }
   })
 }
