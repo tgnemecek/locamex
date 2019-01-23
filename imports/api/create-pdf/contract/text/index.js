@@ -6,12 +6,13 @@ import text4 from './text-4/index';
 import text5 from './text-5/index';
 import text6 from './text-6/index';
 import text7 from './text-7/index';
+import text8 from './text-8/index';
 
-export default function clauses(which, _id) {
+export default function clauses(which, _id, proposal) {
   if (which === 0) {
     return text0(_id);
   } else if (which === 1) {
-    return text1();
+    return text1(proposal);
   } else if (which === 2) {
     return text2();
   } else if (which === 3) {
@@ -24,5 +25,7 @@ export default function clauses(which, _id) {
     return text6();
   } else if (which === 7) {
     return text7();
+  } else if (which === 8) {
+    return text8();
   }
 }

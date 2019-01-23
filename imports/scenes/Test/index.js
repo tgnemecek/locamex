@@ -10,22 +10,24 @@ class TestPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      a: "Alo, como vai? Qual é o seu nome? Prazer em conhecer."
+      return: ''
     }
   }
 
   onChange = (e) => {
-    console.log(e.target.value);
+    var value = e.target.value;
+
+    value = Number(value);
+
+
+    this.setState({ return: value })
   }
 
   render() {
     return (
       <div style={{width: "50px"}}>
-        <Input
-          type="textarea"
-          value={this.state.a}
-          onChange={this.onChange}
-        />
+        <input onChange={this.onChange} type="text"/>
+        Return is: {this.state.return}
       </div>
     )
   }

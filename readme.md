@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.6.2
+Version: 1.6.3
 
 ## Information:
 
@@ -8,6 +8,11 @@ Version: 1.6.2
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.6.3
+
+-  Restructured create-pdf api for flexible pdf assembly;
+-  Implemented proposal number, discount and billingServices in Contract scene;
 
 ### Version 1.6.2
 

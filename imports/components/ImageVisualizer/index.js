@@ -68,7 +68,7 @@ export default class ImageVisualizer extends React.Component {
         </div>
         <FooterButtons buttons={[
           {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
-          {text: "Novo Registro", className: "button--green", onClick: this.toggleUploadWindow}
+          {text: "Novo Registro", className: "button--green", onClick: () => this.toggleUploadWindow()}
         ]}/>
         {this.state.uploadWindow ?
           <FileUploader

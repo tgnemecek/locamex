@@ -145,7 +145,7 @@ export default class ServicesSection extends React.Component {
                 <th>Vencimento</th>
                 <th>Descrição da Cobrança</th>
                 <th>Valor Líquido</th>
-                <th>Valor Bruto</th>
+                <th>INSS + ISS</th>
               </tr>
             </thead>
             <tbody>

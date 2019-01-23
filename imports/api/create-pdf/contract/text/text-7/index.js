@@ -1,31 +1,34 @@
 export default function () {
   return [
-    {text: `CLÁUSULA NOVE - DA DEVOLUÇÃO DO OBJETO DE LOCAÇÃO`, style: 'h2'},
-    {text: `A LOCATÁRIA deverá comunicar, por e-mail, à LOCADORA o pedido de devolução do Objeto da Locação com antecedência mínima de 15 dias da data de devolução pretendida e efetuar a quitação de quaisquer dívidas e pagamentos em aberto oriundos deste contrato.`, style: 'p'},
-    {text: `§ 1º. No momento da retirada do Objeto da Locação, a LOCATÁRIA deverá:`, style: 'p'},
+    {text: `e deverá ser utilizado exclusivamente nesse local, sendo vedada sua movimentação sem prévio consentimento da LOCADORA formalizado por e-mail.`, style: 'p'},
+    {text: `§ 1º. A LOCATÁRIA declara ter completa permissão e autorização legal para utilizar o local em questão para instalação do Objeto da Locação por todo o período em que estiver em sua posse, ficando a LOCADORA eximida de toda e qualquer responsabilidade relacionada ao espaço que o Objeto da Locação ocupe.`, style: 'p'},
+    {text: `§ 2º. A LOCATÁRIA deverá garantir a plena acessibilidade ao local dos trabalhos, assim como espaço suficiente para posicionamento do caminhão com guindaste e para manobra dos equipamentos.`, style: 'p'},
+    {text: `§ 3º. É de responsabilidade da LOCATÁRIA identificar e formalizar imediatamente, por e-mail à LOCADORA, qualquer avaria existente no Objeto da Locação no ato da entrega, visto que a partir da entrega do Objeto da Locação, este passa a estar sob total responsabilidade da LOCATÁRIA e sujeito a indenizações, como definidas na Cláusula Oitava.`, style: 'p'},
+    {text: `§ 4º. A LOCATÁRIA, obriga-se a manter no local de entrega um preposto qualificado para coordenar os procedimentos de carga e descarga, de modo a prevenir problemas de qualquer espécie, por toda a duração de tais procedimentos.`, style: 'p'},
+    {text: `§ 5º. A demora superior a uma hora nos procedimentos de entrega por item do tipo Loca (Módulo Habitável) contada a partir da chegada do Objeto da Locação segundo o registro do rastreador no caminhão, implicará à LOCATÁRIA o pagamento do custo adicional de R$ 200,00 (duzentos reais) à LOCADORA por hora excedida, podendo ser cobrado em até 15 (quinze) dias após o ocorrido.`, style: 'p'},
+    {text: `§ 6º. Qualquer viagem e/ou serviço que, por falta de comunicação ou negligência da LOCATÁRIA, se tornar improdutiva no seu objetivo de entrega ou execução gerará à LOCATÁRIA nova cobrança correspondente aos custos da viagem e dos procedimentos improdutivos.`, style: 'p'},
+    {text: `CLÁUSULA QUINTA - DA VISTORIA`, style: 'h2'},
+    {text: `Para liberação da entrega do Objeto da Locação, será marcada pela LOCADORA uma data onde a LOCATÁRIA fará a visita em um dos pátios da LOCADORA para vistoria do Objeto da Locação e liberação para embarque formalizada e assinada.`, style: 'p'},
+    {text: `§ 1º. Caso a LOCATÁRIA deseje, está em seu poder indicar um outro funcionário da empresa da LOCATÁRIA para fazer a vistoria.`, style: 'p'},
+    {text: `§ 2º. Se por qualquer motivo a LOCATÁRIA opte por não efetuar a vistoria, a mesma pode dispensar tal formalidade através de um e-mail ou telefonema aprovando a liberação para embarque do Objeto da Locação por sua conta e risco.`, style: 'p'},
+    {text: `§ 3º. Com a assinatura da LOCATÁRIA do termo de aprovação de embarque, ou com a aprovação não presencial via email ou telefonema, a LOCADORA fica eximida da obrigação de realizar quaisquer alterações requisitadas pela LOCATÁRIA, podendo essas serem negociadas de forma extracontratual.`, style: 'p'},
+    {text: `CLÁUSULA SEXTA - DA UTILIZAÇÃO`, style: 'h2'},
+    {text: `A LOCATÁRIA é responsável pela correta utilização do Objeto da Locação, assim como por sua conservação e guarda, e serão de sua exclusiva responsabilidade quaisquer acidentes e/ou problemas com o Objeto da Locação ou por ele causados a terceiros durante todo o período da entrega à devolução, ficando excluída a LOCADORA de qualquer responsabilidade civil ou trabalhista e do pagamento de quaisquer indenizações, seja a que título for, mesmo que geradas por terceiros.`, style: 'p'},
+    {text: `§ 1º. É de responsabilidade da LOCATÁRIA executar, se necessárias, as ligações de água fria, rede de esgoto, alimentação elétrica e aterramento dos bens locados, ficando sob sua exclusiva responsabilidade o perfeito funcionamento dessas instalações, eximindo a LOCADORA de tais responsabilidades.`, style: 'p'},
+    {text: `§ 2º. A LOCATÁRIA fica expressamente proibida de realizar quaisquer adequações, customizações ou alterações de qualquer natureza no Objeto da Locação a menos que receba expressa autorização da LOCADORA formalizada via e-mail. O descumprimento dessa exigência gerará à LOCATÁRIA a cobrança de custos de restauração das respectivas alterações baseados na tabela de preços da LOCADORA vigente no período do ocorrido.`, style: 'p'},
+    {text: `CLÁUSULA SÉTIMA - DA MANUTENÇÃO`, style: 'h2'},
+    {text: `É de responsabilidade da LOCADORA a manutenção sem custo adicional somente dos seguintes itens, desde que os problemas emergentes não tenham sido causados por mau uso da LOCATÁRIA ou de terceiros:`, style: 'p'},
     {ol: [
-      `Providenciar a limpeza interna e externa do Objeto da Locação;`,
-      `Realizar o desligamento dos pontos de eletricidade, esgoto e água fria;`,
-      `Disponibilizar no local um preposto qualificado para auxiliar o procedimento de retirada;`,
-      `Garantir acessibilidade ao local de retirada para todo e qualquer procedimento necessário;`,
-      `Retirar qualquer publicidade, acessório e/ou decoração inserida no objeto da locação.`
+      `Vazamentos em cobertura;`,
+      `Troca de equipamento de ar-condicionado;`,
+      `Fechaduras de portas e janelas;`,
+      `Elétrica: tomadas, disjuntores e iluminação (exceto lâmpadas);`,
+      `Estrutura: Completa.`
     ], style: 'ol', type: 'upper-roman'},
-    {text: `§ 2º. O não atendimento dessas providências facultará à LOCADORA não aceitar a devolução dos equipamentos até que sejam atendidas, assim como a cobrança extra de eventuais períodos de locação, serviços, visitas técnicas, viagens e demais despesas geradas pelo ocorrido.`, style: 'p'},
-    {text: `§ 3º. Qualquer viagem e/ou serviço que, por falta de comunicação ou negligência da LOCATÁRIA, se tornar improdutiva no seu objetivo de devolução gerará à LOCATÁRIA nova cobrança correspondente aos custos da viagem e dos procedimentos improdutivos.`, style: 'p'},
-    {text: `§ 4º. Ao final da devolução do Objeto da Locação, será realizada pela LOCADORA a inspeção dos itens e, caso constate avarias além do desgaste normal, lhe estará facultado enviar à LOCATÁRIA um relatório de avarias, cabendo à LOCATÁRIA, dentro de um prazo máximo de 10 dias, optar por, necessariamente, uma das duas alternativas abaixo:`, style: 'p'},
-    {ol: [
-      `Realizar pagamento à LOCADORA pelos Serviços de Reparo dos itens, de acordo com a tabela de preços, fornecida pela LOCADORA, vigente no dia da devolução;`,
-      `Executar os Serviços de Reparo por sua conta ou mediante a contratação de terceiros.`
-    ], style: 'ol', type: 'upper-roman'},
-    {text: `§ 5º. Esgotado o prazo de 10 dias, a LOCADORA fica autorizada a emitir cobrança relativa aos Serviços de Reparo dos itens, assim como a cobrança extra correspondente ao Valor Unitário Mensal (Cláusula 1ª, § 1º) dos itens danificados em questão, oriunda dos custos gerados pela inatividade dos bens móveis.`, style: 'p'},
-    {text: `CLÁUSULA DEZ - DA VEDAÇÃO À SUBLOCAÇÃO, À CESSÃO DE LOCAÇÃO E AO EMPRÉSTIMO A TERCEIROS`, style: 'h2'},
-    {text: `Fica vedada à LOCATÁRIA a sublocação, cessão, ou empréstimo do Objeto da Locação, quer no todo ou em parte ou sob qualquer título, sem a expressa autorização da LOCADORA, sob pena de rescisão do presente contrato.`, style: 'p'},
-    {text: `CLÁUSULA ONZE - DA RECISÃO`, style: 'h2'},
-    {text: `Em caso de rescisão antecipada do contrato antes do seu termo final, independente de qual parte deu causa à rescisão, a LOCATÁRIA se obriga a quitar quaisquer dívidas oriundas deste contrato, incluindo mas não se limitando ao Valor Total do Contrato, Valores de Indenização (se cabíveis), Valores dos Serviços de Reparo (se cabíveis) e do Valor Mensal de Prorrogação (se cabível), sem nenhuma forma de proporcionalidade ou desconto, dentro de um prazo de 30 dias a contar a partir da rescisão.`, style: 'p'},
-    {text: `Parágrafo Único: Em cumprimento ao princípio da boa-fé, as partes se comprometem a informar uma à outra qualquer fato que possa porventura intervir na relação jurídica travada neste contrato.`, style: 'p'},
-    {text: `CLÁUSULA DOZE - DO FORO`, style: 'h2'},
-    {text: `Para reger as demandas oriundas do presente instrumento, as partes elegem como foro competente o da Comarca da Capital de São Paulo, renunciando a qualquer outro, por mais privilegiado que seja ou que possa vir a ser.`, style: 'p'},
-    {text: `E por terem assim ajustado e contratado, ambas as partes assinam este Instrumento em duas vias de igual valor e teor.`, style: 'p'}
+    {text: `Parágrafo Único: A LOCADORA não se responsabiliza pela manutenção de todo e qualquer serviço distinto dos descritos acima, como troca de lâmpadas, desentupimentos de tubulações, pintura, troca de chaves entre outros.`, style: 'p'},
+    {text: `CLÁUSULA OITAVA - DO SEGURO E DA INDENIZAÇÃO`, style: 'h2'},
+    {text: `É de responsabilidade e custos da LOCATÁRIA a contratação de seguro para o Objeto da Locação.`, style: 'p'},
+    {text: `Parágrafo Único: Na hipótese de não devolução, perda, roubo, extravio, ou destruição total dos bens móveis por ora locados, fica estipulada indenização devida pela LOCATÁRIA correspondente ao Valor de Indenização de cada item a ser indenizado, que deverá ser pago à LOCADORA em até 30 (trinta) dias a partir da data da notificação do sinistro. Transcorridos os 30 (trinta) dias, caso a LOCATÁRIA não pague o valor indenizatório, a LOCADORA poderá emitir cobranças de locação dos itens que ficaram indisponíveis mês a mês até que o valor de indenização seja quitado.`, style: 'p'}
   ]
 }
 
