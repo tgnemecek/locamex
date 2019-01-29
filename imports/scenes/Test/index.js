@@ -3,6 +3,8 @@ import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Containers } from '/imports/api/containers/index';
 
+import tools from '/imports/startup/tools/index';
+
 import SuggestionBar from '/imports/components/SuggestionBar/index';
 import Input from '/imports/components/Input/index';
 
@@ -15,19 +17,21 @@ class TestPage extends React.Component {
   }
 
   onChange = (e) => {
-    var value = e.target.value;
-
-    value = Number(value);
-
-
-    this.setState({ return: value })
+    this.setState({ return: e.target.value })
   }
 
   render() {
     return (
-      <div style={{width: "50px"}}>
-        <input onChange={this.onChange} type="text"/>
+      <div style={{width: "500px"}}>
+        <Input
+          type="currency"
+          onChange={this.onChange}
+          value={this.state.return}
+          allowNegative={true}
+        />
+        {/* <input onChange={this.onChange} type="text"/>
         Return is: {this.state.return}
+        aaaaaaaaa {tools.format("-", "currency")} */}
       </div>
     )
   }

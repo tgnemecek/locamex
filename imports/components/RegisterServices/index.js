@@ -15,8 +15,7 @@ export default class RegisterServices extends React.Component {
     this.state = {
       _id: this.props.item._id || '',
       description: this.props.item.description || '',
-      negative: this.props.item.price < 0,
-      price: this.props.item.price || '',
+      price: this.props.item.price || 0,
 
       errorMsg: '',
       errorKeys: [],
@@ -26,17 +25,6 @@ export default class RegisterServices extends React.Component {
   }
   onChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
-  }
-  onChangePrice = (e) => {
-    var price = Number(e.target.value);
-    var negative = price < 0;
-    this.setState({ price, negative });
-  }
-  onChangeNegative = (e) => {
-    var value = e.target.value;
-    var price = this.state.price;
-    price = 0 - price;
-    this.setState({ negative: value, price });
   }
   toggleConfirmationWindow = () => {
     var confirmationWindow = !this.state.confirmationWindow;
@@ -65,7 +53,7 @@ export default class RegisterServices extends React.Component {
         closeBox={this.props.toggleWindow}
         width="800px">
           <div className="error-message">{this.state.errorMsg}</div>
-          <Block columns={4} options={[{block: 0, span: 2}]}>
+          <Block columns={3} options={[{block: 0, span: 2}]}>
             <Input
               title="Descrição:"
               type="text"
@@ -75,19 +63,12 @@ export default class RegisterServices extends React.Component {
               onChange={this.onChange}
             />
             <Input
-              title="Desconto?"
-              type="checkbox"
-              id="negative"
-              name="negative"
-              value={this.state.negative}
-              onChange={this.onChangeNegative}
-            />
-            <Input
               title="Valor:"
               type="currency"
               name="price"
               value={this.state.price}
-              onChange={this.onChangePrice}
+              onChange={this.onChange}
+              allowNegative={true}
             />
           </Block>
           <ConfirmationWindow

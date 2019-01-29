@@ -12,9 +12,13 @@ if (Meteor.isProduction) {
 
 } else {
 
-  AWSAccessKeyId = Meteor.settings.private.AWSAccessKeyId;
-  AWSSecretAccessKey = Meteor.settings.private.AWSSecretAccessKey;
-
+  if (Meteor.settings.private) {
+    AWSAccessKeyId = Meteor.settings.private.AWSAccessKeyId;
+    AWSSecretAccessKey = Meteor.settings.private.AWSSecretAccessKey;
+  } else {
+    AWSAccessKeyId = '';
+    AWSSecretAccessKey = '';
+  }
 }
 
 

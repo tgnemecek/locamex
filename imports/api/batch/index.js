@@ -1,4 +1,3 @@
-import { Mongo } from 'meteor/mongo';
 import tools from '/imports/startup/tools/index';
 
 import { Accessories } from '/imports/api/accessories/index';
@@ -10,39 +9,71 @@ import { Packs } from '/imports/api/packs/index';
 import { Places } from '/imports/api/places/index';
 import { Services } from '/imports/api/services/index';
 
-const Batch = new Mongo.Collection('batch');
-
-if (Meteor.isServer) {
-  Meteor.methods({
-    'batch.insert'(observations) {
-      Batch.insert({
-        insertionDate: new Date(),
-        observations
-      })
-    }
-  })
-
-  // EXEMPLO:
-  
-
-  // const batchCollections = () => {
-  //   var currentBatch = Batch.find().count();
+if (Meteor.isServer && Meteor.isDevelopment) {
+  // // Use meteor debug for bebugger to work!
+  // debugger;
   //
-  //   // currentBactch is an index used to identify if the current database needs to run the batch code.
-  //   // If the currentBatch matches, it means the database is outdated.
-  //   if (currentBatch === 0) {
-  //     var arrayOfCollections = [Accessories, Clients, Containers, History, Modules, Packs, Places, Services];
+  // var modules = Modules.find().fetch();
+  // var containers = Containers.find().fetch();
   //
-  //     arrayOfCollections.forEach((Collection, i) => {
-  //       var database = Collection.find().fetch();
-  //       Collection.remove({});
-  //       database.forEach((item) => {
-  //         delete item._id;
-  //         Collection.insert(item);
-  //       })
+  // var backModules = tools.deepCopy(modules);
+  // var backContainers = tools.deepCopy(containers);
+  //
+  // const restore = (type) => {
+  //   if (type === 'modules') {
+  //     Modules.remove({});
+  //     backModules.forEach((item) => {
+  //       Modules.insert(item);
   //     })
-  //     Meteor.call('batch.insert', 'Removed prefix from all _ids from all collections', () => batchCollections());
+  //   } else {
+  //     Containers.remove({});
+  //     backContainers.forEach((item) => {
+  //       Containers.insert(item);
+  //     })
   //   }
   // }
-  // batchCollections();
+  //
+  // var dictionary = {};
+  //
+  // Modules.remove({});
+  // Containers.remove({});
+  //
+  // modules.forEach((module) => {
+  //   var oldId = module._id;
+  //   var newId = new Meteor.Collection.ObjectID()._str;
+  //   module._id = newId;
+  //   dictionary[oldId] = newId;
+  //   Modules.insert(module);
+  // })
+  //
+  // containers.forEach((container, i) => {
+  //   if (container.type === 'modular') {
+  //     var modules = tools.deepCopy(container.modules);
+  //     for (var j = 0; j < modules.length; j++) {
+  //       modules[j] = dictionary[modules[j]];
+  //     }
+  //     container.modules = modules;
+  //   }
+  //   delete container._id;
+  //
+  //   Containers.insert(container);
+  // })
+
+  // Modules.remove({});
+  // Containers.remove({});
+  //
+  // modules.forEach((module) => {
+  //   var newId = new Meteor.Collection.ObjectID()._str;
+  //   containers.forEach((container) => {
+  //     if (container.modules) {
+  //       for (var i = 0; i < container.modules.length; i++) {
+  //         if (container.modules[i] === module._id) {
+  //           container.modules[i] = newId;
+  //         }
+  //       }
+  //     }
+  //     Containers.insert(container);
+  //   })
+  //   Modules.insert({...module, _id: newId});
+  // })
 }
