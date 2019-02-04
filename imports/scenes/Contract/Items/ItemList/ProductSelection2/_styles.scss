@@ -1,16 +1,16 @@
 @import './ModularScreen/styles';
 
-.product-selection {
+.item-list__selection {
   display: flex;
   justify-content: space-between;
 }
-.product-selection__edit-button {
+.item-list__selection__edit-button {
   padding: ($space /4);
   background: none;
   border: none;
   cursor: pointer;
 }
-.product-selection__table {
+.item-list__selection__table {
   .medium-column {
     text-align: center;
     width: 120px;
@@ -20,15 +20,15 @@
     width: 42px;
   }
 }
-.product-selection__scroll-block {
+.item-list__selection__scroll-block {
   height: 500px;
   overflow-y: auto;
 }
-.product-selection__database {
+.item-list__selection__database {
   flex-grow: .8;
   flex-basis: 1px;
 }
-.product-selection__added-items {
+.item-list__selection__added-items {
   flex-grow: 1;
   flex-basis: 1px;
   label {margin-bottom: 10px;}

@@ -19,7 +19,7 @@ export default class AddedItemsSide extends React.Component {
       var buttonProps = {
         name: "addedItems",
         value: item._id,
-        className: "product-selection__edit-button"
+        className: "item-list__selection__edit-button"
       };
       var buttonIcon = "✎";
       if (item.type === 'fixed' || this.props.databaseType === 'accessories' || this.props.databaseType === 'services') {
@@ -39,7 +39,7 @@ export default class AddedItemsSide extends React.Component {
       }
 
       return (
-        <tr key={i} className="product-selection__db-item">
+        <tr key={i} className="item-list__selection__db-item">
           <td className="small-column">{item.serial || "-"}</td>
           <td>{item.description + suffix()}</td>
           <td className="medium-column"><Input type="currency" name={i} value={item.price} onChange={this.props.changePrice}/></td>
@@ -61,9 +61,9 @@ export default class AddedItemsSide extends React.Component {
 
   render() {
       return (
-        <div className="product-selection__added-items">
-          <div className="product-selection__scroll-block">
-            <table className="table product-selection__table">
+        <div className="item-list__selection__added-items">
+          <div className="item-list__selection__scroll-block">
+            <table className="table item-list__selection__table">
               <thead>
                 <tr>
                   <th className="table__small-column">Série</th>

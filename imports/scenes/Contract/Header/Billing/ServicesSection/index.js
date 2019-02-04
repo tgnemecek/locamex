@@ -69,13 +69,13 @@ export default class ServicesSection extends React.Component {
         this.toggleCalendar();
         this.props.updateBilling('billingServices', array);
       }
-      const calculateLiquid = () => {
+      const calculateTaxes = () => {
         var value = charge.value;
         if (!value) return tools.format(0, "currency");
 
         var inssDiscount = (value * this.props.inss) / 100;
         var issDiscount = (value * this.props.iss) / 100;
-        value = value - (inssDiscount + issDiscount);
+        value = inssDiscount + issDiscount;
         return tools.format(value, "currency");
       }
       return (
@@ -93,11 +93,12 @@ export default class ServicesSection extends React.Component {
           <td>
             <Input name={i} value={charge.description} onChange={onChangeDescription} type="textarea"/>
           </td>
-          <td>{calculateLiquid()}</td>
+          <td>{calculateTaxes()}</td>
           <td>
             <Input name={i} type="currency"
               style={{textAlign: 'right'}}
               name="value"
+              allowNegative={true}
               onChange={onChangePrice}
               value={charge.value}/>
           </td>
@@ -144,8 +145,8 @@ export default class ServicesSection extends React.Component {
                 <th>Número</th>
                 <th>Vencimento</th>
                 <th>Descrição da Cobrança</th>
-                <th>Valor Líquido</th>
                 <th>INSS + ISS</th>
+                <th>Valor</th>
               </tr>
             </thead>
             <tbody>

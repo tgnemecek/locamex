@@ -44,7 +44,7 @@ export default class Items extends React.Component {
           <ItemList
             updateContract={this.props.updateContract}
             contract={this.props.contract}
-            database="containers"
+            dbName="containers"
             onClick={this.toggleProductSelection}/>
         </div>
         <div className="contract__list">
@@ -52,7 +52,7 @@ export default class Items extends React.Component {
           <ItemList
             updateContract={this.props.updateContract}
             contract={this.props.contract}
-            database="accessories"
+            dbName="accessories"
             onClick={this.toggleProductSelection}/>
         </div>
         <div className="contract__list">
@@ -60,7 +60,7 @@ export default class Items extends React.Component {
           <ItemList
             updateContract={this.props.updateContract}
             contract={this.props.contract}
-            database="services"
+            dbName="services"
             onClick={this.toggleProductSelection}/>
         </div>
       </div>

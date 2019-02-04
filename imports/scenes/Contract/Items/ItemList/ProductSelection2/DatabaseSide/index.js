@@ -10,7 +10,7 @@ export default class DatabaseSide extends React.Component {
       var buttonProps = {
         name: "database",
         value: item._id,
-        className: "product-selection__edit-button"
+        className: "item-list__selection__edit-button"
       };
       if (item.type === 'fixed' || this.props.databaseType === 'accessories' || this.props.databaseType === 'services') {
         buttonProps.onClick = this.props.addItem;
@@ -22,7 +22,7 @@ export default class DatabaseSide extends React.Component {
 
       if (!item.added && item.available != 0) {
         return (
-          <tr key={i} className="product-selection__db-item">
+          <tr key={i} className="item-list__selection__db-item">
             <td className="table__small-column">{item.serial || "-"}</td>
             <td>{item.description + this.packSuffix(item.type)}</td>
             {this.props.databaseType !== 'containers' ? null : <th className="table__small-column">{item.place || '-'}</th>}
@@ -42,9 +42,9 @@ export default class DatabaseSide extends React.Component {
 
   render() {
       return (
-        <div className="product-selection__database">
-          <div className="product-selection__scroll-block">
-            <table className="table product-selection__table">
+        <div className="item-list__selection__database">
+          <div className="item-list__selection__scroll-block">
+            <table className="table item-list__selection__table">
               <thead>
                 <tr>
                   <th className="table__small-column">Série</th>

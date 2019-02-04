@@ -55,7 +55,7 @@ export default class Billing extends React.Component {
   }
 
   componentDidMount() {
-    if (this.state.masterValue === 0) {
+    if (this.state.masterValue <= 0) {
       this.setState({ errorMsg: 'O Valor Total do Contrato não pode ser zero. Adicione produtos antes.' });
     }
   }
@@ -94,7 +94,7 @@ export default class Billing extends React.Component {
       this.setState({ errorMsg: 'Não devem haver cobranças com valor zero.' });
     } else if (!this.differenceIsZero()) {
       this.setState({ errorMsg: 'O valor resultante das parcelas não coincide com o Valor Total do Contrato.' });
-    } else if (this.state.masterValue === 0) {
+    } else if (this.state.masterValue <= 0) {
       this.setState({ errorMsg: 'O Valor Total do Contrato não pode ser zero. Adicione produtos antes.' });
     } else {
       this.props.updateContract([this.state.billingProducts, this.state.billingServices, this.state.inss, this.state.iss], ["billingProducts", "billingServices", "inss", "iss"]);

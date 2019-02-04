@@ -46,12 +46,12 @@ export default class tools {
     } else return populatedArray[0] || "";
   }
 
-  static findPlaceIndex = (array, value) => {
+  static findUsingId = (array, _id) => {
     for (var i = 0; i < array.length; i++) {
-      if (array[i]._id === value) {
-        return i;
+      if (array[i]._id === _id) {
+        return array[i];
       }
-    } return -1;
+    } return false;
   }
 
   // Strings
@@ -210,14 +210,6 @@ export default class tools {
       default:
         return value;
     }
-  }
-
-  static findPlaceIndex = (array, value) => {
-    for (var i = 0; i < array.length; i++) {
-      if (array[i]._id === value) {
-        return i;
-      }
-    } return -1;
   }
 
   static countAvailableItems = (array) => {

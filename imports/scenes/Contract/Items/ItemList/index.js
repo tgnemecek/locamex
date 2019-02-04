@@ -1,7 +1,8 @@
 import React from 'react';
 
 import tools from '/imports/startup/tools/index';
-import ProductSelection from './ProductSelection/index';
+import ServicesSelection from './ServicesSelection/index';
+import AccessoriesSelection from './AccessoriesSelection/index';
 
 export default class ItemList extends React.Component {
   constructor(props) {
@@ -12,7 +13,7 @@ export default class ItemList extends React.Component {
   }
 
   renderDescripton = (item) => {
-    if (item.type === 'fixed' || this.props.database === 'accessories' || this.props.database === 'services'){
+    if (item.type === 'fixed' || this.props.dbName === 'accessories' || this.props.dbName === 'services'){
       return <td>{item.description}</td>
     } else if (item.type === 'modular' || item.type === 'pack') {
       var suffix = "(";
@@ -34,11 +35,11 @@ export default class ItemList extends React.Component {
   }
 
   updateTable = (addedItems) => {
-    this.props.updateContract([addedItems, []], [this.props.database, "billing"]);
+    this.props.updateContract([addedItems, []], [this.props.dbName, "billing"]);
   }
 
   row = () => {
-    return this.props.contract[this.props.database].map((item, i) => {
+    return this.props.contract[this.props.dbName].map((item, i) => {
       return (
         <tr key={i}>
           <td className="table__small-column">{item.serial || "-"}</td>
@@ -51,15 +52,23 @@ export default class ItemList extends React.Component {
   }
 
   render() {
+    var Selection;
+    if (this.props.dbName === 'containers') {
+      Selection = AccessoriesSelection; // MUDAR!!!!
+    } else if (this.props.dbName === 'accessories') {
+      Selection = AccessoriesSelection;
+    } else if (this.props.dbName === 'services') {
+      Selection = ServicesSelection;
+    }
     return (
       <>
-      {this.state.windowOpen ? <ProductSelection
-                                  database={this.props.database}
-                                  addedItems={this.props.contract[this.props.database]}
-                                  saveEdits={this.updateTable}
-                                  closeProductSelection={this.toggleWindow}/> : null}
+      {this.state.windowOpen ?
+        <Selection
+          addedItems={this.props.contract.accessories}
+          saveEdits={this.updateTable}
+          closeWindow={this.toggleWindow}/> : null}
       <div className="contract__item-list" onClick={this.toggleWindow}>
-        {this.props.contract[this.props.database].length > 0 ?
+        {this.props.contract[this.props.dbName].length > 0 ?
           <div>
             <div className="contract__item-list__overlay">
               <div>✎</div>
@@ -89,7 +98,6 @@ export default class ItemList extends React.Component {
         }
         </div>
       </>
-
     )
   }
 }

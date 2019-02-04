@@ -131,7 +131,7 @@ export default class Contract extends React.Component {
         errorMsg = 'Favor preencher a Tabela de Cobrança.';
       }
 
-      if (!this.totalValue()) {
+      if (this.totalValue() <= 0) {
         errorKeys.push("totalValue");
         errorMsg = 'O Valor Total do Contrato não pode ser zero.';
       }
