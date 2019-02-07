@@ -16,7 +16,6 @@ export default class AddedItems extends React.Component {
               type="currency"
               name={item._id}
               value={item.price}
-              allowNegative={true}
               onChange={this.props.changePrice}/>
           </td>
           <td className="table__small-column">

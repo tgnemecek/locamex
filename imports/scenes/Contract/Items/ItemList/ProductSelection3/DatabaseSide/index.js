@@ -3,7 +3,7 @@ import React from 'react';
 
 import tools from '/imports/startup/tools/index';
 
-export default class DatabaseSide extends React.Component {
+export default class Database extends React.Component {
 
   renderDatabase = () => {
     return this.props.database.map((item, i, array) => {

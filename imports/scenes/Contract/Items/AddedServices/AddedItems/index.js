@@ -5,7 +5,7 @@ import tools from '/imports/startup/tools/index';
 import Input from '/imports/components/Input/index';
 
 
-export default class AddedItemsSide extends React.Component {
+export default class AddedItems extends React.Component {
   renderAddedItems = () => {
     return this.props.addedItems.map((item, i, array) => {
       return (
@@ -16,6 +16,7 @@ export default class AddedItemsSide extends React.Component {
               type="currency"
               name={item._id}
               value={item.price}
+              allowNegative={true}
               onChange={this.props.changePrice}/>
           </td>
           <td className="table__small-column">

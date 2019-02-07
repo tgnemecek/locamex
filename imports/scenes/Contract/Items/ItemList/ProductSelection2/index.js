@@ -15,8 +15,8 @@ import FooterButtons from '/imports/components/FooterButtons/index';
 import Input from '/imports/components/Input/index';
 import SearchBar from '/imports/components/SearchBar/index';
 
-import DatabaseSide from './DatabaseSide/index';
-import AddedItemsSide from './AddedItemsSide/index';
+import Database from './Database/index';
+import AddedItems from './AddedItems/index';
 import ModularScreen from './ModularScreen/index';
 import PackScreen from './PackScreen/index';
 
@@ -375,14 +375,14 @@ export default class ProductSelection extends React.Component {
             <div style={{marginTop: "30px"}}>
               <label>Itens Adicionados no Contrato:</label>
             </div>
-            <DatabaseSide
+            <Database
               database={this.state.filteredDatabase}
               databaseType={this.props.database}
               addItem={this.addItem}
               fullDatabase={this.state.fullDatabase}
               togglePackScreen={this.togglePackScreen}
               toggleModularScreen={this.toggleModularScreen}/>
-            <AddedItemsSide
+            <AddedItems
               database={this.props.database}
               databaseType={this.props.database}
               changePrice={this.changePrice}

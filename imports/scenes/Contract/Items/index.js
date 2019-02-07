@@ -2,66 +2,41 @@ import React from 'react';
 
 import tools from '/imports/startup/tools/index';
 
-import ItemList from './ItemList/index';
+import AddedContainers from './AddedContainers/index';
+import AddedAccessories from './AddedAccessories/index';
+import AddedServices from './AddedServices/index';
 
 export default class Items extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      containersSelectionOpen: false,
-      accessoriesSelectionOpen: false,
-      servicesSelectionOpen: false,
-
-      containers: this.props.contract.containers,
-      accessories: this.props.contract.accessories,
-      services: this.props.contract.services
-    }
-  }
-
-  toggleProductSelection = (database) => {
-    if (this.state.containersSelectionOpen || this.state.accessoriesSelectionOpen || this.state.servicesSelectionOpen) {
-      this.setState({ containersSelectionOpen: false });
-      this.setState({ accessoriesSelectionOpen: false });
-      this.setState({ servicesSelectionOpen: false });
-    } else switch (database) {
-      case 'containers':
-        this.setState({ containersSelectionOpen: true });
-        break;
-      case 'accessories':
-        this.setState({ accessoriesSelectionOpen: true });
-        break;
-      case 'services':
-        this.setState({ servicesSelectionOpen: true });
-        break;
-    }
-  }
-
   render() {
     return(
       <div className="contract__items">
         <div className="contract__list">
-          <h3 onClick={this.toggleProductSelection}>Containers:</h3>
-          <ItemList
+          <h3>Containers:</h3>
+          <AddedContainers
+            updateContract={this.props.updateContract}
+            contract={this.props.contract}/>
+          {/* <ItemList
             updateContract={this.props.updateContract}
             contract={this.props.contract}
             dbName="containers"
-            onClick={this.toggleProductSelection}/>
+            onClick={this.toggleProductSelection}/> */}
         </div>
         <div className="contract__list">
-          <h3 onClick={this.toggleProductSelection}>Acessórios:</h3>
-          <ItemList
+          <h3>Acessórios:</h3>
+          <AddedAccessories
             updateContract={this.props.updateContract}
-            contract={this.props.contract}
-            dbName="accessories"
-            onClick={this.toggleProductSelection}/>
+            contract={this.props.contract}/>
         </div>
         <div className="contract__list">
-          <h3 onClick={this.toggleProductSelection}>Serviços:</h3>
-          <ItemList
+          <h3>Serviços:</h3>
+          <AddedServices
+            updateContract={this.props.updateContract}
+            contract={this.props.contract}/>
+          {/* <ItemList
             updateContract={this.props.updateContract}
             contract={this.props.contract}
             dbName="services"
-            onClick={this.toggleProductSelection}/>
+            onClick={this.toggleProductSelection}/> */}
         </div>
       </div>
     )

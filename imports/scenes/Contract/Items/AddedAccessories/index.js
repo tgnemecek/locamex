@@ -11,15 +11,18 @@ import Input from '/imports/components/Input/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
-import DatabaseSide from './DatabaseSide/index';
-import AddedItemsSide from './AddedItemsSide/index';
+import Table from './Table/index';
+import Database from './Database/index';
+import AddedItems from './AddedItems/index';
 
-class AccessoriesSelection extends React.Component {
+class AddedAccessories extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       filteredDatabase: [],
-      addedItems: this.props.addedItems || []
+      addedItems: this.props.addedItems || [],
+
+      isOpen: false
     }
   }
 
@@ -28,6 +31,11 @@ class AccessoriesSelection extends React.Component {
       var filteredDatabase = this.hideFromArray(this.props.fullDatabase);
       this.setState({ filteredDatabase })
     }
+  }
+
+  toggleWindow = () => {
+    var isOpen = !this.state.isOpen;
+    this.setState({ isOpen })
   }
 
   changePrice = (e) => {
@@ -111,51 +119,60 @@ class AccessoriesSelection extends React.Component {
     var addedItems = this.state.addedItems;
     var newArray = [];
     addedItems.forEach((item) => {
-      if (item.quantity > 0 || item.type !== 'fixed') newArray.push(item);
+      if (item.quantity > 0) newArray.push(item);
     })
-    this.props.saveEdits(newArray);
-    this.props.closeWindow();
+    this.props.updateContract(newArray, 'accessories');
+    this.toggleWindow();
   }
 
   render() {
     return (
-      <Box
-        title="Seleção de Serviços"
-        closeBox={this.props.closeWindow}
-        width="1200px">
-          <Block columns={2}>
-            <SearchBar
-              database={this.props.fullDatabase}
-              options={{onlySearchHere: ['description']}}
-              searchReturn={this.searchReturn}/>
-            <div style={{marginTop: "30px"}}>
-              <label>Serviços Adicionados no Contrato:</label>
-            </div>
-            <DatabaseSide
-              database={this.state.filteredDatabase}
-              addItem={this.addItem}/>
-            <AddedItemsSide
-              database={this.state.filteredDatabase}
-              addedItems={this.state.addedItems}
+      <div>
+        <Table
+          addedItems={this.props.contract.accessories}
+          toggleWindow={this.toggleWindow}
+          updateContract={this.props.updateContract}
+        />
+        {this.state.isOpen ?
+          <Box
+            title="Seleção de Serviços"
+            closeBox={this.toggleWindow}
+            width="1200px">
+              <Block columns={2}>
+                <SearchBar
+                  database={this.props.fullDatabase}
+                  options={{onlySearchHere: ['description']}}
+                  searchReturn={this.searchReturn}/>
+                <div style={{marginTop: "30px"}}>
+                  <label>Serviços Adicionados no Contrato:</label>
+                </div>
+                <Database
+                  database={this.state.filteredDatabase}
+                  addItem={this.addItem}/>
+                <AddedItems
+                  database={this.state.filteredDatabase}
+                  addedItems={this.state.addedItems}
 
-              changePrice={this.changePrice}
-              changeQuantity={this.changeQuantity}
-              removeItem={this.removeItem}
+                  changePrice={this.changePrice}
+                  changeQuantity={this.changeQuantity}
+                  removeItem={this.removeItem}
 
-              togglePackScreen={this.togglePackScreen}
-              toggleModularScreen={this.toggleModularScreen}/>
-          </Block>
-          <FooterButtons buttons={[
-            {text: "Voltar", className: "button--secondary", onClick: this.props.closeWindow},
-            {text: "Salvar", onClick: this.saveEdits}
-          ]}/>
-      </Box>
+                  togglePackScreen={this.togglePackScreen}
+                  toggleModularScreen={this.toggleModularScreen}/>
+              </Block>
+              <FooterButtons buttons={[
+                {text: "Voltar", className: "button--secondary", onClick: this.props.closeWindow},
+                {text: "Salvar", onClick: this.saveEdits}
+              ]}/>
+          </Box>
+        : null}
+      </div>
     )
   }
 }
 
-export default AccessoriesSelectionWrapper = withTracker((props) => {
+export default AddedAccessoriesWrapper = withTracker((props) => {
   Meteor.subscribe("accessoriesPub");
   var fullDatabase = Accessories.find({visible: true}).fetch();
   return { fullDatabase }
-})(AccessoriesSelection);
+})(AddedAccessories);

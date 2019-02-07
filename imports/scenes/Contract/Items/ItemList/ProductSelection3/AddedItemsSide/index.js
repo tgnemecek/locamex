@@ -5,7 +5,7 @@ import tools from '/imports/startup/tools/index';
 import Input from '/imports/components/Input/index';
 
 
-export default class AddedItemsSide extends React.Component {
+export default class AddedItems extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

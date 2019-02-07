@@ -25,6 +25,7 @@ export default class AddedItems extends React.Component {
               name={item._id}
               style={{width: "40px"}}
               value={item.quantity || 1}
+              readOnly={item.type === 'fixed'}
               min={1}
               onChange={this.props.changeQuantity}/>
           </td>
