@@ -9,109 +9,147 @@ if (Meteor.isServer) {
     return Containers.find({ visible: true }, {sort: { description: 1 }});
   })
   Meteor.methods({
-    'containers.insert'(state) {
+    'containers.fixed.insert' (state) {
       const _id = tools.generateId();
-      var data;
-      if (state.type == 'fixed') {
-        data = {
-          _id,
-          description: state.description,
-          type: state.type,
-          serial: state.serial,
-          status: "available",
-          price: state.price || 0,
-          restitution: state.restitution || 0,
-          observations: state.observations,
-          images: state.images,
-          visible: true
-        }
-      } else if (state.type == 'modular') {
-        data = {
-          _id,
-          description: state.description,
-          type: state.type,
-          assembled: state.assembled || 0,
-          place: undefined,
-          price: state.price || 0,
-          restitution: state.restitution || 0,
-          allowedModules: state.allowedModules || [],
-          visible: true
-        };
+      var data = {
+        _id,
+        description: state.description,
+        type: "fixed",
+
+        units: [],
+
+        price: state.price,
+        restitution: state.restitution,
+
+        visible: true
       }
       Containers.insert(data);
-      Meteor.call('history.insert', data, 'containers');
-    }, // Marked (currently being used)
-    'containers.update'(state) {
-      var data;
-      if (state.type == 'fixed') {
-        data = {
-          description: state.description,
-          type: state.type,
-          serial: state.serial,
-          price: state.price,
-          restitution: state.restitution,
-          observations: state.observations,
-          images: state.images,
-          visible: true
-        };
-      } else if (state.type == 'modular') {
-        data = {
-          description: state.description,
-          type: state.type,
-          assembled: state.assembled,
-          price: state.price,
-          restitution: state.restitution,
-          allowedModules: state.allowedModules,
-          visible: true
-        };
-      }
-      Containers.update({ _id: state._id }, { $set: data });
-      Meteor.call('history.insert', data, 'containers');
-    }, // Marked (currently being used)
-    'containers.hide'(_id) {
-      const data = {
-        visible: false
-      };
-      Containers.update({ _id }, { $set: data });
-      Meteor.call('history.insert', data, 'containers');
-    }, // Marked (currently being used)
-    'containers.transaction.fixed'(state) {
-      const data = {
-        _id: state._id,
-        status: state.status,
-        place: state.place
-      }
-      Containers.update({ _id: state._id }, { $set: data });
-      Meteor.call('history.insert', data, 'containers');
-    }, // Marked (currently being used)
-    'containers.status' (_id, status) {
+      Meteor.call('history.insert', data, 'containers.fixed.insert');
+    },
+
+    'containers.modular.insert' (state) {
+      const _id = tools.generateId();
       var data = {
-        status
-      }
-      Containers.update({ _id }, { $set: data });
-      Meteor.call('history.insert', data, 'containers');
-    }, // Unmarked (needs to be checked)
-    'containers.check'(_id) {
-      const item = Containers.findOne(
-        {
-          $and: [
-            { _id },
-            { visible: true }
-          ]
-        }
-      );
-      if (!item) throw new Meteor.Error("_id-not-found", "Um dos containers locados não está mais disponível ou foi excluído.", arguments);
-      if (item.status == 'available') {
-        return true;
-      } else return false;
-    }, // Unmarked (needs to be checked)
-    'containers.update.assembled'(_id, quantity) {
-      var data = {
-        assembled: quantity
+        _id,
+        description: state.description,
+        type: "modular",
+
+        allowedModules: state.allowedModules,
+
+        price: state.price,
+        restitution: state.restitution,
+
+        visible: true
       };
-      Containers.update({ _id }, { $inc: data });
-      data._id = _id;
-      Meteor.call('history.insert', data, 'containers.update.assembled');
-    } // Unmarked (needs to be checked)
+      Containers.insert(data);
+      Meteor.call('history.insert', data, 'containers.modular.insert');
+    }
+
+    // 'containers.insert'(state) {
+    //   const _id = tools.generateId();
+    //   var data;
+    //   if (state.type == 'fixed') {
+    //     data = {
+    //       _id,
+    //       description: state.description,
+    //       type: state.type,
+    //       available: [],
+    //       rented: [],
+    //       serial: state.serial,
+    //       status: "available",
+    //       price: state.price || 0,
+    //       restitution: state.restitution || 0,
+    //       observations: state.observations,
+    //       images: state.images,
+    //       visible: true
+    //     }
+    //   } else if (state.type == 'modular') {
+    //     data = {
+    //       _id,
+    //       description: state.description,
+    //       type: state.type,
+    //       assembled: state.assembled || 0,
+    //       place: undefined,
+    //       price: state.price || 0,
+    //       restitution: state.restitution || 0,
+    //       allowedModules: state.allowedModules || [],
+    //       visible: true
+    //     };
+    //   }
+    //   Containers.insert(data);
+    //   Meteor.call('history.insert', data, 'containers');
+    // }, // Marked (currently being used)
+    // 'containers.update'(state) {
+    //   var data;
+    //   if (state.type == 'fixed') {
+    //     data = {
+    //       description: state.description,
+    //       type: state.type,
+    //       serial: state.serial,
+    //       price: state.price,
+    //       restitution: state.restitution,
+    //       observations: state.observations,
+    //       images: state.images,
+    //       visible: true
+    //     };
+    //   } else if (state.type == 'modular') {
+    //     data = {
+    //       description: state.description,
+    //       type: state.type,
+    //       assembled: state.assembled,
+    //       price: state.price,
+    //       restitution: state.restitution,
+    //       allowedModules: state.allowedModules,
+    //       visible: true
+    //     };
+    //   }
+    //   Containers.update({ _id: state._id }, { $set: data });
+    //   Meteor.call('history.insert', data, 'containers');
+    // }, // Marked (currently being used)
+    // 'containers.hide'(_id) {
+    //   const data = {
+    //     visible: false
+    //   };
+    //   Containers.update({ _id }, { $set: data });
+    //   Meteor.call('history.insert', data, 'containers');
+    // }, // Marked (currently being used)
+    // 'containers.transaction.fixed'(state) {
+    //   const data = {
+    //     _id: state._id,
+    //     status: state.status,
+    //     place: state.place
+    //   }
+    //   Containers.update({ _id: state._id }, { $set: data });
+    //   Meteor.call('history.insert', data, 'containers');
+    // }, // Marked (currently being used)
+    // 'containers.status' (_id, status) {
+    //   var data = {
+    //     status
+    //   }
+    //   Containers.update({ _id }, { $set: data });
+    //   Meteor.call('history.insert', data, 'containers');
+    // }, // Unmarked (needs to be checked)
+    // 'containers.check'(_id) {
+    //   const item = Containers.findOne(
+    //     {
+    //       $and: [
+    //         { _id },
+    //         { visible: true }
+    //       ]
+    //     }
+    //   );
+    //   if (!item) throw new Meteor.Error("_id-not-found", "Um dos containers locados não está mais disponível ou foi excluído.", arguments);
+    //   if (item.status == 'available') {
+    //     return true;
+    //   } else return false;
+    // }, // Unmarked (needs to be checked)
+    // 'containers.update.assembled'(_id, quantity) {
+      // var data = {
+      //   assembled: quantity
+      // };
+      // Containers.update({ _id }, { $inc: data });
+      // data._id = _id;
+      // Meteor.call('history.insert', data, 'containers.update.assembled');
+    // } // Unmarked (needs to be checked)
   })
 }

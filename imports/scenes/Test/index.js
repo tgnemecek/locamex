@@ -20,18 +20,29 @@ class TestPage extends React.Component {
     this.setState({ return: e.target.value })
   }
 
+  aaa = () => {
+    var obj = {
+      a: ['banana', 'apple']
+    }
+
+    var copy = {...obj};
+
+    var a = obj.a;
+    var b = copy.a;
+
+    b.push('strawberry');
+
+    console.log(a);
+
+    // if (a === b) {
+    //   return 'true'
+    // } else return 'false';
+  }
+
   render() {
     return (
       <div style={{width: "500px"}}>
-        <Input
-          type="currency"
-          onChange={this.onChange}
-          value={this.state.return}
-          allowNegative={true}
-        />
-        {/* <input onChange={this.onChange} type="text"/>
-        Return is: {this.state.return}
-        aaaaaaaaa {tools.format("-", "currency")} */}
+        {this.aaa()}
       </div>
     )
   }

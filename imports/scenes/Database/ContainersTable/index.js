@@ -57,11 +57,6 @@ class ContainersTable extends React.Component {
     this.setState({ searchOptions, filteredDatabase: this.props.fullDatabase });
   }
 
-  componentWillUnmount() {
-    this.props.handler1.stop();
-    this.props.handler2.stop();
-  }
-
   searchReturn = (filteredDatabase) => {
     if (filteredDatabase) {
       this.setState({ filteredDatabase });
@@ -90,8 +85,8 @@ class ContainersTable extends React.Component {
       const toggleEditWindow = () => {
         this.props.toggleEditWindow(item);
       }
-      const toggleTransactionWindow = () => {
-        this.props.toggleTransactionWindow(item);
+      const toggleStockVisualizer = () => {
+        this.props.toggleStockVisualizer(item);
       }
       const toggleImageWindow = () => {
         this.props.toggleImageWindow(item);
@@ -115,7 +110,7 @@ class ContainersTable extends React.Component {
       }
       const renderTransactionButton = () => {
         if (item.type === 'fixed') {
-          return <button className="database__table__button" onClick={toggleTransactionWindow}>⟳</button>
+          return <button className="database__table__button" onClick={toggleStockVisualizer}>⟳</button>
         } else return null
       }
       return (
@@ -170,14 +165,12 @@ class ContainersTable extends React.Component {
 }
 
 export default ContainersTableWrapper = withTracker((props) => {
-  var handler1 = Meteor.subscribe('placesPub');
-  var handler2 = Meteor.subscribe('containersPub');
+  Meteor.subscribe('placesPub');
+  Meteor.subscribe('containersPub');
   var placesDatabase = Places.find().fetch();
   var fullDatabase = Containers.find().fetch();
   var ready = !!fullDatabase.length;
   return {
-    handler1,
-    handler2,
     fullDatabase,
     placesDatabase,
     ready

@@ -1,0 +1,15 @@
+.register-containers__module-block {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 500px;
+  margin-bottom: ($space /2);
+}
+
+.register-containers__module-block__title {
+  border-top: 1px solid $grey;
+  border-bottom: 1px solid $grey;
+}
+
+.register-containers__module-block__checkbox {
+  margin: 0;
+}

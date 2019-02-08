@@ -3,6 +3,7 @@ import React from 'react';
 import moment from 'moment';
 import tools from '/imports/startup/tools/index';
 
+import StockVisualizer from '/imports/components/StockVisualizer/index';
 import Transaction from '/imports/components/Transaction/index';
 import ImageVisualizer from '/imports/components/ImageVisualizer/index';
 
@@ -35,6 +36,7 @@ export default class Database extends React.Component {
       item: null,
       editWindow: false,
       transactionWindow: false,
+      stockVisualizer: false,
       imageWindow: false
     }
   }
@@ -46,6 +48,15 @@ export default class Database extends React.Component {
         item
       });
     } else this.setState({ editWindow: false, item: null });
+  }
+
+  toggleStockVisualizer = (item) => {
+    if (item) {
+      this.setState({
+        stockVisualizer: !this.state.stockVisualizer,
+        item
+      });
+    } else this.setState({ stockVisualizer: false, item: null });
   }
 
   toggleTransactionWindow = (item) => {
@@ -108,16 +119,23 @@ export default class Database extends React.Component {
           <Table
             item={this.state.item}
             toggleEditWindow={this.toggleEditWindow}
-            toggleTransactionWindow={this.toggleTransactionWindow}
+            toggleStockVisualizer={this.toggleStockVisualizer}
             toggleImageWindow={this.toggleImageWindow}
           />
         </div>
-        {this.state.transactionWindow ?
+        {this.state.stockVisualizer ?
+          <StockVisualizer
+            type={this.state.item.type}
+            item={this.state.item}
+            toggleWindow={this.toggleStockVisualizer}
+          />
+        : null}
+        {/* {this.state.transactionWindow ?
           <Transaction
             item={this.state.item}
             toggleWindow={this.toggleTransactionWindow}
           />
-        : null}
+        : null} */}
         {this.state.imageWindow ?
           <ImageVisualizer
             item={{...this.state.item, itemType: this.props.match.params.database}}

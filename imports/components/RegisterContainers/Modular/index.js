@@ -1,82 +1,109 @@
+import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import { Modules } from '/imports/api/modules/index';
-
 import tools from '/imports/startup/tools/index';
-import SearchBar from '/imports/components/SearchBar/index';
 
+import Block from '/imports/components/Block/index';
+import Box from '/imports/components/Box/index';
 import Input from '/imports/components/Input/index';
-import RegisterModules from '/imports/components/RegisterModules/index';
-import Loading from '/imports/components/Loading/index';
-import NotFound from '/imports/components/NotFound/index';
+import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
+import FooterButtons from '/imports/components/FooterButtons/index';
+
+import ModuleList from './ModuleList/index';
 
 export default class Modular extends React.Component {
-  onChange = (e) => {
-    var value = e.target.value;
-    var key = e.target.name;
-    var allowedModules = tools.deepCopy(this.props.item.allowedModules);
-    (() => {
-      if (value === true) {
-        if (allowedModules.includes(key)) return
-        else {
-          allowedModules.push(key);
-          return;
-        }
-      } else if (value === false) {
-        if (!allowedModules.includes(key)) return;
-        else {
-          for (var i = 0; i < allowedModules.length; i++) {
-            if (allowedModules[i] == key) {
-              allowedModules.splice(i, 1);
-              break;
-            }
-          }
-        }
-      }
-    })();
-    var exportValue = {target: {value: allowedModules, name: "modules"}};
-    this.props.onChange(exportValue);
-  }
+  constructor(props) {
+    super(props);
+    this.state = {
+      description: this.props.item.description || '',
+      price: this.props.item.price || '',
+      restitution: this.props.item.restitution || '',
+      allowedModules: this.props.item.allowedModules || [],
 
-  renderBody = () => {
-    return this.props.modulesDatabase.map((item, i) => {
-      return (
-        <tr key={i}>
-          <td>{item.description}</td>
-          <td className="table__small-column">
-            <Input
-              key={i}
-              type="checkbox"
-              id={"module--" + i}
-              name={item._id}
-              className="register-containers__module-block__checkbox"
-              value={this.props.item.allowedModules.includes(item._id)}
-              onChange={this.onChange}/>
-          </td>
-        </tr>
-      )
+      errorMsg: '',
+      errorKeys: [],
+
+      confirmationWindow: false
+    }
+  }
+  renderOptions = (database) => {
+    return this.state[database].map((item, i) => {
+      return <option key={i} value={item._id}>{item.description}</option>
     })
   }
-
-  render () {
+  onChange = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
+  }
+  toggleConfirmationWindow = () => {
+    var confirmationWindow = !this.state.confirmationWindow;
+    this.setState({ confirmationWindow });
+  }
+  removeItem = () => {
+    Meteor.call('containers.hide', this.state._id);
+    this.props.toggleWindow();
+  }
+  saveEdits = () => {
+    var errorKeys = [];
+    if (!this.state.description.trim()) {
+      errorKeys.push("description");
+      this.setState({ errorMsg: "Favor informar uma descrição.", errorKeys });
+    } else {
+      if (this.props.item._id) {
+        Meteor.call('containers.update', this.state);
+      } else Meteor.call('containers.modular.insert', this.state);
+      this.props.toggleWindow();
+    }
+  }
+  render() {
     return (
-      <div className="register-containers__module-block">
-        <h4 className="register-containers__module-block__title">Componentes Permitidos:</h4>
-        <SearchBar
-          database={this.props.modulesDatabase}
-          options={this.props.searchOptions}
-          searchReturn={this.props.searchReturn}
-        />
-        <table className="table database__table">
-          <thead>
-            <tr>
-              <th>Descrição</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.renderBody()}
-          </tbody>
-        </table>
-      </div>
+      <Box
+        title={this.props.item._id ? "Editar Container Modular" : "Criar Novo Container Modular"}
+        closeBox={this.props.toggleWindow}
+        width="800px">
+        <div className="error-message">{this.state.errorMsg}</div>
+          <Block columns={4} options={[{block: 0, span: 2}]}>
+            <Input
+              title="Descrição:"
+              type="text"
+              name="description"
+              style={this.state.errorKeys.includes("description") ? {borderColor: "red"} : null}
+              value={this.state.description}
+              onChange={this.onChange}
+            />
+            <Input
+              title="Valor Mensal:"
+              type="currency"
+              name="price"
+              value={this.state.price}
+              onChange={this.onChange}
+            />
+            <Input
+              title="Indenização:"
+              type="currency"
+              name="restitution"
+              value={this.state.restitution}
+              onChange={this.onChange}
+            />
+          </Block>
+          <ModuleList
+            item={this.state}
+            onChange={this.onChange}
+            searchReturn={this.searchReturn}
+            modulesDatabase={this.state.modulesDatabaseFiltered}/>
+          <ConfirmationWindow
+            isOpen={this.state.confirmationWindow}
+            closeBox={this.toggleConfirmationWindow}
+            message="Deseja mesmo excluir este item do banco de dados?"
+            leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
+            rightButton={{text: "Sim", className: "button--danger", onClick: this.removeItem}}/>
+          <FooterButtons buttons={this.props.item._id ? [
+            {text: "Excluir Registro", className: "button button--danger", onClick: this.toggleConfirmationWindow},
+            {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+            {text: "Salvar", onClick: this.saveEdits}
+          ] : [
+            {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+            {text: "Salvar", onClick: this.saveEdits}
+          ]}/>
+      </Box>
     )
   }
 }
