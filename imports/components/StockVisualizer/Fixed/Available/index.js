@@ -145,7 +145,6 @@ export default class Available extends React.Component {
   }
 
   render() {
-    if (this.count() === 0) return null;
     return (
       <Block
         title={`Disponíveis: ${this.count()}`}

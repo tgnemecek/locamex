@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.6.4
+Version: 1.6.5
 
 ## Information:
 
@@ -8,6 +8,10 @@ Version: 1.6.4
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.6.5
+
+-  Fixed StockVisualizer showing blank;
 
 ### Version 1.6.4
 
