@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.6.3
+Version: 1.6.4
 
 ## Information:
 
@@ -8,6 +8,11 @@ Version: 1.6.3
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.6.4
+
+-  Fixed Containers now are 'groups' that contain the series inside;
+-  ImageVisualizer disabled temporarily;
 
 ### Version 1.6.3
 

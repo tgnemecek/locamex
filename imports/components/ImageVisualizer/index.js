@@ -49,6 +49,8 @@ export default class ImageVisualizer extends React.Component {
     this.setState({ currentIndex: nextIndex })
   }
   render() {
+    return null; // REMOVE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    // if (!this.props.item) return null;
     return (
       <Box
         title="Visualizador de Imagens"

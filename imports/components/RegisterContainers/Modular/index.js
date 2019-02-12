@@ -14,6 +14,7 @@ export default class Modular extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      _id: this.props.item._id || '',
       description: this.props.item.description || '',
       price: this.props.item.price || '',
       restitution: this.props.item.restitution || '',
@@ -48,7 +49,7 @@ export default class Modular extends React.Component {
       this.setState({ errorMsg: "Favor informar uma descrição.", errorKeys });
     } else {
       if (this.props.item._id) {
-        Meteor.call('containers.update', this.state);
+        Meteor.call('containers.modular.update', this.state);
       } else Meteor.call('containers.modular.insert', this.state);
       this.props.toggleWindow();
     }

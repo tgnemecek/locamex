@@ -28,13 +28,24 @@ class StockVisualizer extends React.Component {
       return <Fixed {...this.props} item={this.state.item} onChange={this.onChange}/>
     } else return null;
   }
+  saveEdits = () => {
+    if (this.props.type === 'fixed') {
+      Meteor.call('containers.fixed.update.one', this.state.item._id, this.state.item.units, 'units');
+    } else return null;
+    this.props.toggleWindow();
+  }
+
   render() {
     return (
       <Box
-        title="Visualizador de Estoque"
+        title={`Visualizador de Estoque: ${this.state.item.description}`}
         closeBox={this.props.toggleWindow}
         width="800px">
         {this.renderBody()}
+        <FooterButtons buttons={[
+        {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+        {text: "Salvar", onClick: this.saveEdits}
+        ]}/>
       </Box>
     )
   }

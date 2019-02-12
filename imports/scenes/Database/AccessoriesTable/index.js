@@ -51,7 +51,7 @@ class AccessoriesTable extends React.Component {
 
   renderBody = () => {
     return this.state.filteredDatabase.map((item, i) => {
-      var total = item.available + item.maintenance + item.rented + item.inactive;
+      var total = item.available + item.maintenance + item.rented;
       const toggleEditWindow = () => {
         this.props.toggleEditWindow(item);
       }

@@ -19,22 +19,54 @@ export default class Available extends React.Component {
     }
   }
 
+  count = () => {
+    return this.props.item.units.reduce((acc, cur) => {
+      return acc + (cur.place !== 'rented' && cur.visible);
+    }, 0)
+  }
 
   renderBody = () => {
-    if (!this.props.item.units.length) return null;
-
-    const toggleImageWindow = () => {
-      return;
-    }
     return this.props.item.units.map((item, i) => {
-      return (
-        <tr key={i}>
-          <td>{item.serial}</td>
-          <td>{item.place}</td>
-          <td>{item.observations}</td>
-          <td className="table__small-column"><button className="database__table__button" onClick={toggleImageWindow}>🔍</button></td>
-        </tr>
-      )
+      const toggleImageWindow = () => {
+        this.props.toggleImageWindow(item);
+      }
+      const onChange = (e) => {
+        var value = e.target.value;
+        var key = e.target.name;
+        var item = {...this.props.item};
+        item.units[i][key] = value;
+        this.props.onChange(item);
+      }
+      const renderPlaces = () => {
+        return this.props.placesDatabase.map((place, i) => {
+          return <option key={i} value={place._id}>{place.description}</option>
+        })
+      }
+      if (item.visible && item.place !== 'rented') {
+        return (
+          <tr key={i}>
+            <td className="stock-visualizer__fixed__serial">{item.serial}</td>
+            <td>
+              <Input
+                type="select"
+                name="place"
+                value={item.place}
+                onChange={onChange}>
+                {renderPlaces()}
+              </Input>
+            </td>
+            <td>
+              <Input
+                type="text"
+                name="observations"
+                value={item.observations}
+                onChange={onChange}
+              />
+            </td>
+            <td className="table__small-column"><button className="database__table__button" onClick={toggleImageWindow}>🔍</button></td>
+          </tr>
+        )
+      }
     })
   }
 
@@ -65,6 +97,7 @@ export default class Available extends React.Component {
           serial: this.state.serial,
           place: this.state.place,
           observations: this.state.observations,
+          snapshots: [],
           visible: true
         })
         this.setState({
@@ -88,7 +121,7 @@ export default class Available extends React.Component {
             onChange={onChange}
           />
         </td>
-        <td>
+        <td className="stock-visualizer__fixed__place">
           <Input
             type="select"
             name="place"
@@ -106,29 +139,35 @@ export default class Available extends React.Component {
             onChange={onChange}
           />
         </td>
-        <td className="table__small-column"><button onClick={addNew}>+</button></td>
+        <td className="table__small-column"><button onClick={addNew} className="database__table__button">+</button></td>
       </tr>
     )
   }
 
   render() {
+    if (this.count() === 0) return null;
     return (
-      <table className="table database__table">
-        <thead>
-          <tr>
-            <th>Série</th>
-            <th>Pátio</th>
-            <th>Observação</th>
-            <th onClick={this.addNew}>+</th>
-          </tr>
-        </thead>
-        <tbody>
-          {this.renderBody()}
-        </tbody>
-        <tfoot>
-          {this.renderNewItem()}
-        </tfoot>
-      </table>
+      <Block
+        title={`Disponíveis: ${this.count()}`}
+        style={{maxHeight: "500px", overflowY: "auto"}}
+        columns={1}>
+        <table className="table database__table">
+          <thead>
+            <tr>
+              <th className="stock-visualizer__fixed__serial">Série</th>
+              <th className="stock-visualizer__fixed__place">Pátio</th>
+              <th>Observação</th>
+              <th onClick={this.addNew} className="table__small-column"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.renderBody()}
+          </tbody>
+          <tfoot>
+            {this.renderNewItem()}
+          </tfoot>
+        </table>
+      </Block>
     )
   }
 }

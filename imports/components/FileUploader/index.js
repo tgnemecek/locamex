@@ -9,6 +9,8 @@ import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 import Input from '/imports/components/Input/index';
 
+import createMetaContext from './create-meta-context/index';
+
 export default class FileUploader extends React.Component {
   constructor(props) {
     super(props);
@@ -32,8 +34,6 @@ export default class FileUploader extends React.Component {
       return;
     }
 
-    var formattedDate = moment().format("YYYY-MM-DD");
-
     if (areInvalid(sortedFiles, this.props.uploadDirective)) {
       this.setState({ errorMsg: "Formato de arquivo inválido."});
       return;
@@ -42,22 +42,14 @@ export default class FileUploader extends React.Component {
     var successCount = 0
 
     sortedFiles.forEach((file, imageIndex) => {
-      var metaContext = {
-        filename: this.props.item.description,
-        itemId: this.props.item._id,
-        itemType: this.props.item.itemType,
-        imageIndex,
-        extension: file.name.split('.').pop(),
-        formattedDate
-      }
+      var metaContext = createMetaContext(this.props.item, imageIndex, file);
       var uploader = new Slingshot.Upload(this.props.uploadDirective, metaContext);
-
       uploader.send(file, (error, downloadUrl) => {
         if (!error) {
           successCount++;
           urls.push(downloadUrl);
           if ((imageIndex+1) == sortedFiles.length) {
-            Meteor.call('snapshot.add', metaContext.itemType, metaContext.itemId, urls);
+            Meteor.call('snapshot.add', metaContext, urls);
             alert(successCount + ' arquivo(s) enviado(s) com sucesso!');
             this.props.toggleWindow(true);
           }

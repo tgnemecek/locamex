@@ -22,7 +22,13 @@ Slingshot.createDirective("imageUploads", Slingshot.S3Storage, {
 
   key: function (file, metaContext) {
     var cacheBypass = "_" + new Date().getTime();
-    var directory = "user-uploads/" + metaContext.itemType + "/" + metaContext.itemId + "/" + metaContext.formattedDate + cacheBypass + "/";
+    var directory = '';
+
+    if (metaContext.type === 'fixed') {
+      directory = `user-uploads/fixed/${metaContext.documentId}/${metaContext.unitId}/${metaContext.formattedDate}${cacheBypass}/`;
+    } else {
+      directory = `user-uploads/${metaContext.type}/${metaContext.documentId}/${metaContext.formattedDate}${cacheBypass}/`;
+    }
     var name = metaContext.filename + "_" + metaContext.imageIndex + "." + metaContext.extension;
 
     return directory + name;

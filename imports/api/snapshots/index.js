@@ -6,24 +6,21 @@ import { Modules } from '../modules/index';
 
 if (Meteor.isServer) {
   Meteor.methods({
-    'snapshot.add' (itemType, _id, urls) {
+    'snapshot.add' (metaContext, urls) {
       var Database = null;
-      var obj = {};
-      if (itemType == 'accessories') {
-        Database = Accessories;
-      } else if (itemType == 'containers') {
-        Database = Containers;
-      } else if (itemType == 'modules') {
-        Database = Modules;
-      }
-
-      obj = {
+      var obj = {
         date: new Date(),
         images: urls
-      }
+      };
 
-      Database.update({ _id }, { $push: { snapshots: obj } });
+      if (metaContext.type === 'fixed') {
+        Containers.update(
+          { _id: metaContext.documentId, "units._id": metaContext.unitId },
+          {$push: { 'units.$.snapshots': obj }}
+        );
+      } else throw new Meteor.Error('please-add-db-to-snapshots-api');
 
+      // Database.update({ _id }, { $push: { snapshots: obj } });
     }
   })
 }

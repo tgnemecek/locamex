@@ -69,11 +69,8 @@ class ContainersTable extends React.Component {
     }
     return (
       <tr>
-        <th className="table__small-column">Série</th>
         <th>Descrição</th>
         <th className="table__small-column">Tipo</th>
-        <th className="table__small-column">Status</th>
-        <th className="table__small-column">Pátio</th>
         <th className="table__small-column">Valor Mensal</th>
         <th className="table__small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
       </tr>
@@ -87,9 +84,6 @@ class ContainersTable extends React.Component {
       }
       const toggleStockVisualizer = () => {
         this.props.toggleStockVisualizer(item);
-      }
-      const toggleImageWindow = () => {
-        this.props.toggleImageWindow(item);
       }
       function translate (input) {
         if (input === 'available') return 'Disponível';
@@ -115,15 +109,11 @@ class ContainersTable extends React.Component {
       }
       return (
         <tr key={i}>
-          <td className="table__small-column">{item.serial || "-"}</td>
           <td>{item.description}</td>
           <td className="table__small-column">{translate(item.type)}</td>
-          <td className="table__small-column">{translate(item.status) || "Montados: " + item.assembled}</td>
-          <td className="table__small-column">{item.status == "rented" ? "-" : translatePlaces(item.place)}</td>
           <td className="table__small-column">{tools.format(item.price, 'currency')}</td>
           <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
           <td className="table__small-column">{renderTransactionButton()}</td>
-          <td className="table__small-column"><button className="database__table__button" onClick={toggleImageWindow}>🔍</button></td>
         </tr>
       )
     })

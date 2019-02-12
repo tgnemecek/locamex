@@ -9,6 +9,7 @@ if (Meteor.isServer) {
     return Containers.find({ visible: true }, {sort: { description: 1 }});
   })
   Meteor.methods({
+    // FIXED
     'containers.fixed.insert' (state) {
       const _id = tools.generateId();
       var data = {
@@ -27,6 +28,27 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', data, 'containers.fixed.insert');
     },
 
+    'containers.fixed.update' (state) {
+      var data = {
+        description: state.description,
+        price: state.price,
+        restitution: state.restitution
+      };
+
+      Containers.update({ _id: state._id }, { $set: data });
+      Meteor.call('history.insert', { ...data, _id: state._id }, 'containers.fixed.update');
+    },
+
+    'containers.fixed.update.one' (_id, value, key) {
+      var data = {
+        _id,
+        [key]: value
+      }
+      Containers.update({_id}, {$set: {[key]: value}});
+      Meteor.call('history.insert', data, 'containers.fixed.update.one');
+    },
+
+    // MODULAR
     'containers.modular.insert' (state) {
       const _id = tools.generateId();
       var data = {
@@ -43,6 +65,17 @@ if (Meteor.isServer) {
       };
       Containers.insert(data);
       Meteor.call('history.insert', data, 'containers.modular.insert');
+    },
+
+    'containers.modular.update' (state) {
+      var data = {
+        description: state.description,
+        price: state.price,
+        restitution: state.restitution,
+        allowedModules: state.allowedModules
+      };
+      Containers.update({ _id: state._id }, { $set: data });
+      Meteor.call('history.insert', { ...data, _id: state._id }, 'containers.modular.update');
     }
 
     // 'containers.insert'(state) {

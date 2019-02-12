@@ -15,6 +15,7 @@ class Fixed extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      _id: this.props.item._id || '',
       description: this.props.item.description || '',
       price: this.props.item.price || '',
       restitution: this.props.item.restitution || '',
@@ -48,7 +49,7 @@ class Fixed extends React.Component {
       this.setState({ errorMsg: "Favor informar uma descrição.", errorKeys });
     } else {
       if (this.props.item._id) {
-        Meteor.call('containers.update', this.state);
+        Meteor.call('containers.fixed.update', this.state);
       } else Meteor.call('containers.fixed.insert', this.state);
       this.props.toggleWindow();
     }

@@ -119,6 +119,7 @@ export default class Database extends React.Component {
           <Table
             item={this.state.item}
             toggleEditWindow={this.toggleEditWindow}
+            toggleTransactionWindow={this.toggleTransactionWindow}
             toggleStockVisualizer={this.toggleStockVisualizer}
             toggleImageWindow={this.toggleImageWindow}
           />
@@ -130,12 +131,12 @@ export default class Database extends React.Component {
             toggleWindow={this.toggleStockVisualizer}
           />
         : null}
-        {/* {this.state.transactionWindow ?
+        {this.state.transactionWindow ?
           <Transaction
             item={this.state.item}
             toggleWindow={this.toggleTransactionWindow}
           />
-        : null} */}
+        : null}
         {this.state.imageWindow ?
           <ImageVisualizer
             item={{...this.state.item, itemType: this.props.match.params.database}}
