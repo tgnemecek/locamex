@@ -12,7 +12,7 @@ import ClientsTable from './ClientsTable/index';
 import ContainersTable from './ContainersTable/index';
 import ContractsTable from './ContractsTable/index';
 import HistoryTable from './HistoryTable/index';
-import MaintenanceTable from './MaintenanceTable/index';
+import SeriesTable from './SeriesTable/index';
 import ModulesTable from './ModulesTable/index';
 import PacksTable from './PacksTable/index';
 import PlacesTable from './PlacesTable/index';
@@ -94,8 +94,8 @@ export default class Database extends React.Component {
     } else if (this.props.match.params.database === 'history') {
       Table = HistoryTable;
       Register = RegisterHistory;
-    } else if (this.props.match.params.database === 'maintenance') {
-      Table = MaintenanceTable;
+    } else if (this.props.match.params.database === 'series') {
+      Table = SeriesTable;
     } else if (this.props.match.params.database === 'modules') {
       Table = ModulesTable;
       Register = RegisterModules;

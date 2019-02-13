@@ -8,7 +8,7 @@ import SearchBar from '/imports/components/SearchBar/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
-class MaintenanceTable extends React.Component {
+class SeriesTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -119,16 +119,26 @@ class MaintenanceTable extends React.Component {
   }
 }
 
-export default MaintenanceTableWrapper = withTracker((props) => {
+export default SeriesTableWrapper = withTracker((props) => {
   Meteor.subscribe('placesPub');
   Meteor.subscribe('containersPub');
-  var fullDatabase = Containers.find({ type: "fixed" }).fetch();
-  fullDatabase = tools.sortObjects(fullDatabase, 'place');
+  var preDatabase = Containers.find({ type: "fixed" }).fetch();
+  preDatabase = tools.sortObjects(preDatabase, 'place');
   var placesDatabase = Places.find().fetch();
-  var ready = !!fullDatabase.length;
+  var ready = !!preDatabase.length;
+
+  var fullDatabase = [];
+
+  for (var i = 0; i < preDatabase.length; i++) {
+    preDatabase[i].units.forEach((unit) => {
+      unit.description = preDatabase[i].description;
+      fullDatabase.push(unit);
+    })
+  }
+
   return {
     fullDatabase,
     placesDatabase,
     ready
   }
-})(MaintenanceTable);
+})(SeriesTable);

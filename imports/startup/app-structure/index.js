@@ -57,6 +57,11 @@ export const appStructure = [
         link: "/database/containers"
       },
       {
+        name: "series",
+        title: "Séries",
+        link: "/database/series"
+      },
+      {
         name: "accessories",
         title: "Acessórios",
         link: "/database/accessories"
@@ -70,11 +75,6 @@ export const appStructure = [
         name: "packs",
         title: "Pacotes",
         link: "/database/packs"
-      },
-      {
-        name: "maintenance",
-        title: "Manutenção",
-        link: "/database/maintenance"
       }
     ]
   },

@@ -49,6 +49,7 @@ export default class SearchBar extends React.Component {
 
       if (filters.length) {
         for (var i = 0; i < array.length; i++) {
+          debugger;
           for (var j = 0; j < filters.length; j++) {
             if (filters[j].selected !== "") {
               if (array[i][filters[j].key]) {
