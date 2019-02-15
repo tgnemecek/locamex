@@ -15,6 +15,7 @@ import '../imports/api/slingshot/index';
 import '../imports/api/modules/index';
 import '../imports/api/packs/index';
 import '../imports/api/places/index';
+import '../imports/api/series/index';
 import '../imports/api/services/index';
 import '../imports/api/snapshots/index';
 import '../imports/api/test/index';

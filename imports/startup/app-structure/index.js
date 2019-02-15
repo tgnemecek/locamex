@@ -52,9 +52,9 @@ export const appStructure = [
     groupTitle: "Produtos",
     pages: [
       {
-        name: "containers",
-        title: "Containers",
-        link: "/database/containers"
+        name: "models",
+        title: "Modelos",
+        link: "/database/models"
       },
       {
         name: "series",

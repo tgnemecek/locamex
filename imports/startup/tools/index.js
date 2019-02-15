@@ -51,7 +51,7 @@ export default class tools {
       if (array[i]._id === _id) {
         return array[i];
       }
-    } return false;
+    } return {};
   }
 
   // Strings

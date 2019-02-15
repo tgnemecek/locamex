@@ -1,5 +1,6 @@
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
+import { Series } from '/imports/api/series/index';
 import { Places } from '/imports/api/places/index';
 import { Containers } from '/imports/api/containers/index';
 import tools from '/imports/startup/tools/index';
@@ -14,7 +15,7 @@ class SeriesTable extends React.Component {
     this.state = {
       filteredDatabase: [],
       searchOptions: {
-        onlySearchHere: ['description', 'observations'],
+        onlySearchHere: ['serial', 'description', 'observations'],
         filters: [
           {
             label: "Pátio:",
@@ -53,12 +54,16 @@ class SeriesTable extends React.Component {
   }
 
   renderHeader = () => {
+    const toggleEditWindow = () => {
+      this.props.toggleEditWindow({});
+    }
     return (
       <tr>
         <th className="table__small-column">Série</th>
-        <th>Descrição</th>
+        <th className="table__small-column">Modelo</th>
         <th className="table__small-column">Pátio</th>
-        <th className="table__small-column">Observações</th>
+        <th>Observações</th>
+        <th className="table__small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
       </tr>
     )
   }
@@ -67,18 +72,22 @@ class SeriesTable extends React.Component {
     return this.state.filteredDatabase.map((item, i) => {
       const translatePlaces = (place) => {
         if (!place) return "-";
-        for (var i = 0; i < this.props.placesDatabase.length; i++) {
-          if (this.props.placesDatabase[i]._id === place) {
-            return this.props.placesDatabase[i].description;
-          }
-        } return "-";
+        return tools.findUsingId(this.props.placesDatabase, place).description;
+      }
+      const translateModels = (model) => {
+        if (!model) return "-";
+        return tools.findUsingId(this.props.modelsDatabase, model).description;
+      }
+      const toggleImageWindow = () => {
+        this.props.toggleImageWindow(item);
       }
       return (
         <tr key={i}>
           <td className="table__small-column">{item.serial}</td>
-          <td>{item.description}</td>
+          <td className="table__small-column" style={{textAlign: 'left'}}>{translateModels(item.model)}</td>
           <td className="table__small-column">{translatePlaces(item.place)}</td>
           <td className="table__small-column--wrap">{item.observations}</td>
+          <td className="table__small-column"><button className="database__table__button" onClick={toggleImageWindow}>🔍</button></td>
         </tr>
       )
     })
@@ -120,25 +129,21 @@ class SeriesTable extends React.Component {
 }
 
 export default SeriesTableWrapper = withTracker((props) => {
+  Meteor.subscribe('seriesPub');
   Meteor.subscribe('placesPub');
   Meteor.subscribe('containersPub');
-  var preDatabase = Containers.find({ type: "fixed" }).fetch();
-  preDatabase = tools.sortObjects(preDatabase, 'place');
+
+  var fullDatabase = Series.find().fetch();
+  fullDatabase = tools.sortObjects(fullDatabase, 'serial');
+
+  var modelsDatabase = Containers.find().fetch();
   var placesDatabase = Places.find().fetch();
-  var ready = !!preDatabase.length;
-
-  var fullDatabase = [];
-
-  for (var i = 0; i < preDatabase.length; i++) {
-    preDatabase[i].units.forEach((unit) => {
-      unit.description = preDatabase[i].description;
-      fullDatabase.push(unit);
-    })
-  }
+  var ready = !!fullDatabase.length;
 
   return {
     fullDatabase,
     placesDatabase,
+    modelsDatabase,
     ready
   }
 })(SeriesTable);

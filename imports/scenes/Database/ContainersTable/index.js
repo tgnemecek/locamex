@@ -86,10 +86,6 @@ class ContainersTable extends React.Component {
         this.props.toggleStockVisualizer(item);
       }
       function translate (input) {
-        if (input === 'available') return 'Disponível';
-        if (input === 'rented') return 'Locado';
-        if (input === 'maintenance') return 'Manutenção';
-        if (input === 'inactive') return 'Inativo';
         if (input === 'fixed') return 'Fixo';
         if (input === 'modular') return 'Modular';
         return input;
@@ -102,18 +98,12 @@ class ContainersTable extends React.Component {
           }
         } return "-";
       }
-      const renderTransactionButton = () => {
-        if (item.type === 'fixed') {
-          return <button className="database__table__button" onClick={toggleStockVisualizer}>⟳</button>
-        } else return null
-      }
       return (
         <tr key={i}>
           <td>{item.description}</td>
           <td className="table__small-column">{translate(item.type)}</td>
           <td className="table__small-column">{tools.format(item.price, 'currency')}</td>
           <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
-          <td className="table__small-column">{renderTransactionButton()}</td>
         </tr>
       )
     })

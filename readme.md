@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.6.6
+Version: 1.7.0
 
 ## Information:
 
@@ -8,6 +8,11 @@ Version: 1.6.6
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.7.0
+
+-  Containers now are fully restructured to be 'groups', tables fixed;
+-  ImageVisualizer fixed for Containers, Accessories and Modules;
 
 ### Version 1.6.6
 

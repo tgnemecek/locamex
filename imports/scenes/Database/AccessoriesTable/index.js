@@ -40,7 +40,6 @@ class AccessoriesTable extends React.Component {
         <th>Descrição</th>
         <th className="table__small-column">Disponíveis</th>
         <th className="table__small-column">Locados</th>
-        <th className="table__small-column">Manutenção</th>
         <th className="table__small-column">Inativos</th>
         <th className="table__small-column">Total</th>
         <th className="table__small-column">Valor</th>
@@ -51,7 +50,7 @@ class AccessoriesTable extends React.Component {
 
   renderBody = () => {
     return this.state.filteredDatabase.map((item, i) => {
-      var total = item.available + item.maintenance + item.rented;
+      var total = item.available + item.inactive + item.rented;
       const toggleEditWindow = () => {
         this.props.toggleEditWindow(item);
       }
@@ -66,7 +65,6 @@ class AccessoriesTable extends React.Component {
           <td>{item.description}</td>
           <td className="table__small-column">{item.available}</td>
           <td className="table__small-column">{item.rented}</td>
-          <td className="table__small-column">{item.maintenance}</td>
           <td className="table__small-column">{item.inactive}</td>
           <td className="table__small-column">{total}</td>
           <td className="table__small-column">{tools.format(item.price, 'currency')}</td>

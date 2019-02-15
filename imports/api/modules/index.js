@@ -17,10 +17,10 @@ if (Meteor.isServer) {
         description: state.description,
         rented: 0,
         available: 0,
-        maintenance: 0,
         inactive: 0,
 
-        quantitative: true,
+        snapshots: [],
+
         visible: true
       };
       Modules.insert(data);

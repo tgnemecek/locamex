@@ -27,6 +27,7 @@ import RegisterModules from '/imports/components/RegisterModules/index';
 import RegisterPacks from '/imports/components/RegisterPacks/index';
 import RegisterPlaces from '/imports/components/RegisterPlaces/index';
 import RegisterServices from '/imports/components/RegisterServices/index';
+import RegisterSeries from '/imports/components/RegisterSeries/index';
 import RegisterUsers from '/imports/components/RegisterUsers/index';
 
 export default class Database extends React.Component {
@@ -83,7 +84,7 @@ export default class Database extends React.Component {
     if (this.props.match.params.database === 'accessories') {
       Table = AccessoriesTable;
       Register = RegisterAccessories;
-    } else if (this.props.match.params.database === 'containers') {
+    } else if (this.props.match.params.database === 'models') {
       Table = ContainersTable;
       Register = RegisterContainers;
     } else if (this.props.match.params.database === 'contracts') {
@@ -96,6 +97,7 @@ export default class Database extends React.Component {
       Register = RegisterHistory;
     } else if (this.props.match.params.database === 'series') {
       Table = SeriesTable;
+      Register = RegisterSeries;
     } else if (this.props.match.params.database === 'modules') {
       Table = ModulesTable;
       Register = RegisterModules;

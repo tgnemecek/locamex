@@ -8,8 +8,65 @@ import { Modules } from '/imports/api/modules/index';
 import { Packs } from '/imports/api/packs/index';
 import { Places } from '/imports/api/places/index';
 import { Services } from '/imports/api/services/index';
+import { Series } from '/imports/api/series/index';
 
 if (Meteor.isServer && Meteor.isDevelopment) {
+  // 
+  // Modules.update({}, {$set: {
+  //   snapshots: []
+  // }}, {multi: 1});
+
+  // var a = Accessories.find().fetch();
+  //
+  // Accessories.remove({});
+  //
+  // a.forEach((item) => {
+  //   delete item._id;
+  //   Accessories.insert(item);
+  // })
+
+  // Accessories.update({}, {$set: {
+  //   type: "accessory"
+  // }}, {multi: 1});
+
+  // var series = Series.find().fetch();
+  //
+  // series.forEach((item) => {
+  //   Series.update({_id: item._id}, {$set: { type: "fixed" }});
+  // });
+
+  // var containers = Containers.find().fetch();
+  //
+  // containers.forEach((container) => {
+  //   Containers.update({_id: container._id}, {$unset: {units:1}}, {multi: true});
+  // })
+
+
+
+  // var containers = Containers.find().fetch();
+  // var series = Series.find().fetch();
+  //
+  // series.forEach((item) => {
+  //   for (var i = 0; i < containers.length; i++) {
+  //     if (containers[i].description === item.model) {
+  //       Series.update({_id: item._id}, {$set: {model: containers[i]._id} });
+  //       break;
+  //     }
+  //   }
+  // })
+
+
+
+  // containers.forEach((container) => {
+  //   // if (container.units) {
+  //   //   container.units.forEach((unit) => {
+  //   //     unit.model = container.description;
+  //   //     Series.insert(unit);
+  //   //   })
+  //   // }
+  //   Series.update({ model: container.description }, { model: container._id });
+  // })
+
   // // Use meteor debug for bebugger to work!
   // debugger;
   //

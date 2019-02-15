@@ -17,10 +17,10 @@ if (Meteor.isServer) {
         price: state.price,
         restitution: state.restitution,
         observations: state.observations,
+        snapshots: [],
 
         rented: 0,
         available: 0,
-        maintenance: 0,
         inactive: 0,
 
         visible: true
@@ -43,7 +43,6 @@ if (Meteor.isServer) {
       const data = {
         _id: state._id,
         available: state.available,
-        maintenance: state.maintenance,
         inactive: state.inactive
       }
       Accessories.update({ _id: state._id }, { $set: data });
