@@ -6,7 +6,6 @@ import { Places } from '/imports/api/places/index';
 import Box from '/imports/components/Box/index';
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
-import FooterButtons from '/imports/components/FooterButtons/index';
 
 class RegisterSeries extends React.Component {
   constructor(props) {
@@ -61,18 +60,24 @@ class RegisterSeries extends React.Component {
     }
   }
 
+  removeItem = () => {
+    Meteor.call('series.hide', this.props.item._id);
+    this.props.toggleWindow();
+  }
+
   render() {
     return (
       <Box
-        title="Adicionar Nova Série"
+        title={this.props.item._id ? "Editar Série" : "Adicionar Nova Série"}
         closeBox={this.props.toggleWindow}
         width="800px">
-          <Block columns={6} options={[{block: 2, span: 2}, {block: 3, span: 2}]}>
+          <Block columns={3} options={[{block: 3, span: 3}]}>
             <Input
               title="Série:"
               type="number"
               name="serial"
               style={this.state.errorKeys.includes("serial") ? {borderColor: "red"} : null}
+              readOnly={this.props.item._id}
               value={this.state.serial}
               onChange={this.onChange}
             />
@@ -81,7 +86,8 @@ class RegisterSeries extends React.Component {
               type="select"
               name="model"
               style={this.state.errorKeys.includes("model") ? {borderColor: "red"} : null}
-              value={this.state.description}
+              disabled={this.props.item._id}
+              value={this.state.model}
               onChange={this.onChange}>
                 <option value=''></option>
                 {this.renderModels()}
@@ -91,23 +97,20 @@ class RegisterSeries extends React.Component {
               type="select"
               name="place"
               style={this.state.errorKeys.includes("place") ? {borderColor: "red"} : null}
-              value={this.state.price}
+              value={this.state.place}
               onChange={this.onChange}>
                 <option value=''></option>
                 {this.renderPlaces()}
             </Input>
             <Input
               title="Observações:"
-              type="text"
+              type="textarea"
               name="observations"
               value={this.state.observations}
               onChange={this.onChange}
             />
           </Block>
-          <FooterButtons buttons={[
-            {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
-            {text: "Salvar", onClick: this.saveEdits}
-          ]}/>
+          <this.props.Footer {...this.props} saveEdits={this.saveEdits} removeItem={this.removeItem} />
       </Box>
     )
   }

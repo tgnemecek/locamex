@@ -5,7 +5,6 @@ import tools from '/imports/startup/tools/index';
 
 import SearchBar from '/imports/components/SearchBar/index';
 import Input from '/imports/components/Input/index';
-import RegisterModules from '/imports/components/RegisterModules/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 

@@ -6,6 +6,7 @@ import { Containers } from '/imports/api/containers/index';
 import tools from '/imports/startup/tools/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
+import FilterBar from '/imports/components/FilterBar/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
@@ -13,44 +14,18 @@ class SeriesTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filteredDatabase: [],
-      searchOptions: {
-        onlySearchHere: ['serial', 'description', 'observations'],
-        filters: [
-          {
-            label: "Pátio:",
-            key: "place",
-            selected: "",
-            options: []
-          }
-        ]
-      }
+      filteredDatabase: []
     }
-  }
-
-  componentDidMount() {
-    this.updateDatabases();
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps !== this.props) {
-      this.updateDatabases();
+      this.setState({ filteredDatabase: this.props.fullDatabase });
     }
   }
 
-  updateDatabases = () => {
-    var searchOptions = { ...this.state.searchOptions };
-    var placesOptions = this.props.placesDatabase.map((place) => {
-      return {value: place._id, label: place.description}
-    })
-    searchOptions.filters[0].options = placesOptions;
-    this.setState({ searchOptions, filteredDatabase: this.props.fullDatabase });
-  }
-
-  searchReturn = (filteredDatabase) => {
-    if (filteredDatabase) {
-      this.setState({ filteredDatabase });
-    } else this.setState({ filteredDatabase: this.props.fullDatabase });
+  filterSearch = (filteredDatabase) => {
+    this.setState({ filteredDatabase });
   }
 
   renderHeader = () => {
@@ -78,6 +53,9 @@ class SeriesTable extends React.Component {
         if (!model) return "-";
         return tools.findUsingId(this.props.modelsDatabase, model).description;
       }
+      const toggleEditWindow = () => {
+        this.props.toggleEditWindow(item);
+      }
       const toggleImageWindow = () => {
         this.props.toggleImageWindow(item);
       }
@@ -87,6 +65,7 @@ class SeriesTable extends React.Component {
           <td className="table__small-column" style={{textAlign: 'left'}}>{translateModels(item.model)}</td>
           <td className="table__small-column">{translatePlaces(item.place)}</td>
           <td className="table__small-column--wrap">{item.observations}</td>
+          <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
           <td className="table__small-column"><button className="database__table__button" onClick={toggleImageWindow}>🔍</button></td>
         </tr>
       )
@@ -97,10 +76,12 @@ class SeriesTable extends React.Component {
     if (this.props.ready) {
       return (
         <ErrorBoundary>
-          <SearchBar
+          <FilterBar
+            fields={["model", "place"]}
+            placesDatabase={this.props.placesDatabase}
+            modelsDatabase={this.props.modelsDatabase}
             database={this.props.fullDatabase}
-            options={this.state.searchOptions}
-            searchReturn={this.searchReturn}
+            filterSearch={this.filterSearch}
           />
           <div className="database__scroll-div">
             <table className="table database__table">

@@ -15,9 +15,10 @@
 }
 
 .input input:read-only {
-  background: $light-grey;
+  color: $dark-grey;
+  background: $grey;
 }
 
 .input select:disabled {
-  background: $light-grey;
+  background: $grey;
 }

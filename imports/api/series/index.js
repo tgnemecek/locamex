@@ -27,13 +27,16 @@ if (Meteor.isServer) {
     },
     'series.update' (state) {
       var data = {
-        model: state.model,
-        serial: state.serial,
         place: state.place,
         observations: state.observations
       }
-      Series.update({_id: state._id}, data);
+      Series.update({_id: state._id}, {$set: data} );
       Meteor.call('history.insert', {...data, _id: state._id}, 'series.update');
+    },
+    'series.hide' (_id) {
+      var data = { visible: false };
+      Series.update({_id}, {$set: data} );
+      Meteor.call('history.insert', {...data, _id}, 'series.hide');
     }
   })
 }

@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.7.0
+Version: 1.7.1
 
 ## Information:
 
@@ -8,6 +8,13 @@ Version: 1.7.0
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.7.1
+
+-  All RegisterX are now inside RegisterData parent;
+-  All XTable are now inside DatabaseTable parent;
+-  Fixed images not sending (server error);
+-  Added Edit button to SeriesTable;
 
 ### Version 1.7.0
 
