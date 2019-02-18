@@ -12,10 +12,7 @@ class AccessoriesTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filteredDatabase: [],
-      searchOptions: {
-        onlySearchHere: ['description']
-      }
+      filteredDatabase: []
     }
   }
 
@@ -25,10 +22,8 @@ class AccessoriesTable extends React.Component {
     }
   }
 
-  searchReturn = (filteredDatabase) => {
-    if (filteredDatabase) {
-      this.setState({ filteredDatabase });
-    } else this.setState({ filteredDatabase: this.props.fullDatabase });
+  filterSearch = (filteredDatabase) => {
+    this.setState({ filteredDatabase });
   }
 
   renderHeader = () => {
@@ -82,8 +77,8 @@ class AccessoriesTable extends React.Component {
         <ErrorBoundary>
           <SearchBar
             database={this.props.fullDatabase}
-            options={this.state.searchOptions}
-            searchReturn={this.searchReturn}
+            searchHere={['description']}
+            filterSearch={this.filterSearch}
           />
           <div className="database__scroll-div">
             <table className="table database__table">

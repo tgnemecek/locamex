@@ -1,6 +1,7 @@
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Clients } from '/imports/api/clients/index';
+
 import tools from '/imports/startup/tools/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
@@ -11,31 +12,18 @@ class ClientsTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filteredDatabase: [],
-      searchOptions: {
-        onlySearchHere: ['description', 'officialName', 'registry']
-      }
+      filteredDatabase: []
     }
-  }
-
-  componentDidMount() {
-    this.updateDatabases();
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps !== this.props) {
-      this.updateDatabases();
+      this.setState({ filteredDatabase: this.props.fullDatabase });
     }
   }
 
-  updateDatabases = () => {
-    this.setState({ filteredDatabase: this.props.fullDatabase });
-  }
-
-  searchReturn = (filteredDatabase) => {
-    if (filteredDatabase) {
-      this.setState({ filteredDatabase });
-    } else this.setState({ filteredDatabase: this.props.fullDatabase });
+  filterSearch = (filteredDatabase) => {
+    this.setState({ filteredDatabase });
   }
 
   renderHeader = () => {
@@ -75,8 +63,8 @@ class ClientsTable extends React.Component {
         <ErrorBoundary>
           <SearchBar
             database={this.props.fullDatabase}
-            options={this.state.searchOptions}
-            searchReturn={this.searchReturn}
+            searchHere={['description', 'registry']}
+            filterSearch={this.filterSearch}
           />
           <div className="database__scroll-div">
             <table className="table database__table">

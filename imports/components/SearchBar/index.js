@@ -15,6 +15,12 @@ export default class SearchBar extends React.Component {
     this.setState({ value: e.target.value });
   }
 
+  onClick = (e) => {
+    this.setState({ value: '' }, () => {
+      this.runSearch();
+    });
+  }
+
   runSearch = (e) => {
     e ? e.stopPropagation() : null;
     e ? e.preventDefault() : null;
@@ -27,8 +33,6 @@ export default class SearchBar extends React.Component {
     if (!value) {
       this.props.filterSearch(this.props.database);
     } else {
-      value = tools.removeSpecialChars(value, /[\.\/\-\(\) ]/g).toUpperCase();
-
       searchHere.forEach((searchField) => {
         database.forEach((item) => {
           for (var key of Object.keys(item)) {
@@ -64,6 +68,7 @@ export default class SearchBar extends React.Component {
             type="text"
             className="search-bar__search-input"
             onChange={this.onChange}
+            buttonClick={this.onClick}
             value={this.state.value}
           />
           <button className="button--pill search-bar__button" onClick={this.runSearch}>Buscar</button>

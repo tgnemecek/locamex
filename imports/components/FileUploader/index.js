@@ -34,26 +34,29 @@ export default class FileUploader extends React.Component {
       return;
     }
 
-    if (areInvalid(sortedFiles, this.props.uploadDirective)) {
-      this.setState({ errorMsg: "Formato de arquivo inválido."});
+    var areInvalid = validateFiles(sortedFiles, this.props.uploadDirective);
+
+    if (areInvalid) {
+      this.setState({ errorMsg: areInvalid.translation});
       return;
     }
 
-    var successCount = 0
+    var metaContext;
+    var sendCount = 0;
 
-    sortedFiles.forEach((file, imageIndex) => {
-      var metaContext = createMetaContext(this.props.item, imageIndex, file);
+    sortedFiles.forEach((file, imageIndex, arr) => {
+      metaContext = createMetaContext(this.props.item, imageIndex, file);
       var uploader = new Slingshot.Upload(this.props.uploadDirective, metaContext);
       uploader.send(file, (error, downloadUrl) => {
+        sendCount++;
         if (!error) {
-          successCount++;
-          urls.push(downloadUrl);
-          if ((imageIndex+1) == sortedFiles.length) {
+          urls[imageIndex] = downloadUrl;
+          if (sendCount === arr.length) {
             Meteor.call('snapshot.add', metaContext, urls);
-            alert(successCount + ' arquivo(s) enviado(s) com sucesso!');
+            alert(urls.length + ' arquivo(s) enviado(s) com sucesso!');
             this.props.toggleWindow(true);
           }
-        }
+        } else console.error(error);
       });
     })
   }
@@ -107,15 +110,21 @@ export default class FileUploader extends React.Component {
   }
 }
 
-function areInvalid(files, uploadDirective) {
+function validateFiles(files, uploadDirective) {
+  var maxSize = 10 * 1024 * 1024;
   Slingshot.fileRestrictions(uploadDirective, {
-    allowedFileTypes: ["image/png", "image/jpeg"]
+    allowedFileTypes: ["image/png", "image/jpeg"],
+    maxSize
   });
   for (var i = 0; i < files.length; i++) {
     var uploader = new Slingshot.Upload(uploadDirective);
     var error = uploader.validate(files[i]);
     if (error) {
-      return error;
+      console.error(error);
+      var translation;
+      if (error.message.search('size')) translation = `Imagem excede o tamanho limite de ${maxSize} Bytes.`;
+      if (error.message.search('file types')) translation = `Formato de arquivo inválido. Use apenas imagens PNG ou JPEG.`;
+      return {...error, translation};
     }
   }
   return false;

@@ -3,6 +3,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { Modules } from '/imports/api/modules/index';
 import tools from '/imports/startup/tools/index';
 
+import Block from '/imports/components/Block/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import Input from '/imports/components/Input/index';
 import Loading from '/imports/components/Loading/index';
@@ -12,13 +13,16 @@ class ModuleList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      modulesDatabaseFiltered: this.props.modulesDatabase
+      modulesDatabaseFiltered: []
     }
   }
-  searchReturn = (modulesDatabaseFiltered) => {
-    if (modulesDatabaseFiltered) {
-      this.setState({ modulesDatabaseFiltered });
-    } else this.setState({ modulesDatabaseFiltered: this.props.modulesDatabase });
+  componentDidUpdate(prevProps) {
+    if (prevProps.modulesDatabase.length !== this.props.modulesDatabase.length) {
+      this.setState({ modulesDatabaseFiltered: this.props.modulesDatabase });
+    }
+  }
+  filterSearch = (modulesDatabaseFiltered) => {
+    this.setState({ modulesDatabaseFiltered });
   }
   onChange = (e) => {
     var value = e.target.value;
@@ -48,7 +52,7 @@ class ModuleList extends React.Component {
   }
 
   renderBody = () => {
-    return this.props.modulesDatabase.map((item, i) => {
+    return this.state.modulesDatabaseFiltered.map((item, i) => {
       return (
         <tr key={i}>
           <td>{item.description}</td>
@@ -69,12 +73,14 @@ class ModuleList extends React.Component {
 
   render () {
     return (
-      <div className="register-containers__module-block">
-        <h4 className="register-containers__module-block__title">Componentes Permitidos:</h4>
+      <Block
+        title="Componentes Permitidos:"
+        columns={1}
+        className="register-containers__module-block">
         <SearchBar
           database={this.props.modulesDatabase}
-          options={this.props.searchOptions}
-          searchReturn={this.searchReturn}
+          searchHere={['description']}
+          filterSearch={this.filterSearch}
         />
         <table className="table database__table">
           <thead>
@@ -86,7 +92,7 @@ class ModuleList extends React.Component {
             {this.renderBody()}
           </tbody>
         </table>
-      </div>
+      </Block>
     )
   }
 }

@@ -7,42 +7,6 @@ import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
 class UsersTable extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      filteredDatabase: [],
-      searchOptions: {
-        dontSearchHere: ['password', 'pages']
-      }
-    }
-  }
-
-  componentDidMount() {
-    this.updateDatabases();
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps !== this.props) {
-      this.updateDatabases();
-    }
-  }
-
-  updateDatabases = () => {
-    this.setState({ filteredDatabase: this.props.fullDatabase });
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps !== this.props) {
-      this.setState({ filteredDatabase: this.props.fullDatabase });
-    }
-  }
-
-  searchReturn = (filteredDatabase) => {
-    if (filteredDatabase) {
-      this.setState({ filteredDatabase });
-    } else this.setState({ filteredDatabase: this.props.fullDatabase });
-  }
-
   renderHeader = () => {
     const toggleEditWindow = () => {
       this.props.toggleEditWindow({});
@@ -57,7 +21,7 @@ class UsersTable extends React.Component {
     )
   }
   renderBody = () => {
-    return this.state.filteredDatabase.map((item, i) => {
+    return this.props.fullDatabase.map((item, i) => {
       const toggleEditWindow = () => {
         this.props.toggleEditWindow(item);
       }
@@ -75,11 +39,6 @@ class UsersTable extends React.Component {
     if (this.props.ready) {
       return (
         <ErrorBoundary>
-          <SearchBar
-            database={this.props.fullDatabase}
-            options={this.state.searchOptions}
-            searchReturn={this.searchReturn}
-          />
           <div className="database__scroll-div">
             <table className="table database__table">
               <thead>

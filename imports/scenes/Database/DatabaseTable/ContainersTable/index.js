@@ -12,55 +12,18 @@ class ContainersTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filteredDatabase: [],
-      searchOptions: {
-        onlySearchHere: ['description'],
-        filters: [
-          {
-            label: "Status: (Containers Fixos)",
-            key: "status",
-            selected: "",
-            options: [
-              {value: "available", label: "Disponível"},
-              {value: "rented", label: "Locado"},
-              {value: "maintenance", label: "Manutenção"},
-              {value: "inactive", label: "Inativo"}
-            ]
-          },
-          {
-            label: "Pátio: (Containers Fixos)",
-            key: "place",
-            selected: "",
-            options: []
-          }
-        ]
-      }
+      filteredDatabase: []
     }
-  }
-
-  componentDidMount() {
-    this.updateDatabases();
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps !== this.props) {
-      this.updateDatabases();
+      this.setState({ filteredDatabase: this.props.fullDatabase });
     }
   }
 
-  updateDatabases = () => {
-    var searchOptions = { ...this.state.searchOptions };
-    var placesOptions = this.props.placesDatabase.map((place) => {
-      return {value: place._id, label: place.description}
-    })
-    searchOptions.filters[1].options = placesOptions;
-    this.setState({ searchOptions, filteredDatabase: this.props.fullDatabase });
-  }
-
-  searchReturn = (filteredDatabase) => {
-    if (filteredDatabase) {
-      this.setState({ filteredDatabase });
-    } else this.setState({ filteredDatabase: this.props.fullDatabase });
+  filterSearch = (filteredDatabase) => {
+    this.setState({ filteredDatabase });
   }
 
   renderHeader = () => {
@@ -115,8 +78,8 @@ class ContainersTable extends React.Component {
         <ErrorBoundary>
           <SearchBar
             database={this.props.fullDatabase}
-            options={this.state.searchOptions}
-            searchReturn={this.searchReturn}
+            searchHere={['description']}
+            filterSearch={this.filterSearch}
           />
           <div className="database__scroll-div">
             <table className="table database__table">

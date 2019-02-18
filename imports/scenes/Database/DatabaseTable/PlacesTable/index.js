@@ -8,26 +8,6 @@ import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
 class PlacesTable extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      filteredDatabase: []
-    }
-  }
-
-  componentDidMount() {
-    this.updateDatabases();
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps !== this.props) {
-      this.updateDatabases();
-    }
-  }
-
-  updateDatabases = () => {
-    this.setState({ filteredDatabase: this.props.fullDatabase });
-  }
 
   renderHeader = () => {
     const toggleEditWindow = () => {
@@ -42,7 +22,7 @@ class PlacesTable extends React.Component {
   }
 
   renderBody = () => {
-    return this.state.filteredDatabase.map((item, i) => {
+    return this.props.fullDatabase.map((item, i) => {
       const toggleEditWindow = () => {
         this.props.toggleEditWindow(item);
       }

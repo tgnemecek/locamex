@@ -11,6 +11,34 @@ export default class tools {
     } else return [input];
   }
 
+  static filterSearch = (database, state) => {
+
+    const compare = (a, b) => {
+      a = tools.removeSpecialChars(a.toString(), /[\.\/\-\(\) ]/g).toUpperCase();
+      b = tools.removeSpecialChars(b.toString(), /[\.\/\-\(\) ]/g).toUpperCase();
+      return a.search(b) === -1 ? false : true;
+    }
+
+    if (state.search) {
+      if (state.search.value) {
+        database = database.filter((item) => {
+          return compare(item[state.search.key], state.search.value);
+        })
+      }
+    }
+    if (state.filter) {
+      var filterArray = Array.isArray(state.filter) ? state.filter : [state.filter];
+      filterArray.forEach((filter) => {
+        if (filter.value) {
+          database.filter((item) => {
+            return compare(item[state.filter.key], filter.value);
+          })
+        }
+      })
+    }
+    return database;
+  }
+
   static sortObjects = (arr, key, options) => {
     if (!options) options = {};
 

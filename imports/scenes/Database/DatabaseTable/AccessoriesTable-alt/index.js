@@ -1,6 +1,6 @@
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
-import { Modules } from '/imports/api/modules/index';
+import { Accessories } from '/imports/api/accessories/index';
 import tools from '/imports/startup/tools/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 
@@ -8,22 +8,28 @@ import SearchBar from '/imports/components/SearchBar/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
-class ModulesTable extends React.Component {
+import Search from './Search/index';
+import FilterBar from './FilterBar/index';
+
+// This class shows an alternate way to apply filters.
+// It can be more complicated than the current method in the state
+// But the filter is applied during the render with no setting new filtered databases
+// So the databases are never updated, just the filter/search values, which cause the render to filter the databases in real time
+
+class AccessoriesTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filteredDatabase: []
+      search: '',
+      filters: []
     }
+    this.filterHere = ['available'];
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps !== this.props) {
-      this.setState({ filteredDatabase: this.props.fullDatabase });
+  filterSearch = (value, property) => {
+    if (property === 'search') {
+      this.setState({ search: { key: this.state.search.key, value } });
     }
-  }
-
-  filterSearch = (filteredDatabase) => {
-    this.setState({ filteredDatabase });
   }
 
   renderHeader = () => {
@@ -37,13 +43,21 @@ class ModulesTable extends React.Component {
         <th className="table__small-column">Locados</th>
         <th className="table__small-column">Inativos</th>
         <th className="table__small-column">Total</th>
+        <th className="table__small-column">Valor</th>
         <th className="table__small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
       </tr>
     )
   }
+
   renderBody = () => {
-    return this.state.filteredDatabase.map((item, i) => {
-      var total = item.available + item.rented + item.inactive;
+
+    var options = {
+      searchHere: 'description',
+      filterHere: 'available'
+    }
+
+    return tools.filterSearch(this.props.fullDatabase, options).map((item, i) => {
+      var total = item.available + item.inactive + item.rented;
       const toggleEditWindow = () => {
         this.props.toggleEditWindow(item);
       }
@@ -60,6 +74,7 @@ class ModulesTable extends React.Component {
           <td className="table__small-column">{item.rented}</td>
           <td className="table__small-column">{item.inactive}</td>
           <td className="table__small-column">{total}</td>
+          <td className="table__small-column">{tools.format(item.price, 'currency')}</td>
           <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
           <td className="table__small-column"><button className="database__table__button" onClick={toggleTransactionWindow}>⟳</button></td>
           <td className="table__small-column"><button className="database__table__button" onClick={toggleImageWindow}>🔍</button></td>
@@ -67,13 +82,20 @@ class ModulesTable extends React.Component {
       )
     })
   }
+
   render () {
     if (this.props.ready) {
       return (
         <ErrorBoundary>
-          <SearchBar
+          <Search
             database={this.props.fullDatabase}
-            searchHere={['description']}
+            filterSearch={this.filterSearch}
+          />
+          <FilterBar
+            fields={this.filterHere}
+            placesDatabase={this.props.placesDatabase}
+            modelsDatabase={this.props.modelsDatabase}
+            database={this.props.fullDatabase}
             filterSearch={this.filterSearch}
           />
           <div className="database__scroll-div">
@@ -102,12 +124,12 @@ class ModulesTable extends React.Component {
   }
 }
 
-export default ModulesTableWrapper = withTracker((props) => {
-  Meteor.subscribe('modulesPub');
-  var fullDatabase = Modules.find().fetch();
+export default AccessoriesTableWrapper = withTracker((props) => {
+  Meteor.subscribe('accessoriesPub');
+  var fullDatabase = Accessories.find().fetch();
   var ready = !!fullDatabase.length;
   return {
     fullDatabase,
     ready
   }
-})(ModulesTable);
+})(AccessoriesTable);

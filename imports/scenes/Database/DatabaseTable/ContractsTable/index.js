@@ -1,6 +1,7 @@
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Link } from 'react-router-dom';
+
 import { Clients } from '/imports/api/clients/index';
 import { Contracts } from '/imports/api/contracts/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
@@ -17,24 +18,14 @@ class ContractsTable extends React.Component {
     }
   }
 
-  componentDidMount() {
-    this.updateDatabases();
-  }
-
   componentDidUpdate(prevProps) {
     if (prevProps !== this.props) {
-      this.updateDatabases();
+      this.setState({ filteredDatabase: this.props.fullDatabase });
     }
   }
 
-  updateDatabases = () => {
-    this.setState({ filteredDatabase: this.props.fullDatabase });
-  }
-
-  searchReturn = (filteredDatabase) => {
-    if (filteredDatabase) {
-      this.setState({ filteredDatabase });
-    } else this.setState({ filteredDatabase: this.props.fullDatabase });
+  filterSearch = (filteredDatabase) => {
+    this.setState({ filteredDatabase });
   }
   renderHeader = () => {
     const toggleWindow = () => {
@@ -115,7 +106,8 @@ class ContractsTable extends React.Component {
         <ErrorBoundary>
           <SearchBar
             database={this.props.fullDatabase}
-            searchReturn={this.searchReturn}
+            searchHere={['_id']}
+            filterSearch={this.filterSearch}
           />
           <div className="database__scroll-div">
             <table className="table database__table">

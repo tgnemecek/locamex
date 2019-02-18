@@ -9,26 +9,6 @@ import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
 class HistoryTable extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      filteredDatabase: []
-    }
-  }
-
-  componentDidMount() {
-    this.updateDatabases();
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps !== this.props) {
-      this.updateDatabases();
-    }
-  }
-
-  updateDatabases = () => {
-    this.setState({ filteredDatabase: this.props.fullDatabase });
-  }
 
   renderHeader = () => {
     const toggleEditWindow = () => {
@@ -47,7 +27,7 @@ class HistoryTable extends React.Component {
   }
 
   renderBody = () => {
-    return this.state.filteredDatabase.map((item, i) => {
+    return this.props.fullDatabase.map((item, i) => {
       const toggleEditWindow = () => {
         this.props.toggleEditWindow(item);
       }
@@ -57,7 +37,7 @@ class HistoryTable extends React.Component {
           <td>{moment(item.insertionDate).format("HH:mm:ss")}</td>
           <td>{item.user.firstName}</td>
           <td>{tools.translateDatabase(item.type)}</td>
-          <td>{item.data._id.toString()}</td>
+          <td>{item.data._id}</td>
           <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>🔍</button></td>
         </tr>
       )

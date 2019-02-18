@@ -69,7 +69,7 @@ export default class RegisterAccessories extends React.Component {
         closeBox={this.props.toggleWindow}
         width="800px">
           <div className="error-message">{this.state.errorMsg}</div>
-          <Block columns={3}>
+          <Block columns={4} options={[{block: 0, span: 2}]}>
             <Input
               title="Descrição:"
               type="text"

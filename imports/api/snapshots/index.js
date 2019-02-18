@@ -1,7 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 
 import { Accessories } from '../accessories/index';
-import { Containers } from '../containers/index';
 import { Modules } from '../modules/index';
 import { Series } from '../series/index';
 
@@ -20,6 +19,9 @@ if (Meteor.isServer) {
         break;
         case 'accessory':
           Database = Accessories;
+        break;
+        case 'module':
+          Database = Modules;
         break;
         default:
           throw new Meteor.Error('please-add-db-to-snapshots-api');

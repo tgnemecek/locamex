@@ -5,6 +5,7 @@
 
 .search-bar__search-input {
   flex-grow: 1;
+  input { background: $light-grey; }
 }
 
 .search-bar__button {
