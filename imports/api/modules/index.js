@@ -39,11 +39,10 @@ if (Meteor.isServer) {
       const data = {
         _id: state._id,
         available: state.available,
-        maintenance: state.maintenance,
         inactive: state.inactive
       }
       Modules.update({ _id: state._id }, { $set: data });
-      Meteor.call('history.insert', data, 'modules');
+      Meteor.call('history.insert', data, 'modules.transaction');
     },
     'modules.hide'(_id) {
       const data = {

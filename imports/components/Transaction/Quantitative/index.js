@@ -15,7 +15,6 @@ export default class Quantitative extends React.Component {
       destination: 'available',
 
       available: this.props.item.available || 0,
-      maintenance: this.props.item.maintenance || 0,
       inactive: this.props.item.inactive || 0,
     }
   }
@@ -85,7 +84,6 @@ export default class Quantitative extends React.Component {
             onChange={this.onChangeWhere}>
               <option value="-">Entrada (Compra)</option>
               <option value="available">Disponíveis</option>
-              <option value="maintenance">Manutenção</option>
               <option value="inactive">Inativos</option>
           </Input>
           <Input
@@ -122,7 +120,6 @@ export default class Quantitative extends React.Component {
             value={this.state.destination}
             onChange={this.onChangeWhere}>
               <option value="available">Disponíveis</option>
-              <option value="maintenance">Manutenção</option>
               <option value="inactive">Inativos</option>
               <option value="-">Saída (Desmanche)</option>
           </Input>

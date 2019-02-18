@@ -46,7 +46,7 @@ if (Meteor.isServer) {
         inactive: state.inactive
       }
       Accessories.update({ _id: state._id }, { $set: data });
-      Meteor.call('history.insert', data, 'accessories');
+      Meteor.call('history.insert', data, 'accessories.transaction');
     },
     'accessories.hide'(_id) {
       const data = {

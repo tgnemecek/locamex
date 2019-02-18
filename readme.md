@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.7.2
+Version: 1.7.3
 
 ## Information:
 
@@ -8,6 +8,10 @@ Version: 1.7.2
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.7.3
+
+-  Removed maintenance status from accessories;
 
 ### Version 1.7.2
 
