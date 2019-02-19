@@ -16,42 +16,42 @@ if (Meteor.isServer) {
         type: "module",
         description: state.description,
         rented: 0,
-        available: 0,
-        inactive: 0,
+        place: [],
 
         snapshots: [],
 
         visible: true
       };
       Modules.insert(data);
-      Meteor.call('history.insert', data, 'modules');
+      Meteor.call('history.insert', data, 'modules.insert');
     },
     'modules.update'(state) {
       const data = {
-        _id: state._id,
-        description: state.description,
-        visible: true
+        description: state.description
       };
       Modules.update({ _id: state._id }, { $set: data });
-      Meteor.call('history.insert', data, 'modules');
+      Meteor.call('history.insert', {...data, _id: state._id}, 'modules.update');
     },
-    'modules.transaction'(state) {
+    'modules.stock.update'(item) {
       const data = {
-        _id: state._id,
-        available: state.available,
-        inactive: state.inactive
+        place: item.place
       }
-      Modules.update({ _id: state._id }, { $set: data });
-      Meteor.call('history.insert', data, 'modules.transaction');
+      Modules.update({ _id: item._id }, { $set: data });
+      Meteor.call('history.insert', {...data, _id: item._id}, 'modules.stock.update');
     },
     'modules.hide'(_id) {
       const data = {
-        _id,
         visible: false
       };
       Modules.update({ _id }, { $set: data });
-      Meteor.call('history.insert', data, 'modules');
+      Meteor.call('history.insert', {...data, _id}, 'modules.hide');
     },
+
+    // Use not verified:
+
+
+
+
     'modules.check'(_id, quantity) {
       const item = Modules.findOne(
         {

@@ -47,7 +47,6 @@ class ModulesTable extends React.Component {
   }
   renderBody = () => {
     return this.state.filteredDatabase.map((item, i) => {
-      var total = item.available + item.rented + item.inactive;
       const toggleEditWindow = () => {
         this.props.toggleEditWindow(item);
       }
@@ -57,13 +56,18 @@ class ModulesTable extends React.Component {
       const toggleImageWindow = () => {
         this.props.toggleImageWindow(item);
       }
+      function count(places, which) {
+        return places.reduce((acc, cur) => {
+          return acc + cur[which];
+        }, 0);
+      }
       return (
         <tr key={i}>
           <td>{item.description}</td>
-          <td className="table__small-column">{item.available}</td>
+          <td className="table__small-column">{count(item.place, 'available')}</td>
           <td className="table__small-column">{item.rented}</td>
-          <td className="table__small-column">{item.inactive}</td>
-          <td className="table__small-column">{total}</td>
+          <td className="table__small-column">{count(item.place, 'inactive')}</td>
+          <td className="table__small-column">{count(item.place, 'available') + count(item.place, 'inactive')}</td>
           <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
           <td className="table__small-column"><button className="database__table__button" onClick={toggleStockVisualizer}>⟳</button></td>
           <td className="table__small-column"><button className="database__table__button" onClick={toggleImageWindow}>🔍</button></td>

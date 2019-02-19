@@ -86,6 +86,8 @@ class StockVisualizer extends React.Component {
     } else {
       if (this.props.item.type === 'accessory') {
         Meteor.call('accessories.stock.update', this.state.item);
+      } else if (this.props.item.type === 'module') {
+        Meteor.call('modules.stock.update', this.state.item);
       }
       this.props.toggleWindow();
     }

@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.7.4
+Version: 1.7.5
 
 ## Information:
 
@@ -8,6 +8,10 @@ Version: 1.7.4
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.7.5
+
+-  Modules now allows multiple places for each module;
 
 ### Version 1.7.4
 
