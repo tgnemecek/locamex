@@ -16,6 +16,10 @@ class ModulesTable extends React.Component {
     }
   }
 
+  componentDidMount() {
+    this.setState({ filteredDatabase: this.props.fullDatabase });
+  }
+
   componentDidUpdate(prevProps) {
     if (prevProps !== this.props) {
       this.setState({ filteredDatabase: this.props.fullDatabase });
@@ -47,8 +51,8 @@ class ModulesTable extends React.Component {
       const toggleEditWindow = () => {
         this.props.toggleEditWindow(item);
       }
-      const toggleTransactionWindow = () => {
-        this.props.toggleTransactionWindow(item);
+      const toggleStockVisualizer = () => {
+        this.props.toggleStockVisualizer(item);
       }
       const toggleImageWindow = () => {
         this.props.toggleImageWindow(item);
@@ -61,7 +65,7 @@ class ModulesTable extends React.Component {
           <td className="table__small-column">{item.inactive}</td>
           <td className="table__small-column">{total}</td>
           <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
-          <td className="table__small-column"><button className="database__table__button" onClick={toggleTransactionWindow}>⟳</button></td>
+          <td className="table__small-column"><button className="database__table__button" onClick={toggleStockVisualizer}>⟳</button></td>
           <td className="table__small-column"><button className="database__table__button" onClick={toggleImageWindow}>🔍</button></td>
         </tr>
       )

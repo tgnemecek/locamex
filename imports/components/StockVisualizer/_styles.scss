@@ -1,4 +1,4 @@
-@import './Fixed/styles';
+@import './BuySell/styles';
 
 .stock-visualizer__place-block {
   background: $brand-primary;
@@ -8,6 +8,7 @@
   line-height: 35px;
   text-align: left;
   padding-left: ($space /2);
+  margin: ($space /2) 0;
   div {
     padding: 0px;
   }

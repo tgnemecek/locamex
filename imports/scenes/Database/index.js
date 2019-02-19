@@ -16,7 +16,6 @@ export default class Database extends React.Component {
     this.state = {
       item: null,
       editWindow: false,
-      transactionWindow: false,
       stockVisualizer: false,
       imageWindow: false
     }
@@ -38,15 +37,6 @@ export default class Database extends React.Component {
         item
       });
     } else this.setState({ stockVisualizer: false, item: null });
-  }
-
-  toggleTransactionWindow = (item) => {
-    if (item) {
-      this.setState({
-        transactionWindow: !this.state.transactionWindow,
-        item
-      });
-    } else this.setState({ transactionWindow: false, item: null });
   }
 
   toggleImageWindow = (item) => {
@@ -76,12 +66,6 @@ export default class Database extends React.Component {
             type={this.state.item.type}
             item={this.state.item}
             toggleWindow={this.toggleStockVisualizer}
-          />
-        : null}
-        {this.state.transactionWindow ?
-          <Transaction
-            item={this.state.item}
-            toggleWindow={this.toggleTransactionWindow}
           />
         : null}
         {this.state.imageWindow ?

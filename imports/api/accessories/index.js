@@ -20,8 +20,7 @@ if (Meteor.isServer) {
         snapshots: [],
 
         rented: 0,
-        available: 0,
-        inactive: 0,
+        place: [],
 
         visible: true
       }
@@ -39,14 +38,12 @@ if (Meteor.isServer) {
       Accessories.update({ _id: state._id }, { $set: data });
       Meteor.call('history.insert', data, 'accessories');
     },
-    'accessories.transaction'(state) {
+    'accessories.stock.update'(item) {
       const data = {
-        _id: state._id,
-        available: state.available,
-        inactive: state.inactive
+        place: item.place
       }
-      Accessories.update({ _id: state._id }, { $set: data });
-      Meteor.call('history.insert', data, 'accessories.transaction');
+      Accessories.update({ _id: item._id }, { $set: data });
+      Meteor.call('history.insert', {...data, _id: item._id}, 'accessories.stock.update');
     },
     'accessories.hide'(_id) {
       const data = {

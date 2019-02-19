@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.7.3
+Version: 1.7.4
 
 ## Information:
 
@@ -8,6 +8,11 @@ Version: 1.7.3
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.7.4
+
+-  Now unauthorized users are automatically redirected out of a page, even if using the url address;
+-  RegisterAccessories now allows multiple places for each Accessory;
 
 ### Version 1.7.3
 
@@ -210,36 +215,26 @@ The workaround is to check if the edited user is the one logged in and forcing t
 
 ### Urgent Priority:
 
-- Implement images;
 - CONTRACT-PDF IS NOT READY FOR PERSON TYPE:
     - Contract should get and SAVE the client info in some way (but update when the user changes the registry of it);
     - Currently it is only saving the ID, which is good for updating, but after saving it is bad because the info will update later;
     - Fix when using client of person type with NO additional contacts (it is currently checking it wrong);
     - Find a way that representatives are saved in some way (because if the user decides to print a contract later they have to remember who were the reps);
+-  When place is deleted, run batch to remove all items from that place (to avoid miscounting of stock);
 
 ### High Priority:
 
-- Put AWS keys in settings.json (safer), and remove from api/images;
 - RegisterContainers:
     - Add 'select all' toggle in modular header;
     - Put SearchBar out of scroll div;
-- Remove id fields from view;
-- Replace all trackers with withTracker;
 - Add 'events' version of contract;
 - Contract is not verifying CEP on activation;
 - Create confirmation message for unmounting pack: "Desmontar pacote e retornar os componentes para o estoque?";
-- Billing: make equalValue bool start as true;
-- When trying to change page, warn of losing non-saved information;
 
 ### Medium Priority:
 
-- Make RegisterContainers/Modular SearchBar to be outside the scrolling div;
-- Test Billing with broken values and long remainders, possible to encounter NaN.
 - Add server-side security for meteor methods (simple-schema, required fields);
-- Fix table in RegisterPacks where it divides the table randomly;
 - Create better security for unauthorized users (like checking for userId in meteor methods);
-- Create Tag Database;
-- Add PlacesTable in Database for future implementations;
 
 ### Low Priority: (future implementations)
 
@@ -247,7 +242,6 @@ The workaround is to check if the edited user is the one logged in and forcing t
 - Add colors to tables for the different statuses (contracts and products);
 - Add the possibility for accessories to be "qualitative" allowing only quantity of 1;
 - Make Documents save representatives in Contract;
-- Fix trim() tool and apply to Register classes (currently empty spaces count as filled);
 - Make the app responsive and mobile friendly;
 - Make the app compatible to other browsers;
 

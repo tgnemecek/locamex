@@ -16,6 +16,10 @@ class ClientsTable extends React.Component {
     }
   }
 
+  componentDidMount() {
+    this.setState({ filteredDatabase: this.props.fullDatabase });
+  }
+
   componentDidUpdate(prevProps) {
     if (prevProps !== this.props) {
       this.setState({ filteredDatabase: this.props.fullDatabase });

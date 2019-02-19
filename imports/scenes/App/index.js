@@ -10,7 +10,6 @@ import Contract from '/imports/scenes/Contract/index';
 import Database from '/imports/scenes/Database/index';
 import Dashboard from '/imports/scenes/Dashboard/index';
 
-
 export default class App extends React.Component {
   constructor(props) {
     super(props);

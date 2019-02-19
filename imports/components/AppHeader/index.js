@@ -10,7 +10,7 @@ export default class AppHeader extends React.Component {
     super(props);
     this.state = {
       allowedPages: [],
-      title: undefined
+      currentPage: {}
     }
   };
 
@@ -40,7 +40,7 @@ export default class AppHeader extends React.Component {
     for (var i = 0; i < appStructure.length; i++) {
       for (var j = 0; j < appStructure[i].pages.length; j++) {
         if (pathname == appStructure[i].pages[j].link) {
-          this.setState({ title: appStructure[i].pages[j].title });
+          this.setState({ currentPage: appStructure[i].pages[j] });
           return;
         }
       }
@@ -59,17 +59,22 @@ export default class AppHeader extends React.Component {
   }
 
   render() {
-    return (
-      <div className="header__background">
-        <img src="https://s3-sa-east-1.amazonaws.com/locamex-app/app-required/logo-sistema-branco_336x104_21-09-2018.png" className="header__logo"/>
-        <div className="header">
-          <h1 className="header__title">{this.state.title}</h1>
-          <div className="header__menu">
-          {this.renderMenuItems()}
-          <button className="header__logout" onClick={() => Meteor.logout()}>Sair</button>
+    if (this.state.allowedPages.includes(this.state.currentPage.name)) {
+      return (
+        <div className="header__background">
+          <img src="https://s3-sa-east-1.amazonaws.com/locamex-app/app-required/logo-sistema-branco_336x104_21-09-2018.png" className="header__logo"/>
+          <div className="header">
+            <h1 className="header__title">{this.state.currentPage.title}</h1>
+            <div className="header__menu">
+            {this.renderMenuItems()}
+            <button className="header__logout" onClick={() => Meteor.logout()}>Sair</button>
+            </div>
           </div>
         </div>
-      </div>
-    )
+      )
+    } else if (this.state.allowedPages.length) {
+      debugger;
+      return <Redirect to="/dashboard" />
+    } else return null;
   }
 }
