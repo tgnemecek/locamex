@@ -73,7 +73,6 @@ export default class AppHeader extends React.Component {
         </div>
       )
     } else if (this.state.allowedPages.length) {
-      debugger;
       return <Redirect to="/dashboard" />
     } else return null;
   }

@@ -225,6 +225,7 @@ The workaround is to check if the edited user is the one logged in and forcing t
     - Fix when using client of person type with NO additional contacts (it is currently checking it wrong);
     - Find a way that representatives are saved in some way (because if the user decides to print a contract later they have to remember who were the reps);
 -  When place is deleted, run batch to remove all items from that place (to avoid miscounting of stock);
+-  The user-redirect logic using app-structure must be changed. The Contract and Shipping pages redirect with Refresh;
 
 ### High Priority:
 

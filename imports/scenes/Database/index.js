@@ -4,7 +4,6 @@ import moment from 'moment';
 import tools from '/imports/startup/tools/index';
 
 import StockVisualizer from '/imports/components/StockVisualizer/index';
-import Transaction from '/imports/components/Transaction/index';
 import ImageVisualizer from '/imports/components/ImageVisualizer/index';
 import RegisterData from '/imports/components/RegisterData/index';
 
@@ -56,7 +55,6 @@ export default class Database extends React.Component {
             type={this.props.match.params.database}
             item={this.state.item}
             toggleEditWindow={this.toggleEditWindow}
-            toggleTransactionWindow={this.toggleTransactionWindow}
             toggleStockVisualizer={this.toggleStockVisualizer}
             toggleImageWindow={this.toggleImageWindow}
           />

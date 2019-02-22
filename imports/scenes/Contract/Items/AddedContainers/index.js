@@ -122,7 +122,7 @@ class AddedContainers extends React.Component {
     addedItems.forEach((item) => {
       if (item.quantity > 0) newArray.push(item);
     })
-    this.props.updateContract(newArray, 'services');
+    this.props.updateContract(newArray, 'containers');
     this.toggleWindow();
   }
 
@@ -130,7 +130,7 @@ class AddedContainers extends React.Component {
     return (
       <div>
         <Table
-          addedItems={this.props.contract.services}
+          addedItems={this.props.contract.containers}
           toggleWindow={this.toggleWindow}
           updateContract={this.props.updateContract}
         />

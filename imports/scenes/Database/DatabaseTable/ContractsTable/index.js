@@ -14,7 +14,8 @@ class ContractsTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filteredDatabase: []
+      filteredDatabase: [],
+
     }
   }
 
@@ -99,6 +100,12 @@ class ContractsTable extends React.Component {
               className="button--link database__table__button"
               key={i}
               to={"/contract/" + item._id}>✎</Link>
+          </td>
+          <td className="table__small-column">
+            <Link
+              className="button--link database__table__button"
+              key={i}
+              to={"/shipping/" + item._id}>⟳</Link>
           </td>
         </tr>
       )
