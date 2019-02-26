@@ -54,6 +54,7 @@ legend {
 
 textarea {
     font-family: inherit;
+    border: 1px solid $input-border;
     resize: none;
     overflow: hidden;
     padding: ($space /2);

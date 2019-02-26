@@ -1,5 +1,3 @@
-@import './BuySell/styles';
-
 .stock-visualizer__place-block {
   background: $brand-primary;
   border-top-left-radius: 5px;
@@ -12,4 +10,22 @@
   div {
     padding: 0px;
   }
+}
+
+.stock-visualizer__buy-sell-wrapper {
+  display: inline-flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-bottom: ($space);
+}
+
+.stock-visualizer__buy-sell-ammounts {
+  width: 100%;
+}
+
+.stock-visualizer__buy-sell {
+  display: inline-flex;
+}
+.stock-visualizer__buy-sell__button {
+  margin: 17px 0 0 0;
 }

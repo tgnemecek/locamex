@@ -18,6 +18,7 @@ if (Meteor.isServer) {
         restitution: state.restitution,
         observations: state.observations,
         snapshots: [],
+        models: state.models,
 
         rented: 0,
         place: [],
@@ -33,6 +34,7 @@ if (Meteor.isServer) {
         price: state.price,
         restitution: state.restitution,
         observations: state.observations,
+        models: state.models,
         visible: true
       }
       Accessories.update({ _id: state._id }, { $set: data });
@@ -44,6 +46,13 @@ if (Meteor.isServer) {
       }
       Accessories.update({ _id: item._id }, { $set: data });
       Meteor.call('history.insert', {...data, _id: item._id}, 'accessories.stock.update');
+    },
+    'accessories.stock.models.update'(_id, models) {
+      const data = {
+        models
+      }
+      Accessories.update({ _id }, { $set: data });
+      Meteor.call('history.insert', {...data, _id}, 'accessories.stock.models.update');
     },
     'accessories.hide'(_id) {
       const data = {

@@ -1,14 +1,13 @@
-@import './Fixed/styles';
+.register-data__models-block {
+  max-height: 396px;
+  overflow-y: auto;
+}
 
-.stock-visualizer__place-block {
-  background: $brand-primary;
-  border-top-left-radius: 5px;
-  border-bottom-left-radius: 5px;
-  color: white;
-  line-height: 35px;
-  text-align: left;
-  padding-left: ($space /2);
-  div {
-    padding: 0px;
-  }
+.register-accessories__table__models-column {
+  width: 100px;
+}
+
+.register-accessories__table__add-new-column {
+  text-align: center;
+  width: 50px;
 }
