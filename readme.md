@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.7.5
+Version: 1.7.6
 
 ## Information:
 
@@ -8,6 +8,12 @@ Version: 1.7.5
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.7.6
+
+-  Accessories now have the option to contain different types, that can be spread in different places (images not implemented yet);
+-  StockVisualizer now checks for models and renders different children;
+-  AccessoriesTable now updated to count inside models and outside (if doesn't have models);
 
 ### Version 1.7.5
 

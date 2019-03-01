@@ -84,6 +84,12 @@ export default class tools {
 
   // Strings
 
+  static convertToLetter = (n) => {
+    var code = (n+1) + 64;
+    if (code > 90) throw new Meteor.Error("array-too-long");
+    return String.fromCharCode(code);
+  }
+
   static generateId = () => {
     return new Meteor.Collection.ObjectID()._str;
     // return prefix + "_" + new Meteor.Collection.ObjectID()._str;

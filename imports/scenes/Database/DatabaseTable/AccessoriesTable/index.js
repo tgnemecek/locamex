@@ -58,18 +58,13 @@ class AccessoriesTable extends React.Component {
       const toggleImageWindow = () => {
         this.props.toggleImageWindow(item);
       }
-      function count(places, which) {
-        return places.reduce((acc, cur) => {
-          return acc + cur[which];
-        }, 0);
-      }
       return (
         <tr key={i}>
           <td>{item.description}</td>
-          <td className="table__small-column">{count(item.place, 'available')}</td>
-          <td className="table__small-column">{item.rented}</td>
-          <td className="table__small-column">{count(item.place, 'inactive')}</td>
-          <td className="table__small-column">{count(item.place, 'available') + count(item.place, 'inactive')}</td>
+          <td className="table__small-column">{count(item, 'available')}</td>
+          <td className="table__small-column">{'-'}</td>
+          <td className="table__small-column">{count(item, 'inactive')}</td>
+          <td className="table__small-column">{count(item, 'available') + count(item, 'inactive')}</td>
           <td className="table__small-column">{tools.format(item.price, 'currency')}</td>
           <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
           <td className="table__small-column"><button className="database__table__button" onClick={toggleStockVisualizer}>⟳</button></td>
@@ -111,6 +106,26 @@ class AccessoriesTable extends React.Component {
         </div>
       )
     }
+  }
+}
+
+function count(item, which) {
+  if (item.models) {
+
+    var result = 0;
+
+    item.models.forEach((model) => {
+      result = result + model.place.reduce((acc, cur) => {
+        return acc + cur[which];
+      }, 0);
+    })
+
+    return result;
+
+  } else {
+    return item.place.reduce((acc, cur) => {
+      return acc + cur[which];
+    }, 0);
   }
 }
 

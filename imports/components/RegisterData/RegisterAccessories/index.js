@@ -6,6 +6,8 @@ import Box from '/imports/components/Box/index';
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 
+import Models from './Models/index';
+
 export default class RegisterAccessories extends React.Component {
   constructor(props) {
     super(props);
@@ -15,6 +17,7 @@ export default class RegisterAccessories extends React.Component {
       price: this.props.item.price || 0,
       restitution: this.props.item.restitution || 0,
       observations: this.props.item.observations || '',
+      models: this.props.item.models || false,
 
       errorMsg: '',
       errorKeys: [],
@@ -25,6 +28,16 @@ export default class RegisterAccessories extends React.Component {
   onChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   }
+  onChangeModels = (e) => {
+    var bool = e.target.value;
+    var models;
+    if (bool) {
+      models = this.props.item.models || [];
+    } else models = false;
+
+    this.setState({ models });
+  }
+
   toggleConfirmationWindow = () => {
     var confirmationWindow = !this.state.confirmationWindow;
     this.setState({ confirmationWindow });
@@ -52,7 +65,12 @@ export default class RegisterAccessories extends React.Component {
         closeBox={this.props.toggleWindow}
         width="800px">
           <div className="error-message">{this.state.errorMsg}</div>
-          <Block columns={4} options={[{block: 0, span: 2}, {block: 3, span: 4}]}>
+          <Block columns={4} options={[
+            {block: 0, span: 2},
+            {block: 3, span: 2},
+            {block: 4, span: 2},
+            {block: 5, span: 4}
+          ]}>
             <Input
               title="Descrição:"
               type="text"
@@ -82,6 +100,15 @@ export default class RegisterAccessories extends React.Component {
               value={this.state.observations}
               onChange={this.onChange}
             />
+            <Input
+              title="Apresenta Modelos:"
+              type="checkbox"
+              name="models"
+              id="models"
+              value={!!this.state.models}
+              onChange={this.onChangeModels}
+            />
+            <Models models={this.state.models} onChange={this.onChange} />
           </Block>
           <this.props.Footer {...this.props} saveEdits={this.saveEdits} removeItem={this.removeItem} />
       </Box>
