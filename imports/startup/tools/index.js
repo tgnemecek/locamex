@@ -281,7 +281,6 @@ export default class tools {
   // Numbers, Calculations
 
   static round = (value, decimals) => {
-    typeof(value) == 'string' ? value.replace(',', '.') : null;
     return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals);
   }
 

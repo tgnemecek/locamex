@@ -4,7 +4,7 @@ import tools from '/imports/startup/tools/index';
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 
-export default class Models extends React.Component {
+export default class Variations extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -12,23 +12,23 @@ export default class Models extends React.Component {
     }
   }
 
-  renderModels = () => {
-    return this.props.models.map((model, i) => {
+  renderVariations = () => {
+    return this.props.variations.map((model, i) => {
 
       const onChange = (e) => {
-        var models = tools.deepCopy(this.props.models);
-        models[i].observations = e.target.value;
+        var variations = tools.deepCopy(this.props.variations);
+        variations[i].observations = e.target.value;
 
         var obj = {target: {
-          value: models,
-          name: 'models'
+          value: variations,
+          name: 'variations'
         }}
         this.props.onChange(obj);
       }
 
       return (
         <tr key={i}>
-          <td className="register-accessories__table__models-column">Modelo {tools.convertToLetter(i)}</td>
+          <td className="register-accessories__table__variations-column">Padrão {tools.convertToLetter(i)}</td>
           <td>
             <Input
               name={i}
@@ -41,23 +41,23 @@ export default class Models extends React.Component {
   }
 
   renderAddNew = () => {
-    if (this.props.models.length > 25) return null;
+    if (this.props.variations.length > 25) return null;
 
     const onChangeNewItem = (e) => {
       this.setState({ observations: e.target.value })
     }
 
     const addNewItem = () => {
-      var models = tools.deepCopy(this.props.models);
-      models.push({
+      var variations = tools.deepCopy(this.props.variations);
+      variations.push({
         observations: this.state.observations,
         place: [],
         visible: true
       });
 
       var obj = {target: {
-        value: models,
-        name: 'models'
+        value: variations,
+        name: 'variations'
       }}
       this.setState({ observations: '' }, () => {
         this.props.onChange(obj);
@@ -66,7 +66,7 @@ export default class Models extends React.Component {
 
     return (
       <tr>
-        <td className="register-accessories__table__models-column">Novo Modelo</td>
+        <td className="register-accessories__table__variations-column">Novo Padrão</td>
         <td>
           <Input
             value={this.state.observations}
@@ -80,21 +80,21 @@ export default class Models extends React.Component {
   }
 
   render() {
-    if (!this.props.models) return null;
+    if (!this.props.variations) return null;
     return (
       <Block
-        title="Modelos:"
-        className="register-data__models-block"
+        title="Variações:"
+        className="register-data__variations-block"
         columns={1}>
         <table className="table">
           <thead>
             <tr>
-              <th className="register-accessories__table__models-column">Modelo</th>
+              <th className="register-accessories__table__variations-column">Padrão</th>
               <th>Observações</th>
             </tr>
           </thead>
           <tbody>
-            {this.renderModels()}
+            {this.renderVariations()}
           </tbody>
           <tfoot>
             {this.renderAddNew()}

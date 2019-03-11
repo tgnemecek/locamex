@@ -16,7 +16,7 @@ import Table from './Table/index';
 import Database from './Database/index';
 import AddedItems from './AddedItems/index';
 
-class AddedContainers extends React.Component {
+class AddedModular extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -130,7 +130,7 @@ class AddedContainers extends React.Component {
     return (
       <div>
         <Table
-          addedItems={this.props.contract.containers}
+          addedItems={this.props.contract.fixed}
           toggleWindow={this.toggleWindow}
           updateContract={this.props.updateContract}
         />
@@ -189,4 +189,4 @@ export default AddedContainersWrapper = withTracker((props) => {
 
 
   return { fullDatabase, placesDatabase }
-})(AddedContainers);
+})(AddedModular);

@@ -28,15 +28,15 @@ class Information extends React.Component {
     if (months === 1) {
       discount = 0;
     } else if (months > 1 && months <= 3) {
-      discount = 20;
+      discount = 0.2;
     } else if (months > 3 && months <= 6) {
-      discount = 25;
+      discount = 0.25;
     } else if (months > 6 && months <= 9) {
-      discount = 30;
+      discount = 0.3;
     } else if (months > 9 && months <= 12) {
-      discount = 35;
+      discount = 0.3;
     } else if (months > 12) {
-      discount = 40;
+      discount = 0.4;
     }
     var obj = {...this.props.contract.dates};
     obj.duration = months;
@@ -138,8 +138,8 @@ class Information extends React.Component {
               type="number"
               max={100}
               style={this.props.errorKeys.includes("discount") ? {borderColor: "red"} : null}
-              value={this.props.contract.discount}
-              onChange={this.handleChange}
+              value={(this.props.contract.discount) * 100}
+              onChange={(e) => this.handleChange({target: {value: tools.round((Number(e.target.value) / 100), 2), name: e.target.name}})}
             />
             <Input
               title="Cidade:"

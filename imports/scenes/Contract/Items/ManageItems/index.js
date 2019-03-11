@@ -2,6 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 
+import { Containers } from '/imports/api/containers/index';
+import { Accessories } from '/imports/api/accessories/index';
 import { Services } from '/imports/api/services/index';
 import tools from '/imports/startup/tools/index';
 
@@ -15,12 +17,12 @@ import Table from './Table/index';
 import Database from './Database/index';
 import AddedItems from './AddedItems/index';
 
-class AddedServices extends React.Component {
+class ManageItems extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       filteredDatabase: [],
-      addedItems: this.props.addedItems || [],
+      addedItems: this.props.contract[this.props.type] || [],
 
       isOpen: false
     }
@@ -62,7 +64,7 @@ class AddedServices extends React.Component {
     this.setState({ addedItems });
   }
 
-  searchReturn = (filteredDatabase) => {
+  filterSearch = (filteredDatabase) => {
     if (filteredDatabase) {
       filteredDatabase = this.hideFromArray(filteredDatabase);
     } else {
@@ -121,7 +123,7 @@ class AddedServices extends React.Component {
     addedItems.forEach((item) => {
       if (item.quantity > 0) newArray.push(item);
     })
-    this.props.updateContract(newArray, 'services');
+    this.props.updateContract(newArray, this.props.type);
     this.toggleWindow();
   }
 
@@ -129,22 +131,22 @@ class AddedServices extends React.Component {
     return (
       <div>
         <Table
-          addedItems={this.props.contract.services}
+          addedItems={this.props.contract[this.props.type]}
           toggleWindow={this.toggleWindow}
           updateContract={this.props.updateContract}
         />
         {this.state.isOpen ?
           <Box
-            title="Seleção de Serviços"
+            title={`Seleção de  ${this.props.title}`}
             closeBox={this.toggleWindow}
             width="1200px">
               <Block columns={2}>
                 <SearchBar
                   database={this.props.fullDatabase}
-                  options={{onlySearchHere: ['description']}}
-                  searchReturn={this.searchReturn}/>
+                  searchHere={['description']}
+                  filterSearch={this.filterSearch}/>
                 <div style={{marginTop: "30px"}}>
-                  <label>Serviços Adicionados no Contrato:</label>
+                  <label>{`${this.props.title} Adicionados no Contrato:`}</label>
                 </div>
                 <Database
                   database={this.state.filteredDatabase}
@@ -171,8 +173,30 @@ class AddedServices extends React.Component {
   }
 }
 
-export default AddedServicesWrapper = withTracker((props) => {
-  Meteor.subscribe("servicesPub");
-  var fullDatabase = Services.find({visible: true}).fetch();
-  return { fullDatabase }
-})(AddedServices);
+export default ManageItemsWrapper = withTracker((props) => {
+  var fullDatabase = [];
+  var title;
+  switch (props.type) {
+    case 'containers':
+      Meteor.subscribe("containersPub");
+      fullDatabase = Containers.find({visible: true}).fetch();
+      title = "Containers";
+      break;
+    case 'accessories':
+      Meteor.subscribe("accessoriesPub");
+      fullDatabase = Accessories.find({visible: true}).fetch();
+      title = "Acessórios";
+      break;
+    case 'services':
+      Meteor.subscribe("servicesPub");
+      fullDatabase = Services.find({visible: true}).fetch();
+      title = "Serviços";
+      break;
+    default:
+      throw new Error("type-not-found-at-ManageItems");
+  }
+  return {
+    fullDatabase,
+    title
+  }
+})(ManageItems);

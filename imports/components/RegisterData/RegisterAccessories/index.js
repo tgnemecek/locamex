@@ -6,7 +6,7 @@ import Box from '/imports/components/Box/index';
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 
-import Models from './Models/index';
+import Variations from './Variations/index';
 
 export default class RegisterAccessories extends React.Component {
   constructor(props) {
@@ -17,7 +17,7 @@ export default class RegisterAccessories extends React.Component {
       price: this.props.item.price || 0,
       restitution: this.props.item.restitution || 0,
       observations: this.props.item.observations || '',
-      models: this.props.item.models || false,
+      variations: this.props.item.variations || false,
 
       errorMsg: '',
       errorKeys: [],
@@ -28,14 +28,14 @@ export default class RegisterAccessories extends React.Component {
   onChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
   }
-  onChangeModels = (e) => {
+  onChangeVariations = (e) => {
     var bool = e.target.value;
-    var models;
+    var variations;
     if (bool) {
-      models = this.props.item.models || [];
-    } else models = false;
+      variations = this.props.item.variations || [];
+    } else variations = false;
 
-    this.setState({ models });
+    this.setState({ variations });
   }
 
   toggleConfirmationWindow = () => {
@@ -101,14 +101,14 @@ export default class RegisterAccessories extends React.Component {
               onChange={this.onChange}
             />
             <Input
-              title="Apresenta Modelos:"
+              title="Apresenta Variações:"
               type="checkbox"
-              name="models"
-              id="models"
-              value={!!this.state.models}
-              onChange={this.onChangeModels}
+              name="variations"
+              id="variations"
+              value={!!this.state.variations}
+              onChange={this.onChangeVariations}
             />
-            <Models models={this.state.models} onChange={this.onChange} />
+            <Variations variations={this.state.variations} onChange={this.onChange} />
           </Block>
           <this.props.Footer {...this.props} saveEdits={this.saveEdits} removeItem={this.removeItem} />
       </Box>

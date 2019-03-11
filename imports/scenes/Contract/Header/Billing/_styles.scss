@@ -1,6 +1,15 @@
 @import './ProductsSection/styles';
 @import './ServicesSection/styles';
 
+.billing__section {
+  margin-top: 10px;
+  border: 1px solid $grey;
+  padding: ($space /2);
+  textarea {
+    font-size: 1.2rem;
+  }
+}
+
 .billing__difference--zero {
   color: $green !important;
 }

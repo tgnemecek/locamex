@@ -15,7 +15,9 @@ class Shipping extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      products: []
+      fixed: [],
+      modular: [],
+      accessories: []
     }
   }
 
@@ -30,8 +32,17 @@ class Shipping extends React.Component {
   }
 
   setProducts = () => {
+    function splitContainers(arr, which) {
+      return arr.filter((item) => {
+        return item.type === which;
+      })
+    }
     if (this.props.contract) {
-      this.setState({ products: this.props.contract.containers.concat(this.props.contract.accessories) });
+      this.setState({
+        fixed: splitContainers(this.props.contract.containers, 'fixed'),
+        modular: splitContainers(this.props.contract.containers, 'modular'),
+        accessories: this.props.contract.accessories
+      });
     }
   }
 
@@ -42,7 +53,11 @@ class Shipping extends React.Component {
       <div className="page-content">
         <div className="contract">
           <Header {...this.props} />
-          <ShippingBody products={this.state.products} />
+          <ShippingBody
+            fixed={this.state.fixed}
+            modular={this.state.modular}
+            accessories={this.state.accessories}
+          />
         </div>
       </div>
     )

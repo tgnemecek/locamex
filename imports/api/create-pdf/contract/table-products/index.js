@@ -29,7 +29,7 @@ export default function tableProducts(products, dates, discount, totalValueProro
     // return [[{text: '', colSpan: 2}, '', '', '', '', '', '']];
     if (discount) {
       return [
-        [ {text: 'Desconto por tempo de Locação:', colSpan: 6, alignment: 'right', bold: true}, '', '', '', '', '', {text: `-${discount}%`, alignment: 'right', bold: true} ],
+        [ {text: 'Desconto por tempo de Locação:', colSpan: 6, alignment: 'right', bold: true}, '', '', '', '', '', {text: `-${discount * 100}%`, alignment: 'right', bold: true} ],
         [ {text: 'Valor Mensal de Prorrogação:', colSpan: 6, alignment: 'right', bold: true}, '', '', '', '', '', resultFormat(totalValueProrogation) ],
         [ {text: 'Valor Total da Locação:', colSpan: 6, alignment: 'right', bold: true}, '', '', '', '', '', resultFormat(totalValueProducts) ]
       ]

@@ -44,13 +44,6 @@ export default class Header extends React.Component {
     } else this.setState({ windowOpen: false });
   }
 
-  totalValue = () => {
-    var containers = this.props.contract.containers;
-    var services = this.props.contract.services;
-    var accessories = this.props.contract.accessories;
-    return containers.concat(services, accessories);
-  }
-
   render() {
       return (
         <div className="contract__header">
@@ -66,6 +59,7 @@ export default class Header extends React.Component {
                                                   /> : null}
             <button value={'documents'} onClick={this.toggleWindow}>⎙</button>
             {this.state.windowOpen == 'documents' ? <Documents
+                                              saveContract={this.props.saveContract}
                                               contract={this.props.contract}
                                               toggleWindow={this.toggleWindow}
                                               updateContract={this.props.updateContract}

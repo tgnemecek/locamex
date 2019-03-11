@@ -5,15 +5,12 @@ import Input from '/imports/components/Input/index';
 
 export default function Person (props) {
   return (
-    <Block columns={4} options={[{block: 1, span: 3}, {block: 2, span: 2}, {block: 3, span: 2}, {block: 4, span: 2}]}>
-      <Input
-        title="Código:"
-        type="text"
-        readOnly={true}
-        name="_id"
-        value={props.item._id}
-        onChange={props.onChange}
-      />
+    <Block columns={4} options={[
+      {block: 0, span: 4},
+      {block: 1, span: 2},
+      {block: 2, span: 2},
+      {block: 3, span: 2}
+    ]}>
       <Input
         title="Nome Completo:"
         type="text"

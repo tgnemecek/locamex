@@ -1,6 +1,5 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import moment from 'moment';
 import { Contracts } from '/imports/api/contracts/index';
 import tools from '/imports/startup/tools/index';
 
@@ -9,14 +8,11 @@ import Checkmark from '/imports/components/Checkmark/index';
 import AppHeader from '/imports/components/AppHeader/index';
 import NotFound from '/imports/components/NotFound/index';
 import Loading from '/imports/components/Loading/index';
-import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
-import FooterButtons from '/imports/components/FooterButtons/index';
 
-import Activate from './Activate/index';
-import Finalize from './Finalize/index';
 import Header from './Header/index';
 import Information from './Information/index';
 import Items from './Items/index';
+import Footer from './Footer/index';
 
 export default class Contract extends React.Component {
   constructor(props) {
@@ -28,6 +24,7 @@ export default class Contract extends React.Component {
 
         client: '',
 
+        version: 0,
         negociator: '',
         representatives: [],
 
@@ -95,51 +92,22 @@ export default class Contract extends React.Component {
     this.tracker ? this.tracker.stop() : null;
   }
 
-  updateContract = (value, what) => {
+  updateContract = (value, what, callback) => {
     if (Array.isArray(value) && Array.isArray(what)) {
       var contract = {...this.state.contract};
       what.forEach((key, i) => {
         contract[key] = value[i];
       })
-      this.setState({ contract });
+      this.setState({ contract }, callback);
     } else {
       var contract = {...this.state.contract};
       contract[what] = value;
-      this.setState({ contract });
+      this.setState({ contract }, callback);
     }
   }
 
-  toggleActivateWindow = () => {
-    var toggleActivateWindow = !this.state.toggleActivateWindow;
-    if (toggleActivateWindow) {
-      var errorKeys = [];
-      var errorMsg = 'Campos obrigatórios não preenchidos/inválidos.';
-
-      if (!this.state.contract.client) errorKeys.push("client");
-      if (!this.state.contract.proposal) errorKeys.push("proposal");
-
-      if (!this.state.contract.dates.duration) errorKeys.push("duration");
-
-      if (!this.state.contract.deliveryAddress.cep) errorKeys.push("cep");
-      if (!this.state.contract.deliveryAddress.street) errorKeys.push("street");
-      if (!this.state.contract.deliveryAddress.city) errorKeys.push("city");
-      if (!this.state.contract.deliveryAddress.state) errorKeys.push("state");
-      if (!this.state.contract.deliveryAddress.number) errorKeys.push("number");
-
-      if (!this.state.contract.billing.length) {
-        errorKeys.push("billing");
-        errorMsg = 'Favor preencher a Tabela de Cobrança.';
-      }
-
-      if (this.totalValue() <= 0) {
-        errorKeys.push("totalValue");
-        errorMsg = 'O Valor Total do Contrato não pode ser zero.';
-      }
-      if (errorKeys.length > 0) {
-        this.setState({ errorKeys, errorMsg });
-      } else this.setState({ toggleActivateWindow, errorKeys, errorMsg: '' });
-
-    } else this.setState({ toggleActivateWindow });
+  setError = (errorMsg, errorKeys) => {
+    this.setState({ errorMsg, errorKeys })
   }
 
   toggleCancelWindow = () => {
@@ -173,20 +141,6 @@ export default class Contract extends React.Component {
     this.toggleActivateWindow();
   }
 
-  finalizeContract = (containers, accessories) => {
-    Meteor.call('contracts.finalize', this.state.contract._id, containers, accessories, (err, res) => {
-      if (res) {
-        var contract = {
-          ...this.state.contract,
-          status: "finalized"
-        }
-        this.setState({ contract });
-      }
-      else if (err) alert(err.reason);
-    });
-    this.toggleFinalizeWindow();
-  }
-
   saveEdits = () => {
     if (this.props.match.params.contractId == 'new') {
       Meteor.call('contracts.insert', this.state.contract, (err, res) => {
@@ -215,12 +169,13 @@ export default class Contract extends React.Component {
 
     var containers = this.state.contract.containers || [];
     var accessories = this.state.contract.accessories || [];
+
     var products = containers.concat(accessories);
     var productsValue = products.reduce((acc, current) => {
       var quantity = current.quantity ? current.quantity : 1;
       return acc + (current.price * quantity * duration)
     }, 0);
-    productsValue = productsValue * (100 - discount) / 100;
+    productsValue = productsValue * (1 - discount);
 
     var services = this.state.contract.services || [];
     var servicesValue = services.reduce((acc, current) => {
@@ -241,6 +196,7 @@ export default class Contract extends React.Component {
               contract={this.state.contract}
               updateContract={this.updateContract}
               errorKeys={this.state.errorKeys}
+              saveContract={this.saveEdits}
             />
             <div className={this.setDisabledClassName()}>
               <Information
@@ -253,41 +209,15 @@ export default class Contract extends React.Component {
                 updateContract={this.updateContract}
               />
             </div>
-            <div className="contract__footer">
-              <div className="error-message">{this.state.errorMsg}</div>
-              <div className="contract__total-value" style={this.state.errorKeys.includes("totalValue") ? {color: "red"} : null}>
-                <h3>Valor Total do Contrato: {tools.format(this.totalValue(), 'currency')}</h3>
-              </div>
-              {this.state.contract.status === 'inactive' ?
-              <FooterButtons buttons={[
-                {text: "Salvar Edições", className: "button--secondary", onClick: this.saveEdits},
-                {text: "Ativar Contrato", className: "button--primary", onClick: this.toggleActivateWindow},
-              ]}/>
-              : null}
-              {this.state.contract.status === 'active' ?
-              <FooterButtons buttons={[
-                {text: "Finalizar Contrato", onClick: this.toggleFinalizeWindow},
-              ]}/>
-              : null}
-              <div className="contract__footer-text">Contrato criado dia {moment(this.state.contract.dates.creationDate).format("DD/MM/YYYY")}</div>
-              <ConfirmationWindow
-                isOpen={this.state.toggleCancelWindow}
-                closeBox={this.toggleCancelWindow}
-                message="Deseja mesmo cancelar este contrato? Ele não poderá ser reativado."
-                leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleCancelWindow}}
-                rightButton={{text: "Sim", className: "button--danger", onClick: this.cancelContract}}/>
-              <ConfirmationWindow
-                isOpen={this.state.toggleActivateWindow}
-                closeBox={this.toggleActivateWindow}
-                message="Deseja ativar este contrato e locar os itens?"
-                leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleActivateWindow}}
-                rightButton={{text: "Sim", className: "button--danger", onClick: this.activateContract}}/>
-              <Finalize
-                isOpen={this.state.toggleFinalizeWindow}
-                contract={this.state.contract}
-                toggleWindow={this.toggleFinalizeWindow}
-                finalizeContract={this.finalizeContract}/>
-            </div>
+            <Footer
+              totalValue={this.totalValue()}
+              setError={this.setError}
+              contract={this.state.contract}
+              saveEdits={this.saveEdits}
+              saveEdits={this.saveEdits}
+              activateContract={this.activateContract}
+              finalizeContract={this.finalizeContract}
+            />
           </div>
         </div>
       )

@@ -26,20 +26,20 @@ export default class Billing extends React.Component {
       masterValue: 0,
       productsValue: 0,
       servicesValue: 0,
-      difference: 0,
 
       errorKeys: [],
       errorMsg: ''
     }
     var duration = this.props.contract.dates.duration || 1;
-    var containers = this.props.contract.containers || [];
+    var containers = this.props.contract.containers;
     var accessories = this.props.contract.accessories || [];
     var services = this.props.contract.services || [];
+    var discount = this.props.contract.discount;
 
     var containersValue = calcTotalValue(containers, duration);
     var accessoriesValue = calcTotalValue(accessories, duration);
     var servicesValue = calcTotalValue(services, 1);
-    var productsValue = containersValue + accessoriesValue;
+    var productsValue = (containersValue + accessoriesValue) * (1 - discount);
     var masterValue = productsValue + servicesValue;
 
     var billingProducts = tools.deepCopy(this.state.billingProducts);
@@ -84,6 +84,7 @@ export default class Billing extends React.Component {
     var total = billingAll.reduce((acc, cur) => {
       return acc = acc + Number(cur.value);
     }, 0);
+    total = tools.round(total, 2);
     if (masterValue - total === 0) {
       return true;
     } else return false;
@@ -93,7 +94,7 @@ export default class Billing extends React.Component {
     if (this.anyZeroBills()) {
       this.setState({ errorMsg: 'Não devem haver cobranças com valor zero.' });
     } else if (!this.differenceIsZero()) {
-      this.setState({ errorMsg: 'O valor resultante das parcelas não coincide com o Valor Total do Contrato.' });
+      this.setState({ errorMsg: 'O valor resultante das parcelas não coincide com os Valores Totais.' });
     } else if (this.state.masterValue <= 0) {
       this.setState({ errorMsg: 'O Valor Total do Contrato não pode ser zero. Adicione produtos antes.' });
     } else {
@@ -107,6 +108,7 @@ export default class Billing extends React.Component {
         <Box
           title="Tabela de Cobrança:"
           width="1000px"
+          className="billing"
           closeBox={this.props.toggleWindow}>
           <div className={this.props.contract.status !== 'inactive' ? "contract--disabled" : null}>
             <div className="error-message">{this.state.errorMsg}</div>

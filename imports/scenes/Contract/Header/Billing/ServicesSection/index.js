@@ -20,6 +20,7 @@ export default class ServicesSection extends React.Component {
     var value = this.props.charges.reduce((acc, cur) => {
       return acc + cur.value;
     }, 0);
+    value = tools.round(value, 2);
     return isNaN(value) ? 0 : value;
   }
 
@@ -113,7 +114,11 @@ export default class ServicesSection extends React.Component {
 
     if (this.props.servicesValue) {
       return (
-        <Block title="Pacote de Serviços:" columns={1} style={{marginTop: "10px"}}>
+        <Block
+          title="Pacote de Serviços:"
+          className="billing__section"
+          style={{background: "honeydew"}}
+          columns={1}>
           <Block columns={3} options={[{block: 1, span: 0.5}, {block: 2, span: 0.5}, {block: 3, span: 1, className: "billing__equal-charges"}]}>
             <ChargesNumber
               masterValue={this.props.servicesValue}

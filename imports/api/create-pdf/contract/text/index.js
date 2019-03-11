@@ -8,9 +8,9 @@ import text6 from './text-6/index';
 import text7 from './text-7/index';
 import text8 from './text-8/index';
 
-export default function clauses(which, _id, proposal) {
+export default function clauses(which, _id, proposal, version) {
   if (which === 0) {
-    return text0(_id);
+    return text0(_id, version);
   } else if (which === 1) {
     return text1(proposal);
   } else if (which === 2) {

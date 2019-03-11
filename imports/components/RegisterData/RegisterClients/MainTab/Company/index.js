@@ -6,18 +6,10 @@ import Input from '/imports/components/Input/index';
 export default function Company (props) {
   return (
     <Block columns={6} options={[
-      {block: 1, span: 3},
-      {block: 2, span: 2},
-      {block: 3, span: 4}
+      {block: 0, span: 4},
+      {block: 1, span: 2},
+      {block: 2, span: 4}
     ]}>
-      <Input
-        title="Código:"
-        type="text"
-        readOnly={true}
-        name="_id"
-        value={props.item._id}
-        onChange={props.onChange}
-      />
       <Input
         title="Nome Fantasia:"
         type="text"

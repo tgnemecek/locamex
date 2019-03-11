@@ -31,16 +31,12 @@ export default function ContactTab (props) {
     }
   }
   return (
-    <Block columns={4} options={[{block: 1, span: 3}, {block: 2, span: 2}, {block: 3, span: 2}, {block: 4, span: 2}]}>
-      <Input
-        title="Código do Contato:"
-        type="text"
-        readOnly={true}
-        name="_id"
-        style={style("_id")}
-        value={props.item.contacts[tab]._id}
-        onChange={onChange}
-      />
+    <Block columns={4} options={[
+      {block: 0, span: 4},
+      {block: 1, span: 2},
+      {block: 2, span: 2},
+      {block: 3, span: 2}
+    ]}>
       <Input
         title="Nome Completo:"
         type="text"

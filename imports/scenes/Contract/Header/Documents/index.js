@@ -35,8 +35,18 @@ class Documents extends React.Component {
     this.setState({ representatives });
   }
 
-  displayContacts = () => {
-    return this.props.client.contacts.map((contact, i) => {
+  displayContacts = (which) => {
+    var contacts = [];
+    if (which === 'negociator') {
+      contacts = this.props.client.contacts.filter((contact) => {
+        return (contact.name && contact.phone1 && contact.email);
+      })
+    } else if (which === 'rep') {
+      contacts = this.props.client.contacts.filter((contact) => {
+        return (contact.name && contact.cpf && contact.rg);
+      })
+    }
+    return contacts.map((contact, i) => {
       return <option key={i} value={contact._id}>{contact.name}</option>
     })
   }
@@ -73,11 +83,12 @@ class Documents extends React.Component {
       return people;
     }
     // Sends info to createPdf
+    var version = this.props.contract.version++;
     var negociator = getPersonUsingId([negociatorId])[0];
     var representatives = getPersonUsingId(representativesId);
-    createPdf(this.props.contract, this.props.client, negociator, representatives);
+    createPdf(this.props.contract, this.props.client, negociator, representatives, version);
     // Saves changes to contract
-    this.props.updateContract([representativesId, negociatorId], ["representatives", "negociator"]);
+    this.props.updateContract([representativesId, negociatorId, version], ["representatives", "negociator", "version"], this.props.saveContract);
     this.setState({ errorMsg, errorKeys });
   }
 
@@ -97,7 +108,7 @@ class Documents extends React.Component {
                 value={this.state.negociator}
                 onChange={this.onChangeMain}>
                 <option> </option>
-                {this.displayContacts()}
+                {this.displayContacts('negociator')}
               </Input>
               <Input
                 title="Representante Legal:"
@@ -107,7 +118,7 @@ class Documents extends React.Component {
                 value={this.state.representatives[0]}
                 onChange={this.onChangeRepresentatives}>
                 <option> </option>
-                {this.displayContacts()}
+                {this.displayContacts('rep')}
               </Input>
               <Input
                 title="Segundo Representante: (opcional)"
@@ -116,7 +127,7 @@ class Documents extends React.Component {
                 value={this.state.representatives[1]}
                 onChange={this.onChangeRepresentatives}>
                 <option> </option>
-                {this.displayContacts()}
+                {this.displayContacts('rep')}
               </Input>
             </div>
             <FooterButtons buttons={[

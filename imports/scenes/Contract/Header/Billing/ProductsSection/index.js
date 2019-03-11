@@ -137,7 +137,11 @@ export default class ProductsSection extends React.Component {
 
     if (this.props.productsValue) {
       return (
-        <Block title="Mensalidade:" columns={1} style={{marginTop: "10px"}}>
+        <Block
+          title="Mensalidade:"
+          className="billing__section"
+          style={{background: "antiquewhite"}}
+          columns={1}>
           <Block columns={3} options={[{block: 2, span: 1, className: "billing__equal-charges"}]}>
             <ChargesNumber
               masterValue={this.props.productsValue}
@@ -177,7 +181,7 @@ export default class ProductsSection extends React.Component {
                 <td className="table__small-column">{this.displayDifference()}</td>
               </tr>
               <tr>
-                <th colSpan="3" className="billing__table__footer"><b>Valor Total do Pacote de Serviços:</b></th>
+                <th colSpan="3" className="billing__table__footer"><b>Valor Total de Locação:</b></th>
                 <th className="table__small-column">{tools.format(this.props.productsValue, "currency")}</th>
               </tr>
             </tfoot>

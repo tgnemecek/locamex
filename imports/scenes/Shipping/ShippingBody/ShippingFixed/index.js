@@ -20,16 +20,6 @@ export default class ShippingFixed extends React.Component {
   }
 
   render() {
-    return (
-      <>
-        {this.renderSubHeader()}
-        <tr>
-          <td>{this.props.model}</td>
-          <td></td>
-          <td></td>
-          <td>BOTÃO</td>
-        </tr>
-      </>
-    )
+    return null;
   }
 }

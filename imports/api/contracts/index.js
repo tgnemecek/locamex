@@ -25,6 +25,7 @@ if (Meteor.isServer) {
         dates: state.dates,
         discount: state.discount,
 
+        version: state.version,
         negociator: state.negociator,
         representatives: state.representatives,
 
@@ -55,6 +56,7 @@ if (Meteor.isServer) {
         dates: state.dates,
         discount: state.discount,
 
+        version: state.version,
         negociator: state.negociator,
         representatives: state.representatives,
 
