@@ -30,12 +30,12 @@ export default function tableProducts(products, dates, discount, totalValueProro
     if (discount) {
       return [
         [ {text: 'Desconto por tempo de Locação:', colSpan: 6, alignment: 'right', bold: true}, '', '', '', '', '', {text: `-${discount * 100}%`, alignment: 'right', bold: true} ],
-        [ {text: 'Valor Mensal de Prorrogação:', colSpan: 6, alignment: 'right', bold: true}, '', '', '', '', '', resultFormat(totalValueProrogation) ],
+        [ {text: 'Valor Mensal de Locação:', colSpan: 6, alignment: 'right', bold: true}, '', '', '', '', '', resultFormat(totalValueProrogation) ],
         [ {text: 'Valor Total da Locação:', colSpan: 6, alignment: 'right', bold: true}, '', '', '', '', '', resultFormat(totalValueProducts) ]
       ]
     } else {
       return [
-        [ {text: 'Valor Mensal de Prorrogação:', colSpan: 6, alignment: 'right', bold: true}, '', '', '', '', '', resultFormat(totalValueProrogation) ],
+        [ {text: 'Valor Mensal de Locação:', colSpan: 6, alignment: 'right', bold: true}, '', '', '', '', '', resultFormat(totalValueProrogation) ],
         [ {text: 'Valor Total da Locação:', colSpan: 6, alignment: 'right', bold: true}, '', '', '', '', '', resultFormat(totalValueProducts) ]
       ]
     }

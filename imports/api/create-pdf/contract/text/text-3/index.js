@@ -1,7 +1,7 @@
 export default function () {
   return [
     {text: `§ 3º. Define-se como Valor Total do Contrato a soma do Valor Total da Locação com o Valor Total do Pacote de Serviços.`, style: 'p'},
-    {text: `§ 4º. Não está incluso em nenhuma forma neste contrato:`, style: 'p'},
+    {text: `§ 4º. A menos que estritamente especificados, não estão inclusos neste contrato:`, style: 'p'},
     {ol: [
       `Emissão de ART (Anotação de Responsabilidade Técnica);`,
       `Pagamento de qualquer tipo de taxa junto à Prefeitura do Município;`,
