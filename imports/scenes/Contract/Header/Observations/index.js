@@ -26,7 +26,7 @@ export default class Observations extends React.Component {
       productsObs: this.state.productsObs,
       servicesObs: this.state.servicesObs,
     }
-    this.props.updateContract('observations', observations);
+    this.props.updateContract({ observations });
     this.props.toggleWindow();
   }
 

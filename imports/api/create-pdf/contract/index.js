@@ -21,9 +21,9 @@ import date from './date/index';
 import signatures from './signatures/index';
 import tableWitnesses from './table-witnesses/index';
 
-export default function createPdf(contract, client, negociator, representatives, version) {
+export default function createPdf(contract, client, negociator, representatives) {
 
-  const fileName = `Locamex - Contrato de Locação #${contract._id}_${version}`;
+  const fileName = `Locamex - Contrato de Locação #${contract._id}_${contract.version}`;
 
   const products = contract.containers.concat(contract.accessories).map((item) => {
     item.monthlyPrice = item.quantity * item.price;
@@ -52,12 +52,12 @@ export default function createPdf(contract, client, negociator, representatives,
     pageSize: 'A4',
     pageMargins: [ 40, 30, 40, 45 ], //[left, top, right, bottom]
     info: {
-      title: `Contrato Locamex #${contract._id}.${version}`,
+      title: `Contrato Locamex #${contract._id}.${contract.version}`,
       author: `Locamex`,
       subject: `Contrato de Locação de Bens Móveis e Prestação de Serviços`
     },
     content: [
-      text(0, contract._id, undefined, version),
+      text(0, contract._id, undefined, contract.version),
       tableInformationCompany(client, negociator, styles),
       tableRepresentatives(representatives, styles),
       text(1, undefined, contract.proposal),
@@ -86,7 +86,7 @@ export default function createPdf(contract, client, negociator, representatives,
     },
     footer: (currentPage, pageCount) => {
       return {text: [
-          {text: `Contrato de Locação de Bens Móveis e Prestação de Serviços nº ${contract._id}.${version}\n`},
+          {text: `Contrato de Locação de Bens Móveis e Prestação de Serviços nº ${contract._id}.${contract.version}\n`},
           {text: (currentPage + "/" + pageCount)}
         ], style: 'footer'};
     },

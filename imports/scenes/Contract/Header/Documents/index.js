@@ -82,13 +82,19 @@ class Documents extends React.Component {
       })
       return people;
     }
-    // Sends info to createPdf
-    var version = this.props.contract.version++;
+
+    var version = this.props.contract.version + 1;
     var negociator = getPersonUsingId([negociatorId])[0];
     var representatives = getPersonUsingId(representativesId);
-    createPdf(this.props.contract, this.props.client, negociator, representatives, version);
     // Saves changes to contract
-    this.props.updateContract([representativesId, negociatorId, version], ["representatives", "negociator", "version"], this.props.saveContract);
+    this.props.updateContract({
+      representatives: representativesId,
+      negociator: negociatorId,
+      version
+    }, () => {
+      createPdf(this.props.contract, this.props.client, negociator, representatives);
+      this.props.saveContract();
+    });
     this.setState({ errorMsg, errorKeys });
   }
 

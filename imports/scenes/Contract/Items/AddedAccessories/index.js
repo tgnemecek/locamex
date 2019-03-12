@@ -117,11 +117,11 @@ class AddedAccessories extends React.Component {
 
   saveEdits = () => {
     var addedItems = this.state.addedItems;
-    var newArray = [];
-    addedItems.forEach((item) => {
-      if (item.quantity > 0) newArray.push(item);
+    var accessories = [];
+    accessories.forEach((item) => {
+      if (item.quantity > 0) accessories.push(item);
     })
-    this.props.updateContract(newArray, 'accessories');
+    this.props.updateContract({ accessories });
     this.toggleWindow();
   }
 

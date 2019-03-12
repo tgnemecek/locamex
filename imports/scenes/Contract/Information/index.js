@@ -38,20 +38,26 @@ class Information extends React.Component {
     } else if (months > 12) {
       discount = 0.4;
     }
-    var obj = {...this.props.contract.dates};
-    obj.duration = months;
-    this.props.updateContract([obj, [], discount], ['dates', 'billing', 'discount']);
+    var dates = {...this.props.contract.dates};
+    dates.duration = months;
+    this.props.updateContract({
+      dates,
+      discount
+    });
   }
 
   handleChange = (e) => {
     var value = e.target.value;
     var name = e.target.name;
     var extra = e.target.extra;
-    if (extra) {
+
+    if (!extra) {
+      this.props.updateContract({[name]: value});
+    } else {
       var obj = {...this.props.contract[extra]};
       obj[name] = value;
-      this.props.updateContract(obj, extra);
-    } else this.props.updateContract(value, name);
+      this.props.updateContract({[extra]: obj});
+    }
   }
 
   cepButtonClick = (data) => {
@@ -65,7 +71,7 @@ class Information extends React.Component {
       number: '',
       additional: ''
     };
-    this.props.updateContract(deliveryAddress, "deliveryAddress");
+    this.props.updateContract({ deliveryAddress });
   }
 
   render() {

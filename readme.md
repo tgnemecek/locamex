@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.7.6
+Version: 1.8.0
 
 ## Information:
 
@@ -8,6 +8,14 @@ Version: 1.7.6
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.8.0
+
+-  Contract restructured to work with new database logic (series, modules, containers);
+-  Contract now has versions for each generated document;
+-  ItemsList is now one single reusable component;
+-  Contract now checks each billing for the correct final value before activation;
+-  RegisterClients redone: removed 'code' input, now contacts with no name are erased;
 
 ### Version 1.7.6
 

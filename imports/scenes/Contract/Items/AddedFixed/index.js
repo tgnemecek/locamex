@@ -118,11 +118,11 @@ class AddedFixed extends React.Component {
 
   saveEdits = () => {
     var addedItems = this.state.addedItems;
-    var newArray = [];
-    addedItems.forEach((item) => {
-      if (item.quantity > 0) newArray.push(item);
+    var containers = [];
+    containers.forEach((item) => {
+      if (item.quantity > 0) containers.push(item);
     })
-    this.props.updateContract(newArray, 'containers');
+    this.props.updateContract({ containers });
     this.toggleWindow();
   }
 

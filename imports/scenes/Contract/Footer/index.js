@@ -28,18 +28,26 @@ export default class Footer extends React.Component {
     if (!this.props.contract.deliveryAddress.state) errorKeys.push("state");
     if (!this.props.contract.deliveryAddress.number) errorKeys.push("number");
 
-    if (this.props.contract.containers.length || this.props.contract.accessories.length) {
-      if (!this.props.contract.billingProducts.length) {
-        errorKeys.push("billingProducts");
-        errorMsg = 'Favor preencher corretamente a Tabela de Cobrança.';
-      }
+    const isBillingCorrect = () => {
+      var productsGoalValue = this.props.productsValue;
+      var productsValue = this.props.contract.billingProducts.reduce((acc, cur) => {
+        return acc + cur.value;
+      }, 0);
+      productsValue = tools.round(productsValue, 2);
+      if (productsGoalValue !== productsValue) return false;
+
+      var servicesGoalValue = this.props.servicesValue;
+      var servicesValue = this.props.contract.billingServices.reduce((acc, cur) => {
+        return acc + cur.value;
+      }, 0);
+      servicesValue = tools.round(servicesValue, 2);
+      if (servicesGoalValue !== servicesValue) return false;
+      return true;
     }
 
-    if (this.props.contract.services.length) {
-      if (!this.props.contract.billingServices.length) {
-        errorKeys.push("billingServices");
-        errorMsg = 'Favor preencher corretamente a Tabela de Cobrança.';
-      }
+    if (!isBillingCorrect()) {
+      errorMsg = 'Favor preencher corretamente a Tabela de Cobrança.';
+      errorKeys.push("billing");
     }
 
     if (this.props.totalValue <= 0) {
@@ -48,7 +56,6 @@ export default class Footer extends React.Component {
     }
     if (errorKeys.length > 0) {
       this.props.setError(errorMsg, errorKeys);
-      this.setState({ errorKeys, errorMsg });
     } else {
       this.props.setError('', errorKeys);
       this.setState({ confirmationWindow: 'activate' });
@@ -91,17 +98,19 @@ export default class Footer extends React.Component {
         <div className="contract__footer-text">Contrato criado dia {moment(this.props.contract.dates.creationDate).format("DD/MM/YYYY")}</div>
         <ConfirmationWindow
           isOpen={this.state.confirmationWindow === 'finalize'}
-          closeBox={this.toggleCancelWindow}
+          closeBox={this.toggleWindowsOff}
           message="Deseja finalizar este contrato? Ele não poderá ser reativado."
           leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleWindowsOff}}
           rightButton={{text: "Sim", className: "button--danger", onClick: this.props.finalizeContract}}/>
         <ConfirmationWindow
           isOpen={this.state.confirmationWindow === 'activate'}
-          closeBox={this.toggleActivateWindow}
-          message="Deseja ativar este contrato e locar os itens?"
+          closeBox={this.toggleWindowsOff}
+          message="Deseja ativar este contrato?"
           leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleWindowsOff}}
           rightButton={{text: "Sim", className: "button--danger", onClick: this.props.activateContract}}/>
       </div>
     )
   }
 }
+
+

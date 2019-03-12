@@ -123,7 +123,7 @@ class ManageItems extends React.Component {
     addedItems.forEach((item) => {
       if (item.quantity > 0) newArray.push(item);
     })
-    this.props.updateContract(newArray, this.props.type);
+    this.props.updateContract({ [this.props.type]: newArray });
     this.toggleWindow();
   }
 
@@ -152,6 +152,7 @@ class ManageItems extends React.Component {
                   database={this.state.filteredDatabase}
                   addItem={this.addItem}/>
                 <AddedItems
+                  type={this.props.type}
                   database={this.state.filteredDatabase}
                   addedItems={this.state.addedItems}
 

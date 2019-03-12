@@ -35,7 +35,11 @@ export default class ItemList extends React.Component {
   }
 
   updateTable = (addedItems) => {
-    this.props.updateContract([addedItems, []], [this.props.dbName, "billing"]);
+    this.props.updateContract({
+      [this.props.dbName]: addedItems,
+      billingProducts: [],
+      billingServices: []
+    });
   }
 
   row = () => {

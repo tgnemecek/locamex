@@ -92,18 +92,14 @@ export default class Contract extends React.Component {
     this.tracker ? this.tracker.stop() : null;
   }
 
-  updateContract = (value, what, callback) => {
-    if (Array.isArray(value) && Array.isArray(what)) {
-      var contract = {...this.state.contract};
-      what.forEach((key, i) => {
-        contract[key] = value[i];
-      })
-      this.setState({ contract }, callback);
-    } else {
-      var contract = {...this.state.contract};
-      contract[what] = value;
-      this.setState({ contract }, callback);
-    }
+  updateContract = (changes, callback) => {
+    var contract = {
+      ...this.state.contract,
+      ...changes
+    };
+    this.setState({ contract }, () => {
+      if (callback) callback();
+    })
   }
 
   setError = (errorMsg, errorKeys) => {
@@ -163,7 +159,7 @@ export default class Contract extends React.Component {
     } else return "contract__body contract--disabled";
   }
 
-  totalValue = () => {
+  totalValue = (option) => {
     var duration = this.state.contract.dates.duration;
     var discount = this.state.contract.discount;
 
@@ -183,7 +179,12 @@ export default class Contract extends React.Component {
       return acc + (current.price * quantity)
     }, 0);
 
-    return productsValue + servicesValue;
+    if (option === 'products') {
+      return productsValue;
+    } else if (option === 'services') {
+      return servicesValue;
+    } else return productsValue + servicesValue;
+
   }
 
   render () {
@@ -211,9 +212,14 @@ export default class Contract extends React.Component {
             </div>
             <Footer
               totalValue={this.totalValue()}
+              productsValue={this.totalValue('products')}
+              servicesValue={this.totalValue('services')}
+
               setError={this.setError}
+              errorMsg={this.state.errorMsg}
+
               contract={this.state.contract}
-              saveEdits={this.saveEdits}
+
               saveEdits={this.saveEdits}
               activateContract={this.activateContract}
               finalizeContract={this.finalizeContract}

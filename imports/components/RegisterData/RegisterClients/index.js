@@ -71,30 +71,35 @@ export default class RegisterClients extends React.Component {
     this.props.toggleWindow();
   }
   saveEdits = () => {
-    var state = { ...this.state };
-    var originalContacts = state.contacts;
+    var contacts = tools.deepCopy(this.state.contacts);
     var contactsToCheck = [];
-    if (state.type == "company") {
-      contactsToCheck.push(state.contacts[0]);
-      state.contacts = contactsToCheck;
-    }
-    var check = checkRequiredFields(state);
-    state.contacts = originalContacts;
+    if (this.state.type == "company") contactsToCheck.push(contacts[0]);
 
-    if (check === true) {
-      state.contacts.forEach((contact, i) => {
-        if (state.type == 'person') i++;
-        contact._id = i.toString().padStart(4, '0');
-      })
-      if (this.props.item._id) {
-        Meteor.call('clients.update', state);
-      } else Meteor.call('clients.insert', state);
-      this.props.toggleWindow();
-    } else {
+    var check = checkRequiredFields({
+      ...this.state,
+      contacts: contactsToCheck
+    });
+
+    if (check !== true) {
       this.setState({
         errorMsg: 'Campos obrigatórios não preenchidos/inválidos.',
         errorKeys: check
       })
+    } else {
+      var contacts = contacts.filter((contact, i) => {
+        contact._id = tools.generateId();
+        return !!contact.name;
+      })
+
+      var state = {
+        ...this.state,
+        contacts
+      }
+
+      if (this.props.item._id) {
+        Meteor.call('clients.update', state);
+      } else Meteor.call('clients.insert', state);
+      this.props.toggleWindow();
     }
   }
   changeTab = (tab) => {

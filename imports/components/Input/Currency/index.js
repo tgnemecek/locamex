@@ -29,7 +29,7 @@ export default class Currency extends React.Component {
         decimalSeparator=","
         thousandSeparator="."
         allowNegative={this.props.allowNegative}
-        selectAllOnFocus={true}
+        // selectAllOnFocus={true}
       />
     )
   }
