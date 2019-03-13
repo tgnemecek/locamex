@@ -2,9 +2,10 @@ import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 
 import { Contracts } from '/imports/api/contracts/index';
-import { Series } from '/imports/api/series/index';
-import { Containers } from '/imports/api/containers/index';
 import { Places } from '/imports/api/places/index';
+
+import { Containers } from '/imports/api/containers/index';
+import { Series } from '/imports/api/series/index';
 import { Modules } from '/imports/api/modules/index';
 import { Accessories } from '/imports/api/accessories/index';
 
@@ -31,16 +32,37 @@ class Shipping extends React.Component {
     }
   }
 
+  onChange = (changes) => {
+    this.setState({
+      ...this.state,
+      changes
+    })
+  }
+
   setProducts = () => {
-    function splitContainers(arr, which) {
-      return arr.filter((item) => {
-        return item.type === which;
+
+    const setFixed = () => {
+      var newArray = [];
+      this.props.contract.containers.forEach((item) => {
+        if (item.type === 'fixed') {
+          for (var i = 0; i < item.quantity; i++) {
+            newArray.push({ model: item._id })
+          }
+        }
+      })
+      return newArray;
+    }
+
+    const setModular = () => {
+      return this.props.contract.containers.filter((item) => {
+        return item.type === 'modular';
       })
     }
+
     if (this.props.contract) {
       this.setState({
-        fixed: splitContainers(this.props.contract.containers, 'fixed'),
-        modular: splitContainers(this.props.contract.containers, 'modular'),
+        fixed: setFixed(),
+        modular: setModular(),
         accessories: this.props.contract.accessories
       });
     }
@@ -54,6 +76,7 @@ class Shipping extends React.Component {
         <div className="contract">
           <Header {...this.props} />
           <ShippingBody
+            {...this.props}
             fixed={this.state.fixed}
             modular={this.state.modular}
             accessories={this.state.accessories}
@@ -66,26 +89,27 @@ class Shipping extends React.Component {
 
 export default ShippingWrapper = withTracker((props) => {
   Meteor.subscribe('contractsPub');
-  Meteor.subscribe('seriesPub');
-  Meteor.subscribe('containersPub');
   Meteor.subscribe('placesPub');
+
+  Meteor.subscribe('containersPub');
+  Meteor.subscribe('seriesPub');
   Meteor.subscribe('modulesPub');
   Meteor.subscribe('accessoriesPub');
 
   var contract = Contracts.findOne({ _id: props.match.params.contractId });
-
-  var seriesDatabase = Series.find().fetch();
-  var modelsDatabase = Containers.find().fetch();
   var placesDatabase = Places.find().fetch();
+
+  var containersDatabase = Containers.find().fetch();
+  var seriesDatabase = Series.find().fetch();
   var modulesDatabase = Modules.find().fetch();
   var accessoriesDatabase = Accessories.find().fetch();
 
   return {
     contract,
-
-    seriesDatabase,
-    modelsDatabase,
     placesDatabase,
+
+    containersDatabase,
+    seriesDatabase,
     modulesDatabase,
     accessoriesDatabase
   }

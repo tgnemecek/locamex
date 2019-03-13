@@ -20,16 +20,6 @@ export default class ShippingAccessories extends React.Component {
   }
 
   render() {
-    return (
-      <>
-        {this.renderSubHeader()}
-        <tr>
-          <td>{this.props.description}</td>
-          <td></td>
-          <td></td>
-          <td>BOTÃO</td>
-        </tr>
-      </>
-    )
+    return null;
   }
 }

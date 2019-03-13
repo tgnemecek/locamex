@@ -7,8 +7,8 @@ export default class ShippingBody extends React.Component {
   render() {
     return (
       <div>
-        <ShippingFixed {...this.props.fixed} />
-        <ShippingAccessories {...this.props.accessories} />
+        <ShippingFixed {...this.props} />
+        <ShippingAccessories {...this.props} />
       </div>
     )
   }
