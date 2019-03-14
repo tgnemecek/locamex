@@ -67,10 +67,12 @@ export default class ImageVisualizer extends React.Component {
         <div className="image-visualizer__controls-wrap">
           <button onClick={this.indexDown}>◀</button> {this.state.currentIndex+1} de {this.state.maxIndex+1} <button onClick={this.indexUp}>▶</button>
         </div>
-        <FooterButtons buttons={[
-          {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
-          {text: "Novo Registro", className: "button--green", onClick: () => this.toggleUploadWindow()}
-        ]}/>
+        {this.props.readOnly ? null :
+          <FooterButtons buttons={[
+            {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+            {text: "Novo Registro", className: "button--green", onClick: () => this.toggleUploadWindow()}
+          ]}/>
+        }
         {this.state.uploadWindow ?
           <FileUploader
             uploadDirective="imageUploads"

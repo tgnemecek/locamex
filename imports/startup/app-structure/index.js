@@ -86,6 +86,11 @@ export const appStructure = [
         name: "contracts",
         title: "Contratos",
         link: "/database/contracts"
+      },
+      {
+        name: "shipping",
+        title: "Remessas",
+        link: "/shipping"
       }
     ]
   }

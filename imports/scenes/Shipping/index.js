@@ -35,7 +35,7 @@ class Shipping extends React.Component {
   onChange = (changes) => {
     this.setState({
       ...this.state,
-      changes
+      ...changes
     })
   }
 
@@ -77,6 +77,7 @@ class Shipping extends React.Component {
           <Header {...this.props} />
           <ShippingBody
             {...this.props}
+            onChange={this.onChange}
             fixed={this.state.fixed}
             modular={this.state.modular}
             accessories={this.state.accessories}
