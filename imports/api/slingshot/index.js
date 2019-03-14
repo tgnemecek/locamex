@@ -23,7 +23,8 @@ Slingshot.createDirective("imageUploads", Slingshot.S3Storage, {
 
   key: function (file, metaContext) {
     var cacheBypass = "_" + new Date().getTime();
-    var directory = `user-uploads/${metaContext.type}/${metaContext.documentId}/${metaContext.formattedDate}${cacheBypass}/`;
+    var parentFolder = Meteor.isDevelopment ? 'tests/' : '';
+    var directory = `${parentFolder}user-uploads/${metaContext.type}/${metaContext.documentId}/${metaContext.formattedDate}${cacheBypass}/`;
     var name = metaContext.filename + "_" + metaContext.imageIndex + "." + metaContext.extension;
 
     return directory + name;
