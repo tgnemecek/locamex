@@ -52,9 +52,15 @@ export default class ShippingFixed extends React.Component {
   }
 
   renderBody = () => {
-    const renderOptions = (model) => {
+    const renderOptions = (model, currentId) => {
       var filtered = this.props.seriesDatabase.filter((item) => {
-        return (item.model === model && item.place !== 'rented');
+        if (item.model === model && item.place !== 'rented') {
+          return !this.props.fixed.find((element) => {
+            if (element._id === item._id) {
+              return (currentId !== item._id);
+            } else return false;
+          })
+        }
       })
       return filtered.map((item, i) => {
         return <option key={i} value={item._id}>{`Série: ${item.serial} - Pátio: ${this.getDescriptionPlace(item.place)}`}</option>
@@ -86,7 +92,7 @@ export default class ShippingFixed extends React.Component {
               onChange={onChange}
               value={item._id}>
                 <option value="">Selecione uma série</option>
-                {renderOptions(item.model)}
+                {renderOptions(item.model, item._id)}
             </Input>
           </td>
           <td className="table__small-column">
