@@ -9,15 +9,15 @@ import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 import Input from '/imports/components/Input/index';
 
-class ModelsStockVisualizer extends React.Component {
+class VariationsStockVisualizer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      item: this.props.item.models[0],
-      totalItems: this.props.item.models[0].place.reduce((acc, cur) => {
+      item: this.props.item.variations[0],
+      totalItems: this.props.item.variations[0].place.reduce((acc, cur) => {
         return acc + (cur.available + cur.inactive);
       }, 0),
-      modelIndex: 0,
+      variationIndex: 0,
       errorMsg: '',
       errorKeys: []
     }
@@ -31,19 +31,19 @@ class ModelsStockVisualizer extends React.Component {
     this.setState({ totalItems: this.state.totalItems + modifier, errorMsg: '', errorKeys: [] });
   }
 
-  renderModels = () => {
-    return this.props.item.models.map((model, i) => {
-      return <option key={i} value={i}>{"Modelo " + tools.convertToLetter(i)}</option>
+  renderVariations = () => {
+    return this.props.item.variations.map((variation, i) => {
+      return <option key={i} value={i}>{"Padrão " + tools.convertToLetter(i)}</option>
     })
   }
 
-  changeModel = (e) => {
-    var modelIndex = e.target.value;
+  changeVariation = (e) => {
+    var variationIndex = e.target.value;
     debugger;
     this.setState({
-      modelIndex,
-      item: this.props.item.models[modelIndex],
-      totalItems: this.props.item.models[modelIndex].place.reduce((acc, cur) => {
+      variationIndex,
+      item: this.props.item.variations[variationIndex],
+      totalItems: this.props.item.variations[variationIndex].place.reduce((acc, cur) => {
         return acc + (cur.available + cur.inactive);
       }, 0),
     });
@@ -60,10 +60,10 @@ class ModelsStockVisualizer extends React.Component {
       this.setState({ errorMsg: 'As quantidades nos pátios devem equivaler ao estoque total.', errorKeys: ['sum'] });
     } else {
       var _id = this.props.item._id;
-      var models = tools.deepCopy(this.props.item.models);
-      models[this.state.modelIndex] = this.state.item;
+      var variations = tools.deepCopy(this.props.item.variations);
+      variations[this.state.variationIndex] = this.state.item;
 
-      Meteor.call('accessories.stock.models.update', _id, models);
+      Meteor.call('accessories.stock.variations.update', _id, variations);
       this.props.toggleWindow();
     }
   }
@@ -82,9 +82,9 @@ class ModelsStockVisualizer extends React.Component {
           <div>
             <Input
               type="select"
-              onChange={this.changeModel}
-              value={this.state.modelIndex}>
-            {this.renderModels()}
+              onChange={this.changeVariation}
+              value={this.state.variationIndex}>
+            {this.renderVariations()}
             </Input>
           </div>
         </Block>
@@ -110,7 +110,7 @@ class ModelsStockVisualizer extends React.Component {
   }
 }
 
-export default ModelsStockVisualizerWrapper = withTracker((props) => {
+export default VariationsStockVisualizerWrapper = withTracker((props) => {
   Meteor.subscribe('placesPub');
   var placesDatabase = Places.find().fetch();
   var ready = !!placesDatabase.length;
@@ -118,4 +118,4 @@ export default ModelsStockVisualizerWrapper = withTracker((props) => {
     placesDatabase,
     ready
   }
-})(ModelsStockVisualizer);
+})(VariationsStockVisualizer);
