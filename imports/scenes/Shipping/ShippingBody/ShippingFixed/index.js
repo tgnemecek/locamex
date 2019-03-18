@@ -19,7 +19,7 @@ export default class ShippingFixed extends React.Component {
     return (
       <tr>
         <th>#</th>
-        <th>Modelo</th>
+        <th>Produto</th>
         <th>Série</th>
       </tr>
     )

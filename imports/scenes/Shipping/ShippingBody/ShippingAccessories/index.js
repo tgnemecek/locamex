@@ -6,6 +6,9 @@ import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 import ImageVisualizer from '/imports/components/ImageVisualizer/index';
 
+import WithVariations from './WithVariations/index';
+import WithoutVariations from './WithoutVariations/index';
+
 export default class ShippingAccessories extends React.Component {
   constructor(props) {
     super(props);
@@ -19,21 +22,22 @@ export default class ShippingAccessories extends React.Component {
     return (
       <tr>
         <th>#</th>
-        <th>Modelo</th>
-        <th>Série</th>
+        <th>Produto</th>
+        <th>Variações</th>
+        <th>Pátio</th>
       </tr>
     )
   }
 
   toggleImageWindow = (e) => {
     var index = e ? e.target.value : null;
-    var imageVisualizer = this.state.imageVisualizer ? false : {...this.props.fixed[index]};
+    var imageVisualizer = this.state.imageVisualizer ? false : {...this.props.accessories[index]};
     this.setState({ imageVisualizer });
   }
 
   toggleObservationsWindow = (e) => {
     var index = e ? e.target.value : null;
-    var observationsVisualizer = this.state.observationsVisualizer ? false : {...this.props.fixed[index]};
+    var observationsVisualizer = this.state.observationsVisualizer ? false : {...this.props.accessories[index]};
     this.setState({ observationsVisualizer });
   }
 
@@ -52,68 +56,17 @@ export default class ShippingAccessories extends React.Component {
   }
 
   renderBody = () => {
-    const renderOptions = (model, currentId) => {
-      var filtered = this.props.seriesDatabase.filter((item) => {
-        if (item.model === model && item.place !== 'rented') {
-          return !this.props.fixed.find((element) => {
-            if (element._id === item._id) {
-              return (currentId !== item._id);
-            } else return false;
-          })
-        }
-      })
-      return filtered.map((item, i) => {
-        return <option key={i} value={item._id}>{`Série: ${item.serial} - Pátio: ${this.getDescriptionPlace(item.place)}`}</option>
-      })
-    }
-
-    const onChange = (e) => {
-      var value = e.target.value;
-      var serial = tools.findUsingId(this.props.seriesDatabase, value);
-      var fixed = tools.deepCopy(this.props.fixed);
-      var index = e.target.name;
-      fixed[index] = serial._id ? serial : { model: this.props.fixed[index].model };
-      this.props.onChange({ fixed });
-    }
-
-    const canDisplayImages = (item) => {
-      return (item._id && item.snapshots.length);
-    }
-
-    return this.props.fixed.map((item, i) => {
-      return (
-        <tr key={i}>
-          <td className="table__small-column">{i+1}</td>
-          <td>{this.getDescriptionModel(item.model)}</td>
-          <td>
-            <Input
-              type="select"
-              name={i}
-              onChange={onChange}
-              value={item._id}>
-                <option value="">Selecione uma série</option>
-                {renderOptions(item.model, item._id)}
-            </Input>
-          </td>
-          <td className="table__small-column">
-            {item.observations ? <button className="database__table__button" value={i} onClick={this.toggleObservationsWindow}>⚠</button>
-            : null}
-          </td>
-          <td className="table__small-column">
-            {canDisplayImages(item) ? <button className="database__table__button" value={i} onClick={this.toggleImageWindow}>🔍</button> : null}
-          </td>
-          <td className="table__small-column">
-            {item._id ? <span style={{color: 'green'}}>✔</span> : <span style={{color: 'red'}}>✖</span>}
-          </td>
-        </tr>
-      )
+    return this.props.accessories.map((item, i) => {
+      if (item.variations) {
+        return <WithVariations {...this.props} item={item} i={i} />
+      } else return <WithoutVariations {...this.props} item={item} i={i} />
     })
   }
 
   render() {
-    if (this.props.fixed.length > 0) {
+    if (this.props.accessories.length > 0) {
       return (
-        <Block columns={1} title="Containers Fixos">
+        <Block columns={1} title="Acessórios">
           <table className="table">
             <thead>
               {this.renderHeader()}
@@ -124,7 +77,7 @@ export default class ShippingAccessories extends React.Component {
           </table>
           {this.state.imageVisualizer ?
             <ImageVisualizer
-              item={{...this.state.imageVisualizer, itemType: 'fixed'}}
+              item={{...this.state.imageVisualizer, itemType: 'accessories'}}
               readOnly={true}
               toggleWindow={this.toggleImageWindow}
             />
