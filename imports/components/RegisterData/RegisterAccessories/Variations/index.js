@@ -50,6 +50,7 @@ export default class Variations extends React.Component {
     const addNewItem = () => {
       var variations = tools.deepCopy(this.props.variations);
       variations.push({
+        _id: tools.generateId(),
         observations: this.state.observations,
         place: [],
         visible: true
