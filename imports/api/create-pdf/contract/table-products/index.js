@@ -17,8 +17,8 @@ export default function tableProducts(products, dates, discount, totalValueProro
           (i+1),
           product.description,
           tools.format(product.price, 'currency'),
-          {text: product.quantity.toString(), alignment: 'center'},
-          {text: tools.format((product.price * product.quantity), 'currency'), alignment: 'center'},
+          {text: product.renting.toString(), alignment: 'center'},
+          {text: tools.format((product.price * product.renting), 'currency'), alignment: 'center'},
           {text: dates.duration.toString(), alignment: 'center'},
           {text: tools.format(product.finalPrice, 'currency'), alignment: 'right'}
         ];

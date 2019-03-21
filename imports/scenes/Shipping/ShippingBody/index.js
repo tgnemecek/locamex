@@ -5,6 +5,7 @@ import tools from '/imports/startup/tools/index';
 import ShippingFixed from './ShippingFixed/index';
 import ShippingAccessories from './ShippingAccessories/index';
 import Observations from './Observations/index';
+import SelectMultiple from './SelectMultiple/index';
 
 export default class ShippingBody extends React.Component {
   sortSeriesDatabase = () => {
@@ -21,7 +22,7 @@ export default class ShippingBody extends React.Component {
     return (
       <div>
         <ShippingFixed {...this.props} Observations={Observations} seriesDatabase={this.sortSeriesDatabase()}/>
-        <ShippingAccessories {...this.props} Observations={Observations} />
+        <ShippingAccessories {...this.props} Observations={Observations} SelectMultiple={SelectMultiple} />
       </div>
     )
   }

@@ -58,7 +58,7 @@ class ManageItems extends React.Component {
     var addedItems = tools.deepCopy(this.state.addedItems);
     addedItems.forEach((item) => {
       if (item._id === _id) {
-        item.quantity = value;
+        item.renting = value;
       }
     })
     this.setState({ addedItems });
@@ -90,12 +90,19 @@ class ManageItems extends React.Component {
     var _id = e.target.value;
     var filteredDatabase = this.state.filteredDatabase;
     var addedItems = tools.deepCopy(this.state.addedItems);
-    var item;
 
     for (var i = 0; i < filteredDatabase.length; i++) {
       if (filteredDatabase[i]._id === _id) {
-        item = {...filteredDatabase[i], quantity: 1}
-        addedItems.push(item);
+        addedItems.push({
+          _id: filteredDatabase[i]._id,
+          type: filteredDatabase[i].type,
+          description: filteredDatabase[i].description,
+          renting: 1,
+          place: filteredDatabase[i].place,
+          restitution: filteredDatabase[i].restitution,
+          variations: filteredDatabase[i].variations,
+          snapshots: filteredDatabase[i].snapshots
+        });
         filteredDatabase = this.hideFromArray(filteredDatabase, addedItems);
         break;
       }
@@ -121,7 +128,7 @@ class ManageItems extends React.Component {
     var addedItems = this.state.addedItems;
     var newArray = [];
     addedItems.forEach((item) => {
-      if (item.quantity > 0) newArray.push(item);
+      if (item.renting > 0) newArray.push(item);
     })
     this.props.updateContract({ [this.props.type]: newArray });
     this.toggleWindow();

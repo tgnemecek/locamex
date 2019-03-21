@@ -168,15 +168,15 @@ export default class Contract extends React.Component {
 
     var products = containers.concat(accessories);
     var productsValue = products.reduce((acc, current) => {
-      var quantity = current.quantity ? current.quantity : 1;
-      return acc + (current.price * quantity * duration)
+      var renting = current.renting ? current.renting : 1;
+      return acc + (current.price * renting * duration)
     }, 0);
     productsValue = productsValue * (1 - discount);
 
     var services = this.state.contract.services || [];
     var servicesValue = services.reduce((acc, current) => {
-      var quantity = current.quantity ? current.quantity : 1;
-      return acc + (current.price * quantity)
+      var renting = current.renting ? current.renting : 1;
+      return acc + (current.price * renting)
     }, 0);
 
     if (option === 'products') {

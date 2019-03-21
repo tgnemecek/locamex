@@ -6,15 +6,11 @@ import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 import ImageVisualizer from '/imports/components/ImageVisualizer/index';
 
-import WithVariations from './WithVariations/index';
-import WithoutVariations from './WithoutVariations/index';
-
 export default class ShippingAccessories extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      imageVisualizer: false,
-      observationsVisualizer: false
+      selectMultiple: false
     }
   }
 
@@ -23,22 +19,15 @@ export default class ShippingAccessories extends React.Component {
       <tr>
         <th>#</th>
         <th>Produto</th>
-        <th>Variações</th>
-        <th>Pátio</th>
+        <th>Seleção</th>
       </tr>
     )
   }
 
-  toggleImageWindow = (e) => {
+  toggleMultipleWindow = (e) => {
     var index = e ? e.target.value : null;
-    var imageVisualizer = this.state.imageVisualizer ? false : {...this.props.accessories[index]};
-    this.setState({ imageVisualizer });
-  }
-
-  toggleObservationsWindow = (e) => {
-    var index = e ? e.target.value : null;
-    var observationsVisualizer = this.state.observationsVisualizer ? false : {...this.props.accessories[index]};
-    this.setState({ observationsVisualizer });
+    var selectMultiple = this.state.selectMultiple ? false : {...this.props.accessories[index]};
+    this.setState({ selectMultiple });
   }
 
   getDescriptionPlace = (placeId) => {
@@ -56,11 +45,26 @@ export default class ShippingAccessories extends React.Component {
   }
 
   renderBody = () => {
+    function check(item) {
+      if (!item.selected) return false;
+      var currentlySelected = item.selected.reduce((acc, cur) => {
+        return acc + cur.renting
+      }, 0);
+      return currentlySelected === item.renting;
+    }
+
     return this.props.accessories.map((item, i) => {
-      if (item.variations) {
-        return <WithVariations {...this.props} item={item} i={i} />
-      } else return <WithoutVariations {...this.props} item={item} i={i} />
-    })
+      return (
+        <tr key={i}>
+          <td>{i+1}</td>
+          <td>{item.description}</td>
+          <td><button className="database__table__button" value={i} onClick={this.toggleMultipleWindow}>⟳</button></td>
+          <td className="table__small-column">
+            {check(item) ? <span style={{color: 'green'}}>✔</span> : <span style={{color: 'red'}}>✖</span>}
+          </td>
+        </tr>
+      )
+    });
   }
 
   render() {
@@ -75,18 +79,10 @@ export default class ShippingAccessories extends React.Component {
               {this.renderBody()}
             </tbody>
           </table>
-          {this.state.imageVisualizer ?
-            <ImageVisualizer
-              item={{...this.state.imageVisualizer, itemType: 'accessories'}}
-              readOnly={true}
-              toggleWindow={this.toggleImageWindow}
-            />
-          : null}
-          {this.state.observationsVisualizer ?
-            <this.props.Observations
-              title={this.getDescriptionModel(this.state.observationsVisualizer.model) + " - " + this.state.observationsVisualizer.serial}
-              content={this.state.observationsVisualizer.observations}
-              toggleWindow={this.toggleObservationsWindow}
+          {this.state.selectMultiple ?
+            <this.props.SelectMultiple
+              toggleWindow={this.toggleMultipleWindow}
+              item={this.state.selectMultiple}
             />
           : null}
         </Block>

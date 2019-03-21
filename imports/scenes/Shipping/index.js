@@ -45,7 +45,7 @@ class Shipping extends React.Component {
       var newArray = [];
       this.props.contract.containers.forEach((item) => {
         if (item.type === 'fixed') {
-          for (var i = 0; i < item.quantity; i++) {
+          for (var i = 0; i < item.renting; i++) {
             newArray.push({ model: item._id })
           }
         }

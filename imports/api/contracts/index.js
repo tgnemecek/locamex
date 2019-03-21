@@ -86,12 +86,12 @@ if (Meteor.isServer) {
         for (var i = 0; i < data.containers.length; i++) {
           if (data.containers[i].type === 'modular') {
             data.containers[i].modules.forEach((module) => {
-              var stillAvailable = Meteor.call('modules.check', module._id, module.quantity);
+              var stillAvailable = Meteor.call('modules.check', module._id, module.renting);
               if (!stillAvailable) {
                 throw new Meteor.Error ("module-not-available",
                 "O componente " + module._id + " não está mais disponível na quantidade desejada.");
               }
-              module.quantity = module.quantity * data.containers[i].quantity;
+              module.renting = module.renting * data.containers[i].renting;
             })
             modules = modules.concat(data.containers[i].modules);
           } else if (data.containers[i].type === 'fixed') {
@@ -111,7 +111,7 @@ if (Meteor.isServer) {
           }
         }
         for (var i = 0; i < data.accessories.length; i++) {
-          var stillAvailable = Meteor.call('accessories.check', data.accessories[i]._id, data.accessories[i].quantity);
+          var stillAvailable = Meteor.call('accessories.check', data.accessories[i]._id, data.accessories[i].renting);
           if (!stillAvailable) {
             throw new Meteor.Error ("accessory-not-available",
             "O acessório " + data.accessories[i]._id + " não está mais disponível na quantidade desejada.");
@@ -140,7 +140,7 @@ if (Meteor.isServer) {
             Meteor.call('packs.insert', containers[i]);
           }
           containers[i].modules.forEach((module) => {
-            module.quantity = module.quantity * (containers[i].quantity - containers[i].selectedAssembled);
+            module.renting = module.renting * (containers[i].renting - containers[i].selectedAssembled);
           })
           modules = modules.concat(containers[i].modules);
         } else {

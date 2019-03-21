@@ -45,52 +45,6 @@ if (Meteor.isServer) {
       };
       Modules.update({ _id }, { $set: data });
       Meteor.call('history.insert', {...data, _id}, 'modules.hide');
-    },
-
-    // Use not verified:
-
-
-
-
-    'modules.check'(_id, quantity) {
-      const item = Modules.findOne(
-        {
-          $and: [
-            { _id },
-            { visible: true }
-          ]
-        }
-      );
-      if (!item) throw new Meteor.Error("_id-not-found", "Um dos componentes locados não está mais disponível ou foi excluído.", arguments);
-      if (item.available < quantity) {
-        return false;
-      } else return true;
-    },
-    'modules.rent' (modules) {
-      var data = [];
-      for (var i = 0; i < modules.length; i++) {
-        if (modules[i].quantity == 0) continue;
-        var changes = {
-          available: -modules[i].quantity,
-          rented: modules[i].quantity
-        }
-        Modules.update({ _id: modules[i]._id }, { $inc: changes });
-        if (!data.includes(modules[i])) data.push(modules[i]);
-        Meteor.call('history.insert', data, 'modules.rent');
-      }
-    },
-    'modules.receive' (modules) {
-      var data = [];
-      for (var i = 0; i < modules.length; i++) {
-        if (modules[i].quantity == 0) continue;
-        var changes = {
-          available: modules[i].quantity,
-          rented: -modules[i].quantity
-        }
-        Modules.update({ _id: modules[i]._id }, { $inc: changes });
-        if (!data.includes(modules[i])) data.push(modules[i]);
-        Meteor.call('history.insert', data, 'modules.receive');
-      }
     }
   })
 }

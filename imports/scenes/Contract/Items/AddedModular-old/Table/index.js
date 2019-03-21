@@ -9,7 +9,7 @@ export default class Table extends React.Component {
         <tr key={i}>
           <td>{item.description}</td>
           <td className="table__small-column">{tools.format(item.price, "currency")}</td>
-          <td className="table__small-column">{item.quantity}</td>
+          <td className="table__small-column">{item.renting}</td>
         </tr>
       )
     })

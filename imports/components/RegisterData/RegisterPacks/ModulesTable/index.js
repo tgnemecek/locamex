@@ -15,7 +15,7 @@ export default function ModulesTable (props) {
       if (i >= index && i < (index + numberOfRows)) return (
         <tr key={i}>
           <td>{module.description}</td>
-          <td style={{textAlign: "center"}}>{module.quantity}</td>
+          <td style={{textAlign: "center"}}>{module.renting}</td>
         </tr>
       )
     })

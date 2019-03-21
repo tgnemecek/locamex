@@ -76,15 +76,15 @@ class ContractsTable extends React.Component {
         var accessories = item.accessories || [];
         var products = containers.concat(accessories);
         var productsValue = products.reduce((acc, current) => {
-          var quantity = current.quantity ? current.quantity : 1;
-          return acc + (current.price * quantity * duration)
+          var renting = current.renting ? current.renting : 1;
+          return acc + (current.price * renting * duration)
         }, 0);
         productsValue = productsValue * (100 - discount) / 100;
 
         var services = item.services || [];
         var servicesValue = services.reduce((acc, current) => {
-          var quantity = current.quantity ? current.quantity : 1;
-          return acc + (current.price * quantity)
+          var renting = current.renting ? current.renting : 1;
+          return acc + (current.price * renting)
         }, 0);
 
         return tools.format((productsValue + servicesValue), "currency");

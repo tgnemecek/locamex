@@ -15,7 +15,7 @@ if (Meteor.isServer) {
         var _id = tools.generateId();
         var modules = [];
         packInfo.modules.forEach((module) => {
-          if (module.quantity) modules.push(module);
+          if (module.renting) modules.push(module);
         })
         var data = {
           _id,

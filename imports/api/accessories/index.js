@@ -60,45 +60,6 @@ if (Meteor.isServer) {
       }
       Accessories.update({ _id: _id }, { $set: data });
       Meteor.call('history.insert', data, 'accessories');
-    },
-    'accessories.rent' (accessories) {
-      var data = [];
-      for (var i = 0; i < accessories.length; i++) {
-        var changes = {
-          available: -accessories[i].quantity,
-          rented: accessories[i].quantity
-        }
-        Accessories.update({ _id: accessories[i]._id }, { $inc: changes });
-        if (!data.includes(accessories[i])) data.push(accessories[i]);
-        Meteor.call('history.insert', data, 'accessories');
-      }
-    },
-    'accessories.receive' (accessories) {
-      var data = [];
-      for (var i = 0; i < accessories.length; i++) {
-        if (accessories[i].quantity == 0) continue;
-        var changes = {
-          available: accessories[i].quantity,
-          rented: -accessories[i].quantity
-        }
-        Accessories.update({ _id: accessories[i]._id }, { $inc: changes });
-        if (!data.includes(accessories[i])) data.push(accessories[i]);
-        Meteor.call('history.insert', data, 'accessories.receive');
-      }
-    },
-    'accessories.check'(_id, quantity) {
-      const item = Accessories.findOne(
-        {
-          $and: [
-            { _id },
-            { visible: true }
-          ]
-        }
-      );
-      if (!item) throw new Meteor.Error("_id-not-found", "Um dos acessórios locados não está mais disponível ou foi excluído.", arguments);
-      if (item.available < quantity) {
-        return false;
-      } else return true;
     }
   })
 }

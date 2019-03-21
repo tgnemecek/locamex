@@ -1,0 +1,12 @@
+.shipping-accessories__select-multiple__place {
+  border: 1px solid black;
+  border-radius: 5px;
+}
+
+.shipping-accessories__select-multiple__place span:nth-child(1) {
+  background: red;
+}
+
+.shipping-accessories__select-multiple__place span:nth-child(2) {
+  background: black;
+}
