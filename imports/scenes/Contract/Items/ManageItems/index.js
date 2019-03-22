@@ -1,10 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import { withTracker } from 'meteor/react-meteor-data';
 
-import { Containers } from '/imports/api/containers/index';
-import { Accessories } from '/imports/api/accessories/index';
-import { Services } from '/imports/api/services/index';
 import tools from '/imports/startup/tools/index';
 
 import Box from '/imports/components/Box/index';
@@ -17,7 +13,7 @@ import Table from './Table/index';
 import Database from './Database/index';
 import AddedItems from './AddedItems/index';
 
-class ManageItems extends React.Component {
+export default class ManageItems extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -96,12 +92,7 @@ class ManageItems extends React.Component {
         addedItems.push({
           _id: filteredDatabase[i]._id,
           type: filteredDatabase[i].type,
-          description: filteredDatabase[i].description,
-          renting: 1,
-          place: filteredDatabase[i].place,
-          restitution: filteredDatabase[i].restitution,
-          variations: filteredDatabase[i].variations,
-          snapshots: filteredDatabase[i].snapshots
+          renting: 1
         });
         filteredDatabase = this.hideFromArray(filteredDatabase, addedItems);
         break;
@@ -138,6 +129,7 @@ class ManageItems extends React.Component {
     return (
       <div>
         <Table
+          fullDatabase={this.props.fullDatabase}
           addedItems={this.props.contract[this.props.type]}
           toggleWindow={this.toggleWindow}
           updateContract={this.props.updateContract}
@@ -160,7 +152,7 @@ class ManageItems extends React.Component {
                   addItem={this.addItem}/>
                 <AddedItems
                   type={this.props.type}
-                  database={this.state.filteredDatabase}
+                  fullDatabase={this.props.fullDatabase}
                   addedItems={this.state.addedItems}
 
                   changePrice={this.changePrice}
@@ -180,31 +172,3 @@ class ManageItems extends React.Component {
     )
   }
 }
-
-export default ManageItemsWrapper = withTracker((props) => {
-  var fullDatabase = [];
-  var title;
-  switch (props.type) {
-    case 'containers':
-      Meteor.subscribe("containersPub");
-      fullDatabase = Containers.find({visible: true}).fetch();
-      title = "Containers";
-      break;
-    case 'accessories':
-      Meteor.subscribe("accessoriesPub");
-      fullDatabase = Accessories.find({visible: true}).fetch();
-      title = "Acessórios";
-      break;
-    case 'services':
-      Meteor.subscribe("servicesPub");
-      fullDatabase = Services.find({visible: true}).fetch();
-      title = "Serviços";
-      break;
-    default:
-      throw new Error("type-not-found-at-ManageItems");
-  }
-  return {
-    fullDatabase,
-    title
-  }
-})(ManageItems);

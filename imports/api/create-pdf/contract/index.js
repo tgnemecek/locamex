@@ -21,7 +21,7 @@ import date from './date/index';
 import signatures from './signatures/index';
 import tableWitnesses from './table-witnesses/index';
 
-export default function createPdf(contract, client, negociator, representatives) {
+export default function createPdf(contract) {
 
   const fileName = `Locamex - Contrato de Locação #${contract._id}_${contract.version}`;
 
@@ -58,8 +58,8 @@ export default function createPdf(contract, client, negociator, representatives)
     },
     content: [
       text(0, contract._id, undefined, contract.version),
-      tableInformationCompany(client, negociator, styles),
-      tableRepresentatives(representatives, styles),
+      tableInformationCompany(contract.client, contract.negociator, styles),
+      tableRepresentatives(contract.representatives, styles),
       text(1, undefined, contract.proposal),
       tableProducts(products, contract.dates, contract.discount, totalValueProrogation, totalValueProducts, resultFormat, styles),
       text(2),
@@ -76,7 +76,7 @@ export default function createPdf(contract, client, negociator, representatives)
       tableRestitution(products, resultFormat, styles),
       text(8),
       date(),
-      signatures(representatives, client),
+      signatures(contract.representatives, contract.client),
       tableWitnesses(styles)
     ],
     pageBreakBefore: function (currentNode, followingNodesOnPage, nodesOnNextPage, previousNodesOnPage) {

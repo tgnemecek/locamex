@@ -7,6 +7,11 @@ export const appStructure = [
         name: "dashboard",
         title: "Início",
         link: "/dashboard"
+      },
+      {
+        name: "test",
+        title: "Teste",
+        link: "/test"
       }
     ]
   },

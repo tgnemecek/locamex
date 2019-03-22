@@ -1,8 +1,6 @@
 import React from 'react';
-import { withTracker } from 'meteor/react-meteor-data';
 
 import createPdf from '/imports/api/create-pdf/contract/index';
-import { Clients } from '/imports/api/clients/index';
 
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
@@ -10,10 +8,11 @@ import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 import tools from '/imports/startup/tools/index';
 
-class Documents extends React.Component {
+export default class Documents extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      client: tools.findUsingId(this.props.databases.clientsDatabase, this.props.contract.client),
       negociator: this.props.contract.negociator || '',
       representatives: this.props.contract.representatives || [],
 
@@ -38,11 +37,11 @@ class Documents extends React.Component {
   displayContacts = (which) => {
     var contacts = [];
     if (which === 'negociator') {
-      contacts = this.props.client.contacts.filter((contact) => {
+      contacts = this.state.client.contacts.filter((contact) => {
         return (contact.name && contact.phone1 && contact.email);
       })
     } else if (which === 'rep') {
-      contacts = this.props.client.contacts.filter((contact) => {
+      contacts = this.state.client.contacts.filter((contact) => {
         return (contact.name && contact.cpf && contact.rg);
       })
     }
@@ -74,13 +73,34 @@ class Documents extends React.Component {
     const getPersonUsingId = (arrayOfIds) => {
       var people = [];
       arrayOfIds.forEach((id) => {
-        this.props.client.contacts.forEach((item) => {
+        this.state.client.contacts.forEach((item) => {
           if (item._id === id) {
             people.push(item)
           }
         })
       })
       return people;
+    }
+
+    const assembleContractReferences = (negociator, representatives) => {
+      var containersDatabase = this.props.databases.containersDatabase;
+      var accessoriesDatabase = this.props.databases.accessoriesDatabase;
+      var servicesDatabase = this.props.databases.servicesDatabase;
+
+      var contract = { ...this.props.contract };
+      var client = this.state.client;
+
+      var containers = contract.containers.map((item) => {
+        return { ...item, description: tools.findUsingId(containersDatabase, item._id).description }
+      })
+      var accessories = contract.accessories.map((item) => {
+        return { ...item, description: tools.findUsingId(accessoriesDatabase, item._id).description }
+      })
+      var services = contract.services.map((item) => {
+        return { ...item, description: tools.findUsingId(servicesDatabase, item._id).description }
+      })
+
+      return { ...contract, client, containers, accessories, services, negociator, representatives };
     }
 
     var version = this.props.contract.version + 1;
@@ -92,7 +112,8 @@ class Documents extends React.Component {
       negociator: negociatorId,
       version
     }, () => {
-      createPdf(this.props.contract, this.props.client, negociator, representatives);
+      var assembledContract = assembleContractReferences(negociator, representatives);
+      createPdf(assembledContract);
       this.props.saveContract();
     });
     this.setState({ errorMsg, errorKeys });
@@ -143,11 +164,3 @@ class Documents extends React.Component {
       )
   }
 }
-
-export default DocumentsWrapper = withTracker((props) => {
-  Meteor.subscribe('clientsPub');
-  var client = Clients.findOne({_id: props.contract.client});
-  return {
-    client
-  }
-})(Documents);

@@ -3,7 +3,6 @@ import { withTracker } from 'meteor/react-meteor-data';
 
 import { Contracts } from '/imports/api/contracts/index';
 import { Places } from '/imports/api/places/index';
-
 import { Containers } from '/imports/api/containers/index';
 import { Series } from '/imports/api/series/index';
 import { Modules } from '/imports/api/modules/index';
@@ -27,8 +26,11 @@ class Shipping extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.contract !== this.props.contract) {
-      this.setProducts();
+    if (prevProps.contract && this.props.contract) {
+      if (prevProps.contract.containers !== this.props.contract.containers ||
+          prevProps.contract.accessories !== this.props.contract.accessories) {
+        this.setProducts();
+      }
     }
   }
 
@@ -76,7 +78,7 @@ class Shipping extends React.Component {
         <div className="contract">
           <Header {...this.props} />
           <ShippingBody
-            {...this.props}
+            databases={this.props.databases}
             onChange={this.onChange}
             fixed={this.state.fixed}
             modular={this.state.modular}
@@ -105,14 +107,14 @@ export default ShippingWrapper = withTracker((props) => {
   var modulesDatabase = Modules.find().fetch();
   var accessoriesDatabase = Accessories.find().fetch();
 
-  return {
-    contract,
-    placesDatabase,
-
-    containersDatabase,
-    seriesDatabase,
-    modulesDatabase,
-    accessoriesDatabase
+  var databases = {
+    placesDatabase: Places.find().fetch(),
+    containersDatabase: Containers.find().fetch(),
+    seriesDatabase: Series.find().fetch(),
+    modulesDatabase: Modules.find().fetch(),
+    accessoriesDatabase: Accessories.find().fetch()
   }
+
+  return { contract, databases }
 
 })(Shipping);

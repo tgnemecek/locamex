@@ -10,7 +10,7 @@ export default class AddedItems extends React.Component {
     return this.props.addedItems.map((item, i, array) => {
       return (
         <tr key={i} className="item-list__selection__db-item">
-          <td>{item.description}</td>
+          <td>{tools.findUsingId(this.props.fullDatabase, item._id).description}</td>
           <td className="medium-column">
             <Input
               type="currency"

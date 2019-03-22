@@ -1,7 +1,5 @@
 import React from 'react';
-
 import tools from '/imports/startup/tools/index';
-
 import ManageItems from './ManageItems/index';
 
 export default class Items extends React.Component {
@@ -11,6 +9,7 @@ export default class Items extends React.Component {
         <div className="contract__list">
           <h3>Containers:</h3>
           <ManageItems
+            fullDatabase={this.props.databases.containersDatabase}
             contract={this.props.contract}
             updateContract={this.props.updateContract}
             type="containers"
@@ -19,6 +18,7 @@ export default class Items extends React.Component {
         <div className="contract__list">
           <h3>Acessórios:</h3>
           <ManageItems
+            fullDatabase={this.props.databases.accessoriesDatabase}
             contract={this.props.contract}
             updateContract={this.props.updateContract}
             type="accessories"
@@ -27,6 +27,7 @@ export default class Items extends React.Component {
         <div className="contract__list">
           <h3>Serviços:</h3>
           <ManageItems
+            fullDatabase={this.props.databases.servicesDatabase}
             contract={this.props.contract}
             updateContract={this.props.updateContract}
             type="services"

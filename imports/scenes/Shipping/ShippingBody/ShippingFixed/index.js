@@ -37,13 +37,6 @@ export default class ShippingFixed extends React.Component {
     this.setState({ observationsVisualizer });
   }
 
-  getDescriptionPlace = (placeId) => {
-    var place = this.props.placesDatabase.find((item) => {
-      return item._id === placeId;
-    });
-    return place ? place.description : null;
-  }
-
   getDescriptionModel = (model) => {
     var container = this.props.containersDatabase.find((item) => {
       return item._id === model;
@@ -63,7 +56,12 @@ export default class ShippingFixed extends React.Component {
         }
       })
       return filtered.map((item, i) => {
-        return <option key={i} value={item._id}>{`Série: ${item.serial} - Pátio: ${this.getDescriptionPlace(item.place)}`}</option>
+        return (
+          <option
+            key={i}
+            value={item._id}>{`Série: ${item.serial} - Pátio: ${tools.findUsingId(this.props.placesDatabase, item.place).description}`}
+          </option>
+        )
       })
     }
 
@@ -84,7 +82,7 @@ export default class ShippingFixed extends React.Component {
       return (
         <tr key={i}>
           <td className="table__small-column">{i+1}</td>
-          <td>{this.getDescriptionModel(item.model)}</td>
+          <td>{tools.findUsingId(this.props.containersDatabase, item.model).description}</td>
           <td>
             <Input
               type="select"

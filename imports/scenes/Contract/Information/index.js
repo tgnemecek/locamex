@@ -1,7 +1,5 @@
 import React from 'react';
 import moment from 'moment';
-import { withTracker } from 'meteor/react-meteor-data';
-import { Clients } from '/imports/api/clients/index';
 import tools from '/imports/startup/tools/index';
 
 import Block from '/imports/components/Block/index';
@@ -9,7 +7,7 @@ import Input from '/imports/components/Input/index';
 import Calendar from '/imports/components/Calendar/index';
 import SuggestionBar from '/imports/components/SuggestionBar/index';
 
-class Information extends React.Component {
+export default class Information extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -189,13 +187,3 @@ class Information extends React.Component {
       )
   }
 }
-
-export default InformationWrapper = withTracker((props) => {
-  Meteor.subscribe('clientsPub');
-  var clientsDatabase = Clients.find().fetch({visible: true});
-  var ready = !!clientsDatabase.length;
-  return {
-    clientsDatabase,
-    ready
-  }
-})(Information)

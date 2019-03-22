@@ -10,7 +10,8 @@ export default class ShippingAccessories extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectMultiple: false
+      selectMultiple: false,
+      itemToSelect: {}
     }
   }
 
@@ -26,22 +27,8 @@ export default class ShippingAccessories extends React.Component {
 
   toggleMultipleWindow = (e) => {
     var index = e ? e.target.value : null;
-    var selectMultiple = this.state.selectMultiple ? false : {...this.props.accessories[index]};
-    this.setState({ selectMultiple });
-  }
-
-  getDescriptionPlace = (placeId) => {
-    var place = this.props.placesDatabase.find((item) => {
-      return item._id === placeId;
-    });
-    return place ? place.description : null;
-  }
-
-  getDescriptionModel = (model) => {
-    var container = this.props.containersDatabase.find((item) => {
-      return item._id === model;
-    });
-    return container ? container.description : null;
+    var itemToSelect = this.state.selectMultiple ? false : {...this.props.accessories[index]};
+    this.setState({ selectMultiple: !this.state.selectMultiple, itemToSelect });
   }
 
   renderBody = () => {
@@ -57,7 +44,7 @@ export default class ShippingAccessories extends React.Component {
       return (
         <tr key={i}>
           <td>{i+1}</td>
-          <td>{item.description}</td>
+          <td>{tools.findUsingId(this.props.accessoriesDatabase, item._id).description}</td>
           <td><button className="database__table__button" value={i} onClick={this.toggleMultipleWindow}>⟳</button></td>
           <td className="table__small-column">
             {check(item) ? <span style={{color: 'green'}}>✔</span> : <span style={{color: 'red'}}>✖</span>}
@@ -81,8 +68,10 @@ export default class ShippingAccessories extends React.Component {
           </table>
           {this.state.selectMultiple ?
             <this.props.SelectMultiple
+              accessoriesDatabase={this.props.accessoriesDatabase}
+              placesDatabase={this.props.placesDatabase}
               toggleWindow={this.toggleMultipleWindow}
-              item={this.state.selectMultiple}
+              item={this.state.itemToSelect}
             />
           : null}
         </Block>

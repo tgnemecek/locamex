@@ -1,6 +1,15 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
+import { withTracker } from 'meteor/react-meteor-data';
+
 import { Contracts } from '/imports/api/contracts/index';
+import { Clients } from '/imports/api/clients/index';
+import { Places } from '/imports/api/places/index';
+import { Containers } from '/imports/api/containers/index';
+import { Accessories } from '/imports/api/accessories/index';
+import { Services } from '/imports/api/services/index';
+
+
 import tools from '/imports/startup/tools/index';
 
 import Box from '/imports/components/Box/index';
@@ -14,7 +23,7 @@ import Information from './Information/index';
 import Items from './Items/index';
 import Footer from './Footer/index';
 
-export default class Contract extends React.Component {
+class Contract extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -71,25 +80,22 @@ export default class Contract extends React.Component {
   }
 
   componentDidMount() {
-    var contract;
     if (this.props.match.params.contractId == 'new') {
       this.setState({ ready: 1 });
-    } else {
-      this.tracker = Tracker.autorun(() => {
-        Meteor.subscribe('contractsPub');
-        contract = Contracts.findOne({ _id: this.props.match.params.contractId });
-        if (contract) this.setState({ contract, ready: 1 });
-      })
-    }
-    setTimeout(() => {
-      if (!contract && this.state.ready == 0) {
-        this.setState({ ready: -1 })
-      }
-    }, 3000);
+    } else this.setContract();
   }
 
-  componentWillUnmount = () => {
-    this.tracker ? this.tracker.stop() : null;
+  componentDidUpdate(prevProps) {
+    if (prevProps.match.params.contractId !== this.props.match.params.contractId) {
+      this.setContract();
+    }
+  }
+
+  setContract = () => {
+    var contract = this.props.databases.contractsDatabase.find((element) => {
+      return element._id === this.props.match.params.contractId;
+    })
+    if (contract) this.setState({ contract, ready: 1 });
   }
 
   updateContract = (changes, callback) => {
@@ -193,6 +199,7 @@ export default class Contract extends React.Component {
         <div className="page-content">
           <div className="contract">
             <Header
+              databases={this.props.databases}
               toggleCancelWindow={this.toggleCancelWindow}
               contract={this.state.contract}
               updateContract={this.updateContract}
@@ -201,11 +208,13 @@ export default class Contract extends React.Component {
             />
             <div className={this.setDisabledClassName()}>
               <Information
+                clientsDatabase={this.props.databases.clientsDatabase}
                 contract={this.state.contract}
                 updateContract={this.updateContract}
                 errorKeys={this.state.errorKeys}
               />
               <Items
+                databases={this.props.databases}
                 contract={this.state.contract}
                 updateContract={this.updateContract}
               />
@@ -234,3 +243,28 @@ export default class Contract extends React.Component {
     }
   }
 }
+
+export default ContractWrapper = withTracker((props) => {
+  Meteor.subscribe('contractsPub');
+  Meteor.subscribe('clientsPub');
+
+  Meteor.subscribe('placesPub');
+
+  Meteor.subscribe('containersPub');
+  Meteor.subscribe('accessoriesPub');
+  Meteor.subscribe('servicesPub');
+
+  var databases = {
+    contractsDatabase: Contracts.find().fetch(),
+    clientsDatabase: Clients.find().fetch(),
+
+    placesDatabase: Places.find().fetch(),
+
+    containersDatabase: Containers.find().fetch(),
+    accessoriesDatabase: Accessories.find().fetch(),
+    servicesDatabase: Services.find().fetch()
+
+  }
+  return { databases }
+
+})(Contract);

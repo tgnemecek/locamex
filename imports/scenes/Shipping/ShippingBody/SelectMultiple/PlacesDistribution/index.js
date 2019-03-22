@@ -20,7 +20,7 @@ export default class PlacesDistribution extends React.Component {
   }
 
   renderBody = () => {
-    var variation = this.props.item.variations[this.state.variationIndex];
+    var variation = tools.findUsingId(this.props.accessoriesDatabase, this.props.item._id).variations[this.state.variationIndex]
     var places = variation.place.filter((place) => {
       return place.available > 0;
     })

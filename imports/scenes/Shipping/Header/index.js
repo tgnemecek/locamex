@@ -3,7 +3,6 @@ import Documents from './Documents/index';
 import Observations from './Observations/index';
 
 export default class Header extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
