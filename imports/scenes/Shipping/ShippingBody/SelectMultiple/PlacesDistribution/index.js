@@ -5,13 +5,6 @@ import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 
 export default class PlacesDistribution extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      variationIndex: 0
-    }
-  }
-
   getDescriptionPlace = (placeId) => {
     var place = this.props.placesDatabase.find((item) => {
       return item._id === placeId;
@@ -20,14 +13,14 @@ export default class PlacesDistribution extends React.Component {
   }
 
   renderBody = () => {
-    var variation = tools.findUsingId(this.props.accessoriesDatabase, this.props.item._id).variations[this.state.variationIndex]
-    var places = variation.place.filter((place) => {
+    var currentVariation = tools.findUsingId(this.props.productFromDatabase.variations, this.props.variation);
+    var places = currentVariation.place.filter((place) => {
       return place.available > 0;
     })
     return places.map((place, i) => {
       const onDragStart = (e) => {
-        e.dataTransfer.setData("itemIndex", i);
-        e.dataTransfer.setData("itemPlace", place._id);
+        e.dataTransfer.setData("variationPlace", place._id);
+        e.dataTransfer.setData("available", place.available);
       }
       return (
         <div key={i} className="shipping-accessories__select-multiple__place" draggable={true} onDragStart={onDragStart}>
