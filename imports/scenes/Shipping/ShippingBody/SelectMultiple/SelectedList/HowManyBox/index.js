@@ -17,7 +17,11 @@ export default class HowManyBox extends React.Component {
   }
 
   submit = () => {
-    this.props.addToSelection(this.state.howManyToMove);
+    var howManyToMove = this.state.howManyToMove;
+    if (howManyToMove > 0) {
+      this.props.addToSelection(howManyToMove);
+      this.props.toggleWindow();
+    }
   }
 
   render() {

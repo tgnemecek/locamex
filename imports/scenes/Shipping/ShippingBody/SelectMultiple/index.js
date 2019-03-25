@@ -10,47 +10,100 @@ import ImageVisualizer from '/imports/components/ImageVisualizer/index';
 import PlacesDistribution from './PlacesDistribution/index';
 import SelectedList from './SelectedList/index';
 import SelectVariation from './SelectVariation/index';
+import Footer from './Footer/index';
 
 export default class SelectMultiple extends React.Component {
   constructor(props) {
     super(props);
+
+    const populateVariations = () => {
+      var variations = tools.deepCopy(this.props.productFromDatabase.variations);
+      var selectedList = this.props.item.selectedList || [];
+      if (!selectedList.length) return variations;
+
+      selectedList.forEach((listItem) => {
+        variations.forEach((variation) => {
+          if (variation._id === listItem._id) {
+            variation.place.forEach((place) => {
+              if (place._id === listItem.place) {
+                place.available = place.available - listItem.selected;
+              }
+            })
+          }
+        })
+      })
+      return variations;
+    }
+
     this.state = {
-      selected: [],
-      allVariations: this.props.productFromDatabase.variations, //   TEM UM VALOR PRA UMA VARIACAO E OUTRO PRA TODAS???????
-      variation: this.props.productFromDatabase.variations[0]._id //  ...TA ERRADO ISSO, TEM QUE TIRAR
+      selectedList: this.props.item.selectedList || [],
+      variations: populateVariations(),
+      currentVariationIndex: 0
     }
   }
 
-  addToSelection = (howManyToMove, variationPlace) => {  // AO ADICIONAR, TEM QUE REDUZIR A QTD QUE TEM NA VARIACAO
-    var selected = tools.deepCopy(this.state.selected);
-    var existingVariation = tools.findUsingId(selected, this.state.variation);
+  addToSelection = (howManyToMove, variationPlace) => {
+
+    var selectedList = tools.deepCopy(this.state.selectedList);
+    var variationToAdd = this.state.variations[this.state.currentVariationIndex];
+    var existingVariation = tools.findUsingId(selectedList, variationToAdd._id);
 
     if (existingVariation._id && existingVariation.place === variationPlace) {
       existingVariation.selected = existingVariation.selected + howManyToMove;
     } else {
-      var variationFromDatabase = tools.findUsingId(this.props.productFromDatabase.variations, this.state.variation);
-      selected.push({
-        _id: variationFromDatabase._id,
+      selectedList.push({
+        _id: variationToAdd._id,
         place: variationPlace,
         selected: howManyToMove
       })
-      this.setState({ selected });
     }
+    var variations = this.changeAvailable((0 - howManyToMove), variationToAdd._id, variationPlace);
+    this.setState({ selectedList, variations });
   }
 
-  removeFromSelection = (selectedToRemoveId) => { // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! CONTINUAR AQUI, QUANTIDADES TEM QUE VOLTAR
-    var selected = this.state.selection.filter((item) => {
-      return item._id !== selectedToRemoveId;
+  removeFromSelection = (selectedToRemoveIndex) => {
+    var selectedList = this.state.selectedList
+    var itemRemoved = selectedList[selectedToRemoveIndex];
+
+    selectedList = selectedList.filter((item) => {
+      if (item._id !== itemRemoved._id) {
+        return true;
+      } else {
+        if (item.place === itemRemoved.place) {
+          return false;
+        } else return true;
+      }
     })
-    var selectedToRemoveObj = tools.findUsingId(this.state.selection, selectedToRemoveId);
-    var restorePlace = selectedToRemoveObj.place;
-    var restoreQuantity = selectedToRemoveObj.selected;
-
-    this.setState({ selected })
+    var variations = this.changeAvailable(itemRemoved.selected, itemRemoved._id, itemRemoved.place)
+    this.setState({ selectedList, variations });
   }
 
-  changeVariation = (variation) => {
-    this.setState({ variation });
+  changeAvailable = (toChange, variationId, placeId) => {
+    var variations = tools.deepCopy(this.state.variations);
+    var variationToChangeIndex = variations.findIndex((item) => {
+      return item._id === variationId;
+    })
+    var placeToChangeIndex = variations[variationToChangeIndex].place.findIndex((item) => {
+      return item._id === placeId;
+    })
+    var placeToChange = variations[variationToChangeIndex].place[placeToChangeIndex];
+    var previousRemaining = placeToChange.available;
+    var newRemaining = previousRemaining + toChange;
+    if (newRemaining < 0) throw new Meteor.Error('number-cannot-be-negative!');
+    variations[variationToChangeIndex].place[placeToChangeIndex].available = newRemaining;
+    return variations;
+  }
+
+  changeVariationIndex = (currentVariationIndex) => {
+    this.setState({ currentVariationIndex });
+  }
+
+  saveEdits = () => {
+    this.props.onChange({
+      _id: this.props.productFromDatabase._id,
+      selectedList: this.state.selectedList
+    });
+    this.props.toggleWindow();
   }
 
   render() {
@@ -66,24 +119,30 @@ export default class SelectMultiple extends React.Component {
                 {"Produto: " + this.props.productFromDatabase.description}
               </div>
               <SelectVariation
-                onChange={this.changeVariation}
-                productFromDatabase={this.props.productFromDatabase}
-                variation={this.state.variation}
+                onChange={this.changeVariationIndex}
+                variations={this.state.variations}
+                currentVariationIndex={this.state.currentVariationIndex}
               />
             </Block>
             <PlacesDistribution
-              item={this.props.item}
-              variation={this.state.variation}
-              productFromDatabase={this.props.productFromDatabase}
+              currentVariationIndex={this.state.currentVariationIndex}
+              variations={this.state.variations}
               placesDatabase={this.props.placesDatabase}/>
           </Block>
           <SelectedList
-            selected={this.state.selected}
             addToSelection={this.addToSelection}
             removeFromSelection={this.removeFromSelection}
-            variation={this.state.variation}
+
             item={this.props.item}
+            productFromDatabase={this.props.productFromDatabase}
+            selectedList={this.state.selectedList}
+            currentVariationId={this.state.variations[this.state.currentVariationIndex]._id}
+
             placesDatabase={this.props.placesDatabase}
+          />
+          <Footer
+            toggleWindow={this.props.toggleWindow}
+            saveEdits={this.saveEdits}
           />
       </Box>
     )

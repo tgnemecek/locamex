@@ -9,8 +9,8 @@ export default class SelectVariation extends React.Component {
   }
 
   renderOptions = () => {
-    return this.props.productFromDatabase.variations.map((variation, i) => {
-      return <option key={i} value={variation._id}>{i+1}</option>
+    return this.props.variations.map((variation, i) => {
+      return <option key={i} value={i}>{i+1}</option>
     })
   }
 
@@ -18,7 +18,7 @@ export default class SelectVariation extends React.Component {
     return (
       <Input
         type="select"
-        value={this.props.variation}
+        value={this.props.currentVariationIndex}
         onChange={this.onChange}
       >
         {this.renderOptions()}

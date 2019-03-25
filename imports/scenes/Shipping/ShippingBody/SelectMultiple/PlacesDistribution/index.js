@@ -13,7 +13,7 @@ export default class PlacesDistribution extends React.Component {
   }
 
   renderBody = () => {
-    var currentVariation = tools.findUsingId(this.props.productFromDatabase.variations, this.props.variation);
+    var currentVariation = this.props.variations[this.props.currentVariationIndex];
     var places = currentVariation.place.filter((place) => {
       return place.available > 0;
     })
@@ -34,7 +34,7 @@ export default class PlacesDistribution extends React.Component {
 
   render() {
     return (
-      <Block columns={2}>
+      <Block columns={2} title="Estoque disponível do produto:">
         {this.renderBody()}
       </Block>
     )

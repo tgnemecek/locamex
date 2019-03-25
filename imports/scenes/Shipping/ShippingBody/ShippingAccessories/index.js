@@ -34,9 +34,9 @@ export default class ShippingAccessories extends React.Component {
 
   renderBody = () => {
     function check(item) {
-      if (!item.selected) return false;
-      var currentlySelected = item.selected.reduce((acc, cur) => {
-        return acc + cur.renting
+      if (!item.selectedList) return false;
+      var currentlySelected = item.selectedList.reduce((acc, cur) => {
+        return acc + cur.selected
       }, 0);
       return currentlySelected === item.renting;
     }
@@ -56,6 +56,18 @@ export default class ShippingAccessories extends React.Component {
     });
   }
 
+  onChange = (changedItem) => {
+    var accessories = tools.deepCopy(this.props.accessories);
+    var itemIndex = accessories.findIndex((element) => {
+      return element._id === changedItem._id;
+    })
+    accessories[itemIndex] = {
+      ...accessories[itemIndex],
+      ...changedItem
+    };
+    this.props.onChange({ accessories });
+  }
+
   render() {
     if (this.props.accessories.length > 0) {
       return (
@@ -70,6 +82,7 @@ export default class ShippingAccessories extends React.Component {
           </table>
           {this.state.selectMultiple && this.state.itemToSelect ?
             <this.props.SelectMultiple
+              onChange={this.onChange}
               productFromDatabase={tools.findUsingId(this.props.accessoriesDatabase, this.state.itemToSelect._id)}
               placesDatabase={this.props.placesDatabase}
               toggleWindow={this.toggleMultipleWindow}

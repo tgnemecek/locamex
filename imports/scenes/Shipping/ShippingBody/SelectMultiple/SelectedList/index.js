@@ -29,11 +29,11 @@ export default class SelectedList extends React.Component {
     var renting = this.props.item.renting;
     var max = available < renting ? available : renting;
 
-    var existing = tools.findUsingId(this.props.selected, this.props.variation);
-    if (existing._id) {
-      var remains = renting - existing.selected;
-      max = remains < max ? remains : max;
-    }
+    var selectedListQuantity = this.props.selectedList.reduce((acc, cur) => {
+      return acc + cur.selected;
+    }, 0)
+
+    max = (renting - selectedListQuantity) < max ? (renting - selectedListQuantity) : max;
 
     this.setState({
       variationPlace,
@@ -57,14 +57,14 @@ export default class SelectedList extends React.Component {
   }
 
   renderBody = () => {
-    return this.props.selected.map((item, i) => {
+    return this.props.selectedList.map((item, i) => {
       return (
         <tr key={i}>
-          <td>{this.props.item.description}</td>
+          <td>{this.props.productFromDatabase.description}</td>
           <td>{i+1}</td>
           <td>{tools.findUsingId(this.props.placesDatabase, item.place).description}</td>
           <td>{item.selected}</td>
-          <td><td className="buttom-column"><button value={item._id} onClick={this.removeFromSelection} className="button--table-x">✖</button></td></td>
+          <td className="buttom-column"><button value={i} onClick={this.removeFromSelection} className="button--table-x">✖</button></td>
         </tr>
       )
     })
@@ -85,28 +85,30 @@ export default class SelectedList extends React.Component {
   }
 
   render() {
-    if (this.props.selected.length) {
+    if (this.props.selectedList.length) {
       return (
-        <div onDrop={this.onDrop} onDragOver={this.onDragOver}>
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Produto</th>
-                <th>Variação</th>
-                <th>Pátio</th>
-                <th>Quantidade</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.renderBody()}
-            </tbody>
-          </table>
-          {this.howManyBox()}
-        </div>
+        <Block columns={1} title="Quantidade adicionada na remessa:">
+          <div onDrop={this.onDrop} onDragOver={this.onDragOver}>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Produto</th>
+                  <th>Variação</th>
+                  <th>Pátio</th>
+                  <th>Quantidade</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.renderBody()}
+              </tbody>
+            </table>
+            {this.howManyBox()}
+          </div>
+        </Block>
       )
     } else return (
-      <div onDrop={this.onDrop} onDragOver={this.onDragOver}>
-        nada
+      <div onDrop={this.onDrop} onDragOver={this.onDragOver} style={{border: "1px solid grey", height: "50px"}}>
+        Nenhuma quantidade adicionada. Para adicionar, selecione a variação e arraste até aqui.
         {this.howManyBox()}
       </div>
     )
