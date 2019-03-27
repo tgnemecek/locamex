@@ -6,13 +6,13 @@ import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 import ImageVisualizer from '/imports/components/ImageVisualizer/index';
 
-import SelectMultiple from './SelectMultiple/index';
+import SelectModules from './SelectModules/index';
 
-export default class ShippingAccessories extends React.Component {
+export default class ShippingModular extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectMultiple: false,
+      modulesWindow: false,
       itemToSelect: {}
     }
   }
@@ -28,10 +28,10 @@ export default class ShippingAccessories extends React.Component {
     )
   }
 
-  toggleMultipleWindow = (e) => {
+  toggleModulesWindow = (e) => {
     var index = e ? e.target.value : null;
-    var itemToSelect = this.state.selectMultiple ? false : this.props.accessories[index];
-    this.setState({ selectMultiple: !this.state.selectMultiple, itemToSelect });
+    var itemToSelect = this.state.modulesWindow ? false : this.props.modular[index];
+    this.setState({ modulesWindow: !this.state.modulesWindow, itemToSelect });
   }
 
   renderBody = () => {
@@ -43,13 +43,13 @@ export default class ShippingAccessories extends React.Component {
       return currentlySelected === item.renting;
     }
 
-    return this.props.accessories.map((item, i) => {
+    return this.props.modular.map((item, i) => {
       return (
         <tr key={i}>
           <td>{i+1}</td>
-          <td>{tools.findUsingId(this.props.accessoriesDatabase, item._id).description}</td>
+          <td>{tools.findUsingId(this.props.containersDatabase, item._id).description}</td>
           <td>{item.renting}</td>
-          <td><button className="database__table__button" value={i} onClick={this.toggleMultipleWindow}>⟳</button></td>
+          <td><button className="database__table__button" value={i} onClick={this.toggleModulesWindow}>⟳</button></td>
           <td className="table__small-column">
             {check(item) ? <span style={{color: 'green'}}>✔</span> : <span style={{color: 'red'}}>✖</span>}
           </td>
@@ -59,21 +59,21 @@ export default class ShippingAccessories extends React.Component {
   }
 
   onChange = (changedItem) => {
-    var accessories = tools.deepCopy(this.props.accessories);
-    var itemIndex = accessories.findIndex((element) => {
+    var modular = tools.deepCopy(this.props.modular);
+    var itemIndex = modular.findIndex((element) => {
       return element._id === changedItem._id;
     })
-    accessories[itemIndex] = {
-      ...accessories[itemIndex],
+    modular[itemIndex] = {
+      ...modular[itemIndex],
       ...changedItem
     };
-    this.props.onChange({ accessories });
+    this.props.onChange({ modular });
   }
 
   render() {
-    if (this.props.accessories.length > 0) {
+    if (this.props.modular.length > 0) {
       return (
-        <Block columns={1} title="Acessórios">
+        <Block columns={1} title="Containers Modulares">
           <table className="table">
             <thead>
               {this.renderHeader()}
@@ -82,13 +82,14 @@ export default class ShippingAccessories extends React.Component {
               {this.renderBody()}
             </tbody>
           </table>
-          {this.state.selectMultiple && this.state.itemToSelect ?
-            <SelectMultiple
+          {this.state.modulesWindow && this.state.itemToSelect ?
+            <SelectModules
               onChange={this.onChange}
-              productFromDatabase={tools.findUsingId(this.props.accessoriesDatabase, this.state.itemToSelect._id)}
-              placesDatabase={this.props.placesDatabase}
-              toggleWindow={this.toggleMultipleWindow}
               item={this.state.itemToSelect}
+              productFromDatabase={tools.findUsingId(this.props.containersDatabase, this.state.itemToSelect._id)}
+              modulesDatabase={this.props.modulesDatabase}
+              placesDatabase={this.props.placesDatabase}
+              toggleWindow={this.toggleModulesWindow}
             />
           : null}
         </Block>
