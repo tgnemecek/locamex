@@ -1,1 +1,8 @@
 @import './ShippingBody/styles';
+
+.shipping__modules__add-new {
+  color: white;
+  text-align: center;
+  cursor: pointer;
+  background: $brand-primary;
+}

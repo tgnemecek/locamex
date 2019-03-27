@@ -1,6 +1,8 @@
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 
+import tools from '/imports/startup/tools/index';
+
 import { Contracts } from '/imports/api/contracts/index';
 import { Places } from '/imports/api/places/index';
 import { Containers } from '/imports/api/containers/index';
@@ -16,8 +18,10 @@ class Shipping extends React.Component {
     super(props);
     this.state = {
       fixed: [],
-      modular: [],
-      accessories: []
+      modules: [],
+      accessories: [],
+      modulesEnabled: false,
+      allowedModules: []
     }
   }
 
@@ -55,16 +59,31 @@ class Shipping extends React.Component {
       return newArray;
     }
 
-    const setModular = () => {
-      return this.props.contract.containers.filter((item) => {
-        return item.type === 'modular';
+    const setAllowedModules = () => {
+      if (!this.props.databases.containersDatabase.length) return [];
+      var allowedModules = [];
+      var modularList = [];
+      this.props.contract.containers.forEach((container) => {
+        if (container.type === 'modular') {
+          modularList.push(tools.findUsingId(this.props.databases.containersDatabase, container._id))
+        }
       })
+      modularList.forEach((modular) => {
+        modular.allowedModules.forEach((module) => {
+          if (!allowedModules.includes(module)) {
+            allowedModules.push(module);
+          }
+        })
+      })
+      return allowedModules;
     }
 
     if (this.props.contract) {
+      var allowedModules = setAllowedModules();
       this.setState({
         fixed: setFixed(),
-        modular: setModular(),
+        modulesEnabled: !!allowedModules.length,
+        allowedModules,
         accessories: this.props.contract.accessories
       });
     }
@@ -81,7 +100,9 @@ class Shipping extends React.Component {
             databases={this.props.databases}
             onChange={this.onChange}
             fixed={this.state.fixed}
-            modular={this.state.modular}
+            modulesEnabled={this.state.modulesEnabled}
+            modules={this.state.modules}
+            allowedModules={this.state.allowedModules}
             accessories={this.state.accessories}
           />
         </div>

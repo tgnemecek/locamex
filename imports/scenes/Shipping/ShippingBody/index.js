@@ -2,7 +2,7 @@ import React from 'react';
 
 import tools from '/imports/startup/tools/index';
 
-import ShippingModular from './ShippingModular/index';
+import ShippingModules from './ShippingModules/index';
 import ShippingFixed from './ShippingFixed/index';
 import ShippingAccessories from './ShippingAccessories/index';
 
@@ -19,16 +19,22 @@ export default class ShippingBody extends React.Component {
     })
   }
 
+  filterModulesDatabase = () => {
+    return this.props.databases.modulesDatabase.filter((item) => {
+      return this.props.allowedModules.includes(item._id);
+    })
+  }
+
   render() {
     return (
       <div>
-        <ShippingModular
+        <ShippingModules
           onChange={this.props.onChange}
-          modular={this.props.modular}
+          modules={this.props.modules}
+          modulesEnabled={this.props.modulesEnabled}
           Observations={Observations}
 
-          containersDatabase={this.props.databases.containersDatabase}
-          modulesDatabase={this.props.databases.modulesDatabase}
+          modulesDatabase={this.filterModulesDatabase()}
           placesDatabase={this.props.databases.placesDatabase}/>
         <ShippingFixed
           onChange={this.props.onChange}
