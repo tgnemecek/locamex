@@ -10,11 +10,13 @@ if (Meteor.isServer) {
   })
   Meteor.methods({
     'series.insert' (state) {
-      var _id = tools.generateId();
+
+      var isIdInUse = !!Series.find({_id: state._id}).fetch().length;
+      if (isIdInUse) throw new Meteor.Error('id-in-use');
+
       var data = {
-        _id,
-        model: state.model,
-        serial: state.serial,
+        _id: state._id,
+        containerId: state.containerId,
         place: state.place,
         observations: state.observations,
         type: 'fixed',
@@ -24,6 +26,7 @@ if (Meteor.isServer) {
       }
       Series.insert(data);
       Meteor.call('history.insert', data, 'series.insert');
+      return true;
     },
     'series.update' (state) {
       var data = {

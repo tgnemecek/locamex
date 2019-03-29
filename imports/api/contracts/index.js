@@ -7,6 +7,14 @@ if (Meteor.isServer) {
   Meteor.publish('contractsPub', () => {
     return Contracts.find({ visible: true }, {sort: { _id: -1 }});
   })
+  function setProducts(array) {
+    return array.map((item) => {
+      delete item.description;
+      delete item.restitution;
+      return item;
+    })
+  }
+
   Meteor.methods({
     'contracts.insert'(state) {
       const prefix = new Date().getFullYear();
@@ -19,15 +27,15 @@ if (Meteor.isServer) {
         createdBy: state.createdBy,
         visible: true,
         // Contract Information
-        client: state.client,
+        clientId: state.clientId,
         proposal: state.proposal,
         deliveryAddress: state.deliveryAddress,
         dates: state.dates,
         discount: state.discount,
 
         version: state.version,
-        negociator: state.negociator,
-        representatives: state.representatives,
+        negociatorId: state.negociatorId,
+        representativesId: state.representativesId,
 
         inss: state.inss,
         iss: state.iss,
@@ -36,9 +44,9 @@ if (Meteor.isServer) {
 
         observations: state.observations,
 
-        containers: state.containers,
-        accessories: state.accessories,
-        services: state.services
+        containers: setProducts(state.containers),
+        accessories: setProducts(state.accessories),
+        services: setProducts(state.services)
 
       };
       Contracts.insert(data);
@@ -50,15 +58,15 @@ if (Meteor.isServer) {
         // System Information
         _id: state._id,
         // Contract Information
-        client: state.client,
+        clientId: state.clientId,
         proposal: state.proposal,
         deliveryAddress: state.deliveryAddress,
         dates: state.dates,
         discount: state.discount,
 
         version: state.version,
-        negociator: state.negociator,
-        representatives: state.representatives,
+        negociatorId: state.negociatorId,
+        representativesId: state.representativesId,
 
         inss: state.inss,
         iss: state.iss,
@@ -67,9 +75,9 @@ if (Meteor.isServer) {
 
         observations: state.observations,
 
-        containers: state.containers,
-        accessories: state.accessories,
-        services: state.services
+        containers: setProducts(state.containers),
+        accessories: setProducts(state.accessories),
+        services: setProducts(state.services)
 
       };
       Contracts.update({ _id: state._id }, { $set: data });

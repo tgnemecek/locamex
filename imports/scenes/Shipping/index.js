@@ -20,20 +20,20 @@ class Shipping extends React.Component {
       fixed: [],
       modules: [],
       accessories: [],
-      modulesEnabled: false,
+
       allowedModules: []
     }
   }
 
   componentDidMount() {
-    this.setProducts();
+    this.setup();
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.contract && this.props.contract) {
       if (prevProps.contract.containers !== this.props.contract.containers ||
           prevProps.contract.accessories !== this.props.contract.accessories) {
-        this.setProducts();
+        this.setup();
       }
     }
   }
@@ -45,14 +45,19 @@ class Shipping extends React.Component {
     })
   }
 
-  setProducts = () => {
-
+  setup = () => {
     const setFixed = () => {
       var newArray = [];
       this.props.contract.containers.forEach((item) => {
         if (item.type === 'fixed') {
           for (var i = 0; i < item.renting; i++) {
-            newArray.push({ model: item._id })
+            var productFromDatabase = tools.findUsingId(this.props.databases.containersDatabase, item.productId);
+            newArray.push({
+              _id: tools.generateId(),
+              productId: item.productId,
+              seriesId: '',
+              description: productFromDatabase.description
+            })
           }
         }
       })
@@ -60,31 +65,43 @@ class Shipping extends React.Component {
     }
 
     const setAllowedModules = () => {
-      if (!this.props.databases.containersDatabase.length) return [];
       var allowedModules = [];
       var modularList = [];
+      if (!this.props.databases.containersDatabase.length) return [];
       this.props.contract.containers.forEach((container) => {
         if (container.type === 'modular') {
-          modularList.push(tools.findUsingId(this.props.databases.containersDatabase, container._id))
+          var productFromDatabase = tools.findUsingId(this.props.databases.containersDatabase, container.productId);
+
+          productFromDatabase.allowedModules.forEach((module) => {
+            if (!allowedModules.includes(module)) {
+              allowedModules.push(module);
+            }
+          })
         }
-      })
-      modularList.forEach((modular) => {
-        modular.allowedModules.forEach((module) => {
-          if (!allowedModules.includes(module)) {
-            allowedModules.push(module);
-          }
-        })
       })
       return allowedModules;
     }
 
+    const setAccessories = () => {
+      var newArray = [];
+      this.props.contract.accessories.forEach((item) => {
+        var productFromDatabase = tools.findUsingId(this.props.databases.accessoriesDatabase, item.productId);
+        newArray.push({
+          _id: tools.generateId(),
+          productId: item.productId,
+          renting: item.renting,
+          selected: '',
+          description: productFromDatabase.description
+        })
+      })
+      return newArray;
+    }
+
     if (this.props.contract) {
-      var allowedModules = setAllowedModules();
       this.setState({
         fixed: setFixed(),
-        modulesEnabled: !!allowedModules.length,
-        allowedModules,
-        accessories: this.props.contract.accessories
+        allowedModules: setAllowedModules(),
+        accessories: setAccessories()
       });
     }
   }
@@ -100,8 +117,8 @@ class Shipping extends React.Component {
             databases={this.props.databases}
             onChange={this.onChange}
             fixed={this.state.fixed}
-            modulesEnabled={this.state.modulesEnabled}
             modules={this.state.modules}
+            modulesEnabled={!!this.state.allowedModules}
             allowedModules={this.state.allowedModules}
             accessories={this.state.accessories}
           />

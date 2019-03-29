@@ -17,7 +17,7 @@ export default class Footer extends React.Component {
     var errorKeys = [];
     var errorMsg = 'Campos obrigatórios não preenchidos/inválidos.';
 
-    if (!this.props.contract.client) errorKeys.push("client");
+    if (!this.props.contract.clientId) errorKeys.push("clientId");
     if (!this.props.contract.proposal) errorKeys.push("proposal");
 
     if (!this.props.contract.dates.duration) errorKeys.push("duration");

@@ -1,19 +1,34 @@
 .suggestion-bar {
   position: relative;
   overflow: visible;
+  input {
+    padding-left: 32px;
+  }
+}
+
+.suggestion-bar__magnifier {
+  position: absolute;
+  z-index: 1;
+  left: ($space /2);
+  filter: grayscale(1);
+  opacity: 0.5;
 }
 
 .suggestion-bar__input--button {
   input {
     background-color: $grey !important;
     cursor: pointer;
+    border: 1px solid $dark-grey;
   }
 }
 
 .suggestion-bar__dropbox {
   position: absolute;
+  max-height: 170px;
+  overflow-y: auto;
   width: 100%;
   z-index: 999;
+  list-style: none;
   button {
     background-color: $light-grey;
     border: 1px solid $grey;

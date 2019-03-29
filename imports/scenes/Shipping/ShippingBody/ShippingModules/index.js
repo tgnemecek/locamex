@@ -5,15 +5,17 @@ import tools from '/imports/startup/tools/index';
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 import ImageVisualizer from '/imports/components/ImageVisualizer/index';
-
-import SelectMultiple from './SelectMultiple/index';
+import SuggestionBar from '/imports/components/SuggestionBar/index';
 
 export default class ShippingModules extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectMultiple: false,
-      itemToSelect: {}
+      selectMultiple: {
+        isOpen: false,
+        item: {},
+        title: ""
+      }
     }
   }
 
@@ -24,43 +26,38 @@ export default class ShippingModules extends React.Component {
         <th>Componente</th>
         <th>Quantidade</th>
         <th>Seleção</th>
-        <th>+/-</th>
       </tr>
     )
   }
 
   toggleMultipleWindow = (e) => {
-    var index = e ? e.target.value : null;
-    if (!this.props.modules[index]._id) return;
-    var itemToSelect = this.state.selectMultiple ? false : this.props.modules[index];
-    this.setState({ selectMultiple: !this.state.selectMultiple, itemToSelect });
+    if (!e) return this.setState({ selectMultiple: { isOpen: false } });
+    var index = e.target.value;
+    var _id = this.props.modules[index]._id;
+    if (!_id) return;
+    var item = this.props.modules[index];
+    var selectMultiple = {
+      isOpen: true,
+      item: item,
+      title: "Produto: " + item.description
+    }
+    this.setState({ selectMultiple });
   }
 
   renderBody = () => {
     function checkmark(item) {
-      if (!item._id || !item.selectedList) return <span style={{color: 'red'}}>✖</span>;
+      if (!item._id || !item.selectedList) return <span style={{color: 'red'}}>⦸</span>;
       return <span style={{color: 'green'}}>✔</span>
     }
 
-    const renderOptions = (currentId) => {
-      var filtered = this.props.modulesDatabase.filter((item) => {
+    const filterOptions = (currentId) => {
+      return this.props.modulesDatabase.filter((item) => {
         return !this.props.modules.find((element) => {
           if (element._id === item._id) {
             return (currentId !== item._id);
           } else return false;
         })
       })
-      return filtered.map((item, i) => {
-        return <option key={i} value={item._id}>{item.description}</option>
-      })
-    }
-
-    const onChange = (e) => {
-      var _id = e.target.value;
-      var modules = tools.deepCopy(this.props.modules);
-      var index = e.target.name;
-      modules[index] = { _id }
-      this.props.onChange({ modules });
     }
 
     const removeItem = (e) => {
@@ -70,19 +67,30 @@ export default class ShippingModules extends React.Component {
       this.props.onChange({ modules });
     }
 
+    const onChange = (e, module) => {
+      var modules = tools.deepCopy(this.props.modules);
+      var i = e.target.name;
+      modules[i] = {
+        ...modules[i],
+        productId: module._id,
+        description: module.description,
+        selected: [],
+        place: tools.findUsingId(this.props.modulesDatabase, module._id).place
+      }
+      this.props.onChange({ modules });
+    }
+
     return this.props.modules.map((item, i) => {
       return (
         <tr key={i}>
           <td>{i+1}</td>
           <td>
-            <Input
-              type="select"
+            <SuggestionBar
               name={i}
-              onChange={onChange}
-              value={item._id}>
-                <option value="">Selecione um componente</option>
-                {renderOptions(item._id)}
-            </Input>
+              database={filterOptions(item._id)}
+              value={item._id}
+              showAll={true}
+              onClick={onChange}/>
           </td>
           <td>{item.renting}</td>
           <td><button className="database__table__button" value={i} onClick={this.toggleMultipleWindow}>⟳</button></td>
@@ -97,7 +105,9 @@ export default class ShippingModules extends React.Component {
     const onClick = () =>  {
       var modules = tools.deepCopy(this.props.modules);
       modules.push({
-        _id: ''
+        _id: tools.generateId(),
+        productId: '',
+        description: ''
       })
       this.props.onChange({ modules });
     }
@@ -121,30 +131,28 @@ export default class ShippingModules extends React.Component {
   }
 
   render() {
-    if (this.props.modulesEnabled) {
-      return (
-        <Block columns={1} title="Componentes">
-          <table className="table">
-            <thead>
-              {this.renderHeader()}
-            </thead>
-            <tbody>
-              {this.renderBody()}
-              {this.renderAddNew()}
-            </tbody>
-          </table>
-          {this.state.selectMultiple && this.state.itemToSelect ?
-            <SelectMultiple
-              onChange={this.onChange}
-              item={this.state.itemToSelect}
-              productFromDatabase={tools.findUsingId(this.props.containersDatabase, this.state.itemToSelect._id)}
-              modulesDatabase={this.props.modulesDatabase}
-              placesDatabase={this.props.placesDatabase}
-              toggleWindow={this.toggleModulesWindow}
-            />
-          : null}
-        </Block>
-      )
-    } else return null;
+    return (
+      <Block columns={1} title="Componentes">
+        <table className="table">
+          <thead>
+            {this.renderHeader()}
+          </thead>
+          <tbody>
+            {this.renderBody()}
+            {this.renderAddNew()}
+          </tbody>
+        </table>
+        {this.state.selectMultiple.isOpen ?
+          <this.props.SelectMultiple
+            onChange={this.onChange}
+            item={this.state.selectMultiple.item}
+            title={this.state.selectMultiple.title}
+            modulesDatabase={this.props.modulesDatabase}
+            placesDatabase={this.props.placesDatabase}
+            toggleWindow={this.toggleMultipleWindow}
+          />
+        : null}
+      </Block>
+    )
   }
 }

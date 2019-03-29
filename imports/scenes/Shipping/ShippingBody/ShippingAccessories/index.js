@@ -6,8 +6,6 @@ import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 import ImageVisualizer from '/imports/components/ImageVisualizer/index';
 
-import SelectMultiple from './SelectMultiple/index';
-
 export default class ShippingAccessories extends React.Component {
   constructor(props) {
     super(props);
@@ -47,11 +45,11 @@ export default class ShippingAccessories extends React.Component {
       return (
         <tr key={i}>
           <td>{i+1}</td>
-          <td>{tools.findUsingId(this.props.accessoriesDatabase, item._id).description}</td>
+          <td>{item.description}</td>
           <td>{item.renting}</td>
           <td><button className="database__table__button" value={i} onClick={this.toggleMultipleWindow}>⟳</button></td>
           <td className="table__small-column">
-            {check(item) ? <span style={{color: 'green'}}>✔</span> : <span style={{color: 'red'}}>✖</span>}
+            {check(item) ? <span style={{color: 'green'}}>✔</span> : <span style={{color: 'red'}}>⦸</span>}
           </td>
         </tr>
       )
@@ -83,7 +81,7 @@ export default class ShippingAccessories extends React.Component {
             </tbody>
           </table>
           {this.state.selectMultiple && this.state.itemToSelect ?
-            <SelectMultiple
+            <this.props.SelectMultiple
               onChange={this.onChange}
               productFromDatabase={tools.findUsingId(this.props.accessoriesDatabase, this.state.itemToSelect._id)}
               placesDatabase={this.props.placesDatabase}

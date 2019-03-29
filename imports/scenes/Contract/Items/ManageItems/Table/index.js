@@ -7,7 +7,7 @@ export default class Table extends React.Component {
     return this.props.addedItems.map((item, i) => {
       return (
         <tr key={i}>
-          <td>{tools.findUsingId(this.props.fullDatabase, item._id).description}</td>
+          <td>{item.description}</td>
           <td className="contract__item-list__value-column">{tools.format(item.price, "currency")}</td>
           <td className="table__small-column">{item.renting}</td>
         </tr>

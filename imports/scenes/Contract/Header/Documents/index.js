@@ -12,9 +12,9 @@ export default class Documents extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      client: tools.findUsingId(this.props.databases.clientsDatabase, this.props.contract.client),
-      negociator: this.props.contract.negociator || '',
-      representatives: this.props.contract.representatives || [],
+      client: tools.findUsingId(this.props.databases.clientsDatabase, this.props.contract.clientId),
+      negociatorId: this.props.contract.negociatorId || '',
+      representativesId: this.props.contract.representativesId || [],
 
       errorMsg: '',
       errorKeys: []
@@ -22,16 +22,16 @@ export default class Documents extends React.Component {
   }
 
   onChangeMain = (e) => {
-    var negociator = e.target.value;
-    this.setState({ negociator });
+    var negociatorId = e.target.value;
+    this.setState({ negociatorId });
   }
 
   onChangeRepresentatives = (e) => {
     var _id = e.target.value;
     var i = Number(e.target.name);
-    var representatives = tools.deepCopy(this.state.representatives);
-    representatives[i] = _id;
-    this.setState({ representatives });
+    var representativesId = tools.deepCopy(this.state.representativesId);
+    representativesId[i] = _id;
+    this.setState({ representativesId });
   }
 
   displayContacts = (which) => {
@@ -55,8 +55,8 @@ export default class Documents extends React.Component {
     var errorMsg = '';
     var errorKeys = [];
 
-    if (!this.state.negociator) errorKeys.push("negociator");
-    if (!this.state.representatives[0]) errorKeys.push("rep1");
+    if (!this.state.negociatorId) errorKeys.push("negociatorId");
+    if (!this.state.representativesId[0]) errorKeys.push("rep1");
 
     if (errorKeys.length) {
       errorMsg = 'Campos obrigatórios não preenchidos/inválidos.';
@@ -64,8 +64,8 @@ export default class Documents extends React.Component {
       return;
     }
     // Conditions are ok, now preparing info to be sent to the pdf generator
-    var negociatorId = this.state.negociator;
-    var representativesId = this.state.representatives;
+    var negociatorId = this.state.negociatorId;
+    var representativesId = this.state.representativesId;
     if (representativesId[0] == representativesId[1] || !representativesId[1]) {
       representativesId = [ representativesId[0] ];
     }
@@ -82,38 +82,16 @@ export default class Documents extends React.Component {
       return people;
     }
 
-    const assembleContractReferences = (negociator, representatives) => {
-      var containersDatabase = this.props.databases.containersDatabase;
-      var accessoriesDatabase = this.props.databases.accessoriesDatabase;
-      var servicesDatabase = this.props.databases.servicesDatabase;
-
-      var contract = { ...this.props.contract };
-      var client = this.state.client;
-
-      var containers = contract.containers.map((item) => {
-        return { ...item, description: tools.findUsingId(containersDatabase, item._id).description }
-      })
-      var accessories = contract.accessories.map((item) => {
-        return { ...item, description: tools.findUsingId(accessoriesDatabase, item._id).description }
-      })
-      var services = contract.services.map((item) => {
-        return { ...item, description: tools.findUsingId(servicesDatabase, item._id).description }
-      })
-
-      return { ...contract, client, containers, accessories, services, negociator, representatives };
-    }
-
     var version = this.props.contract.version + 1;
     var negociator = getPersonUsingId([negociatorId])[0];
     var representatives = getPersonUsingId(representativesId);
     // Saves changes to contract
     this.props.updateContract({
-      representatives: representativesId,
-      negociator: negociatorId,
+      representativesId,
+      negociatorId,
       version
     }, () => {
-      var assembledContract = assembleContractReferences(negociator, representatives);
-      createPdf(assembledContract);
+      createPdf({ ...this.props.contract, client: this.state.client, negociator, representatives });
       this.props.saveContract();
     });
     this.setState({ errorMsg, errorKeys });
@@ -130,9 +108,9 @@ export default class Documents extends React.Component {
               <Input
                 title="Contato da Negociação:"
                 type="select"
-                name="negociator"
-                style={this.state.errorKeys.includes("negociator") ? {borderColor: "red"} : null}
-                value={this.state.negociator}
+                name="negociatorId"
+                style={this.state.errorKeys.includes("negociatorId") ? {borderColor: "red"} : null}
+                value={this.state.negociatorId}
                 onChange={this.onChangeMain}>
                 <option> </option>
                 {this.displayContacts('negociator')}
@@ -142,7 +120,7 @@ export default class Documents extends React.Component {
                 type="select"
                 name="0"
                 style={this.state.errorKeys.includes("rep1") ? {borderColor: "red"} : null}
-                value={this.state.representatives[0]}
+                value={this.state.representativesId[0]}
                 onChange={this.onChangeRepresentatives}>
                 <option> </option>
                 {this.displayContacts('rep')}
@@ -151,7 +129,7 @@ export default class Documents extends React.Component {
                 title="Segundo Representante: (opcional)"
                 type="select"
                 name="1"
-                value={this.state.representatives[1]}
+                value={this.state.representativesId[1]}
                 onChange={this.onChangeRepresentatives}>
                 <option> </option>
                 {this.displayContacts('rep')}

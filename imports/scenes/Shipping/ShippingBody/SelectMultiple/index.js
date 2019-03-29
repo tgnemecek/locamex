@@ -92,13 +92,10 @@ export default class SelectMultiple extends React.Component {
         >
           <Block columns={1}>
             <Block columns={2}>
-              <div>
-                {"Produto: " + this.props.productFromDatabase.description}
-              </div>
+              <div>{this.props.title}</div>
             </Block>
             <PlacesDistribution
-              currentVariationIndex={this.state.currentVariationIndex}
-              variations={this.state.variations}
+              item={this.props.item}
               placesDatabase={this.props.placesDatabase}/>
           </Block>
           <SelectedList
@@ -108,7 +105,6 @@ export default class SelectMultiple extends React.Component {
             item={this.props.item}
             productFromDatabase={this.props.productFromDatabase}
             selectedList={this.state.selectedList}
-            currentVariationId={this.state.variations[this.state.currentVariationIndex]._id}
 
             placesDatabase={this.props.placesDatabase}
           />

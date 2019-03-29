@@ -27,7 +27,7 @@ export default class HowManyBox extends React.Component {
   render() {
     return (
       <Box
-        title="Quantidade:"
+        title="Mover:"
         closeBox={this.props.toggleWindow}
         style={{position: "absolute", left: this.props.boxX, top: this.props.boxY}}
         columns={1}>

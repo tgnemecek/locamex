@@ -84,10 +84,10 @@ export default class Information extends React.Component {
               {block: 9, span: 0.5}]}>
             <SuggestionBar
               title="Cliente:"
-              name="client"
+              name="clientId"
               database={this.props.clientsDatabase}
-              style={this.props.errorKeys.includes("client") ? {borderColor: "red"} : null}
-              value={this.props.contract.client}
+              style={this.props.errorKeys.includes("clientId") ? {borderColor: "red"} : null}
+              value={this.props.contract.clientId}
               onClick={this.handleChange}>
             </SuggestionBar>
             <Input

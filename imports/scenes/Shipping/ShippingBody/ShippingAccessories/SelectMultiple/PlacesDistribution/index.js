@@ -13,11 +13,7 @@ export default class PlacesDistribution extends React.Component {
   }
 
   renderBody = () => {
-    var currentVariation = this.props.variations[this.props.currentVariationIndex];
-    var places = currentVariation.place.filter((place) => {
-      return place.available > 0;
-    })
-    return places.map((place, i) => {
+    return this.props.placesWithQuantity.map((place, i) => {
       const onDragStart = (e) => {
         e.dataTransfer.setData("variationPlace", place._id);
         e.dataTransfer.setData("available", place.available);

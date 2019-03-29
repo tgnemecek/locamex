@@ -6,6 +6,7 @@ import ShippingModules from './ShippingModules/index';
 import ShippingFixed from './ShippingFixed/index';
 import ShippingAccessories from './ShippingAccessories/index';
 
+import SelectMultiple from './SelectMultiple/index';
 import Observations from './Observations/index';
 
 export default class ShippingBody extends React.Component {
@@ -14,7 +15,7 @@ export default class ShippingBody extends React.Component {
     return seriesDatabase.sort((a, b) => {
       var comparison = a.place.localeCompare(b.place);
       if (comparison === 0) {
-        return a.serial.toString().localeCompare(b.serial.toString());
+        return a._id.localeCompare(b._id);
       } else return comparison;
     })
   }
@@ -28,14 +29,16 @@ export default class ShippingBody extends React.Component {
   render() {
     return (
       <div>
-        <ShippingModules
-          onChange={this.props.onChange}
-          modules={this.props.modules}
-          modulesEnabled={this.props.modulesEnabled}
-          Observations={Observations}
+        {this.props.modulesEnabled ?
+          <ShippingModules
+            onChange={this.props.onChange}
+            modules={this.props.modules}
+            Observations={Observations}
+            SelectMultiple={SelectMultiple}
 
-          modulesDatabase={this.filterModulesDatabase()}
-          placesDatabase={this.props.databases.placesDatabase}/>
+            modulesDatabase={this.filterModulesDatabase()}
+            placesDatabase={this.props.databases.placesDatabase}/>
+        : null}
         <ShippingFixed
           onChange={this.props.onChange}
           fixed={this.props.fixed}
@@ -48,6 +51,7 @@ export default class ShippingBody extends React.Component {
           onChange={this.props.onChange}
           accessories={this.props.accessories}
           Observations={Observations}
+          SelectMultiple={SelectMultiple}
 
           accessoriesDatabase={this.props.databases.accessoriesDatabase}
           placesDatabase={this.props.databases.placesDatabase}/>

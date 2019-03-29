@@ -27,8 +27,7 @@ export default class SuggestionBar extends React.Component {
   }
 
   hideDropbox = () => {
-    var results = [];
-    this.setState({ results });
+    this.setState({ results: [] });
   }
 
   getResults = () => {
@@ -56,22 +55,26 @@ export default class SuggestionBar extends React.Component {
   }
 
   renderResults = () => {
-    var results = this.state.results;
+    const onClick = (e) => {
+      var exportObject = this.state.results[e.target.name];
+      this.props.onClick({target: {
+        value: e.target.value,
+        name: this.props.name
+      }}, exportObject);
 
-    if (results.length > 5) results.splice(5);
-
-    return results.map((item, i) => {
-
-      const onClick = (e) => {
-        this.props.onClick(e);
-
-        this.setState({ query: item.description, buttonMode: true }, () => {
-          this.hideDropbox();
-        })
-      }
-
-      return <button key={i} name={this.props.name} onClick={onClick} value={item._id}>{item.description}</button>
+      this.setState({ query: exportObject.description, buttonMode: true }, () => {
+        this.hideDropbox();
+      })
+    }
+    return this.state.results.map((item, i) => {
+      return <li key={i}><button name={i} onClick={onClick} value={item._id}>{item.description}</button></li>
     })
+  }
+
+  conditionalShowAll = () => {
+    if (!this.state.query && this.props.showAll) {
+      this.setState({ results: this.props.database });
+    }
   }
 
   onBlur = (e) => {
@@ -90,6 +93,7 @@ export default class SuggestionBar extends React.Component {
 
     this.setState({ buttonMode: false, query: '' }, () => {
       this.props.onClick({target: {value: '', name: this.props.name}});
+      this.conditionalShowAll();
     });
   }
 
@@ -103,7 +107,8 @@ export default class SuggestionBar extends React.Component {
 
   render() {
     return (
-      <div className="suggestion-bar" onBlur={this.onBlur}>
+      <div className="suggestion-bar" onBlur={this.onBlur} onFocus={this.conditionalShowAll}>
+        <div className="suggestion-bar__magnifier" style={this.props.title ? {top: "2.2rem"} : {top: "0.7rem"}}>🔍</div>
         <Input
           title={this.props.title}
           className={this.state.buttonMode ? "suggestion-bar__input--button" : ""}
@@ -113,9 +118,9 @@ export default class SuggestionBar extends React.Component {
           buttonClick={this.buttonClick}
           value={this.state.query}/>
         {this.state.results.length > 0 ?
-          <div className="suggestion-bar__dropbox">
+          <ul className="suggestion-bar__dropbox">
             {this.renderResults()}
-          </div>
+          </ul>
         : null}
 
       </div>

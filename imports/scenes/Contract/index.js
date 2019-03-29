@@ -31,11 +31,11 @@ class Contract extends React.Component {
         createdBy: Meteor.user() || {username: "Anônimo"},
         status: "inactive",
 
-        client: '',
+        clientId: '',
 
         version: 0,
-        negociator: '',
-        representatives: [],
+        negociatorId: '',
+        representativesId: [],
 
         proposal: '',
         discount: 0,
@@ -89,6 +89,9 @@ class Contract extends React.Component {
     if (prevProps.match.params.contractId !== this.props.match.params.contractId) {
       this.setContract();
     }
+    if (prevProps.databases !== this.props.databases) {
+      this.setUpdatedItemInformation();
+    }
   }
 
   setContract = () => {
@@ -96,6 +99,34 @@ class Contract extends React.Component {
       return element._id === this.props.match.params.contractId;
     })
     if (contract) this.setState({ contract, ready: 1 });
+  }
+
+  setUpdatedItemInformation = () => {
+    var contract = { ...this.state.contract };
+    var arrayOfArrays = [contract.containers, contract.accessories, contract.services];
+    arrayOfArrays.forEach((itemArray) => {
+      itemArray.forEach((item) => {
+        var database;
+        switch (item.type) {
+          case 'modular':
+          case 'fixed':
+            database = this.props.databases.containersDatabase;
+            break;
+          case 'accessory':
+            database = this.props.databases.accessoriesDatabase;
+            break;
+          case 'service':
+            database = this.props.databases.servicesDatabase;
+            break;
+          default:
+            throw new Meteor.Error('type-not-found');
+        }
+        var productFromDatabase = tools.findUsingId(database, item.productId);
+        item.description = productFromDatabase.description;
+        item.restitution = productFromDatabase.restitution;
+      })
+    })
+    this.setState({ contract });
   }
 
   updateContract = (changes, callback) => {

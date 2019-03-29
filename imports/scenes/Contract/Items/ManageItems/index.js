@@ -74,7 +74,7 @@ export default class ManageItems extends React.Component {
 
     return toFilter.filter((item) => {
       for (var i = 0; i < addedItems.length; i++) {
-        if (item._id === addedItems[i]._id) {
+        if (item._id === addedItems[i].productId) {
           return false;
         }
       }
@@ -90,8 +90,12 @@ export default class ManageItems extends React.Component {
     for (var i = 0; i < filteredDatabase.length; i++) {
       if (filteredDatabase[i]._id === _id) {
         addedItems.push({
-          _id: filteredDatabase[i]._id,
+          _id: tools.generateId(),
+          description: filteredDatabase[i].description,
+          productId: filteredDatabase[i]._id,
           type: filteredDatabase[i].type,
+          price: filteredDatabase[i].price,
+          restitution: filteredDatabase[i].restitution,
           renting: 1
         });
         filteredDatabase = this.hideFromArray(filteredDatabase, addedItems);
@@ -152,7 +156,6 @@ export default class ManageItems extends React.Component {
                   addItem={this.addItem}/>
                 <AddedItems
                   type={this.props.type}
-                  fullDatabase={this.props.fullDatabase}
                   addedItems={this.state.addedItems}
 
                   changePrice={this.changePrice}

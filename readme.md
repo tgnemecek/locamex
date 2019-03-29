@@ -9,6 +9,14 @@ Version: 1.8.0
 
 ## Changelog:
 
+!!!!!!!!!!! Changes to the database are needed !!!!!!!!!!!
+
+-  Inside Series, rename key 'model' to 'containerId';
+-  Inside Series, change type 'fixed' to 'series';
+-  Series don't have 'serial' key anymore, now they use id. Re-insert all items setting the 'serial' as the id
+-  Later, to be consistent, change all id fields to end with Id;
+-  The key 'place' should be 'placeId', and when it's an array of places, it should be called 'places' (with an 's');
+
 ### Version 1.8.0
 
 -  Contract restructured to work with new database logic (series, modules, containers);

@@ -10,7 +10,7 @@ export default class SelectedList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      variationPlace: '',
+      placesWithQuantity: '',
       max: '',
       howManyBoxOpen: false,
       boxX: '',
@@ -24,9 +24,9 @@ export default class SelectedList extends React.Component {
 
   onDrop = (e) => {
     e.preventDefault();
-    var variationPlace = e.dataTransfer.getData("variationPlace");
+    var placesWithQuantity = e.dataTransfer.getData("place");
     var available = Number(e.dataTransfer.getData("available"));
-    var renting = this.props.item.renting;
+    var renting = this.props.item.renting || 999;
     var max = available < renting ? available : renting;
 
     var selectedListQuantity = this.props.selectedList.reduce((acc, cur) => {
@@ -36,7 +36,7 @@ export default class SelectedList extends React.Component {
     max = (renting - selectedListQuantity) < max ? (renting - selectedListQuantity) : max;
 
     this.setState({
-      variationPlace,
+      placesWithQuantity,
       max,
       howManyBoxOpen: true,
       boxX: e.clientX,
@@ -49,11 +49,32 @@ export default class SelectedList extends React.Component {
   }
 
   addToSelection = (howManyToMove) => {
-    this.props.addToSelection(howManyToMove, this.state.variationPlace);
+    this.props.addToSelection(howManyToMove, this.state.placesWithQuantity);
   }
 
   removeFromSelection = (e) => {
     this.props.removeFromSelection(e.target.value);
+  }
+
+  renderHeader = () => {
+    if (this.props.item.variations) {
+      return (
+        <tr>
+          <th>Produto</th>
+          <th>Variação</th>
+          <th>Pátio</th>
+          <th>Quantidade</th>
+        </tr>
+      )
+    } else {
+      return (
+        <tr>
+          <th>Produto</th>
+          <th>Pátio</th>
+          <th>Quantidade</th>
+        </tr>
+      )
+    }
   }
 
   renderBody = () => {
@@ -91,12 +112,7 @@ export default class SelectedList extends React.Component {
           <div onDrop={this.onDrop} onDragOver={this.onDragOver}>
             <table className="table">
               <thead>
-                <tr>
-                  <th>Produto</th>
-                  <th>Variação</th>
-                  <th>Pátio</th>
-                  <th>Quantidade</th>
-                </tr>
+                {this.renderHeader()}
               </thead>
               <tbody>
                 {this.renderBody()}
@@ -108,7 +124,7 @@ export default class SelectedList extends React.Component {
       )
     } else return (
       <div onDrop={this.onDrop} onDragOver={this.onDragOver} style={{border: "1px solid grey", height: "50px"}}>
-        Nenhuma quantidade adicionada. Para adicionar, selecione a variação e arraste até aqui.
+        Nenhuma quantidade adicionada. Para adicionar, selecione o estoque e arraste até aqui.
         {this.howManyBox()}
       </div>
     )

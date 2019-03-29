@@ -37,20 +37,13 @@ export default class ShippingFixed extends React.Component {
     this.setState({ observationsVisualizer });
   }
 
-  getDescriptionModel = (model) => {
-    var container = this.props.containersDatabase.find((item) => {
-      return item._id === model;
-    });
-    return container ? container.description : null;
-  }
-
   renderBody = () => {
-    const renderOptions = (model, currentId) => {
-      var filtered = this.props.seriesDatabase.filter((item) => {
-        if (item.model === model && item.place !== 'rented') {
-          return !this.props.fixed.find((element) => {
-            if (element._id === item._id) {
-              return (currentId !== item._id);
+    const renderOptions = (productId, currentId) => {
+      var filtered = this.props.seriesDatabase.filter((itemFromDatabase) => {
+        if (itemFromDatabase.containerId === productId && itemFromDatabase.place !== 'rented') {
+          return !this.props.fixed.find((itemAdded) => {
+            if (itemAdded.seriesId === itemFromDatabase._id) {
+              return (currentId !== itemAdded._id)
             } else return false;
           })
         }
@@ -59,49 +52,48 @@ export default class ShippingFixed extends React.Component {
         return (
           <option
             key={i}
-            value={item._id}>{`Série: ${item.serial} - Pátio: ${tools.findUsingId(this.props.placesDatabase, item.place).description}`}
+            value={item._id}>{`Série: ${item._id} - Pátio: ${tools.findUsingId(this.props.placesDatabase, item.place).description}`}
           </option>
         )
       })
     }
 
     const onChange = (e) => {
-      var value = e.target.value;
-      var serial = tools.findUsingId(this.props.seriesDatabase, value);
+      var seriesId = e.target.value;
       var fixed = tools.deepCopy(this.props.fixed);
       var index = e.target.name;
-      fixed[index] = serial._id ? serial : { model: this.props.fixed[index].model };
+      fixed[index].seriesId = seriesId;
       this.props.onChange({ fixed });
     }
 
-    const canDisplayImages = (item) => {
-      return (item._id && item.snapshots.length);
-    }
+    // const canDisplayImages = (item) => {
+    //   return (item._id && item.snapshots.length);
+    // }
 
     return this.props.fixed.map((item, i) => {
       return (
         <tr key={i}>
           <td className="table__small-column">{i+1}</td>
-          <td>{tools.findUsingId(this.props.containersDatabase, item.model).description}</td>
+          <td>{item.description}</td>
           <td>
             <Input
               type="select"
               name={i}
               onChange={onChange}
-              value={item._id}>
+              value={item.seriesId}>
                 <option value="">Selecione uma série</option>
-                {renderOptions(item.model, item._id)}
+                {renderOptions(item.productId, item._id)}
             </Input>
           </td>
-          <td className="table__small-column">
+          {/* <td className="table__small-column">
             {item.observations ? <button className="database__table__button" value={i} onClick={this.toggleObservationsWindow}>⚠</button>
             : null}
-          </td>
-          <td className="table__small-column">
+          </td> */}
+          {/* <td className="table__small-column">
             {canDisplayImages(item) ? <button className="database__table__button" value={i} onClick={this.toggleImageWindow}>🔍</button> : null}
-          </td>
+          </td> */}
           <td className="table__small-column">
-            {item._id ? <span style={{color: 'green'}}>✔</span> : <span style={{color: 'red'}}>✖</span>}
+            {item.seriesId ? <span style={{color: 'green'}}>✔</span> : <span style={{color: 'red'}}>⦸</span>}
           </td>
         </tr>
       )
@@ -120,7 +112,7 @@ export default class ShippingFixed extends React.Component {
               {this.renderBody()}
             </tbody>
           </table>
-          {this.state.imageVisualizer ?
+          {/* {this.state.imageVisualizer ?
             <ImageVisualizer
               item={{...this.state.imageVisualizer, itemType: 'fixed'}}
               readOnly={true}
@@ -129,11 +121,11 @@ export default class ShippingFixed extends React.Component {
           : null}
           {this.state.observationsVisualizer ?
             <this.props.Observations
-              title={this.getDescriptionModel(this.state.observationsVisualizer.model) + " - " + this.state.observationsVisualizer.serial}
+              title={this.state.observationsVisualizer.serial}
               content={this.state.observationsVisualizer.observations}
               toggleWindow={this.toggleObservationsWindow}
             />
-          : null}
+          : null} */}
         </Block>
       )
     } else return null;

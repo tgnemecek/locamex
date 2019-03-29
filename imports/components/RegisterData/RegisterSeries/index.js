@@ -12,8 +12,7 @@ class RegisterSeries extends React.Component {
     super(props);
     this.state = {
       _id: this.props.item._id || '',
-      serial: this.props.item.serial || 0,
-      model: this.props.item.model || '',
+      containerId: this.props.item.containerId || '',
       place: this.props.item.place || '',
       observations: this.props.item.observations || '',
 
@@ -26,7 +25,7 @@ class RegisterSeries extends React.Component {
   }
 
   renderModels = () => {
-    return this.props.modelsDatabase.map((model, i) => {
+    return this.props.containersDatabase.map((model, i) => {
       return <option key={i} value={model._id}>{model.description}</option>
     })
   }
@@ -47,16 +46,22 @@ class RegisterSeries extends React.Component {
       return errorKeys;
     }
 
-    var errorKeys = check(['serial', 'model', 'place']);
+    var errorKeys = check(['_id', 'containerId', 'place']);
     if (errorKeys.length) {
       this.setState({ errorKeys });
     } else {
       if (this.props.item._id) {
         Meteor.call('series.update', this.state);
+        this.props.toggleWindow();
       } else {
-        Meteor.call('series.insert', this.state);
+        Meteor.call('series.insert', this.state, (err, res) => {
+          if (err) {
+            if (err === 'id-in-use') {
+              alert("Série já existente!")
+            } else alert('Erro de servidor. Tente mais tarde.')
+          } else if (res) this.props.toggleWindow();
+        });
       }
-      this.props.toggleWindow();
     }
   }
 
@@ -74,20 +79,20 @@ class RegisterSeries extends React.Component {
           <Block columns={3} options={[{block: 3, span: 3}]}>
             <Input
               title="Série:"
-              type="number"
-              name="serial"
-              style={this.state.errorKeys.includes("serial") ? {borderColor: "red"} : null}
-              readOnly={this.props.item._id}
-              value={this.state.serial}
+              type="digits"
+              name="_id"
+              style={this.state.errorKeys.includes("_id") ? {borderColor: "red"} : null}
+              readOnly={!!this.props.item._id}
+              value={this.state._id}
               onChange={this.onChange}
             />
             <Input
               title="Modelo:"
               type="select"
-              name="model"
-              style={this.state.errorKeys.includes("model") ? {borderColor: "red"} : null}
+              name="containerId"
+              style={this.state.errorKeys.includes("containerId") ? {borderColor: "red"} : null}
               disabled={this.props.item._id}
-              value={this.state.model}
+              value={this.state.containerId}
               onChange={this.onChange}>
                 <option value=''></option>
                 {this.renderModels()}
@@ -119,10 +124,10 @@ class RegisterSeries extends React.Component {
 export default RegisterSeriesWrapper = withTracker((props) => {
   Meteor.subscribe('containersPub');
   Meteor.subscribe('placesPub');
-  var modelsDatabase = Containers.find().fetch();
+  var containersDatabase = Containers.find().fetch();
   var placesDatabase = Places.find().fetch();
   return {
-    modelsDatabase,
+    containersDatabase,
     placesDatabase
   }
 })(RegisterSeries);

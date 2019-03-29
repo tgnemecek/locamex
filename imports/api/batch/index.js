@@ -11,7 +11,17 @@ import { Services } from '/imports/api/services/index';
 import { Series } from '/imports/api/series/index';
 
 if (Meteor.isServer && Meteor.isDevelopment) {
-  // 
+  // var series = Series.find().fetch();
+  //
+  // Series.remove({});
+  //
+  // series.forEach((item) => {
+  //   var newItem = item;
+  //   newItem._id = item.serial;
+  //   delete newItem.serial;
+  //   Series.insert(item);
+  // })
+  //
   // Modules.update({}, {$set: {
   //   snapshots: []
   // }}, {multi: 1});

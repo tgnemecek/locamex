@@ -6,7 +6,7 @@ export default function createMetaContext (item, imageIndex, file) {
 
   const writeFilename = () => {
     if (item.description) return item.description.replace(/\W/g, '');
-    if (item.serial) return item.serial.toString();
+    if (item.type === 'series') return item._id.toString();
     return 'undefined';
   }
 
