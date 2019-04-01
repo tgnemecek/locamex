@@ -34,7 +34,8 @@ export default class ShippingModules extends React.Component {
     if (!e) return this.setState({ selectMultiple: { isOpen: false } });
     var index = e.target.value;
     var _id = this.props.modules[index]._id;
-    if (!_id) return;
+    var productId = this.props.modules[index].productId;
+    if (!productId) return;
     var item = this.props.modules[index];
     var selectMultiple = {
       isOpen: true,
@@ -67,7 +68,7 @@ export default class ShippingModules extends React.Component {
       this.props.onChange({ modules });
     }
 
-    const onChange = (e, module) => {
+    const onClick = (e, module) => {
       var modules = tools.deepCopy(this.props.modules);
       var i = e.target.name;
       modules[i] = {
@@ -90,7 +91,7 @@ export default class ShippingModules extends React.Component {
               database={filterOptions(item._id)}
               value={item._id}
               showAll={true}
-              onClick={onChange}/>
+              onClick={onClick}/>
           </td>
           <td>{item.renting}</td>
           <td><button className="database__table__button" value={i} onClick={this.toggleMultipleWindow}>⟳</button></td>
@@ -147,9 +148,10 @@ export default class ShippingModules extends React.Component {
             onChange={this.onChange}
             item={this.state.selectMultiple.item}
             title={this.state.selectMultiple.title}
+            toggleWindow={this.toggleMultipleWindow}
+
             modulesDatabase={this.props.modulesDatabase}
             placesDatabase={this.props.placesDatabase}
-            toggleWindow={this.toggleMultipleWindow}
           />
         : null}
       </Block>

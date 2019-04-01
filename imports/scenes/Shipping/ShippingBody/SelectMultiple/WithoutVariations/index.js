@@ -7,59 +7,27 @@ import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 import ImageVisualizer from '/imports/components/ImageVisualizer/index';
 
-import PlacesDistribution from './PlacesDistribution/index';
-import SelectedList from './SelectedList/index';
-import SelectVariation from './SelectVariation/index';
-import Footer from './Footer/index';
-
-export default class SelectMultiple extends React.Component {
+export default class WithoutVariations extends React.Component {
   constructor(props) {
     super(props);
-
-    const populateVariations = () => {
-      var variations = tools.deepCopy(this.props.productFromDatabase.variations);
-      var selectedList = this.props.item.selectedList || [];
-      if (!selectedList.length) return variations;
-
-      selectedList.forEach((listItem) => {
-        variations.forEach((variation) => {
-          if (variation._id === listItem._id) {
-            variation.place.forEach((place) => {
-              if (place._id === listItem.place) {
-                place.available = place.available - listItem.selected;
-              }
-            })
-          }
-        })
-      })
-      return variations;
-    }
-    debugger;
-
     this.state = {
-      selectedList: this.props.item.selectedList || [],
-      variations: populateVariations(),
-      currentVariationIndex: 0
+      selectedList: this.props.item.selectedList || []
     }
   }
 
-  addToSelection = (howManyToMove, variationPlace) => {
-
+  addToSelection = (howManyToMove, place) => {
     var selectedList = tools.deepCopy(this.state.selectedList);
-    var variationToAdd = this.state.variations[this.state.currentVariationIndex];
-    var existingVariation = tools.findUsingId(selectedList, variationToAdd._id);
+    var existing = selectedList.find((item) => item.place === place._id);
 
-    if (existingVariation._id && existingVariation.place === variationPlace) {
-      existingVariation.selected = existingVariation.selected + howManyToMove;
+    if (existing) {
+      existing.selected = existing.selected + howManyToMove;
     } else {
       selectedList.push({
-        _id: variationToAdd._id,
-        place: variationPlace,
+        place,
         selected: howManyToMove
       })
     }
-    var variations = this.changeAvailable((0 - howManyToMove), variationToAdd._id, variationPlace);
-    this.setState({ selectedList, variations });
+    this.setState({ selectedList });
   }
 
   removeFromSelection = (selectedToRemoveIndex) => {
@@ -116,32 +84,23 @@ export default class SelectMultiple extends React.Component {
         >
           <Block columns={1}>
             <Block columns={2}>
-              <div>
-                {"Produto: " + this.props.productFromDatabase.description}
-              </div>
-              <SelectVariation
-                onChange={this.changeVariationIndex}
-                variations={this.state.variations}
-                currentVariationIndex={this.state.currentVariationIndex}
-              />
+              <div>{this.props.title}</div>
             </Block>
-            <PlacesDistribution
-              currentVariationIndex={this.state.currentVariationIndex}
-              variations={this.state.variations}
+            <this.props.PlacesDistribution
+              item={this.props.item}
               placesDatabase={this.props.placesDatabase}/>
           </Block>
-          <SelectedList
+          <this.props.SelectedList
             addToSelection={this.addToSelection}
             removeFromSelection={this.removeFromSelection}
 
             item={this.props.item}
             productFromDatabase={this.props.productFromDatabase}
             selectedList={this.state.selectedList}
-            currentVariationId={this.state.variations[this.state.currentVariationIndex]._id}
 
             placesDatabase={this.props.placesDatabase}
           />
-          <Footer
+          <this.props.Footer
             toggleWindow={this.props.toggleWindow}
             saveEdits={this.saveEdits}
           />

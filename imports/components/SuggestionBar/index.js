@@ -56,7 +56,7 @@ export default class SuggestionBar extends React.Component {
 
   renderResults = () => {
     const onClick = (e) => {
-      var exportObject = this.state.results[e.target.name];
+      var exportObject = this.state.results[e.target.name] || {};
       this.props.onClick({target: {
         value: e.target.value,
         name: this.props.name
@@ -92,7 +92,7 @@ export default class SuggestionBar extends React.Component {
     if (!buttonMode) return;
 
     this.setState({ buttonMode: false, query: '' }, () => {
-      this.props.onClick({target: {value: '', name: this.props.name}});
+      this.props.onClick({target: {value: '', name: this.props.name}}, {});
       this.conditionalShowAll();
     });
   }

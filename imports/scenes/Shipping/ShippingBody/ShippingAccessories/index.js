@@ -6,6 +6,8 @@ import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 import ImageVisualizer from '/imports/components/ImageVisualizer/index';
 
+import SelectMultiple from './SelectMultiple/index';
+
 export default class ShippingAccessories extends React.Component {
   constructor(props) {
     super(props);
@@ -81,7 +83,7 @@ export default class ShippingAccessories extends React.Component {
             </tbody>
           </table>
           {this.state.selectMultiple && this.state.itemToSelect ?
-            <this.props.SelectMultiple
+            <SelectMultiple
               onChange={this.onChange}
               productFromDatabase={tools.findUsingId(this.props.accessoriesDatabase, this.state.itemToSelect._id)}
               placesDatabase={this.props.placesDatabase}

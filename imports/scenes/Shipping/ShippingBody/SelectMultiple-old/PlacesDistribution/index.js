@@ -75,10 +75,14 @@ class PlacesDistribution extends React.Component {
   }
 
   render() {
-    return (
-      <Block columns={2} title="Estoque disponível do produto:">
-        {this.renderBody()}
-      </Block>
+    if (this.props.placesWithQuantity.length) {
+      return (
+        <Block columns={2} title="Estoque disponível do produto:">
+          {this.renderBody()}
+        </Block>
+      )
+    } else return (
+      <Block columns={2} title="Não há quantidade disponível do produto em estoque!"></Block>
     )
   }
 }
