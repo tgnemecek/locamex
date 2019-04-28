@@ -118,7 +118,6 @@ class Shipping extends React.Component {
             onChange={this.onChange}
             fixed={this.state.fixed}
             modules={this.state.modules}
-            modulesEnabled={!!this.state.allowedModules}
             allowedModules={this.state.allowedModules}
             accessories={this.state.accessories}
           />

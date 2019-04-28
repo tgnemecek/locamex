@@ -9,20 +9,15 @@ import ImageVisualizer from '/imports/components/ImageVisualizer/index';
 
 import WithoutVariations from './WithoutVariations/index';
 // import WithVariations from './WithVariations/index';
-import PlacesDistribution from './PlacesDistribution/index';
-import SelectedList from './SelectedList/index';
-import Footer from './Footer/index';
+// import PlacesDistribution from './PlacesDistribution/index';
+// import SelectedList from './SelectedList/index';
+// import Footer from './Footer/index';
 
 export default function SelectMultiple(props) {
   var joined = {
-    ...props,
-    onChange: props.onChange,
-    PlacesDistribution,
-    SelectedList,
-    Footer
+    onChange: props.onChange
   }
-  return <WithoutVariations {...joined} />
   // if (props.item.variations) {
-  //   return <WithVariations {...joined} />
+    // return <WithVariations {...joined} />
   // } else return <WithoutVariations {...joined} />
 }

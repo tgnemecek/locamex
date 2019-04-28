@@ -4,8 +4,10 @@ import tools from '/imports/startup/tools/index';
 
 import ShippingModules from './ShippingModules/index';
 import ShippingFixed from './ShippingFixed/index';
-// import ShippingAccessories from './ShippingAccessories/index';
+import ShippingAccessories from './ShippingAccessories/index';
+
 import SelectMultiple from './SelectMultiple/index';
+import Observations from './Observations/index';
 
 export default class ShippingBody extends React.Component {
   sortSeriesDatabase = () => {
@@ -27,10 +29,11 @@ export default class ShippingBody extends React.Component {
   render() {
     return (
       <div>
-        {!!this.props.allowedModules.length ?
+        {this.props.modulesEnabled ?
           <ShippingModules
             onChange={this.props.onChange}
             modules={this.props.modules}
+            Observations={Observations}
             SelectMultiple={SelectMultiple}
 
             modulesDatabase={this.filterModulesDatabase()}
@@ -39,18 +42,19 @@ export default class ShippingBody extends React.Component {
         <ShippingFixed
           onChange={this.props.onChange}
           fixed={this.props.fixed}
+          Observations={Observations}
 
           containersDatabase={this.props.databases.containersDatabase}
           placesDatabase={this.props.databases.placesDatabase}
           seriesDatabase={this.sortSeriesDatabase()}/>
-        {/* <ShippingAccessories
+        <ShippingAccessories
           onChange={this.props.onChange}
           accessories={this.props.accessories}
           Observations={Observations}
           SelectMultiple={SelectMultiple}
 
           accessoriesDatabase={this.props.databases.accessoriesDatabase}
-          placesDatabase={this.props.databases.placesDatabase}/> */}
+          placesDatabase={this.props.databases.placesDatabase}/>
       </div>
     )
   }

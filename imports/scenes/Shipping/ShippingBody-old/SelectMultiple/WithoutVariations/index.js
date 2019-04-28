@@ -11,40 +11,13 @@ export default class WithoutVariations extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      item: this.props.item,
       selectedList: this.props.item.selectedList || []
-    }
-  }
-
-  componentDidMount() {
-    var item = this.state.item;
-    var selectedList = this.state.selectedList;
-    if (selectedList.length) {
-      selectedList.forEach((listElement) => {
-        item.place.forEach((itemElement) => {
-          if (itemElement._id === listElement.place) {
-            itemElement.available = itemElement.available - listElement.selected;
-          }
-        })
-      })
-    }
-  }
-
-  updatePlacesQuantity = (quantityToChange, place) => {
-    var placesInItem = tools.deepCopy(this.state.item.place);
-    var placeIndex = placesInItem.findIndex((element) => {
-      return element._id === place;
-    });
-    placesInItem[placeIndex].available = placesInItem[placeIndex].available + quantityToChange;
-    return {
-      ...this.state.item,
-      place: placesInItem
     }
   }
 
   addToSelection = (howManyToMove, place) => {
     var selectedList = tools.deepCopy(this.state.selectedList);
-    var existing = selectedList.find((item) => item.place === place);
+    var existing = selectedList.find((item) => item.place === place._id);
 
     if (existing) {
       existing.selected = existing.selected + howManyToMove;
@@ -54,17 +27,24 @@ export default class WithoutVariations extends React.Component {
         selected: howManyToMove
       })
     }
-    var item = this.updatePlacesQuantity((0 - howManyToMove), place);
-    this.setState({ selectedList, item });
+    this.setState({ selectedList });
   }
 
-  removeFromSelection = (selectedToRemoveIndex, place) => {
-    var selectedList = tools.deepCopy(this.state.selectedList);
-    var quantity = selectedList[selectedToRemoveIndex].selected;
-    selectedList.splice(selectedToRemoveIndex, 1);
+  removeFromSelection = (selectedToRemoveIndex) => {
+    var selectedList = this.state.selectedList
+    var itemRemoved = selectedList[selectedToRemoveIndex];
 
-    var item = this.updatePlacesQuantity(quantity, place);
-    this.setState({ selectedList, item });
+    selectedList = selectedList.filter((item) => {
+      if (item._id !== itemRemoved._id) {
+        return true;
+      } else {
+        if (item.place === itemRemoved.place) {
+          return false;
+        } else return true;
+      }
+    })
+    var variations = this.changeAvailable(itemRemoved.selected, itemRemoved._id, itemRemoved.place)
+    this.setState({ selectedList, variations });
   }
 
   changeAvailable = (toChange, variationId, placeId) => {
@@ -107,14 +87,14 @@ export default class WithoutVariations extends React.Component {
               <div>{this.props.title}</div>
             </Block>
             <this.props.PlacesDistribution
-              item={this.state.item}
+              item={this.props.item}
               placesDatabase={this.props.placesDatabase}/>
           </Block>
           <this.props.SelectedList
             addToSelection={this.addToSelection}
             removeFromSelection={this.removeFromSelection}
 
-            item={this.state.item}
+            item={this.props.item}
             productFromDatabase={this.props.productFromDatabase}
             selectedList={this.state.selectedList}
 

@@ -120,7 +120,6 @@ export default class ShippingModules extends React.Component {
   }
 
   onChange = (changedItem) => {
-    debugger;
     var modular = tools.deepCopy(this.props.modular);
     var itemIndex = modular.findIndex((element) => {
       return element._id === changedItem._id;
@@ -150,7 +149,6 @@ export default class ShippingModules extends React.Component {
             item={this.state.selectMultiple.item}
             title={this.state.selectMultiple.title}
             toggleWindow={this.toggleMultipleWindow}
-            productFromDatabase={tools.findUsingId(this.props.modulesDatabase, this.state.selectMultiple.item.productId)}
 
             modulesDatabase={this.props.modulesDatabase}
             placesDatabase={this.props.placesDatabase}
