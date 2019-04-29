@@ -81,7 +81,7 @@ export default class Variations extends React.Component {
   }
 
   render() {
-    if (!this.props.variations) return null;
+    if (this.props.variations.length < 2) return null;
     return (
       <Block
         title="Variações:"

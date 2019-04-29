@@ -17,7 +17,12 @@ export default class RegisterAccessories extends React.Component {
       price: this.props.item.price || 0,
       restitution: this.props.item.restitution || 0,
       observations: this.props.item.observations || '',
-      variations: this.props.item.variations || false,
+      variations: this.props.item.variations || [{
+        _id: tools.generateId(),
+        observations: '',
+        place: [],
+        visible: true
+      }],
 
       errorMsg: '',
       errorKeys: [],
@@ -31,9 +36,17 @@ export default class RegisterAccessories extends React.Component {
   onChangeVariations = (e) => {
     var bool = e.target.value;
     var variations;
+    function emptyVariation() {
+      return {
+        _id: tools.generateId(),
+        observations: '',
+        place: [],
+        visible: true
+      }
+    }
     if (bool) {
-      variations = this.props.item.variations || [];
-    } else variations = false;
+      variations = [emptyVariation(), emptyVariation()];
+    } else variations = [emptyVariation()];
 
     this.setState({ variations });
   }
@@ -105,7 +118,7 @@ export default class RegisterAccessories extends React.Component {
               type="checkbox"
               name="variations"
               id="variations"
-              value={!!this.state.variations}
+              value={this.state.variations.length > 1}
               onChange={this.onChangeVariations}
             />
             <Variations variations={this.state.variations} onChange={this.onChange} />

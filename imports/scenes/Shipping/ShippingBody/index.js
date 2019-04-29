@@ -5,7 +5,6 @@ import tools from '/imports/startup/tools/index';
 import ShippingModules from './ShippingModules/index';
 import ShippingFixed from './ShippingFixed/index';
 // import ShippingAccessories from './ShippingAccessories/index';
-import SelectMultiple from './SelectMultiple/index';
 
 export default class ShippingBody extends React.Component {
   sortSeriesDatabase = () => {
@@ -31,7 +30,6 @@ export default class ShippingBody extends React.Component {
           <ShippingModules
             onChange={this.props.onChange}
             modules={this.props.modules}
-            SelectMultiple={SelectMultiple}
 
             modulesDatabase={this.filterModulesDatabase()}
             placesDatabase={this.props.databases.placesDatabase}/>

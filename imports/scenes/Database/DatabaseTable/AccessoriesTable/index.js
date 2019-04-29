@@ -110,23 +110,13 @@ class AccessoriesTable extends React.Component {
 }
 
 function count(item, which) {
-  if (item.models) {
-
-    var result = 0;
-
-    item.models.forEach((model) => {
-      result = result + model.place.reduce((acc, cur) => {
-        return acc + cur[which];
-      }, 0);
-    })
-
-    return result;
-
-  } else {
-    return item.place.reduce((acc, cur) => {
+  var result = 0;
+  item.variations.forEach((variation) => {
+    result = result + variation.place.reduce((acc, cur) => {
       return acc + cur[which];
     }, 0);
-  }
+  })
+  return result;
 }
 
 export default AccessoriesTableWrapper = withTracker((props) => {

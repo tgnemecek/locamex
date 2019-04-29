@@ -39,6 +39,7 @@ class Shipping extends React.Component {
   }
 
   onChange = (changes) => {
+    debugger;
     this.setState({
       ...this.state,
       ...changes

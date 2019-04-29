@@ -7,38 +7,15 @@ import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 import ImageVisualizer from '/imports/components/ImageVisualizer/index';
 
-export default class WithoutVariations extends React.Component {
+import PlacesDistribution from './PlacesDistribution/index';
+import SelectedList from './SelectedList/index';
+import Footer from './Footer/index';
+
+export default class SelectModules extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      item: this.props.item,
-      selectedList: this.props.item.selectedList || []
-    }
-  }
-
-  componentDidMount() {
-    var item = this.state.item;
-    var selectedList = this.state.selectedList;
-    if (selectedList.length) {
-      selectedList.forEach((listElement) => {
-        item.place.forEach((itemElement) => {
-          if (itemElement._id === listElement.place) {
-            itemElement.available = itemElement.available - listElement.selected;
-          }
-        })
-      })
-    }
-  }
-
-  updatePlacesQuantity = (quantityToChange, place) => {
-    var placesInItem = tools.deepCopy(this.state.item.place);
-    var placeIndex = placesInItem.findIndex((element) => {
-      return element._id === place;
-    });
-    placesInItem[placeIndex].available = placesInItem[placeIndex].available + quantityToChange;
-    return {
-      ...this.state.item,
-      place: placesInItem
+      selectedList: this.props.item.selected || []
     }
   }
 
@@ -54,8 +31,7 @@ export default class WithoutVariations extends React.Component {
         selected: howManyToMove
       })
     }
-    var item = this.updatePlacesQuantity((0 - howManyToMove), place);
-    this.setState({ selectedList, item });
+    this.setState({ selectedList });
   }
 
   removeFromSelection = (selectedToRemoveIndex, place) => {
@@ -63,8 +39,7 @@ export default class WithoutVariations extends React.Component {
     var quantity = selectedList[selectedToRemoveIndex].selected;
     selectedList.splice(selectedToRemoveIndex, 1);
 
-    var item = this.updatePlacesQuantity(quantity, place);
-    this.setState({ selectedList, item });
+    this.setState({ selectedList });
   }
 
   changeAvailable = (toChange, variationId, placeId) => {
@@ -83,14 +58,10 @@ export default class WithoutVariations extends React.Component {
     return variations;
   }
 
-  changeVariationIndex = (currentVariationIndex) => {
-    this.setState({ currentVariationIndex });
-  }
-
   saveEdits = () => {
     this.props.onChange({
-      _id: this.props.productFromDatabase._id,
-      selectedList: this.state.selectedList
+      _id: this.props.item._id,
+      selected: this.state.selectedList
     });
     this.props.toggleWindow();
   }
@@ -106,21 +77,22 @@ export default class WithoutVariations extends React.Component {
             <Block columns={2}>
               <div>{this.props.title}</div>
             </Block>
-            <this.props.PlacesDistribution
-              item={this.state.item}
+            <PlacesDistribution
+              item={this.props.item}
+              selectedList={this.state.selectedList}
               placesDatabase={this.props.placesDatabase}/>
           </Block>
-          <this.props.SelectedList
+          <SelectedList
             addToSelection={this.addToSelection}
             removeFromSelection={this.removeFromSelection}
 
-            item={this.state.item}
+            item={this.props.item}
             productFromDatabase={this.props.productFromDatabase}
             selectedList={this.state.selectedList}
 
             placesDatabase={this.props.placesDatabase}
           />
-          <this.props.Footer
+          <Footer
             toggleWindow={this.props.toggleWindow}
             saveEdits={this.saveEdits}
           />

@@ -7,6 +7,8 @@ import Input from '/imports/components/Input/index';
 import ImageVisualizer from '/imports/components/ImageVisualizer/index';
 import SuggestionBar from '/imports/components/SuggestionBar/index';
 
+import SelectModules from './SelectModules/index';
+
 export default class ShippingModules extends React.Component {
   constructor(props) {
     super(props);
@@ -46,16 +48,17 @@ export default class ShippingModules extends React.Component {
   }
 
   renderBody = () => {
-    function checkmark(item) {
-      if (!item._id || !item.selectedList) return <span style={{color: 'red'}}>⦸</span>;
+    function checkmark(item, quantity) {
+      if (!item._id || !item.selected || !quantity) return <span style={{color: 'red'}}>⦸</span>;
       return <span style={{color: 'green'}}>✔</span>
     }
 
     const filterOptions = (currentId) => {
       return this.props.modulesDatabase.filter((item) => {
+        debugger;
         return !this.props.modules.find((element) => {
-          if (element._id === item._id) {
-            return (currentId !== item._id);
+          if (element.productId === item._id) {
+            return (currentId !== element._id);
           } else return false;
         })
       })
@@ -81,6 +84,13 @@ export default class ShippingModules extends React.Component {
       this.props.onChange({ modules });
     }
 
+    function calculateQuantity(selected) {
+      if (!selected) return 0;
+      return selected.reduce((acc, cur) => {
+        return acc + cur.selected;
+      }, 0);
+    }
+
     return this.props.modules.map((item, i) => {
       return (
         <tr key={i}>
@@ -93,10 +103,10 @@ export default class ShippingModules extends React.Component {
               showAll={true}
               onClick={onClick}/>
           </td>
-          <td>{item.renting}</td>
+          <td>{calculateQuantity(item.selected)}</td>
           <td><button className="database__table__button" value={i} onClick={this.toggleMultipleWindow}>⟳</button></td>
           <td><button className="database__table__button" value={i} onClick={removeItem}>✖</button></td>
-          <td className="table__small-column">{checkmark(item)}</td>
+          <td className="table__small-column">{checkmark(item, calculateQuantity(item.selected))}</td>
         </tr>
       )
     });
@@ -121,15 +131,15 @@ export default class ShippingModules extends React.Component {
 
   onChange = (changedItem) => {
     debugger;
-    var modular = tools.deepCopy(this.props.modular);
-    var itemIndex = modular.findIndex((element) => {
+    var modules = tools.deepCopy(this.props.modules);
+    var itemIndex = modules.findIndex((element) => {
       return element._id === changedItem._id;
     })
-    modular[itemIndex] = {
-      ...modular[itemIndex],
+    modules[itemIndex] = {
+      ...modules[itemIndex],
       ...changedItem
     };
-    this.props.onChange({ modular });
+    this.props.onChange({ modules });
   }
 
   render() {
@@ -145,7 +155,7 @@ export default class ShippingModules extends React.Component {
           </tbody>
         </table>
         {this.state.selectMultiple.isOpen ?
-          <this.props.SelectMultiple
+          <SelectModules
             onChange={this.onChange}
             item={this.state.selectMultiple.item}
             title={this.state.selectMultiple.title}

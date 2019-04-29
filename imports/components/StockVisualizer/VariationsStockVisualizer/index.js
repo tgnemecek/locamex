@@ -32,8 +32,13 @@ class VariationsStockVisualizer extends React.Component {
   }
 
   renderVariations = () => {
-    return this.props.item.variations.map((variation, i) => {
-      return <option key={i} value={i}>{"Padrão " + tools.convertToLetter(i)}</option>
+    return this.props.item.variations.map((variation, i, array) => {
+      const label = () => {
+        if (array.length > 1) {
+          return "Padrão " + tools.convertToLetter(i);
+        } else return "Modelo Único";
+      }
+      return <option key={i} value={i}>{label()}</option>
     })
   }
 
