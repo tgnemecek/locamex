@@ -34,7 +34,6 @@ export default class SelectMultiple extends React.Component {
       })
       return variations;
     }
-    debugger;
 
     this.state = {
       selectedList: this.props.item.selectedList || [],

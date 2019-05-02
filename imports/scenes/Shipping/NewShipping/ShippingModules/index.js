@@ -26,7 +26,6 @@ export default class ShippingModules extends React.Component {
       <tr>
         <th>#</th>
         <th>Componente</th>
-        <th>Quantidade</th>
         <th>Seleção</th>
       </tr>
     )
@@ -49,13 +48,12 @@ export default class ShippingModules extends React.Component {
 
   renderBody = () => {
     function checkmark(item, quantity) {
-      if (!item._id || !item.selected || !quantity) return <span style={{color: 'red'}}>⦸</span>;
+      if (!item._id || !quantity) return <span style={{color: 'red'}}>⦸</span>;
       return <span style={{color: 'green'}}>✔</span>
     }
 
     const filterOptions = (currentId) => {
       return this.props.modulesDatabase.filter((item) => {
-        debugger;
         return !this.props.modules.find((element) => {
           if (element.productId === item._id) {
             return (currentId !== element._id);
@@ -118,7 +116,8 @@ export default class ShippingModules extends React.Component {
       modules.push({
         _id: tools.generateId(),
         productId: '',
-        description: ''
+        description: '',
+        selected: []
       })
       this.props.onChange({ modules });
     }
@@ -130,7 +129,6 @@ export default class ShippingModules extends React.Component {
   }
 
   onChange = (changedItem) => {
-    debugger;
     var modules = tools.deepCopy(this.props.modules);
     var itemIndex = modules.findIndex((element) => {
       return element._id === changedItem._id;

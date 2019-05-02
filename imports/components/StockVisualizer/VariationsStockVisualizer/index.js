@@ -36,7 +36,7 @@ class VariationsStockVisualizer extends React.Component {
       const label = () => {
         if (array.length > 1) {
           return "Padrão " + tools.convertToLetter(i);
-        } else return "Modelo Único";
+        } else return "Padrão Único";
       }
       return <option key={i} value={i}>{label()}</option>
     })
@@ -44,7 +44,6 @@ class VariationsStockVisualizer extends React.Component {
 
   changeVariation = (e) => {
     var variationIndex = e.target.value;
-    debugger;
     this.setState({
       variationIndex,
       item: this.props.item.variations[variationIndex],

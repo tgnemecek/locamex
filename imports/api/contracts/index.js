@@ -43,6 +43,7 @@ if (Meteor.isServer) {
         billingServices: state.billingServices,
 
         observations: state.observations,
+        shipping: [],
 
         containers: setProducts(state.containers),
         accessories: setProducts(state.accessories),
@@ -168,6 +169,19 @@ if (Meteor.isServer) {
       }
       Contracts.update({ _id }, { $set: data });
       Meteor.call('history.insert', data, 'contracts.update.one');
+    },
+    'contracts.shipping.insert'(_id, state) {
+      var data = {
+        _id: tools.generateId(),
+        date: new Date(),
+
+        fixed: state.fixed,
+        modules: state.modules,
+        accessories: state.accessories
+      };
+
+      Contracts.update({ _id }, { $push: {shipping: data} });
+      Meteor.call('history.insert', {...data, contractId: _id}, 'contracts.shipping.insert');
     }
   })
 }

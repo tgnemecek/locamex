@@ -60,7 +60,7 @@ export default class PlacesDistribution extends React.Component {
         }
         return (
           <div key={i}
-            className="shipping-accessories__select-multiple__place"
+            className="shipping__select-multiple__place"
             style={this.style()}
             onMouseOver={this.hoveringState}
             onMouseOut={this.normalState}

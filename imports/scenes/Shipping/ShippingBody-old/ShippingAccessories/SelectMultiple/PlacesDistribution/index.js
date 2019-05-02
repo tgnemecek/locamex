@@ -19,7 +19,7 @@ export default class PlacesDistribution extends React.Component {
         e.dataTransfer.setData("available", place.available);
       }
       return (
-        <div key={i} className="shipping-accessories__select-multiple__place" draggable={true} onDragStart={onDragStart}>
+        <div key={i} className="shipping__select-multiple__place" draggable={true} onDragStart={onDragStart}>
           <div>⧉</div>
           <div>{this.getDescriptionPlace(place._id)}</div>
           <div>{place.available}</div>

@@ -11,7 +11,8 @@ import { Modules } from '/imports/api/modules/index';
 import { Accessories } from '/imports/api/accessories/index';
 
 import Header from './Header/index';
-import ShippingBody from './ShippingBody/index';
+import ShippingHistory from './ShippingHistory/index';
+import NewShipping from './NewShipping/index';
 
 class Shipping extends React.Component {
   constructor(props) {
@@ -21,7 +22,9 @@ class Shipping extends React.Component {
       modules: [],
       accessories: [],
 
-      allowedModules: []
+      allowedModules: [],
+
+      toggleNewShipping: false
     }
   }
 
@@ -36,14 +39,6 @@ class Shipping extends React.Component {
         this.setup();
       }
     }
-  }
-
-  onChange = (changes) => {
-    debugger;
-    this.setState({
-      ...this.state,
-      ...changes
-    })
   }
 
   setup = () => {
@@ -91,7 +86,7 @@ class Shipping extends React.Component {
           _id: tools.generateId(),
           productId: item.productId,
           renting: item.renting,
-          selected: '',
+          selected: [],
           description: productFromDatabase.description
         })
       })
@@ -107,6 +102,21 @@ class Shipping extends React.Component {
     }
   }
 
+  toggleNewShipping = (e) => {
+    this.setState({ toggleNewShipping: !this.state.toggleNewShipping });
+  }
+
+  onChange = (changes) => {
+    this.setState({
+      ...this.state,
+      ...changes
+    })
+  }
+
+  sendProducts = () => {
+    Meteor.call('contracts.shipping.insert', this.props.contract._id, this.state);
+  }
+
   render() {
     if (this.props.contract === undefined) return null;
     if (this.props.contract === null) return null; // Add NotFound Component Here!!!!!
@@ -114,14 +124,23 @@ class Shipping extends React.Component {
       <div className="page-content">
         <div className="contract">
           <Header {...this.props} />
-          <ShippingBody
-            databases={this.props.databases}
-            onChange={this.onChange}
-            fixed={this.state.fixed}
-            modules={this.state.modules}
-            allowedModules={this.state.allowedModules}
-            accessories={this.state.accessories}
+          <ShippingHistory
+            shipping={this.props.contract.shipping}
+            toggleNewShipping={this.toggleNewShipping}
           />
+          {this.state.toggleNewShipping ?
+            <NewShipping
+              toggleNewShipping={this.toggleNewShipping}
+              databases={this.props.databases}
+              onChange={this.onChange}
+              fixed={this.state.fixed}
+              modules={this.state.modules}
+              allowedModules={this.state.allowedModules}
+              accessories={this.state.accessories}
+              invalidFields={this.state.invalidFields}
+              sendProducts={this.sendProducts}
+            />
+          : null}
         </div>
       </div>
     )
