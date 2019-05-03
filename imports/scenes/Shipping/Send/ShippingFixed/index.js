@@ -7,34 +7,14 @@ import Input from '/imports/components/Input/index';
 import ImageVisualizer from '/imports/components/ImageVisualizer/index';
 
 export default class ShippingFixed extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      imageVisualizer: false,
-      observationsVisualizer: false
-    }
-  }
-
   renderHeader = () => {
     return (
       <tr>
-        <th>#</th>
-        <th>Produto</th>
+        <th className="table__small-column">#</th>
+        <th className="table__small-column">Produto</th>
         <th>Série</th>
       </tr>
     )
-  }
-
-  toggleImageWindow = (e) => {
-    var index = e ? e.target.value : null;
-    var imageVisualizer = this.state.imageVisualizer ? false : {...this.props.fixed[index]};
-    this.setState({ imageVisualizer });
-  }
-
-  toggleObservationsWindow = (e) => {
-    var index = e ? e.target.value : null;
-    var observationsVisualizer = this.state.observationsVisualizer ? false : {...this.props.fixed[index]};
-    this.setState({ observationsVisualizer });
   }
 
   renderBody = () => {
@@ -66,15 +46,11 @@ export default class ShippingFixed extends React.Component {
       this.props.onChange({ fixed });
     }
 
-    // const canDisplayImages = (item) => {
-    //   return (item._id && item.snapshots.length);
-    // }
-
     return this.props.fixed.map((item, i) => {
       return (
         <tr key={i}>
           <td className="table__small-column">{i+1}</td>
-          <td>{item.description}</td>
+          <td style={{width: "110px"}}>{item.description}</td>
           <td>
             <Input
               type="select"
@@ -85,13 +61,6 @@ export default class ShippingFixed extends React.Component {
                 {renderOptions(item.productId, item._id)}
             </Input>
           </td>
-          {/* <td className="table__small-column">
-            {item.observations ? <button className="database__table__button" value={i} onClick={this.toggleObservationsWindow}>⚠</button>
-            : null}
-          </td> */}
-          {/* <td className="table__small-column">
-            {canDisplayImages(item) ? <button className="database__table__button" value={i} onClick={this.toggleImageWindow}>🔍</button> : null}
-          </td> */}
           <td className="table__small-column">
             {item.seriesId ? <span style={{color: 'green'}}>✔</span> : <span style={{color: 'red'}}>⦸</span>}
           </td>

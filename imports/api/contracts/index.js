@@ -43,7 +43,7 @@ if (Meteor.isServer) {
         billingServices: state.billingServices,
 
         observations: state.observations,
-        shipping: [],
+        shipping: {},
 
         containers: setProducts(state.containers),
         accessories: setProducts(state.accessories),
@@ -93,7 +93,7 @@ if (Meteor.isServer) {
         }
         var modules = [];
         for (var i = 0; i < data.containers.length; i++) {
-          if (data.containers[i].type === 'modular') {
+          if (data.containers[i].type === 'modular') {''
             data.containers[i].modules.forEach((module) => {
               var stillAvailable = Meteor.call('modules.check', module._id, module.renting);
               if (!stillAvailable) {
@@ -170,18 +170,49 @@ if (Meteor.isServer) {
       Contracts.update({ _id }, { $set: data });
       Meteor.call('history.insert', data, 'contracts.update.one');
     },
-    'contracts.shipping.insert'(_id, state) {
-      var data = {
-        _id: tools.generateId(),
-        date: new Date(),
+    'contracts.shipping.send'(_id, state) {
+      var oldShipping = Contracts.findOne({ _id }).shipping;
 
+      shipping = {
+        ...oldShipping,
         fixed: state.fixed,
         modules: state.modules,
         accessories: state.accessories
       };
 
-      Contracts.update({ _id }, { $push: {shipping: data} });
-      Meteor.call('history.insert', {...data, contractId: _id}, 'contracts.shipping.insert');
+      var history = {
+        date: new Date(),
+        type: 'sendAll',
+        _id: tools.generateId()
+      };
+
+      shipping.history ? shipping.history.push(history) : shipping.history = [history];
+
+      Contracts.update({ _id }, { $set: { shipping } });
+      Meteor.call('history.insert', {...history, contractId: _id}, 'contracts.shipping.send');
+      return true;
+    },
+    'contracts.shipping.receive'(_id, state) {
+      var oldShipping = Contracts.findOne({ _id }).shipping;
+
+      shipping = {
+        ...oldShipping,
+        fixed: [],
+        modules: [],
+        accessories: []
+      };
+
+      var history = {
+        date: new Date(),
+        type: 'receiveAll',
+        _id: tools.generateId()
+      };
+
+      shipping.history ? shipping.history.push(history) : shipping.history = [history];
+
+      Contracts.update({ _id }, { $set: { shipping } });
+      Meteor.call('history.insert', {...history, contractId: _id}, 'contracts.shipping.receive');
+      return true;
     }
   })
 }

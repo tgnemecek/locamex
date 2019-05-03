@@ -23,10 +23,10 @@ export default class ShippingAccessories extends React.Component {
   renderHeader = () => {
     return (
       <tr>
-        <th>#</th>
+        <th className="table__small-column">#</th>
         <th>Produto</th>
-        <th>Quantidade</th>
-        <th>Seleção</th>
+        <th className="table__small-column">Quantidade</th>
+        <th className="table__small-column">Seleção</th>
       </tr>
     )
   }
@@ -61,11 +61,11 @@ export default class ShippingAccessories extends React.Component {
     return this.props.accessories.map((item, i) => {
       return (
         <tr key={i}>
-          <td>{i+1}</td>
+          <td className="table__small-column">{i+1}</td>
           <td>{item.description}</td>
-          <td>{item.renting}</td>
-          <td>{countSelection(item)}</td>
-          <td><button className="database__table__button" value={i} onClick={this.toggleMultipleWindow}>⟳</button></td>
+          <td className="table__small-column">{item.renting}</td>
+          <td className="table__small-column">{countSelection(item)}</td>
+          <td className="table__small-column"><button className="database__table__button" value={i} onClick={this.toggleMultipleWindow}>⟳</button></td>
           <td className="table__small-column">
             {checkmark(item)}
           </td>

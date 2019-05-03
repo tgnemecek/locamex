@@ -24,9 +24,9 @@ export default class ShippingModules extends React.Component {
   renderHeader = () => {
     return (
       <tr>
-        <th>#</th>
+        <th className="table__small-column">#</th>
         <th>Componente</th>
-        <th>Seleção</th>
+        <th className="table__small-column">Seleção</th>
       </tr>
     )
   }
@@ -92,7 +92,7 @@ export default class ShippingModules extends React.Component {
     return this.props.modules.map((item, i) => {
       return (
         <tr key={i}>
-          <td>{i+1}</td>
+          <td className="table__small-column">{i+1}</td>
           <td>
             <SuggestionBar
               name={i}
@@ -101,9 +101,9 @@ export default class ShippingModules extends React.Component {
               showAll={true}
               onClick={onClick}/>
           </td>
-          <td>{calculateQuantity(item.selected)}</td>
-          <td><button className="database__table__button" value={i} onClick={this.toggleMultipleWindow}>⟳</button></td>
-          <td><button className="database__table__button" value={i} onClick={removeItem}>✖</button></td>
+          <td className="table__small-column">{calculateQuantity(item.selected)}</td>
+          <td className="table__small-column"><button className="database__table__button" value={i} onClick={this.toggleMultipleWindow}>⟳</button></td>
+          <td className="table__small-column"><button className="database__table__button" value={i} onClick={removeItem}>✖</button></td>
           <td className="table__small-column">{checkmark(item, calculateQuantity(item.selected))}</td>
         </tr>
       )

@@ -108,7 +108,7 @@ export default class SelectedList extends React.Component {
       )
     } else return (
       <div onDrop={this.onDrop} onDragOver={this.onDragOver} style={{border: "1px solid grey", height: "50px"}}>
-        Nenhuma quantidade adicionada. Para adicionar, selecione a variação e arraste até aqui.
+        Nenhuma quantidade adicionada. Para adicionar, selecione e arraste até aqui.
         {this.howManyBox()}
       </div>
     )
