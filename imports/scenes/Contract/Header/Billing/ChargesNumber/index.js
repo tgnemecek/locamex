@@ -14,7 +14,7 @@ export default class ChargesNumber extends React.Component {
 
     const updateChargesInformation = (charges) => {
       return charges.map((charge, i) => {
-        var startDate = charges[0] ? charges[0].startDate : new Date();
+        var startDate = this.props.startDate;
         return {
           ...charge,
           startDate: moment(startDate).add((30 * i + i), 'days').toDate(),

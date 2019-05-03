@@ -21,6 +21,7 @@ export default class ProductsSection extends React.Component {
     this.setState({ calendarOpen });
   }
 
+
   changeDate = (e) => {
     var startDate = e.target.value;
 
@@ -39,18 +40,6 @@ export default class ProductsSection extends React.Component {
       this.props.updateBilling('billingProducts', charges);
       this.toggleCalendar();
     });
-  }
-
-  updateChargesDates = (input) => {
-    var array = input || this.state.charges;
-    var charges = array.map((charge, i) => {
-      return {
-        ...charge,
-        startDate: moment(this.state.startDate).add((30 * i + i), 'days').toDate(),
-        endDate: moment(this.state.startDate).add((30 * i + 30 + i), 'days').toDate(),
-      }
-    })
-    return charges;
   }
 
   // Calculations: -------------------------------------------------------------
@@ -145,6 +134,7 @@ export default class ProductsSection extends React.Component {
           <Block columns={3} options={[{block: 2, span: 1, className: "billing__equal-charges"}]}>
             <ChargesNumber
               masterValue={this.props.productsValue}
+              startDate={this.state.startDate}
               stateKey="billingProducts"
               charges={this.props.charges}
               description="Locação - Informamos: Locações são cobradas através de Faturas de Locação de Bens Móveis plenamente contabilizáveis."

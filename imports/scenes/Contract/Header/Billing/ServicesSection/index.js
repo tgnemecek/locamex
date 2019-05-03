@@ -122,6 +122,7 @@ export default class ServicesSection extends React.Component {
           <Block columns={3} options={[{block: 1, span: 0.5}, {block: 2, span: 0.5}, {block: 3, span: 1, className: "billing__equal-charges"}]}>
             <ChargesNumber
               masterValue={this.props.servicesValue}
+              startDate={this.state.startDate}
               stateKey="billingServices"
               charges={this.props.charges}
               description="Pacote de Serviços - Informamos: Pagamentos de Notas Fiscais Eletrônicas (NFe) são exclusivos através de Depósito Bancário junto ao Banco Itaú S.A. (341) Agência 1571 C/C 02313-2 a favor da LOCADORA."

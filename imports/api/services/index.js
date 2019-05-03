@@ -16,6 +16,7 @@ if (Meteor.isServer) {
         _id,
         description,
         price,
+        type: "service",
         visible: true
       }
       Services.insert(data);

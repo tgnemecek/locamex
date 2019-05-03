@@ -316,7 +316,7 @@ export default function createPdf(contract, client, mainContact, representatives
       `Qualquer outro serviço, insumo, material ou procedimento que não esteja expressamente descrito neste contrato.`
     ], style: 'ol', type: 'upper-roman'},
     {text: `CLÁUSULA SEGUNDA - DO PRAZO DA LOCAÇÃO`, style: 'h2'},
-    {text: `O Objeto da Locação ficará sob responsabilidade da LOCATÁRIA durante o período seguinte:`, style: 'p'},
+    {text: `O Objeto da Locação ficará sob responsabilidade da LOCATÁRIA durante o período mínimo seguinte:`, style: 'p'},
     tableDuration(),
     {text: `§ 1º. O contrato entrará em Prorrogação Automática se não houver manifestação da LOCATÁRIA para retirada do Objeto da Locação feita com mínimo de 15 dias de antecedência do fim do Prazo Mínimo de Locação e o contrato continuará a ser prorrogado a cada 30 dias com prazo indeterminado caso as partes não se manifestem, acompanhado mensalmente da cobrança do Valor Mensal da Locação.`, style: 'p'},
     {text: `§ 2º. Caso a LOCATÁRIA deseje devolver o Objeto da Locação antes do término do Prazo Mínimo de Locação, a LOCATÁRIA deverá notificar a LOCADORA e também efetuar a quitação do Valor Total do Contrato (Cláusula Primeira, § 3º) por completo.`, style: 'p'},

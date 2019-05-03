@@ -125,7 +125,7 @@ export default class Information extends React.Component {
               calendarOpen={this.state.calendarOpen}
               toggleCalendar={this.toggleCalendar}
               onChange={this.handleChange}
-              value={this.props.contract.startDate}
+              value={this.props.contract.dates.startDate}
             />
             <Input
               title="Duração: (meses)"

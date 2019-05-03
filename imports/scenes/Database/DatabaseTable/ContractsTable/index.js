@@ -39,7 +39,7 @@ class ContractsTable extends React.Component {
     return (
       <tr>
         <th className="table__small-column">Código</th>
-        <th>Nome da Empresa</th>
+        <th>Nome do Cliente</th>
         <th className="table__small-column">Status</th>
         <th className="table__small-column">Valor Total do Contrato</th>
         <th className="table__small-column">
@@ -63,7 +63,7 @@ class ContractsTable extends React.Component {
       }
       const clientName = () => {
         for (var j = 0; j < this.props.clientsDatabase.length; j++) {
-          if (this.props.clientsDatabase[j]._id === item.client) {
+          if (this.props.clientsDatabase[j]._id === item.clientId) {
             return this.props.clientsDatabase[j].description;
           }
         }
@@ -76,10 +76,10 @@ class ContractsTable extends React.Component {
         var accessories = item.accessories || [];
         var products = containers.concat(accessories);
         var productsValue = products.reduce((acc, current) => {
-          var renting = current.renting ? current.renting : 1;
+          var renting = current.renting || 1;
           return acc + (current.price * renting * duration)
         }, 0);
-        productsValue = productsValue * (100 - discount) / 100;
+        productsValue = productsValue * (1 - discount);
 
         var services = item.services || [];
         var servicesValue = services.reduce((acc, current) => {

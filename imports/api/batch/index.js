@@ -11,6 +11,13 @@ import { Services } from '/imports/api/services/index';
 import { Series } from '/imports/api/series/index';
 
 if (Meteor.isServer && Meteor.isDevelopment) {
+  // var services = Services.find().fetch();
+  // Services.remove({});
+  //
+  // services.forEach((service) => {
+  //   service._id = tools.generateId();
+  //   Services.insert(service);
+  // })
   // var series = Series.find().fetch();
   //
   // Series.remove({});
