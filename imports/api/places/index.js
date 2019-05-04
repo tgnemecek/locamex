@@ -36,25 +36,5 @@ if (Meteor.isServer) {
       Places.update({ _id }, { $set: {description} });
       Meteor.call('history.insert', data, 'places');
     }
-
-    // 'places.transfer'(itemId, itemType, originId, transaction, destinationId) {
-    //
-    //   var origin = Places.findOne({_id: originId});
-    //   origin[itemType] = origin[itemType] - transaction;
-    //   if (origin[itemType] < 0) throw new Meteor.Error("Value can't be negative.");
-    //
-    //   var destination = Places.findOne({_id: destinationId});
-    //   destination[itemType] = destination[itemType] + transaction;
-    //
-    //
-    //
-    //
-    //   const data = {
-    //     _id,
-    //     description
-    //   };
-    //   Places.update({ _id }, { $set: {description} });
-    //   Meteor.call('history.insert', data, 'places.transfer');
-    // }
   });
 }

@@ -90,7 +90,7 @@ export default class RegisterUsers extends React.Component {
           closeBox={this.props.toggleWindow}
           width="800px">
             <div className="error-message">{this.state.errorMsg}</div>
-            <Block columns={3} options={[{block: 0, span: 1.5}, {block: 1, span: 1.5}]}>
+            <Block columns={3}>
               <Input
                 title="Nome:"
                 type="text"
@@ -107,6 +107,16 @@ export default class RegisterUsers extends React.Component {
                 value={this.state.lastName}
                 onChange={this.onChange}
               />
+              <Input
+                title="Tipo de Usuário"
+                type="select"
+                name="type"
+                onChange={this.onChange}>
+                <option value="administrator">Administrador</option>
+                <option value="finances">Financeiro</option>
+                <option value="sales">Vendas</option>
+                <option value="logistics">Logística</option>
+              </Input>
               <Input
                 title="Usuário:"
                 type="text"
