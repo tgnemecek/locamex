@@ -2,7 +2,6 @@ import { Meteor } from 'meteor/meteor';
 import { WebApp } from 'meteor/webapp';
 
 import '../imports/startup/aws-configuration/index';
-import '../imports/startup/app-structure/index';
 import '../imports/startup/simple-schema-configuration/index';
 
 import '../imports/api/accessories/index';

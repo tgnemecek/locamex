@@ -4,6 +4,7 @@ import { Series } from '/imports/api/series/index';
 import { Places } from '/imports/api/places/index';
 import { Containers } from '/imports/api/containers/index';
 import tools from '/imports/startup/tools/index';
+import RedirectUser from '/imports/components/RedirectUser/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import FilterBar from '/imports/components/FilterBar/index';
@@ -80,6 +81,7 @@ class SeriesTable extends React.Component {
     if (this.props.ready) {
       return (
         <ErrorBoundary>
+          <RedirectUser currentPage="series"/>
           <FilterBar
             fields={["place"]}
             placesDatabase={this.props.placesDatabase}

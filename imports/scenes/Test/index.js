@@ -2,6 +2,7 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Containers } from '/imports/api/containers/index';
+import { Redirect } from 'react-router-dom';
 
 import tools from '/imports/startup/tools/index';
 
@@ -10,7 +11,7 @@ import Input from '/imports/components/Input/index';
 
 class TestPage extends React.Component {
   render() {
-    return null;
+    return <Redirect to="/dashboard" />;
   }
 }
 
@@ -23,4 +24,3 @@ export default TestWrap = withTracker((props) => {
     ready
   }
 })(TestPage);
-

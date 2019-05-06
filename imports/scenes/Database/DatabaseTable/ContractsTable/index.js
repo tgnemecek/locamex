@@ -1,7 +1,7 @@
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Link } from 'react-router-dom';
-
+import RedirectUser from '/imports/components/RedirectUser/index';
 import { Clients } from '/imports/api/clients/index';
 import { Contracts } from '/imports/api/contracts/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
@@ -89,24 +89,38 @@ class ContractsTable extends React.Component {
 
         return tools.format((productsValue + servicesValue), "currency");
       }
+      const renderContractButton = () => {
+        if (tools.isUserAllowed("contract")) {
+          return (
+            <td className="table__small-column">
+              <Link
+                className="button--link database__table__button"
+                key={i}
+                to={"/contract/" + item._id}>✎</Link>
+            </td>
+          )
+        } else return null;
+      }
+      const renderShippingButton = () => {
+        if (tools.isUserAllowed("shipping")) {
+          return (
+            <td className="table__small-column">
+              <Link
+                className="button--link database__table__button"
+                key={i}
+                to={"/shipping/" + item._id}>⟳</Link>
+            </td>
+          )
+        } else return null;
+      }
       return (
         <tr key={i}>
           <td className="table__small-column">{item._id}</td>
           <td>{clientName()}</td>
           <td className="table__small-column">{translate(item.status)}</td>
           <td className="table__small-column">{totalValue()}</td>
-          <td className="table__small-column">
-            <Link
-              className="button--link database__table__button"
-              key={i}
-              to={"/contract/" + item._id}>✎</Link>
-          </td>
-          <td className="table__small-column">
-            <Link
-              className="button--link database__table__button"
-              key={i}
-              to={"/shipping/" + item._id}>⟳</Link>
-          </td>
+          {renderContractButton()}
+          {renderShippingButton()}
         </tr>
       )
     })
@@ -115,6 +129,7 @@ class ContractsTable extends React.Component {
     if (this.props.ready) {
       return (
         <ErrorBoundary>
+          <RedirectUser currentPage="contracts"/>
           <SearchBar
             database={this.props.fullDatabase}
             searchHere={['_id']}
@@ -149,6 +164,7 @@ class ContractsTable extends React.Component {
 export default ContractsTableWrapper = withTracker((props) => {
   Meteor.subscribe('clientsPub');
   Meteor.subscribe('contractsPub');
+  Meteor.subscribe('usersPub');
   var fullDatabase = Contracts.find().fetch();
   var clientsDatabase = Clients.find().fetch();
   var ready = !!fullDatabase.length;

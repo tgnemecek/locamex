@@ -1,6 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
 
+import { userTypes } from '/imports/startup/user-types/index';
+
 export default class tools {
 
   // Objects, Arrays
@@ -80,6 +82,14 @@ export default class tools {
         return array[i];
       }
     } return {};
+  }
+
+  static isUserAllowed = (page) => {
+    var user = Meteor.user();
+    if (user.type === 'administrator') return true;
+    var allowedPages = userTypes.find((userType) => userType.type === user.type);
+    if (!allowedPages) return false;
+    return allowedPages.pages.includes(page);
   }
 
   // Strings

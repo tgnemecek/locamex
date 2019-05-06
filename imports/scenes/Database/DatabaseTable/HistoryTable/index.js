@@ -2,6 +2,7 @@ import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { History } from '/imports/api/history/index';
 import moment from 'moment';
+import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
@@ -48,6 +49,7 @@ class HistoryTable extends React.Component {
     if (this.props.ready) {
       return (
         <ErrorBoundary>
+          <RedirectUser currentPage="history"/>
           <div className="database__scroll-div">
             <table className="table database__table">
               <thead>

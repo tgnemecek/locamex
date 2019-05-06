@@ -1,6 +1,8 @@
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import tools from '/imports/startup/tools/index';
+
+import RedirectUser from '/imports/components/RedirectUser/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import Loading from '/imports/components/Loading/index';
@@ -39,6 +41,7 @@ class UsersTable extends React.Component {
     if (this.props.ready) {
       return (
         <ErrorBoundary>
+          <RedirectUser currentPage="users"/>
           <div className="database__scroll-div">
             <table className="table database__table">
               <thead>

@@ -1,0 +1,48 @@
+@import './MenuItem/styles';
+
+.header__background {
+  background: $brand-primary;
+  width: 100%;
+}
+
+.header__logo {
+  margin-left: $space;
+  position: absolute;
+  height: 40px;
+}
+
+.header {
+  max-width: ($site-max-width /1.5);
+  margin: 0 auto;
+  padding: 0 $space;
+  h1 { color: white }
+}
+
+.header__menu {
+  display: inline-flex;
+  width: 85%;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.header__title {
+  display: inline-block;
+  margin: 0 !important;
+  width: 15%;
+  vertical-align: middle;
+}
+
+.header__logout {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: $space ($space /2);
+  text-decoration: none;
+  position: relative;
+  margin-left: $space;
+}
+
+.header__logout:hover {
+  background-color: darken($brand-primary, 5);
+}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Clients } from '/imports/api/clients/index';
-
+import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
@@ -65,6 +65,7 @@ class ClientsTable extends React.Component {
     if (this.props.ready) {
       return (
         <ErrorBoundary>
+          <RedirectUser currentPage="clients"/>
           <SearchBar
             database={this.props.fullDatabase}
             searchHere={['description', 'registry']}

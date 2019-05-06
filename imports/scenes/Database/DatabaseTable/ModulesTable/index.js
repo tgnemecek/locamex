@@ -1,6 +1,7 @@
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Modules } from '/imports/api/modules/index';
+import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 
@@ -79,6 +80,7 @@ class ModulesTable extends React.Component {
     if (this.props.ready) {
       return (
         <ErrorBoundary>
+          <RedirectUser currentPage="modules"/>
           <SearchBar
             database={this.props.fullDatabase}
             searchHere={['description']}

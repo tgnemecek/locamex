@@ -9,14 +9,11 @@ var userNameMaxLength = 40;
 
 if (Meteor.isServer) {
   Meteor.publish('usersPub', function () {
-    return Meteor.users.find({ visible: true }, {sort: { username: 1 }});
-    // if (this.userId) {
-    //   return Meteor.users.find({}, {
-    //     fields: { username: 1, visible: 1, pages: 1 }
-    //   });
-    // } else {
-    //   this.ready();
-    // }
+    return Meteor.users.find(
+      { visible: true },
+      { fields: { type: 1, emails: 1, firstName: 1, lastName: 1 } },
+      { sort: { username: 1 } }
+    );
   });
 
   Meteor.methods({
@@ -25,9 +22,8 @@ if (Meteor.isServer) {
       var lastName = state.lastName;
       var username = state.username;
       var password = state.password;
+      var type = state.type;
       var emails = [{address: state.emails, verified: false}];
-      var pages = state.pages;
-      if (!pages.includes('dashboard')) pages.unshift('dashboard');
 
       if (!username || !emails) {
         throw new Meteor.Error('required-fields-empty');
@@ -47,9 +43,9 @@ if (Meteor.isServer) {
         _id,
         firstName,
         lastName,
+        type,
         username,
         emails,
-        pages,
         visible: true
       };
       Meteor.users.update({ _id }, { $set: data });
@@ -71,9 +67,8 @@ if (Meteor.isServer) {
       var lastName = state.lastName;
       var username = state.username;
       var password = state.password;
+      var type = state.type;
       var emails = [{address: state.emails, verified: false}];
-      var pages = state.pages;
-      if (!pages.includes('dashboard')) pages.unshift('dashboard');
 
       if (!username || !emails) {
         throw new Meteor.Error('required-fields-empty');
@@ -90,19 +85,15 @@ if (Meteor.isServer) {
       const data = {
         firstName,
         lastName,
+        type,
         username,
         emails,
-        pages,
         visible: true
       }
       Meteor.users.update({ _id }, { $set: data });
       data._id = _id;
       Meteor.call('history.insert', data, 'users');
       password ? Accounts.setPassword(_id, password) : null;
-    },
-    'users.get.pages' (_id) {
-      var user = Meteor.users.findOne({_id});
-      return user.pages;
     }
   })
 }

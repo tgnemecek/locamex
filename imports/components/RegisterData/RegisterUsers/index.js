@@ -9,8 +9,6 @@ import Input from '/imports/components/Input/index';
 import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
-import PageSelection from './PageSelection/index';
-
 export default class RegisterUsers extends React.Component {
   constructor(props) {
     super(props);
@@ -25,9 +23,10 @@ export default class RegisterUsers extends React.Component {
       firstName: this.props.item.firstName || '',
       lastName: this.props.item.lastName || '',
       username: this.props.item.username || '',
+
+      type: this.props.item.type || 'administrator',
       emails,
       password: '',
-      pages: this.props.item.pages ? this.props.item.pages : [],
 
       errorMsg: '',
       errorKeys: [],
@@ -108,29 +107,19 @@ export default class RegisterUsers extends React.Component {
                 onChange={this.onChange}
               />
               <Input
-                title="Tipo de Usuário"
-                type="select"
-                name="type"
-                onChange={this.onChange}>
-                <option value="administrator">Administrador</option>
-                <option value="finances">Financeiro</option>
-                <option value="sales">Vendas</option>
-                <option value="logistics">Logística</option>
-              </Input>
+                title="Email:"
+                type="email"
+                name="emails"
+                style={this.state.errorKeys.includes("emails") ? {borderColor: "red"} : null}
+                value={this.state.emails}
+                onChange={this.onChange}
+              />
               <Input
                 title="Usuário:"
                 type="text"
                 name="username"
                 style={this.state.errorKeys.includes("username") ? {borderColor: "red"} : null}
                 value={this.state.username}
-                onChange={this.onChange}
-              />
-              <Input
-                title="Email:"
-                type="email"
-                name="emails"
-                style={this.state.errorKeys.includes("emails") ? {borderColor: "red"} : null}
-                value={this.state.emails}
                 onChange={this.onChange}
               />
               <Input
@@ -141,8 +130,17 @@ export default class RegisterUsers extends React.Component {
                 value={this.state.password}
                 onChange={this.onChange}
               />
+              <Input
+                title="Tipo de Usuário"
+                type="select"
+                name="type"
+                onChange={this.onChange}>
+                <option value="administrator">Administrador</option>
+                <option value="sales">Vendas</option>
+                <option value="finances">Financeiro</option>
+                <option value="maintenance">Manutenção</option>
+              </Input>
             </Block>
-            <PageSelection onChange={this.onChange} item={this.state}/>
             <ConfirmationWindow
               isOpen={this.state.confirmationWindow}
               message="Deseja mesmo excluir este item do banco de dados?"

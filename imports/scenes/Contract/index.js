@@ -9,7 +9,7 @@ import { Containers } from '/imports/api/containers/index';
 import { Accessories } from '/imports/api/accessories/index';
 import { Services } from '/imports/api/services/index';
 
-
+import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
 
 import Box from '/imports/components/Box/index';
@@ -228,6 +228,7 @@ class Contract extends React.Component {
     if (this.state.ready === 1) {
       return (
         <div className="page-content">
+          <RedirectUser currentPage="contract"/>
           <div className="contract">
             <Header
               databases={this.props.databases}

@@ -2,7 +2,7 @@ import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 
 import tools from '/imports/startup/tools/index';
-
+import RedirectUser from '/imports/components/RedirectUser/index';
 import { Contracts } from '/imports/api/contracts/index';
 import { Places } from '/imports/api/places/index';
 import { Containers } from '/imports/api/containers/index';
@@ -38,6 +38,7 @@ class Shipping extends React.Component {
     if (this.props.contract === null) return null; // Add NotFound Component Here!!!!!
     return (
       <div className="page-content">
+        <RedirectUser currentPage="shipping"/>
         <div className="contract">
           <Header {...this.props} />
           <h3 style={{textAlign: "center", margin: "20px"}}>Histórico de Remessas</h3>
