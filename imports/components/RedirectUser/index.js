@@ -13,7 +13,13 @@ export default function RedirectUser (props) {
     return null;
   }
 
+  function noUser() {
+    return <Redirect to="/" />;
+  }
+
   var user = Meteor.user();
+  if (!user) return noUser();
+
   if (user.type === 'administrator') return allowed();
 
   var allowedPages = userTypes.find((userType) => user.type === userType.type);
