@@ -1,7 +1,7 @@
 export const userTypes = [
   {
     type: "sales",
-    pages: []
+    pages: ["series", "accessories", "packs"]
   },
   {
     type: "finances",
@@ -9,6 +9,13 @@ export const userTypes = [
   },
   {
     type: "maintenance",
-    pages: ["series", "accessories", "modules", "packs", "contracts", "shipping"]
+    pages: [
+    "series", "series.edit",
+    "accessories", "accessories.edit", "accessories.stock",
+    "modules",
+    "packs",
+    "contracts",
+    "shipping"
+    ]
   }
 ]

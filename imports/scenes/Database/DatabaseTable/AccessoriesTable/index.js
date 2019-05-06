@@ -59,6 +59,16 @@ class AccessoriesTable extends React.Component {
       const toggleImageWindow = () => {
         this.props.toggleImageWindow(item);
       }
+      const renderEditButton = () => {
+        if (tools.isUserAllowed("accessories.edit")) {
+          return <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
+        } else return null;
+      }
+      const renderStockButton = () => {
+        if (tools.isUserAllowed("accessories.stock")) {
+          return <td className="table__small-column"><button className="database__table__button" onClick={toggleStockVisualizer}>⟳</button></td>
+        } else return null;
+      }
       return (
         <tr key={i}>
           <td>{item.description}</td>
@@ -67,8 +77,8 @@ class AccessoriesTable extends React.Component {
           <td className="table__small-column">{count(item, 'inactive')}</td>
           <td className="table__small-column">{count(item, 'available') + count(item, 'inactive')}</td>
           <td className="table__small-column">{tools.format(item.price, 'currency')}</td>
-          <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
-          <td className="table__small-column"><button className="database__table__button" onClick={toggleStockVisualizer}>⟳</button></td>
+          {renderEditButton()}
+          {renderStockButton()}
           <td className="table__small-column"><button className="database__table__button" onClick={toggleImageWindow}>🔍</button></td>
         </tr>
       )

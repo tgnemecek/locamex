@@ -64,13 +64,18 @@ class SeriesTable extends React.Component {
       const toggleImageWindow = () => {
         this.props.toggleImageWindow(item);
       }
+      const renderEditButton = () => {
+        if (tools.isUserAllowed("series.edit")) {
+          return <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
+        } else return null;
+      }
       return (
         <tr key={i}>
           <td className="table__small-column">{item._id}</td>
           <td className="table__small-column" style={{textAlign: 'left'}}>{translateModels(item.containerId)}</td>
           <td className="table__small-column">{translatePlaces(item.place)}</td>
           <td className="table__small-column--wrap">{item.observations}</td>
-          <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
+          {renderEditButton()}
           <td className="table__small-column"><button className="database__table__button" onClick={toggleImageWindow}>🔍</button></td>
         </tr>
       )
