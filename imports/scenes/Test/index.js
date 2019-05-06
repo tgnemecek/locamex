@@ -11,7 +11,7 @@ import Input from '/imports/components/Input/index';
 
 class TestPage extends React.Component {
   render() {
-    return <Redirect to="/dashboard" />;
+    return <p>AAAA</p>
   }
 }
 

@@ -67,7 +67,7 @@ export default class ReceiveAccessories extends React.Component {
   render() {
     if (this.props.accessories.length > 0) {
       return (
-        <Block columns={1} title="Componentes">
+        <Block columns={1} title="Acessórios">
           <table className="table">
             <thead>
               {this.renderHeader()}

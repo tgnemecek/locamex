@@ -23,15 +23,6 @@ export default class Send extends React.Component {
     this.setup();
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.contract && this.props.contract) {
-      if (prevProps.contract.containers !== this.props.contract.containers ||
-          prevProps.contract.accessories !== this.props.contract.accessories) {
-        this.setup();
-      }
-    }
-  }
-
   setup = () => {
     const setFixed = () => {
       var newArray = [];
@@ -110,7 +101,7 @@ export default class Send extends React.Component {
     Meteor.call('contracts.shipping.send', this.props.contract._id, state, (err, res) => {
       if (res) {
         this.props.toggleSend();
-      } if (err) alert("Erro de servidor!");
+      } if (err) alert(err.error);
     });
   }
 

@@ -23,9 +23,9 @@ if (Meteor.isServer && Meteor.isDevelopment) {
   // Series.remove({});
   //
   // series.forEach((item) => {
-  //   var newItem = item;
-  //   newItem._id = item.serial;
-  //   delete newItem.serial;
+  //   item._id = item.serial.toString();
+  //   delete item.serial;
+  //   console.log(item);
   //   Series.insert(item);
   // })
   //

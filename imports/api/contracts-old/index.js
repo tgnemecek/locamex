@@ -1,9 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import tools from '/imports/startup/tools/index';
 
-import { Series } from '/imports/api/series/index';
-import { Modules } from '/imports/api/modules/index';
-
 export const Contracts = new Mongo.Collection('contracts');
 
 if (Meteor.isServer) {
@@ -88,15 +85,82 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', data, 'contracts');
     },
     'contracts.activate'(state) {
-      var _id = state._id || Meteor.call('contracts.insert', state);
-      Contracts.update({ _id }, { $set: { status: 'active' } })
-      Meteor.call('history.insert', { _id }, 'contracts.activate');
-      return _id;
+      const activate = (_id) => {
+        const data = {
+          ...state,
+          _id: _id || state._id,
+          status: "active"
+        }
+        var modules = [];
+        for (var i = 0; i < data.containers.length; i++) {
+          if (data.containers[i].type === 'modular') {''
+            data.containers[i].modules.forEach((module) => {
+              var stillAvailable = Meteor.call('modules.check', module._id, module.renting);
+              if (!stillAvailable) {
+                throw new Meteor.Error ("module-not-available",
+                "O componente " + module._id + " não está mais disponível na quantidade desejada.");
+              }
+              module.renting = module.renting * data.containers[i].renting;
+            })
+            modules = modules.concat(data.containers[i].modules);
+          } else if (data.containers[i].type === 'fixed') {
+            var stillAvailable = Meteor.call('containers.check', data.containers[i]._id);
+            if (!stillAvailable) {
+              throw new Meteor.Error ("container-not-available",
+              "O container " + data.containers[i]._id + " não está mais disponível.");
+            }
+            Meteor.call('containers.status', data.containers[i]._id, "rented");
+          } else if (data.containers[i].type === 'pack') {
+            var stillAvailable = Meteor.call('packs.check', data.containers[i]._id);
+            if (!stillAvailable) {
+              throw new Meteor.Error ("container-not-available",
+              "O container " + data.containers[i]._id + " não está mais disponível.");
+            }
+            Meteor.call('packs.rent', data.containers[i]._id);
+          }
+        }
+        for (var i = 0; i < data.accessories.length; i++) {
+          var stillAvailable = Meteor.call('accessories.check', data.accessories[i]._id, data.accessories[i].renting);
+          if (!stillAvailable) {
+            throw new Meteor.Error ("accessory-not-available",
+            "O acessório " + data.accessories[i]._id + " não está mais disponível na quantidade desejada.");
+          }
+        }
+        Meteor.call('accessories.rent', data.accessories);
+        Meteor.call('modules.rent', modules);
+        Meteor.call('contracts.update', data);
+        Meteor.call('history.insert', data, 'contracts');
+        return data._id;
+      }
+      if (!state._id) {
+        var _id = Meteor.call('contracts.insert', state);
+        return activate(_id);
+      } else return activate();
     },
-    'contracts.finalize'(_id) {
-      Contracts.update({ _id }, { $set: { status: 'finalized' } })
-      Meteor.call('history.insert', { _id }, 'contracts.finalize');
-      return _id;
+    'contracts.finalize'(_id, containers, accessories) {
+      const data = {
+        _id,
+        status: "finalized"
+      }
+      var modules = [];
+      for (var i = 0; i < containers.length; i++) {
+        if (containers[i].type !== 'fixed') {
+          if (containers[i].selectedAssembled > 0) {
+            Meteor.call('packs.insert', containers[i]);
+          }
+          containers[i].modules.forEach((module) => {
+            module.renting = module.renting * (containers[i].renting - containers[i].selectedAssembled);
+          })
+          modules = modules.concat(containers[i].modules);
+        } else {
+          Meteor.call('containers.status', containers[i]._id, "available");
+        }
+      }
+      Meteor.call('accessories.receive', accessories);
+      Meteor.call('modules.receive', modules);
+      Meteor.call('contracts.update.one', _id, {status: "finalized"});
+      Meteor.call('history.insert', data, 'contracts');
+      return data._id;
     },
     'contracts.update.one'(_id, update) {
       const data = {
@@ -115,25 +179,6 @@ if (Meteor.isServer) {
         modules: state.modules,
         accessories: state.accessories
       };
-
-      // const executeRent = (isSimulation) => {
-      //   shipping.fixed.forEach((fixed) => {
-      //     var productFromDatabase = Series.findOne({ _id: fixed.seriesId });
-      //     if (!productFromDatabase) throw new Meteor.Error('product-not-found');
-      //     if (productFromDatabase.place === "rented") throw new Meteor.Error('product-already-rented');
-      //     if (!isSimulation) Meteor.call('series.update', {place: "rented"}, fixed.seriesId);
-      //   })
-      //   shipping.modules.forEach((module) => {
-      //     var productFromDatabase = Modules.findOne({ _id: module.productId });
-      //     if (!productFromDatabase) throw new Meteor.Error('product-not-found');
-      //     if (productFromDatabase.place === "rented") throw new Meteor.Error('product-already-rented'); // PAREI AQUI!!!!!!
-      //     if (!isSimulation) Meteor.call('series.update', {place: "rented"}, fixed.seriesId);
-      //   })
-      //   return true;
-      // }
-      //
-      // executeRent(true);
-      // executeRent(false);
 
       var history = {
         date: new Date(),

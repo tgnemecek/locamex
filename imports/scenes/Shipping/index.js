@@ -34,8 +34,6 @@ class Shipping extends React.Component {
   }
 
   render() {
-    if (this.props.contract === undefined) return null;
-    if (this.props.contract === null) return null; // Add NotFound Component Here!!!!!
     return (
       <div className="page-content">
         <RedirectUser currentPage="shipping"/>
@@ -67,6 +65,12 @@ class Shipping extends React.Component {
   }
 }
 
+function ShippingLoader(props) {
+  if (props.contract) {
+    return <Shipping {...props}/>
+  } else return null;
+}
+
 export default ShippingWrapper = withTracker((props) => {
   Meteor.subscribe('contractsPub');
   Meteor.subscribe('placesPub');
@@ -94,4 +98,4 @@ export default ShippingWrapper = withTracker((props) => {
 
   return { contract, databases }
 
-})(Shipping);
+})(ShippingLoader);

@@ -51,7 +51,11 @@ class RegisterSeries extends React.Component {
       this.setState({ errorKeys });
     } else {
       if (this.props.item._id) {
-        Meteor.call('series.update', this.state);
+        var changes = {
+          place: this.state.place,
+          observations: this.state.observations
+        }
+        Meteor.call('series.update', changes, this.state._id);
         this.props.toggleWindow();
       } else {
         Meteor.call('series.insert', this.state, (err, res) => {

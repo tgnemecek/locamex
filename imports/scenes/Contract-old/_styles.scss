@@ -1,0 +1,32 @@
+@import './Header/styles';
+@import './Items/styles';
+@import './Information/styles';
+
+.contract {
+  box-shadow: $box-shadow-spread;
+  background: $light-grey;
+}
+
+.contract__body {
+  padding: $space;
+}
+
+.contract__footer {
+  padding: $space;
+}
+
+.contract--disabled {
+  pointer-events: none;
+}
+
+.contract__total-value {
+  text-align: center;
+  font-weight: bold;
+}
+
+.contract__footer-text {
+  text-align: center;
+  font-style: italic;
+  color: $dark-grey;
+  margin-top: $space;
+}

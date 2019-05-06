@@ -27,7 +27,7 @@ class Contract extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      contract: this.props.contract || {
+      contract: {
         createdBy: Meteor.user() || {username: "Anônimo"},
         status: "inactive",
 
@@ -75,14 +75,35 @@ class Contract extends React.Component {
       toggleFinalizeWindow: false,
       errorMsg: '',
       errorKeys: [],
-      ready: false
+      ready: 0
+    }
+  }
+
+  componentDidMount() {
+    if (!this.props.match.params.contractId == 'new') {
+      this.setContract();
     }
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.databases !== this.props.databases) {
-      this.setUpdatedItemInformation();
-    }
+    this.setContract();
+    this.setUpdatedItemInformation();
+  }
+
+  // componentDidUpdate(prevProps) {
+  //   if (prevProps.match.params.contractId !== this.props.match.params.contractId) {
+  //     this.setContract();
+  //   }
+  //   if (prevProps.databases !== this.props.databases) {
+  //     this.setUpdatedItemInformation();
+  //   }
+  // }
+
+  setContract = () => {
+    var contract = this.props.databases.contractsDatabase.find((element) => {
+      return element._id === this.props.match.params.contractId;
+    })
+    if (contract) this.setState({ contract });
   }
 
   setUpdatedItemInformation = () => {
@@ -225,55 +246,53 @@ class Contract extends React.Component {
   }
 
   render () {
-    return (
-      <div className="page-content">
-        {/* <RedirectUser currentPage="contract"/> */}
-        <div className="contract">
-          <Header
-            databases={this.props.databases}
-            toggleCancelWindow={this.toggleCancelWindow}
-            contract={this.state.contract}
-            updateContract={this.updateContract}
-            errorKeys={this.state.errorKeys}
-            saveContract={this.saveEdits}
-          />
-          <div className={this.setDisabledClassName()}>
-            <Information
-              clientsDatabase={this.props.databases.clientsDatabase}
+    if (this.props.ready) {
+      return (
+        <div className="page-content">
+          <RedirectUser currentPage="contract"/>
+          <div className="contract">
+            <Header
+              databases={this.props.databases}
+              toggleCancelWindow={this.toggleCancelWindow}
               contract={this.state.contract}
               updateContract={this.updateContract}
               errorKeys={this.state.errorKeys}
+              saveContract={this.saveEdits}
             />
-            <Items
-              databases={this.props.databases}
+            <div className={this.setDisabledClassName()}>
+              <Information
+                clientsDatabase={this.props.databases.clientsDatabase}
+                contract={this.state.contract}
+                updateContract={this.updateContract}
+                errorKeys={this.state.errorKeys}
+              />
+              <Items
+                databases={this.props.databases}
+                contract={this.state.contract}
+                updateContract={this.updateContract}
+              />
+            </div>
+            <Footer
+              totalValue={this.totalValue()}
+              productsValue={this.totalValue('products')}
+              servicesValue={this.totalValue('services')}
+
+              setError={this.setError}
+              errorMsg={this.state.errorMsg}
+
               contract={this.state.contract}
-              updateContract={this.updateContract}
+
+              saveEdits={this.saveEdits}
+              activateContract={this.activateContract}
+              finalizeContract={this.finalizeContract}
             />
           </div>
-          <Footer
-            totalValue={this.totalValue()}
-            productsValue={this.totalValue('products')}
-            servicesValue={this.totalValue('services')}
-
-            setError={this.setError}
-            errorMsg={this.state.errorMsg}
-
-            contract={this.state.contract}
-
-            saveEdits={this.saveEdits}
-            activateContract={this.activateContract}
-            finalizeContract={this.finalizeContract}
-          />
         </div>
-      </div>
-    )
+      )
+    } else if (!this.props.ready) {
+      return <Loading/>
+    }
   }
-}
-
-function ContractLoader (props) {
-  if (props.match.params.contractId === 'new' || props.contract) {
-    return <Contract {...props} />
-  } else return null;
 }
 
 export default ContractWrapper = withTracker((props) => {
@@ -297,13 +316,13 @@ export default ContractWrapper = withTracker((props) => {
     servicesDatabase: Services.find().fetch()
 
   }
-  var contract = undefined;
-  if (props.match.params.contractId !== 'new') {
-    contract = Contracts.findOne({ _id: props.match.params.contractId });
+  var contract = {};
+  if (!this.props.match.params.contractId == 'new') {
+    contract = Containers.findOne({_id: this.props.match.params.contractId});
   }
   return { databases, contract }
 
-})(ContractLoader);
+})(Contract);
 
 
 

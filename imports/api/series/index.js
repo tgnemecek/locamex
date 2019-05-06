@@ -28,13 +28,9 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', data, 'series.insert');
       return true;
     },
-    'series.update' (state) {
-      var data = {
-        place: state.place,
-        observations: state.observations
-      }
-      Series.update({_id: state._id}, {$set: data} );
-      Meteor.call('history.insert', {...data, _id: state._id}, 'series.update');
+    'series.update' (changes, _id) {
+      Series.update({_id: _id}, {$set: changes} );
+      Meteor.call('history.insert', changes, 'series.update');
     },
     'series.hide' (_id) {
       var data = { visible: false };

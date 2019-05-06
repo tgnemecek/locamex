@@ -43,7 +43,7 @@ export default class Footer extends React.Component {
         <ConfirmationWindow
           isOpen={this.state.confirmationWindow}
           closeBox={this.toggleConfirmationWindow}
-          message="Deseja enviar os produtos?"
+          message="Deseja devolver os produtos?"
           leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
           rightButton={{text: "Sim", className: "button--danger", onClick: this.props.receiveProducts}}/>
       </div>

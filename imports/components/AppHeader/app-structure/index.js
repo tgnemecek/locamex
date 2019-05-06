@@ -78,7 +78,7 @@ export const appStructure = [
       },
       {
         name: "packs",
-        title: "Pacotes",
+        title: "Montados",
         link: "/database/packs"
       }
     ]
