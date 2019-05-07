@@ -3,11 +3,12 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { Series } from '/imports/api/series/index';
 import { Places } from '/imports/api/places/index';
 import { Containers } from '/imports/api/containers/index';
+
 import tools from '/imports/startup/tools/index';
+import Block from '/imports/components/Block/index';
+import Input from '/imports/components/Input/index';
 import RedirectUser from '/imports/components/RedirectUser/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
-import SearchBar from '/imports/components/SearchBar/index';
-import FilterBar from '/imports/components/FilterBar/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
@@ -15,22 +16,25 @@ class SeriesTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filteredDatabase: []
+      filterByContainerId: "",
+      filterByPlace: ""
     }
   }
 
-  componentDidMount() {
-    this.setState({ filteredDatabase: this.props.fullDatabase });
+  setFilter = (e) => {
+    this.setState({ [e.target.name]: e.target.value });
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps !== this.props) {
-      this.setState({ filteredDatabase: this.props.fullDatabase });
+  renderFilterOptions = (type) => {
+    if (type === "containerId") {
+      return this.props.containersDatabase.map((container, i) => {
+        return <option key={i} value={container._id}>{container.description}</option>
+      })
+    } else if (type === "place") {
+      return this.props.placesDatabase.map((place, i) => {
+        return <option key={i} value={place._id}>{place.description}</option>
+      })
     }
-  }
-
-  filterSearch = (filteredDatabase) => {
-    this.setState({ filteredDatabase });
   }
 
   renderHeader = () => {
@@ -49,7 +53,14 @@ class SeriesTable extends React.Component {
   }
 
   renderBody = () => {
-    return this.state.filteredDatabase.map((item, i) => {
+    var filterByContainerId = this.state.filterByContainerId;
+    var filterByPlace = this.state.filterByPlace;
+    var filteredDatabase = this.props.fullDatabase.filter((item) => {
+      if (filterByContainerId && item.containerId !== filterByContainerId) return false;
+      if (filterByPlace && item.place !== filterByPlace) return false;
+      return true;
+    })
+    return filteredDatabase.map((item, i) => {
       const translatePlaces = (place) => {
         if (!place) return "-";
         return tools.findUsingId(this.props.placesDatabase, place).description;
@@ -87,13 +98,24 @@ class SeriesTable extends React.Component {
       return (
         <ErrorBoundary>
           <RedirectUser currentPage="series"/>
-          <FilterBar
-            fields={["place"]}
-            placesDatabase={this.props.placesDatabase}
-            containersDatabase={this.props.containersDatabase}
-            database={this.props.fullDatabase}
-            filterSearch={this.filterSearch}
-          />
+          <Block columns={2}>
+            <Input
+              title="Modelo"
+              type="select"
+              name="filterByContainerId"
+              onChange={this.setFilter}>
+              <option value="" style={{fontStyle: "italic"}}>Mostrar Tudo</option>
+              {this.renderFilterOptions("containerId")}
+            </Input>
+            <Input
+              title="Pátio"
+              type="select"
+              name="filterByPlace"
+              onChange={this.setFilter}>
+              <option value="" style={{fontStyle: "italic"}}>Mostrar Tudo</option>
+              {this.renderFilterOptions("place")}
+            </Input>
+          </Block>
           <div className="database__scroll-div">
             <table className="table database__table">
               <thead>

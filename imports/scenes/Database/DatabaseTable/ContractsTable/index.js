@@ -166,6 +166,7 @@ export default ContractsTableWrapper = withTracker((props) => {
   Meteor.subscribe('contractsPub');
   Meteor.subscribe('usersPub');
   var fullDatabase = Contracts.find().fetch();
+  fullDatabase = tools.sortObjects(fullDatabase, '_id', {reverseOrder: true});
   var clientsDatabase = Clients.find().fetch();
   var ready = !!fullDatabase.length;
   return {

@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.8.5
+Version: 1.8.6
 
 ## Information:
 
@@ -8,6 +8,11 @@ Version: 1.8.5
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.8.6
+
+-  Replaced FilterBar with an easier method of filtering, using Input and Array.filter in render;
+-  Added another sort in Database/ContractsTable to ensure newly created contracts go on top;
 
 ### Version 1.8.5
 
