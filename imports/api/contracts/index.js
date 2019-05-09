@@ -3,6 +3,7 @@ import tools from '/imports/startup/tools/index';
 
 import { Series } from '/imports/api/series/index';
 import { Modules } from '/imports/api/modules/index';
+import { Accessories } from '/imports/api/accessories/index';
 
 export const Contracts = new Mongo.Collection('contracts');
 
@@ -116,24 +117,74 @@ if (Meteor.isServer) {
         accessories: state.accessories
       };
 
-      // const executeRent = (isSimulation) => {
-      //   shipping.fixed.forEach((fixed) => {
-      //     var productFromDatabase = Series.findOne({ _id: fixed.seriesId });
-      //     if (!productFromDatabase) throw new Meteor.Error('product-not-found');
-      //     if (productFromDatabase.place === "rented") throw new Meteor.Error('product-already-rented');
-      //     if (!isSimulation) Meteor.call('series.update', {place: "rented"}, fixed.seriesId);
-      //   })
-      //   shipping.modules.forEach((module) => {
-      //     var productFromDatabase = Modules.findOne({ _id: module.productId });
-      //     if (!productFromDatabase) throw new Meteor.Error('product-not-found');
-      //     if (productFromDatabase.place === "rented") throw new Meteor.Error('product-already-rented'); // PAREI AQUI!!!!!!
-      //     if (!isSimulation) Meteor.call('series.update', {place: "rented"}, fixed.seriesId);
-      //   })
-      //   return true;
-      // }
-      //
-      // executeRent(true);
-      // executeRent(false);
+      function updateModule(product, module) {
+        var place = tools.deepCopy(product.place);
+        var rented = product.rented;
+        module.selected.forEach((moduleSelected) => {
+          var exists = place.findIndex((item) => item._id === moduleSelected.place);
+          if (exists > -1) {
+            place[exists].available = place[exists].available - moduleSelected.selected;
+            if (place[exists].available < 0) throw new Meteor.Error('product-already-rented');
+            rented = rented + moduleSelected.selected;
+          } else throw new Meteor.Error('product-already-rented');
+        })
+        return {
+          ...product,
+          rented,
+          place
+        }
+      }
+
+      function updateAccessory(product, accessory) {
+        var variations = product.variations.map((variation, i) => {
+          var place = tools.deepCopy(variation.place);
+          var rented = variation.rented;
+          accessory.selected.forEach((accessorySelected) => {
+            if (i === accessorySelected.variationIndex) {
+              var exists = place.findIndex((item) => item._id === accessorySelected.place);
+              if (exists > -1) {
+                place[exists].available = place[exists].available - accessorySelected.selected;
+                if (place[exists].available < 0) throw new Meteor.Error('product-already-rented');
+                rented = rented + accessorySelected.selected;
+              } else throw new Meteor.Error('product-already-rented' + accessorySelected.place);
+            }
+          })
+          return {
+            ...variation,
+            rented,
+            place
+          }
+        })
+        return {
+          ...product,
+          variations
+        }
+      }
+
+      const executeRent = (isSimulation) => {
+        shipping.fixed.forEach((fixed) => {
+          var productFromDatabase = Series.findOne({ _id: fixed.seriesId });
+          if (!productFromDatabase) throw new Meteor.Error('product-not-found');
+          if (productFromDatabase.place === "rented") throw new Meteor.Error('product-already-rented');
+          if (!isSimulation) Meteor.call('series.update', {place: "rented"}, fixed.seriesId);
+        })
+        shipping.modules.forEach((module) => {
+          var productFromDatabase = Modules.findOne({ _id: module.productId });
+          if (!productFromDatabase) throw new Meteor.Error('product-not-found');
+          productFromDatabase = updateModule(productFromDatabase, module);
+          if (!isSimulation) Meteor.call('modules.shipping.send', productFromDatabase);
+        })
+        shipping.accessories.forEach((accessory) => {
+          var productFromDatabase = Accessories.findOne({ _id: accessory.productId });
+          if (!productFromDatabase) throw new Meteor.Error('product-not-found');
+          productFromDatabase = updateAccessory(productFromDatabase, accessory);
+          if (!isSimulation) Meteor.call('accessories.shipping.send', productFromDatabase);
+        })
+        return true;
+      }
+
+      executeRent(true);
+      executeRent(false);
 
       var history = {
         date: new Date(),

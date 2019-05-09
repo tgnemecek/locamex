@@ -73,7 +73,7 @@ class AccessoriesTable extends React.Component {
         <tr key={i}>
           <td>{item.description}</td>
           <td className="table__small-column">{count(item, 'available')}</td>
-          <td className="table__small-column">{'-'}</td>
+          <td className="table__small-column">{countRented(item)}</td>
           <td className="table__small-column">{count(item, 'inactive')}</td>
           <td className="table__small-column">{count(item, 'available') + count(item, 'inactive')}</td>
           <td className="table__small-column">{tools.format(item.price, 'currency')}</td>
@@ -129,6 +129,13 @@ function count(item, which) {
     }, 0);
   })
   return result;
+}
+
+function countRented(item) {
+  var result = 0;
+  return item.variations.reduce((acc, cur) => {
+    return acc + cur.rented;
+  }, 0);
 }
 
 export default AccessoriesTableWrapper = withTracker((props) => {

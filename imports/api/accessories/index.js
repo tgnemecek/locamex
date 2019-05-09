@@ -46,6 +46,12 @@ if (Meteor.isServer) {
       Accessories.update({ _id }, { $set: data });
       Meteor.call('history.insert', {...data, _id}, 'accessories.stock.variations.update');
     },
+    'accessories.shipping.send'(product) {
+      var _id = product._id;
+      delete product._id;
+      Accessories.update({ _id }, product);
+      Meteor.call('history.insert', {product, _id}, 'accessories.shipping.send');
+    },
     'accessories.hide'(_id) {
       const data = {
         visible: false

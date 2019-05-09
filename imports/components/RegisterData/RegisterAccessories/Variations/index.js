@@ -52,6 +52,7 @@ export default class Variations extends React.Component {
       variations.push({
         _id: tools.generateId(),
         observations: this.state.observations,
+        rented: 0,
         place: [],
         visible: true
       });

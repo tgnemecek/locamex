@@ -20,6 +20,7 @@ export default class RegisterAccessories extends React.Component {
       variations: this.props.item.variations || [{
         _id: tools.generateId(),
         observations: '',
+        rented: 0,
         place: [],
         visible: true
       }],
@@ -40,6 +41,7 @@ export default class RegisterAccessories extends React.Component {
       return {
         _id: tools.generateId(),
         observations: '',
+        rented: 0,
         place: [],
         visible: true
       }

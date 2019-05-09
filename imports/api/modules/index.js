@@ -39,6 +39,12 @@ if (Meteor.isServer) {
       Modules.update({ _id: item._id }, { $set: data });
       Meteor.call('history.insert', {...data, _id: item._id}, 'modules.stock.update');
     },
+    'modules.shipping.send'(product) {
+      var _id = product._id;
+      delete product._id;
+      Modules.update({ _id }, product);
+      Meteor.call('history.insert', {product, _id}, 'modules.shipping.send');
+    },
     'modules.hide'(_id) {
       const data = {
         visible: false
