@@ -22,11 +22,22 @@ export default class ShippingModules extends React.Component {
   }
 
   renderHeader = () => {
+    const addNew = () =>  {
+      var modules = tools.deepCopy(this.props.modules);
+      modules.push({
+        _id: tools.generateId(),
+        productId: '',
+        description: '',
+        selected: []
+      })
+      this.props.onChange({ modules });
+    }
     return (
       <tr>
         <th className="table__small-column">#</th>
         <th>Componente</th>
         <th className="table__small-column">Seleção</th>
+        <th className="table__small-column" onClick={addNew} className="database__table__button" style={{textAlign: "center"}}>+</th>
       </tr>
     )
   }
@@ -110,24 +121,6 @@ export default class ShippingModules extends React.Component {
     });
   }
 
-  renderAddNew = () => {
-    const onClick = () =>  {
-      var modules = tools.deepCopy(this.props.modules);
-      modules.push({
-        _id: tools.generateId(),
-        productId: '',
-        description: '',
-        selected: []
-      })
-      this.props.onChange({ modules });
-    }
-    return (
-      <tr onClick={onClick}>
-        <td colSpan="5" className="shipping__modules__add-new">Adicionar novo Componente</td>
-      </tr>
-    )
-  }
-
   onChange = (changedItem) => {
     var modules = tools.deepCopy(this.props.modules);
     var itemIndex = modules.findIndex((element) => {
@@ -149,7 +142,6 @@ export default class ShippingModules extends React.Component {
           </thead>
           <tbody>
             {this.renderBody()}
-            {this.renderAddNew()}
           </tbody>
         </table>
         {this.state.selectMultiple.isOpen ?

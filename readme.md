@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.8.6
+Version: 1.8.7
 
 ## Information:
 
@@ -8,6 +8,18 @@ Version: 1.8.6
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.8.7
+
+-  Fixed select box in RegisterSeries, excluding modular containers;
+-  Added title prop to ManageItem in Contract;
+-  Fixed Observations in Contract and Shipping;
+-  Users Database now display user type;
+-  Now you can only access Shipping if contract is active;
+-  Packs are temporarily disabled;
+-  AppHeader now displays correctly for Contract and Shipping;
+-  Fixed table layout in ShippingHistory;
+-  Minor changes in pdf/contract;
 
 ### Version 1.8.6
 
@@ -246,21 +258,13 @@ The workaround is to check if the edited user is the one logged in and forcing t
 ### Urgent Priority:
 
 - CONTRACT-PDF IS NOT READY FOR PERSON TYPE:
-    - Contract should get and SAVE the client info in some way (but update when the user changes the registry of it);
-    - Currently it is only saving the ID, which is good for updating, but after saving it is bad because the info will update later;
     - Fix when using client of person type with NO additional contacts (it is currently checking it wrong);
-    - Find a way that representatives are saved in some way (because if the user decides to print a contract later they have to remember who were the reps);
--  When place is deleted, run batch to remove all items from that place (to avoid miscounting of stock);
--  The user-redirect logic using app-structure must be changed. The Contract and Shipping pages redirect with Refresh;
 
 ### High Priority:
 
-- RegisterContainers:
-    - Add 'select all' toggle in modular header;
-    - Put SearchBar out of scroll div;
 - Add 'events' version of contract;
 - Contract is not verifying CEP on activation;
-- Create confirmation message for unmounting pack: "Desmontar pacote e retornar os componentes para o estoque?";
+- When something gets deleted, the system must check all databases to see if the item is rented, or the place has things in it;
 
 ### Medium Priority:
 
@@ -271,16 +275,11 @@ The workaround is to check if the edited user is the one logged in and forcing t
 
 - Add Settings scene for global changes (like the billing charges text);
 - Add colors to tables for the different statuses (contracts and products);
-- Add the possibility for accessories to be "qualitative" allowing only quantity of 1;
-- Make Documents save representatives in Contract;
 - Make the app responsive and mobile friendly;
 - Make the app compatible to other browsers;
-
-### Server security:
-
-- Contract:
-    - Block cancelling of contract if status !== from inactive;
-- Everything that writes in database (meteor methods) should check for userId, and if the user has access to that functionality;
+- RegisterContainers:
+    - Add 'select all' toggle in modular header;
+    - Put SearchBar out of scroll div;
 
 
 

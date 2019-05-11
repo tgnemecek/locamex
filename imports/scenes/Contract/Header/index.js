@@ -30,7 +30,8 @@ export default class Header extends React.Component {
   }
 
   checkIfHasContent = () => {
-    return this.props.contract.observations ? "content-inside" : "";
+    var hasContent = (this.props.contract.observations.internal || this.props.contract.observations.external);
+    return hasContent ? "content-inside" : "";
   }
 
   toggleWindow = (e) => {

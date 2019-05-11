@@ -1,6 +1,8 @@
-export default function () {
+import tools from '/imports/startup/tools/index';
+
+export default function (totalValueContract) {
   return [
-    {text: `§ 3º. Define-se como Valor Total do Contrato a soma do Valor Total da Locação com o Valor Total do Pacote de Serviços.`, style: 'p'},
+    {text: `§ 3º. Define-se como Valor Total do Contrato a importância de ${tools.format(totalValueContract, 'currency')}, composto pela soma do Valor Total da Locação com o Valor Total do Pacote de Serviços.`, style: 'p'},
     {text: `§ 4º. A menos que estritamente especificados, não estão inclusos neste contrato:`, style: 'p'},
     {ol: [
       `Emissão de ART (Anotação de Responsabilidade Técnica);`,

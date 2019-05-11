@@ -14,17 +14,17 @@ export default class ShippingHistory extends React.Component {
       var receiveDisabled = (history.length === 0 || history.length === 2);
 
       if (type === 'send') {
-        return <th><button onClick={this.props.toggleSend} className="database__table__button" disabled={sendDisabled}>⇱</button></th>
+        return <th className="table__small-column"><button onClick={this.props.toggleSend} className="database__table__button" disabled={sendDisabled}>⇱</button></th>
       } else if (type === 'receive') {
-        return <th><button onClick={this.props.toggleReceive} className="database__table__button" disabled={receiveDisabled}>⇲</button></th>
+        return <th className="table__small-column"><button onClick={this.props.toggleReceive} className="database__table__button" disabled={receiveDisabled}>⇲</button></th>
       }
     }
 
     return (
       <thead>
         <tr>
-          <th>#</th>
-          <th>Data do Registro</th>
+          <th className="table__small-column">#</th>
+          <th className="table__small-column">Data do Registro</th>
           <th>Tipo de Envio</th>
           {renderButtons('send')}
           {renderButtons('receive')}

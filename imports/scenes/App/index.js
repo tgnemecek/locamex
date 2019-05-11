@@ -29,6 +29,7 @@ export default class App extends React.Component {
     })
   }
 
+
   render() {
     if (this.state.ready === 1) {
       return (
@@ -44,7 +45,7 @@ export default class App extends React.Component {
             <Route exact path="/" render={() => <Redirect to="/dashboard"/>}/>
             <Route path="*" component={NotFound}/>
           </Switch>
-          <Route path="/" component={AppVersion}/>
+          <Route path="/" render={(props) => <Footer user={this.state.user}/>}/>
         </div>
       )
     } else if (this.state.ready === -1) {
@@ -55,6 +56,11 @@ export default class App extends React.Component {
   }
 }
 
-AppVersion = () => {
-  return <div className="app-version">versão {version}</div>
+function Footer(props) {
+  return (
+    <div className="app-footer">
+      <div className="app-user">Logado como {props.user.firstName}</div>
+      <div className="app-version">versão {version}</div>
+    </div>
+  )
 }

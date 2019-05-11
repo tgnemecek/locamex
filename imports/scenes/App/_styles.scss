@@ -1,7 +1,15 @@
-.app-version {
-  position: fixed;
+.app-footer {
   color: $dark-grey;
   font-style: italic;
+}
+
+.app-user {
+  position: fixed;
+  bottom: ($space /2);
+}
+
+.app-version {
+  position: fixed;
   bottom: ($space /2);
   right: ($space /2);
 }

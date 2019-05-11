@@ -63,7 +63,7 @@ class SeriesTable extends React.Component {
     return filteredDatabase.map((item, i) => {
       const translatePlaces = (place) => {
         if (!place) return "-";
-        return tools.findUsingId(this.props.placesDatabase, place).description;
+        return place === "rented" ? "Alugado" : tools.findUsingId(this.props.placesDatabase, place).description;
       }
       const translateModels = (model) => {
         if (!model) return "-";

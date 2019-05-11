@@ -41,10 +41,8 @@ class Contract extends React.Component {
         discount: 0,
 
         observations: {
-          annotations: '',
-          generalObs: '',
-          productsObs: '',
-          servicesObs: ''
+          internal: '',
+          external: ''
         },
 
         inss: 11,

@@ -8,24 +8,24 @@ import text6 from './text-6/index';
 import text7 from './text-7/index';
 import text8 from './text-8/index';
 
-export default function clauses(which, _id, proposal, version) {
+export default function clauses(which, props) {
   if (which === 0) {
-    return text0(_id, version);
+    return text0(props);
   } else if (which === 1) {
-    return text1(proposal);
+    return text1(props);
   } else if (which === 2) {
-    return text2();
+    return text2(props);
   } else if (which === 3) {
-    return text3();
+    return text3(props);
   } else if (which === 4) {
-    return text4();
+    return text4(props);
   } else if (which === 5) {
-    return text5();
+    return text5(props);
   } else if (which === 6) {
-    return text6();
+    return text6(props);
   } else if (which === 7) {
-    return text7();
+    return text7(props);
   } else if (which === 8) {
-    return text8();
+    return text8(props);
   }
 }

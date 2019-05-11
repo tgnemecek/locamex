@@ -18,7 +18,7 @@ export default function tableBillingProducts(billingProducts, totalValueProducts
   }
   return {table: {
     headerRows: 1,
-    widths: ['auto', 110, 'auto', '*', 50],
+    widths: ['auto', 110, 'auto', '*', 60],
     heights: styles.cellheight,
     body: renderBody()
   }, style: 'table'}

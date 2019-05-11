@@ -6,12 +6,14 @@ export const appStructure = [
       {
         name: "dashboard",
         title: "Início",
-        link: "/dashboard"
+        link: "/dashboard",
+        visible: true
       },
       {
         name: "test",
         title: "Teste",
-        link: "/test"
+        link: "/test",
+        visible: false
       }
     ]
   },
@@ -22,22 +24,26 @@ export const appStructure = [
       {
         name: "users",
         title: "Usuários",
-        link: "/database/users"
+        link: "/database/users",
+        visible: true
       },
       {
         name: "services",
         title: "Serviços",
-        link: "/database/services"
+        link: "/database/services",
+        visible: true
       },
       {
         name: "places",
         title: "Pátios",
-        link: "/database/places"
+        link: "/database/places",
+        visible: true
       },
       {
         name: "history",
         title: "Histórico",
-        link: "/database/history"
+        link: "/database/history",
+        visible: true
       }
     ]
   },
@@ -48,7 +54,8 @@ export const appStructure = [
       {
         name: "clients",
         title: "Clientes",
-        link: "/database/clients"
+        link: "/database/clients",
+        visible: true
       }
     ]
   },
@@ -59,27 +66,32 @@ export const appStructure = [
       {
         name: "models",
         title: "Modelos",
-        link: "/database/models"
+        link: "/database/models",
+        visible: true
       },
       {
         name: "series",
         title: "Séries",
-        link: "/database/series"
+        link: "/database/series",
+        visible: true
       },
       {
         name: "accessories",
         title: "Acessórios",
-        link: "/database/accessories"
+        link: "/database/accessories",
+        visible: true
       },
       {
         name: "modules",
         title: "Componentes",
-        link: "/database/modules"
+        link: "/database/modules",
+        visible: true
       },
       {
         name: "packs",
         title: "Montados",
-        link: "/database/packs"
+        link: "/database/packs",
+        visible: true
       }
     ]
   },
@@ -90,9 +102,21 @@ export const appStructure = [
       {
         name: "contracts",
         title: "Contratos",
-        link: "/database/contracts"
+        link: "/database/contracts",
+        visible: true
+      },
+      {
+        name: "contract",
+        title: "Contrato",
+        link: "/contract/",
+        visible: false
+      },
+      {
+        name: "shipping",
+        title: "Remessa",
+        link: "/shipping/",
+        visible: false
       }
     ]
   }
-
 ]

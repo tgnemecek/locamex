@@ -28,7 +28,8 @@ export default class Header extends React.Component {
   }
 
   checkIfHasContent = () => {
-    return this.props.contract.observations ? "content-inside" : "";
+    var hasContent = (this.props.contract.observations.internal || this.props.contract.observations.external);
+    return hasContent ? {} : {display: "none"};
   }
 
   toggleWindow = (e) => {
@@ -56,13 +57,13 @@ export default class Header extends React.Component {
             <p>Contrato criado por: <strong>{this.props.contract.createdBy.username}</strong></p>
           </div>
           <div className="contract__top-buttons">
-            <button value={'observations'} onClick={this.toggleWindow} className={this.checkIfHasContent()}>⚠</button>
+            <button value={'observations'} onClick={this.toggleWindow} style={this.checkIfHasContent()}>⚠</button>
             {this.state.windowOpen == 'observations' ? <Observations
                                               contract={this.props.contract}
                                               toggleWindow={this.toggleWindow}
                                               updateContract={this.props.updateContract}
                                                   /> : null}
-            <button value={'documents'} onClick={this.toggleWindow}>⎙</button>
+            {/* <button value={'documents'} onClick={this.toggleWindow}>⎙</button> */}
             {this.state.windowOpen == 'documents' ? <Documents
                                               contract={this.props.contract}
                                               toggleWindow={this.toggleWindow}

@@ -8,9 +8,8 @@ export default class Observations extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      annotations: this.props.contract.observations.annotations || '',
-      productsObs: this.props.contract.observations.productsObs || '',
-      servicesObs: this.props.contract.observations.servicesObs || ''
+      internal: this.props.contract.observations.internal || '',
+      external: this.props.contract.observations.external || ''
     }
   }
 
@@ -21,12 +20,7 @@ export default class Observations extends React.Component {
   }
 
   saveEdits = () => {
-    var observations = {
-      generalObs: this.state.generalObs,
-      productsObs: this.state.productsObs,
-      servicesObs: this.state.servicesObs,
-    }
-    this.props.updateContract({ observations });
+    this.props.updateContract({ observations: this.state });
     this.props.toggleWindow();
   }
 
@@ -39,28 +33,16 @@ export default class Observations extends React.Component {
             <div className={this.props.contract.status !== 'inactive' ? "contract--disabled" : null}>
               <div className="observations__body">
                 <Input
-                  title=""
-                  name=""
+                  title="Controle Interno:"
+                  name="internal"
                   type="textarea"
-                  value={this.state.observations}
+                  value={this.state.internal}
                   onChange={this.onChange}/>
                 <Input
-                  title=""
-                  name=""
+                  title="Expresso em Contrato:"
+                  name="external"
                   type="textarea"
-                  value={this.state.observations}
-                  onChange={this.onChange}/>
-                <Input
-                  title=""
-                  name=""
-                  type="textarea"
-                  value={this.state.observations}
-                  onChange={this.onChange}/>
-                <Input
-                  title=""
-                  name=""
-                  type="textarea"
-                  value={this.state.observations}
+                  value={this.state.external}
                   onChange={this.onChange}/>
               </div>
               {this.props.contract.status == 'inactive' ?

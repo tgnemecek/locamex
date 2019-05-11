@@ -17,12 +17,31 @@ class UsersTable extends React.Component {
       <tr>
         <th>Nome</th>
         <th className="table__small-column">Login</th>
+        <th className="table__small-column">Tipo de Usuário</th>
         <th className="table__small-column">Email</th>
         <th className="table__small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
       </tr>
     )
   }
   renderBody = () => {
+    function translate(type) {
+      switch (type) {
+        case 'administrator':
+          return "Administrador";
+          break;
+        case "sales":
+          return "Vendas";
+          break;
+        case "finances":
+          return "Financeiro";
+          break;
+        case "maintenance":
+          return "Manutenção";
+          break;
+        default:
+          return "-"
+      }
+    }
     return this.props.fullDatabase.map((item, i) => {
       const toggleEditWindow = () => {
         this.props.toggleEditWindow(item);
@@ -31,6 +50,7 @@ class UsersTable extends React.Component {
         <tr key={i}>
           <td>{item.firstName + " " + item.lastName}</td>
           <td>{item.username}</td>
+          <td className="table__small-column">{translate(item.type)}</td>
           <td className="table__small-column">{item.emails[0].address}</td>
           <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
         </tr>

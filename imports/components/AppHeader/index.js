@@ -28,7 +28,7 @@ export default class AppHeader extends React.Component {
     var pathname = this.props.location.pathname;
     for (var i = 0; i < appStructure.length; i++) {
       for (var j = 0; j < appStructure[i].pages.length; j++) {
-        if (pathname == appStructure[i].pages[j].link) {
+        if (pathname.includes(appStructure[i].pages[j].link)) {
           this.setState({ currentPage: appStructure[i].pages[j] });
           return;
         }
@@ -38,18 +38,25 @@ export default class AppHeader extends React.Component {
 
   renderMenuItems = () => {
     var filteredPages = [];
+    var currentUserType = this.props.user.type;
     if (!this.props.user.type) return null;
-    if (this.props.user.type !== 'administrator') {
-      var allowedPages = userTypes.find((page) => page.type === this.props.user.type).pages;
-      appStructure.forEach((group, i) => {
-        var tempObject = { ...group, pages: [] };
-        group.pages.forEach((page) => {
-          if (page.name === "dashboard") tempObject.pages.push(page);
-          if (allowedPages.includes(page.name)) tempObject.pages.push(page);
-        })
-        filteredPages.push(tempObject);
+    var allowedPages = [];
+    if (currentUserType !== "administrator") allowedPages = userTypes.find((types) => types.type === currentUserType).pages;
+    appStructure.forEach((group, i) => {
+      var tempObject = { ...group, pages: [] };
+      group.pages.forEach((page) => {
+        if (page.visible) {
+          if (currentUserType === 'administrator') {
+            tempObject.pages.push(page);
+          } else if (page.name === "dashboard") {
+            tempObject.pages.push(page);
+          } else if (allowedPages.includes(page.name)) {
+            tempObject.pages.push(page);
+          }
+        }
       })
-    } else filteredPages = appStructure;
+      filteredPages.push(tempObject);
+    })
 
     return filteredPages.map((group, i) => {
       return (

@@ -25,7 +25,8 @@ class RegisterSeries extends React.Component {
   }
 
   renderModels = () => {
-    return this.props.containersDatabase.map((model, i) => {
+    var filtered = this.props.containersDatabase.filter((model) => model.type === "fixed");
+    return filtered.map((model, i) => {
       return <option key={i} value={model._id}>{model.description}</option>
     })
   }

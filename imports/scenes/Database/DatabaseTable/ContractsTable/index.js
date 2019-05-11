@@ -102,7 +102,7 @@ class ContractsTable extends React.Component {
         } else return null;
       }
       const renderShippingButton = () => {
-        if (tools.isUserAllowed("shipping")) {
+        if (tools.isUserAllowed("shipping") && item.status === "active") {
           return (
             <td className="table__small-column">
               <Link

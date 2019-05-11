@@ -18,7 +18,7 @@ export default function tableBillingServices(billingServices, totalValueServices
   }
   return {table: {
     headerRows: 1,
-    widths: ['auto', 'auto', '*', 50, 50],
+    widths: ['auto', 'auto', '*', 50, 60],
     heights: styles.cellheight,
     body: renderBody()
   }, style: 'table'}

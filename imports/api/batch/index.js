@@ -11,6 +11,14 @@ import { Services } from '/imports/api/services/index';
 import { Series } from '/imports/api/series/index';
 
 if (Meteor.isServer && Meteor.isDevelopment) {
+  // var a = Accessories.find().fetch();
+  //
+  // a.forEach((item) => {
+  //   item.variations.forEach((variation) => {
+  //     variation.rented = 0;
+  //   })
+  //   Accessories.update({_id: item._id}, {$set: {variations: item.variations}})
+  // })
   // var services = Services.find().fetch();
   // Services.remove({});
   //
