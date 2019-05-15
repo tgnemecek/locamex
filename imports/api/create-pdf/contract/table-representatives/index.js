@@ -1,8 +1,9 @@
 import tools from '/imports/startup/tools/index';
 
-export default function tableRepresentatives(representatives, styles) {
+export default function tableRepresentatives(contract, styles) {
+  if (contract.client.type === "person") return {};
   const renderBody = () => {
-    return representatives.map((rep) => {
+    return contract.representatives.map((rep) => {
       return [ 'Nome', rep.name, 'CPF', tools.format(rep.cpf, 'cpf'), 'RG', tools.format(rep.rg, 'rg') ]
     });
   }

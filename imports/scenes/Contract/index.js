@@ -62,7 +62,8 @@ class Contract extends React.Component {
           creationDate: new Date(),
           startDate: new Date(),
           billingDate: new Date(),
-          duration: 1
+          duration: 1,
+          timeUnit: "months"
         },
         containers: [],
         accessories: [],
@@ -195,7 +196,7 @@ class Contract extends React.Component {
   }
 
   totalValue = (option) => {
-    var duration = this.state.contract.dates.duration;
+    var duration = this.state.contract.dates.timeUnit === "months" ? this.state.contract.dates.duration : 1;
     var discount = this.state.contract.discount;
 
     var containers = this.state.contract.containers || [];

@@ -69,7 +69,7 @@ class ContractsTable extends React.Component {
         }
       }
       const totalValue = () => {
-        var duration = item.dates.duration;
+        var duration = item.dates.timeUnit === "months" ? item.dates.duration : 1;
         var discount = item.discount;
 
         var containers = item.containers || [];

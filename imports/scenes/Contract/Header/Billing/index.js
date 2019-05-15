@@ -30,7 +30,7 @@ export default class Billing extends React.Component {
       errorKeys: [],
       errorMsg: ''
     }
-    var duration = this.props.contract.dates.duration || 1;
+    var duration = this.props.contract.dates.timeUnit === "months" ? this.props.contract.dates.duration : 1;
     var containers = this.props.contract.containers;
     var accessories = this.props.contract.accessories || [];
     var services = this.props.contract.services || [];

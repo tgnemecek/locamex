@@ -9,7 +9,7 @@ import styles from './styles/index';
 
 import text from './text/index';
 import observations from './observations/index';
-import tableInformationCompany from './table-information-company/index';
+import tableInformation from './table-information/index';
 import tableRepresentatives from './table-representatives/index';
 import tableProducts from './table-products/index';
 import tableServices from './table-services/index';
@@ -49,61 +49,6 @@ export default function createPdf(contract) {
   }, 0) : 0;
   const totalValueContract = totalValueProducts + totalValueServices;
 
-
-  const personCompanyContents = () => {
-    if (contract.client.type === "company") {
-      return [
-        text(0, {_id: contract._id, version: contract.version}),
-        tableInformationCompany(contract.client, contract.negociator, styles),
-        tableRepresentatives(contract.representatives, styles),
-        text(1, contract.proposal),
-        tableProducts(products, contract.dates, contract.discount, totalValueProrogation, totalValueProducts, resultFormat, styles),
-        text(2),
-        tableServices(services, totalValueServices, resultFormat, styles),
-        observations(contract.observations.external),
-        text(3, totalValueContract),
-        tableDuration(contract.dates, styles),
-        text(4),
-        tableBillingProducts(contract.billingProducts, totalValueProducts, resultFormat, styles),
-        text(5),
-        tableBillingServices(contract.billingServices, totalValueServices, contract.inss, contract.iss, resultFormat, styles),
-        text(6),
-        tableAddress(contract.deliveryAddress, styles),
-        text(7),
-        tableRestitution(products, resultFormat, styles),
-        text(8),
-        date(),
-        signatures(contract.representatives, contract.client),
-        tableWitnesses(styles)
-      ]
-    } else if (contract.client.type === "person") { // EDIT HERE!!!!!!!! ITS CURRENTLY THE SAME AS COMPANY!!!!!
-      return [
-        text(0, {_id: contract._id, version: contract.version}),
-        tableInformationCompany(contract.client, contract.negociator, styles),
-        tableRepresentatives(contract.representatives, styles),
-        text(1, contract.proposal),
-        tableProducts(products, contract.dates, contract.discount, totalValueProrogation, totalValueProducts, resultFormat, styles),
-        text(2),
-        tableServices(services, totalValueServices, resultFormat, styles),
-        observations(contract.observations.external),
-        text(3, totalValueContract),
-        tableDuration(contract.dates, styles),
-        text(4),
-        tableBillingProducts(contract.billingProducts, totalValueProducts, resultFormat, styles),
-        text(5),
-        tableBillingServices(contract.billingServices, totalValueServices, contract.inss, contract.iss, resultFormat, styles),
-        text(6),
-        tableAddress(contract.deliveryAddress, styles),
-        text(7),
-        tableRestitution(products, resultFormat, styles),
-        text(8),
-        date(),
-        signatures(contract.representatives, contract.client),
-        tableWitnesses(styles)
-      ]
-    }
-  }
-
   var docDefinition = {
     pageSize: 'A4',
     pageMargins: [ 40, 30, 40, 45 ], //[left, top, right, bottom]
@@ -112,7 +57,30 @@ export default function createPdf(contract) {
       author: `Locamex`,
       subject: `Contrato de Locação de Bens Móveis e Prestação de Serviços`
     },
-    content: personCompanyContents(),
+    content: [
+      text(0, {_id: contract._id, version: contract.version}),
+      tableInformation(contract.client, contract.negociator, styles),
+      tableRepresentatives(contract, styles),
+      text(1, contract),
+      tableProducts(products, contract.dates, contract.discount, totalValueProrogation, totalValueProducts, resultFormat, styles),
+      text(2),
+      tableServices(services, totalValueServices, resultFormat, styles),
+      observations(contract.observations.external),
+      text(3, totalValueContract),
+      tableDuration(contract.dates, styles),
+      text(4),
+      tableBillingProducts(contract.billingProducts, totalValueProducts, resultFormat, styles),
+      text(5),
+      tableBillingServices(contract.billingServices, totalValueServices, contract.inss, contract.iss, resultFormat, styles),
+      text(6),
+      tableAddress(contract.deliveryAddress, styles),
+      text(7),
+      tableRestitution(products, resultFormat, styles),
+      text(8),
+      date(),
+      signatures(contract),
+      tableWitnesses(styles)
+    ],
     pageBreakBefore: function (currentNode, followingNodesOnPage, nodesOnNextPage, previousNodesOnPage) {
       if (currentNode.style == "table" || currentNode.style == "keep") {
         if (currentNode.pageNumbers.length > 1) return true;
