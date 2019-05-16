@@ -7,12 +7,9 @@ export default function tableRepresentatives(props) {
       return [ 'Nome', rep.name, 'CPF', tools.format(rep.cpf, 'cpf'), 'RG', tools.format(rep.rg, 'rg') ]
     });
   }
-  return [
-    {text: `Representada neste ato por:`, style: 'p'},
-    {table: {
-      widths: ['auto', '*', 'auto', 'auto', 'auto', 'auto'],
-      heights: props.styles.cellheight,
-      body: renderBody(),
-    }, style: 'table'}
-  ]
+  return props.generateTable({
+    body: renderBody(),
+    widths: ['auto', '*', 'auto', 'auto', 'auto', 'auto'],
+    styles: props.styles
+  })
 }

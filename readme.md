@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.8.7
+Version: 1.8.8
 
 ## Information:
 
@@ -8,6 +8,14 @@ Version: 1.8.7
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.8.8
+
+-  Create-pdf:
+    -  Now prints for person type;
+    -  Now reads that the contract's timeUnit is in days and displays an 'events' version;
+    -  Created page breaks for signatures/witnesses;
+-  Contract now has timeUnit variable, inside dates;
 
 ### Version 1.8.7
 

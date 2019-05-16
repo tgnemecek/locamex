@@ -12,8 +12,7 @@ export default class Dashboard extends React.Component {
             <h2>Olá {this.props.user.firstName}.</h2>
             <h2>Avisos:</h2>
             <ul>
-              <li>Acessórios agora permitem cadastro de diferentes modelos.</li>
-              <li>Favor colocar os 'Tipos' dentro de cada acessório, e não fora.</li>
+              <li>Contratos para Pessoa Física e Eventos agora disponíveis.</li>
             </ul>
           </div>
         </div>

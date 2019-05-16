@@ -1,4 +1,5 @@
-export default function () {
+export default function (props) {
+  var monthlyValue = props.dates.timeUnit === "months" ? `Valor Mensal de Locação` : `Valor da Locação`;
   return [
     {text: `CLÁUSULA NOVE - DA DEVOLUÇÃO DO OBJETO DE LOCAÇÃO`, style: 'h2'},
     {text: `A LOCATÁRIA deverá comunicar, por e-mail, à LOCADORA o pedido de devolução do Objeto da Locação com antecedência mínima de 15 (quinze) dias da data de devolução pretendida e efetuar a quitação de quaisquer dívidas e pagamentos em aberto oriundos deste contrato.`, style: 'p'},
@@ -17,11 +18,11 @@ export default function () {
       `Realizar pagamento à LOCADORA pelos Serviços de Reparo dos itens, de acordo com a tabela de preços, fornecida pela LOCADORA, vigente no dia da devolução;`,
       `Executar os Serviços de Reparo por sua conta ou mediante a contratação de terceiros.`
     ], style: 'ol', type: 'upper-roman'},
-    {text: `§ 5º. Esgotado o prazo de 10 (dez) dias, a LOCADORA fica autorizada a emitir cobrança relativa aos Serviços de Reparo dos itens, assim como a cobrança extra correspondente ao Valor Mensal (Cláusula 1ª, § 1º) dos itens danificados em questão, oriunda dos custos gerados pela inatividade dos bens móveis.`, style: 'p'},
+    {text: `§ 5º. Esgotado o prazo de 10 (dez) dias, a LOCADORA fica autorizada a emitir cobrança relativa aos Serviços de Reparo dos itens, assim como a cobrança extra correspondente ao ${monthlyValue} (Cláusula 1ª, § 1º) dos itens danificados em questão, oriunda dos custos gerados pela inatividade dos bens móveis.`, style: 'p'},
     {text: `CLÁUSULA DEZ - DA VEDAÇÃO À SUBLOCAÇÃO, À CESSÃO DE LOCAÇÃO E AO EMPRÉSTIMO A TERCEIROS`, style: 'h2'},
     {text: `Fica vedada à LOCATÁRIA a sublocação, cessão, ou empréstimo do Objeto da Locação, quer no todo ou em parte ou sob qualquer título, sem a expressa autorização da LOCADORA, sob pena de rescisão do presente contrato.`, style: 'p'},
     {text: `CLÁUSULA ONZE - DA RECISÃO`, style: 'h2'},
-    {text: `Em caso de rescisão antecipada do contrato antes do seu termo final, independente de qual parte deu causa à rescisão, a LOCATÁRIA se obriga a quitar quaisquer dívidas oriundas deste contrato, incluindo mas não se limitando ao Valor Total do Contrato, Valores de Indenização (se cabíveis), Valores dos Serviços de Reparo (se cabíveis) e dos Valores Mensais de Locação, sem nenhuma forma de proporcionalidade ou desconto, dentro de um prazo de 30 (trinta) dias a contar a partir da rescisão.`, style: 'p'},
+    {text: `Em caso de rescisão antecipada do contrato antes do seu termo final, independente de qual parte deu causa à rescisão, a LOCATÁRIA se obriga a quitar quaisquer dívidas oriundas deste contrato, incluindo mas não se limitando ao Valor Total do Contrato, Valores de Indenização (se cabíveis), Valores dos Serviços de Reparo (se cabíveis) e do ${monthlyValue}, sem nenhuma forma de proporcionalidade ou desconto, dentro de um prazo de 30 (trinta) dias a contar a partir da rescisão.`, style: 'p'},
     {text: `Parágrafo Único: Em cumprimento ao princípio da boa-fé, as partes se comprometem a informar uma à outra qualquer fato que possa porventura intervir na relação jurídica travada neste contrato.`, style: 'p'},
     {text: `CLÁUSULA DOZE - DO FORO`, style: 'h2'},
     {text: `Para reger as demandas oriundas do presente instrumento, as partes elegem como foro competente o da Comarca da Capital de São Paulo, renunciando a qualquer outro, por mais privilegiado que seja ou que possa vir a ser.`, style: 'p'},

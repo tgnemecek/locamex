@@ -32,6 +32,7 @@ import date from './25-date/index';
 import signatures from './26-signatures/index';
 import tableWitnesses from './27-table-witnesses/index';
 
+import generateTable from './generate-table/index';
 import styles from './styles/index';
 
 
@@ -77,68 +78,9 @@ export default function createPdf(contract) {
     totalValueRestitution,
     totalValueContract,
     resultFormat,
+    generateTable,
     styles
   }
-
-  var regularContract = [
-    header(data),
-    definitions(data),
-    tableInformation(data),
-    declaration(data),
-    tableRepresentatives(data),
-    clause1p1(),
-    tableProducts(data),
-    clause1p2(),
-    tableServices(data),
-    observations(data),
-    clause1p3p4(data),
-    clause2(),
-    tableDuration(data),
-    clause2p1p2(),
-    clause3p1(),
-    tableBillingProducts(data),
-    clause3p2p3p4p5(),
-    tableBillingServices(data),
-    clause3p6p7p8p9(),
-    clause4(),
-    tableAddress(data),
-    clause4p1toClause8(),
-    tableRestitution(data),
-    clause9toClause12(),
-    date(),
-    signatures(data),
-    tableWitnesses(data)
-  ]
-
-  var eventsContract = [ // MUDAR AQUI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    header(data),
-    definitions(data),
-    tableInformation(data),
-    declaration(data),
-    tableRepresentatives(data),
-    clause1p1(),
-    tableProducts(data),
-    clause1p2(),
-    tableServices(data),
-    observations(data),
-    clause1p3p4(data),
-    clause2(),
-    tableDuration(data),
-    clause2p1p2(),
-    clause3p1(),
-    tableBillingProducts(data),
-    clause3p2p3p4p5(),
-    tableBillingServices(data),
-    clause3p6p7p8p9(),
-    clause4(),
-    tableAddress(data),
-    clause4p1toClause8(),
-    tableRestitution(data),
-    clause9toClause12(),
-    date(),
-    signatures(data),
-    tableWitnesses(data)
-  ]
 
   var docDefinition = {
     pageSize: 'A4',
@@ -148,11 +90,40 @@ export default function createPdf(contract) {
       author: `Locamex`,
       subject: `Contrato de Locação de Bens Móveis e Prestação de Serviços`
     },
-    content: contract.dates.timeUnit === "months" ? regularContract : eventsContract,
+    content: [
+      header(data),
+      definitions(data),
+      tableInformation(data),
+      declaration(data),
+      tableRepresentatives(data),
+      clause1p1(data),
+      tableProducts(data),
+      clause1p2(),
+      tableServices(data),
+      observations(data),
+      clause1p3p4(data),
+      clause2(),
+      tableDuration(data),
+      clause2p1p2(data),
+      clause3p1(),
+      tableBillingProducts(data),
+      clause3p2p3p4p5(data),
+      tableBillingServices(data),
+      clause3p6p7p8p9(),
+      clause4(),
+      tableAddress(data),
+      clause4p1toClause8(),
+      tableRestitution(data),
+      clause9toClause12(data),
+      date(),
+      signatures(data),
+      tableWitnesses(data)
+    ],
     pageBreakBefore: function (currentNode, followingNodesOnPage, nodesOnNextPage, previousNodesOnPage) {
-      if (currentNode.style == "table" || currentNode.style == "keep") {
-        if (currentNode.pageNumbers.length > 1) return true;
-      } else return false;
+      if (currentNode.headlineLevel) {
+        var limit = currentNode.headlineLevel;
+        return (currentNode.startPosition.top > limit);
+      }
     },
     footer: (currentPage, pageCount) => {
       return {text: [

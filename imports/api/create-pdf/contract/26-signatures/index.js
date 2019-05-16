@@ -19,17 +19,17 @@ function companySignatures(props) {
         {text: props.client.officialName, style: 'sig'},
         {text: `LOCATÁRIA`, style: 'sig', margin: [0, 0, 0, 30]}]
     })
-    return {columns: array, style: 'sigDiv'}
+    return {columns: array, style: 'sigDiv', headlineLevel: 700}
   }
   if (props.representatives.length === 1) {
-    debugger;
     return {columns:
       [
         locamexSignature,
         clientSignature()
-      ]
+      ],
+      headlineLevel: 700
     }
-  } else return locamexSignature.concat(clientSignature());
+  } else return {stack: locamexSignature.concat(clientSignature()), headlineLevel: 600}
 }
 
 function personSignatures(props) {
@@ -44,6 +44,7 @@ function personSignatures(props) {
     [
       locamexSignature,
       clientSignature()
-    ]
+    ],
+    headlineLevel: 700
   }
 }
