@@ -11,9 +11,9 @@ export default function tableProducts(props) {
   }
 
   const body = () => {
-    const monthlyPrice = () => {
+    const monthlyPrice = (price) => {
       if (props.dates.timeUnit === "months") {
-        return {text: tools.format((product.price * product.renting), 'currency'), alignment: 'center'}
+        return {text: tools.format(price, 'currency'), alignment: 'center'}
       } else return null;
     }
     if (props.products) {
@@ -23,7 +23,7 @@ export default function tableProducts(props) {
           product.description,
           tools.format(product.price, 'currency'),
           {text: product.renting.toString(), alignment: 'center'},
-          monthlyPrice(),
+          monthlyPrice(product.price * product.renting),
           {text: props.dates.duration.toString(), alignment: 'center'},
           {text: tools.format(product.finalPrice, 'currency'), alignment: 'right'}
         ];
