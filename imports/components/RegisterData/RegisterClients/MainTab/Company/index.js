@@ -14,7 +14,7 @@ export default function Company (props) {
         title="Nome Fantasia:"
         type="text"
         name="description"
-        style={props.item.errorKeys.includes("description") ? {borderColor: "red"} : null}
+        error={props.item.errorKeys.includes("description")}
         value={props.item.description}
         onChange={props.onChange}
       />
@@ -22,7 +22,7 @@ export default function Company (props) {
         title="CNPJ:"
         type="cnpj"
         name="registry"
-        style={props.item.errorKeys.includes("registry") ? {borderColor: "red"} : null}
+        error={props.item.errorKeys.includes("registry")}
         value={props.item.registry}
         onChange={props.onChange}
       />
@@ -30,7 +30,7 @@ export default function Company (props) {
         title="Razão Social:"
         type="text"
         name="officialName"
-        style={props.item.errorKeys.includes("officialName") ? {borderColor: "red"} : null}
+        error={props.item.errorKeys.includes("officialName")}
         value={props.item.officialName}
         onChange={props.onChange}
       />
@@ -38,7 +38,7 @@ export default function Company (props) {
         title="Ins. Municipal:"
         type="text"
         name="registryMU"
-        style={props.item.errorKeys.includes("registryMU") ? {borderColor: "red"} : null}
+        error={props.item.errorKeys.includes("registryMU")}
         value={props.item.registryMU}
         onChange={props.onChange}
       />

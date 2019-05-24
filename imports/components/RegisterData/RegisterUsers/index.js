@@ -94,7 +94,7 @@ export default class RegisterUsers extends React.Component {
                 title="Nome:"
                 type="text"
                 name="firstName"
-                style={this.state.errorKeys.includes("firstName") ? {borderColor: "red"} : null}
+                error={this.state.errorKeys.includes("firstName")}
                 value={this.state.firstName}
                 onChange={this.onChange}
               />
@@ -102,7 +102,7 @@ export default class RegisterUsers extends React.Component {
                 title="Sobrenome:"
                 type="text"
                 name="lastName"
-                style={this.state.errorKeys.includes("lastName") ? {borderColor: "red"} : null}
+                error={this.state.errorKeys.includes("lastName")}
                 value={this.state.lastName}
                 onChange={this.onChange}
               />
@@ -110,7 +110,7 @@ export default class RegisterUsers extends React.Component {
                 title="Email:"
                 type="email"
                 name="emails"
-                style={this.state.errorKeys.includes("emails") ? {borderColor: "red"} : null}
+                error={this.state.errorKeys.includes("emails")}
                 value={this.state.emails}
                 onChange={this.onChange}
               />
@@ -118,7 +118,7 @@ export default class RegisterUsers extends React.Component {
                 title="Usuário:"
                 type="text"
                 name="username"
-                style={this.state.errorKeys.includes("username") ? {borderColor: "red"} : null}
+                error={this.state.errorKeys.includes("username")}
                 value={this.state.username}
                 onChange={this.onChange}
               />
@@ -126,7 +126,7 @@ export default class RegisterUsers extends React.Component {
                 title="Senha:"
                 type="password"
                 name="password"
-                style={this.state.errorKeys.includes("password") ? {borderColor: "red"} : null}
+                error={this.state.errorKeys.includes("password")}
                 value={this.state.password}
                 onChange={this.onChange}
               />

@@ -4,38 +4,95 @@ import { Meteor } from 'meteor/meteor';
 import tools from '/imports/startup/tools/index';
 
 export default class Digits extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      displayValue: ''
+    }
+  }
+  componentDidMount() {
+    this.calculateValues(this.props.value.toString().replace('.', ','));
+  }
+  componentDidUpdate(prevProps, prevState) {
+    var value = this.props.value;
+    if (prevProps.value !== value
+        && this.state.displayValue !== "-"
+        && this.state.displayValue !== "") {
+      value = value.toString().replace('.', ',');
+      this.calculateValues(value);
+    }
+  }
   onChange = (e) => {
-    if (e) {
-      var obj = e.target;
-      var cursorStart = obj.selectionStart;
-      var cursorEnd = obj.selectionEnd;
-      var inputValue = e.target.value;
-      var exportValue;
-      var maxLength = 9999;
+    var displayValue = e.target.value.trim();
+    this.calculateValues(displayValue);
+  }
+  calculateValues = (displayValue) => {
+    var options = {
+      allowNegative: this.props.allowNegative === false ? false : true,
+      allowFloat: this.props.allowFloat === false ? false : true,
+    }
+    if (displayValue === "") {
+      this.setValues({displayValue, exportValue: 0});
+    } else if (displayValue === "-" && options.allowNegative) {
+      this.setValues({displayValue, exportValue: 0});
+    } else {
 
-      if (Number(inputValue) > this.props.max) inputValue = this.props.max.toString();
-      if (Number(inputValue) < this.props.min) inputValue = this.props.min.toString();
-
-      if (inputValue.length > maxLength) {
-        var toCut = inputValue.length - maxLength;
-        inputValue = inputValue.slice(0, (0 - toCut));
+      function generalReplace(displayValue) {
+        var forbidden = options.allowNegative ? RegExp('[^0-9,-]', 'g') : RegExp('[^0-9,]', 'g');
+        return displayValue.replace(forbidden, '');
       }
-      exportValue = tools.unformat(inputValue, this.props.type, this.props.options);
 
-      // cursorStart = cursorStart - (exportValue.toString().length - inputValue.length);
-      // cursorEnd = cursorEnd - (exportValue.toString().length - inputValue.length);
+      function commaProcess(displayValue, options) {
+        if (!options.allowFloat) return {displayValue, exportValue: displayValue};
 
+        var commaAtEndOfString = RegExp(',$', 'g');
+        var commasAnywhere = RegExp(',', 'g');
+        var commasFound = displayValue.match(commasAnywhere) || [];
+        var exportValue = displayValue;
 
-      this.props.onChange(exportValue);
-      obj.setSelectionRange(cursorStart, cursorEnd);
+        if (commasFound.length === 1) {
+          if (commaAtEndOfString.test(displayValue)) {
+            exportValue = displayValue.replace(commaAtEndOfString, '');
+          } else {
+            exportValue = displayValue.replace(commasAnywhere, '.');
+          }
+        }
+        return {displayValue, exportValue};
+      }
+      displayValue = generalReplace(displayValue);
+      this.setValues(commaProcess(displayValue, options));
+    }
+  }
+
+  setValues = ({displayValue, exportValue}) => {
+    exportValue = Number(exportValue);
+    if (!isNaN(exportValue)) {
+
+      var min = this.props.min;
+      var max = this.props.max;
+
+      if (exportValue > max) {
+        exportValue = max;
+        displayValue = max.toString();
+      } else if (exportValue < min && displayValue !== "-" && displayValue !== "") {
+        exportValue = min;
+        displayValue = min.toString();
+      }
+
+      this.setState({ displayValue }, () => {
+        this.props.onChange(exportValue);
+      })
     }
   }
 
   render() {
     return (
       <input
-        value={tools.format(this.props.value, this.props.type)}
+        value={this.state.displayValue}
         onChange={this.onChange}
+
+        min={this.props.min}
+        max={this.props.max}
 
         readOnly={this.props.readOnly}
         placeholder={this.props.placeholder}

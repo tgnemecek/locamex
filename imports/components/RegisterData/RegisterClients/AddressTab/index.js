@@ -41,7 +41,7 @@ export default function AddressTab (props) {
         title="Endereço:"
         name="street"
         type="text"
-        style={props.item.errorKeys.includes("street") ? {borderColor: "red"} : null}
+        error={props.item.errorKeys.includes("street")}
         value={props.item.address.street}
         onChange={onChange}
       />
@@ -49,7 +49,7 @@ export default function AddressTab (props) {
         title="CEP:"
         name="cep"
         type="cep"
-        style={props.item.errorKeys.includes("cep") ? {borderColor: "red"} : null}
+        error={props.item.errorKeys.includes("cep")}
         buttonClick={cepButtonClick}
         value={props.item.address.cep}
         onChange={onChange}
@@ -58,7 +58,7 @@ export default function AddressTab (props) {
         title="Cidade:"
         name="city"
         type="text"
-        style={props.item.errorKeys.includes("city") ? {borderColor: "red"} : null}
+        error={props.item.errorKeys.includes("city")}
         value={props.item.address.city}
         onChange={onChange}
       />
@@ -66,7 +66,7 @@ export default function AddressTab (props) {
         title="Estado:"
         type="select"
         name="state"
-        style={props.item.errorKeys.includes("state") ? {borderColor: "red"} : null}
+        error={props.item.errorKeys.includes("state")}
         onChange={onChange}
         value={props.item.address.state}>
         {tools.states.map((item, i) => {
@@ -77,7 +77,7 @@ export default function AddressTab (props) {
         title="Número:"
         name="number"
         type="number"
-        style={props.item.errorKeys.includes("number") ? {borderColor: "red"} : null}
+        error={props.item.errorKeys.includes("number")}
         value={props.item.address.number}
         onChange={onChange}
       />

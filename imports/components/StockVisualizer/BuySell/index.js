@@ -34,7 +34,7 @@ export default class BuySell extends React.Component {
   render() {
     return (
       <div className="stock-visualizer__buy-sell-wrapper">
-        <div className="stock-visualizer__buy-sell-ammounts" style={this.props.errorKeys.includes("sum") ? {color: "red"} : null}>
+        <div className="stock-visualizer__buy-sell-ammounts" error={this.props.errorKeys.includes("sum") ? {color: "red"} : null}>
           TOTAL: {this.props.totalItems} / SOMA ATUAL: {this.props.sumItems}
         </div>
         <div className="stock-visualizer__buy-sell">

@@ -15,7 +15,7 @@ export default function Person (props) {
         title="Nome Completo:"
         type="text"
         name="description"
-        style={props.item.errorKeys.includes("description") ? {borderColor: "red"} : null}
+        error={props.item.errorKeys.includes("description")}
         value={props.item.description}
         onChange={props.onChange}
       />
@@ -23,7 +23,7 @@ export default function Person (props) {
         title="CPF:"
         type="cpf"
         name="registry"
-        style={props.item.errorKeys.includes("registry") ? {borderColor: "red"} : null}
+        error={props.item.errorKeys.includes("registry")}
         value={props.item.registry}
         onChange={props.onChange}
       />
@@ -31,7 +31,7 @@ export default function Person (props) {
         title="RG:"
         type="text"
         name="rg"
-        style={props.item.errorKeys.includes("rg") ? {borderColor: "red"} : null}
+        error={props.item.errorKeys.includes("rg")}
         value={props.item.rg}
         onChange={props.onChange}
       />
@@ -39,7 +39,7 @@ export default function Person (props) {
         title="Email:"
         type="email"
         name="email"
-        style={props.item.errorKeys.includes("email") ? {borderColor: "red"} : null}
+        error={props.item.errorKeys.includes("email")}
         value={props.item.email}
         onChange={props.onChange}
       />
@@ -47,7 +47,7 @@ export default function Person (props) {
         title="Telefone 1:"
         type="phone"
         name="phone1"
-        style={props.item.errorKeys.includes("phone1") ? {borderColor: "red"} : null}
+        error={props.item.errorKeys.includes("phone1")}
         value={props.item.phone1}
         onChange={props.onChange}
       />

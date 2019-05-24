@@ -58,7 +58,7 @@ export default class RegisterServices extends React.Component {
               title="Descrição:"
               type="text"
               name="description"
-              style={this.state.errorKeys.includes("description") ? {borderColor: "red"} : null}
+              error={this.state.errorKeys.includes("description")}
               value={this.state.description}
               onChange={this.onChange}
             />

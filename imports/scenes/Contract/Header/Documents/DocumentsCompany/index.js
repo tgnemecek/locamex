@@ -107,7 +107,7 @@ export default class DocumentsCompany extends React.Component {
                 title="Contato da Negociação:"
                 type="select"
                 name="negociatorId"
-                style={this.state.errorKeys.includes("negociatorId") ? {borderColor: "red"} : null}
+                error={this.state.errorKeys.includes("negociatorId")}
                 value={this.state.negociatorId}
                 onChange={this.onChangeMain}>
                 <option> </option>
@@ -117,7 +117,7 @@ export default class DocumentsCompany extends React.Component {
                 title="Representante Legal:"
                 type="select"
                 name="0"
-                style={this.state.errorKeys.includes("rep1") ? {borderColor: "red"} : null}
+                error={this.state.errorKeys.includes("rep1")}
                 value={this.state.representativesId[0]}
                 onChange={this.onChangeRepresentatives}>
                 <option> </option>

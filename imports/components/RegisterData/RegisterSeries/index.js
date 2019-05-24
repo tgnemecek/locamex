@@ -86,7 +86,7 @@ class RegisterSeries extends React.Component {
               title="Série:"
               type="digits"
               name="_id"
-              style={this.state.errorKeys.includes("_id") ? {borderColor: "red"} : null}
+              error={this.state.errorKeys.includes("_id")}
               readOnly={!!this.props.item._id}
               value={this.state._id}
               onChange={this.onChange}
@@ -95,7 +95,7 @@ class RegisterSeries extends React.Component {
               title="Modelo:"
               type="select"
               name="containerId"
-              style={this.state.errorKeys.includes("containerId") ? {borderColor: "red"} : null}
+              error={this.state.errorKeys.includes("containerId")}
               disabled={this.props.item._id}
               value={this.state.containerId}
               onChange={this.onChange}>
@@ -106,7 +106,7 @@ class RegisterSeries extends React.Component {
               title="Pátio:"
               type="select"
               name="place"
-              style={this.state.errorKeys.includes("place") ? {borderColor: "red"} : null}
+              error={this.state.errorKeys.includes("place")}
               value={this.state.place}
               onChange={this.onChange}>
                 <option value=''></option>

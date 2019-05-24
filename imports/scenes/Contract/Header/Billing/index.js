@@ -77,6 +77,7 @@ export default class Billing extends React.Component {
   }
 
   differenceIsZero = () => {
+    debugger;
     var billingProducts = this.state.billingProducts;
     var billingServices = this.state.billingServices;
     var masterValue = this.state.masterValue;

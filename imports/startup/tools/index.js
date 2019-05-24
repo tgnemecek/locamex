@@ -150,24 +150,11 @@ export default class tools {
       style: 'currency',
       currency: 'BRL'
     }
-    // allowNegative = (value) => {
-    //   var originalValue = value;
-    //   if (options.fromInput) {
-    //     value = value.replace(/\D+/g, '').replace('R$', '').replace(/^0+/g, '').trim();
-    //     if (Number(value) == 0) {
-    //       return 'R$ ' + originalValue.replace(/[^0*\.*,*]/g, '').replace(/,0*/g, '').trim() + ',00';
-    //     } else value = Number(value) /100;
-    //   } else value = Number(value);
-    //   return value.toLocaleString('pt-br', realOptions);
-    // }
 
     switch(type) {
 
       case 'number':
-        if (typeof(value) === 'string') {
-          value = value.replace(/\D+/g, '');
-          if (!options.allowImpossible) value = Number(value);
-        }
+        if (typeof(value) === 'string') value = value.replace(/\D+/g, '');
         return value;
 
       case 'cep':

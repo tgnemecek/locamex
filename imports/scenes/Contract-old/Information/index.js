@@ -86,7 +86,7 @@ export default class Information extends React.Component {
               title="Cliente:"
               name="clientId"
               database={this.props.clientsDatabase}
-              style={this.props.errorKeys.includes("clientId") ? {borderColor: "red"} : null}
+              error={this.props.errorKeys.includes("clientId")}
               value={this.props.contract.clientId}
               onClick={this.handleChange}>
             </SuggestionBar>
@@ -94,7 +94,7 @@ export default class Information extends React.Component {
               title="Nº de Proposta:"
               name="proposal"
               type="text"
-              style={this.props.errorKeys.includes("proposal") ? {borderColor: "red"} : null}
+              error={this.props.errorKeys.includes("proposal")}
               value={this.props.contract.proposal}
               onChange={this.handleChange}
             />
@@ -103,7 +103,7 @@ export default class Information extends React.Component {
               name="street"
               type="text"
               extra="deliveryAddress"
-              style={this.props.errorKeys.includes("street") ? {borderColor: "red"} : null}
+              error={this.props.errorKeys.includes("street")}
               value={this.props.contract.deliveryAddress.street}
               onChange={this.handleChange}
             />
@@ -112,7 +112,7 @@ export default class Information extends React.Component {
               name="cep"
               type="cep"
               extra="deliveryAddress"
-              style={this.props.errorKeys.includes("cep") ? {borderColor: "red"} : null}
+              error={this.props.errorKeys.includes("cep")}
               buttonClick={this.cepButtonClick}
               value={this.props.contract.deliveryAddress.cep}
               onChange={this.handleChange}
@@ -131,7 +131,7 @@ export default class Information extends React.Component {
               title="Duração: (meses)"
               value={this.props.contract.dates.duration}
               onChange={this.changeDuration}
-              style={this.props.errorKeys.includes("duration") ? {borderColor: "red"} : null}
+              error={this.props.errorKeys.includes("duration")}
               name="duration"
               extra="dates"
               type="number"
@@ -141,7 +141,7 @@ export default class Information extends React.Component {
               name="discount"
               type="number"
               max={100}
-              style={this.props.errorKeys.includes("discount") ? {borderColor: "red"} : null}
+              error={this.props.errorKeys.includes("discount")}
               value={(this.props.contract.discount) * 100}
               onChange={(e) => this.handleChange({target: {value: tools.round((Number(e.target.value) / 100), 2), name: e.target.name}})}
             />
@@ -150,7 +150,7 @@ export default class Information extends React.Component {
               name="city"
               type="text"
               extra="deliveryAddress"
-              style={this.props.errorKeys.includes("city") ? {borderColor: "red"} : null}
+              error={this.props.errorKeys.includes("city")}
               value={this.props.contract.deliveryAddress.city}
               onChange={this.handleChange}
             />
@@ -159,7 +159,7 @@ export default class Information extends React.Component {
               type="select"
               name="state"
               extra="deliveryAddress"
-              style={this.props.errorKeys.includes("state") ? {borderColor: "red"} : null}
+              error={this.props.errorKeys.includes("state")}
               onChange={this.handleChange}
               value={this.props.contract.deliveryAddress.state}>
               {tools.states.map((item, i) => {
@@ -171,7 +171,7 @@ export default class Information extends React.Component {
               name="number"
               type="number"
               extra="deliveryAddress"
-              style={this.props.errorKeys.includes("number") ? {borderColor: "red"} : null}
+              error={this.props.errorKeys.includes("number")}
               value={this.props.contract.deliveryAddress.number}
               onChange={this.handleChange}
             />

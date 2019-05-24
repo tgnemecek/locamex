@@ -96,7 +96,7 @@ class Documents extends React.Component {
                 title="Contato da Negociação:"
                 type="select"
                 name="negociator"
-                style={this.state.errorKeys.includes("negociator") ? {borderColor: "red"} : null}
+                error={this.state.errorKeys.includes("negociator")}
                 value={this.state.negociator}
                 onChange={this.onChangeMain}>
                 <option> </option>
@@ -106,7 +106,7 @@ class Documents extends React.Component {
                 title="Representante Legal:"
                 type="select"
                 name="0"
-                style={this.state.errorKeys.includes("rep1") ? {borderColor: "red"} : null}
+                error={this.state.errorKeys.includes("rep1")}
                 value={this.state.representatives[0]}
                 onChange={this.onChangeRepresentatives}>
                 <option> </option>
