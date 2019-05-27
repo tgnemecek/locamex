@@ -235,8 +235,12 @@ export default class tools {
         return value;
 
       case 'currency':
-        // value = allowNegative(value);
-        return Number(value).toLocaleString('pt-br', realOptions);
+        if (typeof(value) === "string") {
+          value = value.replace(/\s/g, "");
+          value = Number(value.replace(",", "."));
+        } else value = Number(value);
+
+        return value.toLocaleString('pt-br', realOptions);
 
       default:
         return value;

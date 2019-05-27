@@ -71,7 +71,9 @@ export default class AppHeader extends React.Component {
   render() {
     return (
       <div className="header__background">
-        <img src="https://s3-sa-east-1.amazonaws.com/locamex-app/app-required/logo-sistema-branco_336x104_21-09-2018.png" className="header__logo"/>
+        <Link to="/">
+          <img src="https://s3-sa-east-1.amazonaws.com/locamex-app/app-required/logo-sistema-branco_336x104_21-09-2018.png" className="header__logo"/>
+        </Link>
         <div className="header">
           <h1 className="header__title">{this.state.currentPage.title}</h1>
           <div className="header__menu">

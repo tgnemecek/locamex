@@ -13,42 +13,62 @@ class TestPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      negative: 10,
-      positive: 6
+      value: 10
     }
   }
   onChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value })
+    this.setState({ value: e.target.value })
   }
   onClick = (e) => {
-    this.setState({ positive: 500.2 })
+    this.setState({ value: 999 })
   }
   render() {
     return (
       <div>
-        {/* <Input
-          title="Negative"
-          name="negative"
-          type="number"
-          onChange={this.onChange}
-          value={this.state.negative}
-          allowFloat={false}
-        />
-        VALUE: {this.state.negative} */}
         <Input
-          title="Positive"
-          name="positive"
-          allowFloat={false}
-          type="number"
-          min={5}
-          max={10}
+          title="Teste"
+          name="value"
+          type="currency"
           onChange={this.onChange}
-          value={this.state.positive}
+          value={this.state.value}
         />
-        VALUE: {this.state.positive}
+        {/* <Test value={this.state.value} onChange={this.onChange}/> */}
+        {/* VALUE: {this.state.value} */}
         <button onClick={this.onClick}>SET</button>
       </div>
 
+    )
+  }
+}
+
+var count = 0;
+
+class Test extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isInput: false
+    }
+  }
+  componentDidUpdate(prevProps, prevState) {
+    count++;
+    if (this.state.isInput) {
+      console.table("UPDATED!", count, prevProps.value, prevState.isInput, this.props.value, this.state.isInput);
+      this.setState({ isInput: false })
+    }
+  }
+  onChange = (e) => {
+    var value = e.target.value;
+    this.setState({ isInput: true }, () => {
+      this.props.onChange({target: {value}});
+    })
+  }
+  render() {
+    return (
+      <input
+        value={this.props.value}
+        onChange={this.onChange}
+      />
     )
   }
 }

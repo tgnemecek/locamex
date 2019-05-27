@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.8.8
+Version: 1.8.9
 
 ## Information:
 
@@ -8,6 +8,13 @@ Version: 1.8.8
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.8.9
+
+-  Fixed Create-pdf products bug;
+-  Input/Currency and Digits now have perfect functionality, allowing blank and '-' values;
+-  Forms now change border to normal when typing (after form error tinted it red);
+-  Billing now correctly resets when adding/changing products;
 
 ### Version 1.8.8
 
