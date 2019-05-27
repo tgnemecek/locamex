@@ -4,7 +4,7 @@ import { Modules } from '/imports/api/modules/index';
 import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
-
+import Button from '/imports/components/Button/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
@@ -35,6 +35,27 @@ class ModulesTable extends React.Component {
     const toggleEditWindow = () => {
       this.props.toggleEditWindow({});
     }
+    const generateReport = () => {
+      var header = [[
+        "Descrição",
+        "Disponíveis",
+        "Locados",
+        "Inativos",
+        "Total"
+      ]]
+      var body = this.props.fullDatabase.map((item) => {
+        var available = count(item.place, 'available');
+        var inactive = count(item.place, 'inactive');
+        return [
+          item.description,
+          available,
+          item.rented,
+          inactive,
+          available + item.rented + inactive
+        ]
+      })
+      this.props.generateReport(header.concat(body));
+    }
     return (
       <tr>
         <th>Descrição</th>
@@ -42,7 +63,10 @@ class ModulesTable extends React.Component {
         <th className="table__small-column">Locados</th>
         <th className="table__small-column">Inativos</th>
         <th className="table__small-column">Total</th>
-        <th className="table__small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
+        <th className="table__small-column">
+          <Button icon="report" onClick={generateReport} />
+        </th>
+        <th className="table__small-column"><Button icon="new" onClick={toggleEditWindow} /></th>
       </tr>
     )
   }
@@ -57,21 +81,18 @@ class ModulesTable extends React.Component {
       const toggleImageWindow = () => {
         this.props.toggleImageWindow(item);
       }
-      function count(places, which) {
-        return places.reduce((acc, cur) => {
-          return acc + cur[which];
-        }, 0);
-      }
+      var available = count(item.place, 'available');
+      var inactive = count(item.place, 'inactive');
       return (
         <tr key={i}>
           <td>{item.description}</td>
-          <td className="table__small-column">{count(item.place, 'available')}</td>
+          <td className="table__small-column">{available}</td>
           <td className="table__small-column">{item.rented}</td>
-          <td className="table__small-column">{count(item.place, 'inactive')}</td>
-          <td className="table__small-column">{count(item.place, 'available') + count(item.place, 'inactive')}</td>
-          <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
-          <td className="table__small-column"><button className="database__table__button" onClick={toggleStockVisualizer}>⟳</button></td>
-          <td className="table__small-column"><button className="database__table__button" onClick={toggleImageWindow}>🔍</button></td>
+          <td className="table__small-column">{inactive}</td>
+          <td className="table__small-column">{available + item.rented + inactive}</td>
+          <td className="table__small-column"><Button icon="edit" onClick={toggleEditWindow} /></td>
+          <td className="table__small-column"><Button icon="transaction" onClick={toggleStockVisualizer} /></td>
+          <td className="table__small-column"><Button icon="image" onClick={toggleImageWindow} /></td>
         </tr>
       )
     })
@@ -110,6 +131,12 @@ class ModulesTable extends React.Component {
       )
     }
   }
+}
+
+function count(places, which) {
+  return places.reduce((acc, cur) => {
+    return acc + cur[which];
+  }, 0);
 }
 
 export default ModulesTableWrapper = withTracker((props) => {

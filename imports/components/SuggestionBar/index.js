@@ -2,6 +2,7 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 
 import tools from '/imports/startup/tools/index';
+import Button from '/imports/components/Button/index';
 import Input from '/imports/components/Input/index';
 import Block from '/imports/components/Block/index';
 
@@ -108,7 +109,9 @@ export default class SuggestionBar extends React.Component {
   render() {
     return (
       <div className="suggestion-bar" onBlur={this.onBlur} onFocus={this.conditionalShowAll}>
-        <div className="suggestion-bar__magnifier" style={this.props.title ? {top: "2.2rem"} : {top: "0.7rem"}}>🔍</div>
+        <div className="suggestion-bar__magnifier" style={this.props.title ? {top: "2.5rem"} : {top: "1rem"}}>
+          <Button icon="search" />
+        </div>
         <Input
           title={this.props.title}
           className={this.state.buttonMode ? "suggestion-bar__input--button" : ""}

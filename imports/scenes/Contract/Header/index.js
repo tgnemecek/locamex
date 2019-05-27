@@ -2,13 +2,15 @@ import React from 'react';
 import Documents from './Documents/index';
 import Billing from './Billing/index';
 import Observations from './Observations/index';
+import Button from '/imports/components/Button/index';
+import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 
 export default class Header extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
-      windowOpen: false
+      windowOpen: false,
+      cancelWindow: false
     }
   }
 
@@ -36,7 +38,6 @@ export default class Header extends React.Component {
 
   toggleWindow = (e) => {
     if (e) {
-      e.stopPropagation();
       var windowOpen = e.target.value;
       if (windowOpen == 'documents') {
         if (this.props.contract.clientId == '') return alert("Escolha antes um cliente.");
@@ -48,6 +49,20 @@ export default class Header extends React.Component {
     } else this.setState({ windowOpen: false });
   }
 
+  showCancelButton = () => {
+    if (this.props.contract.status === "inactive" && this.props.contract._id) {
+      return <Button onClick={this.toggleCancelWindow} icon="not" />
+    } else return null;
+  }
+
+  toggleCancelWindow = () => {
+    this.setState({ windowOpen: false, cancelWindow: !this.state.cancelWindow });
+  }
+
+  cancelContract = () => {
+    this.props.cancelContract(this.toggleCancelWindow);
+  }
+
   render() {
       return (
         <div className="contract__header">
@@ -55,13 +70,13 @@ export default class Header extends React.Component {
             <p>Contrato criado por: <strong>{this.props.contract.createdBy.username}</strong></p>
           </div>
           <div className="contract__top-buttons">
-            <button value={'observations'} onClick={this.toggleWindow} className={this.checkIfHasContent()}>⚠</button>
+            <Button value='observations' onClick={this.toggleWindow} className={this.checkIfHasContent()} icon="warning"/>
             {this.state.windowOpen == 'observations' ? <Observations
                                               contract={this.props.contract}
                                               toggleWindow={this.toggleWindow}
                                               updateContract={this.props.updateContract}
                                                   /> : null}
-            <button value={'documents'} onClick={this.toggleWindow}>⎙</button>
+            <Button value='documents' onClick={this.toggleWindow} icon="print"/>
             {this.state.windowOpen == 'documents' ? <Documents
                                               databases={this.props.databases}
                                               saveContract={this.props.saveContract}
@@ -69,16 +84,22 @@ export default class Header extends React.Component {
                                               toggleWindow={this.toggleWindow}
                                               updateContract={this.props.updateContract}
                                               /> : null}
-            <button value={'billing'} onClick={this.toggleWindow} error={this.props.errorKeys.includes("billing") ? {color: "red"} : null}>$</button>
+            <Button value='billing' onClick={this.toggleWindow} icon="money"
+              style={this.props.errorKeys.includes("billing") ? {color: "red"} : null}
+            />
             {this.state.windowOpen == 'billing' ? <Billing
                                               contract={this.props.contract}
                                               toggleWindow={this.toggleWindow}
                                               updateContract={this.props.updateContract}
                                               errorKeys={this.props.errorKeys}
                                               /> : null}
-            {this.props.contract.status === "inactive" ?
-              <button onClick={this.props.toggleCancelWindow}>✖</button>
-            : null}
+            {this.showCancelButton()}
+            <ConfirmationWindow
+              isOpen={this.state.cancelWindow}
+              closeBox={this.toggleCancelWindow}
+              message="Deseja cancelar este contrato? Ele não poderá ser reativado ou editado."
+              leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleCancelWindow}}
+              rightButton={{text: "Sim", className: "button--danger", onClick: this.cancelContract}}/>
           </div>
           <div className="contract__title">
             <h1>Contrato #{this.props.contract._id}</h1>

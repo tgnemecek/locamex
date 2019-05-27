@@ -3,6 +3,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { Clients } from '/imports/api/clients/index';
 import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
+import Button from '/imports/components/Button/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import Loading from '/imports/components/Loading/index';
@@ -39,7 +40,7 @@ class ClientsTable extends React.Component {
         <th>Nome Fantasia</th>
         <th className="table__small-column">CNPJ/CPF</th>
         <th className="table__small-column">Tipo</th>
-        <th className="table__small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
+        <th className="table__small-column"><Button icon="new" onClick={toggleEditWindow} /></th>
       </tr>
     )
   }
@@ -55,7 +56,7 @@ class ClientsTable extends React.Component {
           <td>{item.description}</td>
           <td className="table__small-column">{tools.format(item.registry, formatType)}</td>
           <td className="table__small-column">{item.type === 'company' ? "PJ" : "PF"}</td>
-          <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
+          <td className="table__small-column"><Button icon="edit" onClick={toggleEditWindow} /></td>
         </tr>
       )
     })

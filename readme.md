@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.8.9
+Version: 1.9.0
 
 ## Information:
 
@@ -9,7 +9,14 @@ Version: 1.8.9
 
 ## Changelog:
 
+### Version 1.9.0
+
+-  Added create-excel functionality to save reports;
 -  Contract/Documents now can only be opened if Billing is filled;
+-  Special characters swaped for font-awesome icons, using a <Button/> component;
+-  Cancel button in Contract:
+    -  Only renders if contract is inactive AND if contract has id (is saved in db);
+    -  Correctly updates database and client;
 
 ### Version 1.8.9
 

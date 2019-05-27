@@ -9,7 +9,7 @@
 .suggestion-bar__magnifier {
   position: absolute;
   z-index: 1;
-  left: ($space /2);
+  left: 1rem;
   filter: grayscale(1);
   opacity: 0.5;
 }

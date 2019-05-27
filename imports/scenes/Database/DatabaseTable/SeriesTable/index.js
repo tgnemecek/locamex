@@ -5,6 +5,7 @@ import { Places } from '/imports/api/places/index';
 import { Containers } from '/imports/api/containers/index';
 
 import tools from '/imports/startup/tools/index';
+import Button from '/imports/components/Button/index';
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 import RedirectUser from '/imports/components/RedirectUser/index';
@@ -41,13 +42,33 @@ class SeriesTable extends React.Component {
     const toggleEditWindow = () => {
       this.props.toggleEditWindow({});
     }
+    const generateReport = () => {
+      var header = [[
+        "Série",
+        "Modelo",
+        "Pátio",
+        "Observações"
+      ]]
+      var body = this.props.fullDatabase.map((item) => {
+        return [
+          item._id,
+          translateModels(item.containerId, this.props.containersDatabase),
+          translatePlaces(item.place, this.props.placesDatabase),
+          item.observations
+        ]
+      })
+      this.props.generateReport(header.concat(body));
+    }
     return (
       <tr>
         <th className="table__small-column">Série</th>
         <th className="table__small-column">Modelo</th>
         <th className="table__small-column">Pátio</th>
         <th>Observações</th>
-        <th className="table__small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
+        <th className="table__small-column">
+          <Button icon="report" onClick={generateReport} />
+        </th>
+        <th className="table__small-column"><Button icon="new" onClick={toggleEditWindow} /></th>
       </tr>
     )
   }
@@ -61,14 +82,6 @@ class SeriesTable extends React.Component {
       return true;
     })
     return filteredDatabase.map((item, i) => {
-      const translatePlaces = (place) => {
-        if (!place) return "-";
-        return place === "rented" ? "Alugado" : tools.findUsingId(this.props.placesDatabase, place).description;
-      }
-      const translateModels = (model) => {
-        if (!model) return "-";
-        return tools.findUsingId(this.props.containersDatabase, model).description;
-      }
       const toggleEditWindow = () => {
         this.props.toggleEditWindow(item);
       }
@@ -77,17 +90,19 @@ class SeriesTable extends React.Component {
       }
       const renderEditButton = () => {
         if (tools.isUserAllowed("series.edit")) {
-          return <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
+          return <td className="table__small-column"><Button icon="edit" onClick={toggleEditWindow} /></td>
         } else return null;
       }
       return (
         <tr key={i}>
           <td className="table__small-column">{item._id}</td>
-          <td className="table__small-column" style={{textAlign: 'left'}}>{translateModels(item.containerId)}</td>
-          <td className="table__small-column">{translatePlaces(item.place)}</td>
+          <td className="table__small-column" style={{textAlign: 'left'}}>
+            {translateModels(item.containerId, this.props.containersDatabase)}
+          </td>
+          <td className="table__small-column">{translatePlaces(item.place, this.props.placesDatabase)}</td>
           <td className="table__small-column--wrap">{item.observations}</td>
           {renderEditButton()}
-          <td className="table__small-column"><button className="database__table__button" onClick={toggleImageWindow}>🔍</button></td>
+          <td className="table__small-column"><Button icon="image" onClick={toggleImageWindow} /></td>
         </tr>
       )
     })
@@ -140,6 +155,15 @@ class SeriesTable extends React.Component {
       )
     }
   }
+}
+
+function translatePlaces(place, database) {
+  if (!place) return "-";
+  return place === "rented" ? "Alugado" : tools.findUsingId(database, place).description;
+}
+function translateModels(model, database) {
+  if (!model) return "-";
+  return tools.findUsingId(database, model).description;
 }
 
 export default SeriesTableWrapper = withTracker((props) => {

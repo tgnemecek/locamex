@@ -6,7 +6,7 @@ import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 import ImageVisualizer from '/imports/components/ImageVisualizer/index';
 import SuggestionBar from '/imports/components/SuggestionBar/index';
-
+import Button from '/imports/components/Button/index';
 import SelectModules from './SelectModules/index';
 
 export default class ShippingModules extends React.Component {
@@ -113,8 +113,12 @@ export default class ShippingModules extends React.Component {
               onClick={onClick}/>
           </td>
           <td className="table__small-column">{calculateQuantity(item.selected)}</td>
-          <td className="table__small-column"><button className="database__table__button" value={i} onClick={this.toggleMultipleWindow}>⟳</button></td>
-          <td className="table__small-column"><button className="database__table__button" value={i} onClick={removeItem}>✖</button></td>
+          <td className="table__small-column">
+            <Button value={i} onClick={this.toggleMultipleWindow} icon="transaction"/>
+          </td>
+          <td className="table__small-column">
+            <Button onClick={removeItem} icon="not"/>
+          </td>
           <td className="table__small-column">{checkmark(item, calculateQuantity(item.selected))}</td>
         </tr>
       )

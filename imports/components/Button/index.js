@@ -1,23 +1,81 @@
 import React from 'react';
-
+import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faFilm, faCarCrash, faCode } from '@fortawesome/free-solid-svg-icons';
+import {
+  faPlus,
+  faFileExcel,
+  faSyncAlt,
+  faEdit,
+  faImages,
+  faSearch,
+  faLevelUpAlt,
+  faLevelDownAlt,
+  faTimes,
+  faExclamationCircle,
+  faPrint,
+  faDollarSign,
+  faArrowLeft,
+  faArrowRight
+} from '@fortawesome/free-solid-svg-icons';
+
+const ICON_SET = {
+  new: faPlus,
+  report: faFileExcel,
+  transaction: faSyncAlt,
+  edit: faEdit,
+  image: faImages,
+  search: faSearch,
+  send: faLevelUpAlt,
+  receive: faLevelDownAlt,
+  not: faTimes,
+  warning: faExclamationCircle,
+  print: faPrint,
+  money: faDollarSign,
+  arrowLeft: faArrowLeft,
+  arrowRight: faArrowRight
+}
 
 export default class Button extends React.Component {
+  constructor(props) {
+    super(props);
+    this.Component = this.props.to ? (props) => <Link {...props} /> : (props) => <button {...props} />
+  }
+
+  style = () => {
+    return {
+      cursor: this.props.onClick ? "pointer" : "default",
+      ...this.props.style
+    }
+  }
+
+  iconStyle = () => {
+    return {
+      cursor: (this.props.onClick || this.props.to) ? "pointer" : "default",
+      ...this.props.iconStyle
+    }
+  }
+
+  onClick = () => {
+    if (this.props.onClick) {
+      this.props.onClick({target: {value: this.props.value, name: this.props.name}});
+    }
+  }
+
   conditionalRendering = () => {
     if (this.props.icon) {
       return (
-        <button
-          onClick={() => this.props.onClick({target: {value: this.props.value, name: this.props.name}})}
-          className={"icon " + this.props.className}
-          style={this.props.style}>
-          <FontAwesomeIcon icon={ICON_SET[this.props.icon]} size={this.props.size || "1x"} style={this.props.iconStyle} />
-        </button>
+        <this.Component
+          {...this.props}
+          onClick={this.onClick}
+          className={"icon " + (this.props.className || "")}
+          style={this.style()}>
+          <FontAwesomeIcon icon={ICON_SET[this.props.icon]} size={this.props.size || "1x"} style={this.iconStyle()} />
+        </this.Component>
       )
     } else return (
-      <button {...this.props}>
+      <this.Component {...this.props}>
         {this.props.children}
-      </button>
+      </this.Component>
     )
   }
 
@@ -28,11 +86,4 @@ export default class Button extends React.Component {
       </>
     )
   }
-}
-
-const ICON_SET = {
-  faPlus,
-  faFilm,
-  faCarCrash,
-  faCode
 }

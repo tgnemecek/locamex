@@ -1,5 +1,6 @@
 import React from 'react';
-import { Link, Route } from 'react-router-dom';
+
+import Button from '/imports/components/Button/index';
 
 export default class FooterButtons extends React.Component {
 
@@ -28,11 +29,13 @@ export default class FooterButtons extends React.Component {
     var text = button.text;
     var onClick = button.onClick || null;
     var type = button.type || "button";
-    return <button
-                type={type}
-                style={style}
-                className={className}
-                onClick={onClick}>{text}</button>
+    return (
+      <Button
+        type={type}
+        style={style}
+        className={className}
+        onClick={onClick}>{text}</Button>
+    )
   }
 
   renderTwoButtons = () => {
@@ -50,12 +53,12 @@ export default class FooterButtons extends React.Component {
       var text = button.text;
       var onClick = button.onClick || null;
       var type = button.type || "button";
-      return <button
+      return <Button
                   key={i}
                   type={type}
                   style={style}
                   className={className}
-                  onClick={onClick}>{text}</button>
+                  onClick={onClick}>{text}</Button>
     })
   }
 
@@ -78,12 +81,12 @@ export default class FooterButtons extends React.Component {
       var text = button.text;
       var onClick = button.onClick || null;
       var type = button.type || "button";
-      return <button
+      return <Button
                   key={i}
                   type={type}
                   style={style}
                   className={className}
-                  onClick={onClick}>{text}</button>
+                  onClick={onClick}>{text}</Button>
     })
   }
 

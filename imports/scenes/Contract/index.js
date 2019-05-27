@@ -28,6 +28,7 @@ class Contract extends React.Component {
     super(props);
     this.state = {
       contract: this.props.contract || {
+        _id: undefined,
         createdBy: Meteor.user() || {username: "Anônimo"},
         status: "inactive",
 
@@ -69,9 +70,6 @@ class Contract extends React.Component {
         accessories: [],
         services: []
       },
-      toggleCancelWindow: false,
-      toggleActivateWindow: false,
-      toggleFinalizeWindow: false,
       errorMsg: '',
       errorKeys: [],
       ready: false
@@ -136,9 +134,18 @@ class Contract extends React.Component {
     this.setState({ toggleFinalizeWindow });
   }
 
-  cancelContract = () => {
-    Meteor.call('contracts.update.one', this.state.contract._id, {status: "cancelled"});
-    this.toggleCancelWindow();
+  cancelContract = (callback) => {
+    Meteor.call('contracts.update.one', this.state.contract._id, {status: "cancelled"}, (err, res) => {
+      if (res) {
+        var contract = {
+          ...this.state.contract,
+          status: "cancelled",
+          _id: res
+        }
+        this.setState({ contract });
+      } else if (err) alert(err.reason);
+    });
+    callback();
   }
 
   activateContract = (callback) => {
@@ -149,10 +156,8 @@ class Contract extends React.Component {
           status: "active",
           _id: res
         }
-        this.props.history.push("/contract/" + res);
         this.setState({ contract });
-      }
-      else if (err) alert(err.reason);
+      } else if (err) alert(err.reason);
     });
     callback();
   }
@@ -167,8 +172,7 @@ class Contract extends React.Component {
         }
         this.props.history.push("/contract/" + res);
         this.setState({ contract });
-      }
-      else if (err) alert(err.reason);
+      } else if (err) alert(err.reason);
     });
     callback();
   }
@@ -230,7 +234,8 @@ class Contract extends React.Component {
         <div className="contract">
           <Header
             databases={this.props.databases}
-            toggleCancelWindow={this.toggleCancelWindow}
+            contractId={this.state.contract._id}
+            cancelContract={this.cancelContract}
             contract={this.state.contract}
             updateContract={this.updateContract}
             errorKeys={this.state.errorKeys}

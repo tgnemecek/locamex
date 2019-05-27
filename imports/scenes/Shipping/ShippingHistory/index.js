@@ -2,6 +2,7 @@ import React from 'react';
 import moment from 'moment';
 
 import tools from '/imports/startup/tools/index';
+import Button from '/imports/components/Button/index';
 
 export default class ShippingHistory extends React.Component {
 
@@ -14,9 +15,17 @@ export default class ShippingHistory extends React.Component {
       var receiveDisabled = (history.length === 0 || history.length === 2);
 
       if (type === 'send') {
-        return <th className="table__small-column"><button onClick={this.props.toggleSend} className="database__table__button" disabled={sendDisabled}>⇱</button></th>
+        return (
+          <th className="table__small-column">
+            <Button icon="send" disabled={sendDisabled} onClick={this.props.toggleSend} />
+          </th>
+        )
       } else if (type === 'receive') {
-        return <th className="table__small-column"><button onClick={this.props.toggleReceive} className="database__table__button" disabled={receiveDisabled}>⇲</button></th>
+        return (
+          <th className="table__small-column">
+            <Button icon="receive" disabled={receiveDisabled} onClick={this.props.toggleReceive} />
+          </th>
+        )
       }
     }
 

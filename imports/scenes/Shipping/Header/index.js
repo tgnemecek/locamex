@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from '/imports/components/Button/index';
 import Documents from './Documents/index';
 import Observations from './Observations/index';
 
@@ -34,11 +35,7 @@ export default class Header extends React.Component {
 
   toggleWindow = (e) => {
     if (e) {
-      e.stopPropagation();
       var windowOpen = e.target.value;
-      if (windowOpen == 'documents') {
-        if (this.props.contract.client == '') return alert("Escolha antes um cliente.");
-      }
       this.setState({ windowOpen });
     } else this.setState({ windowOpen: false });
   }
@@ -57,13 +54,12 @@ export default class Header extends React.Component {
             <p>Contrato criado por: <strong>{this.props.contract.createdBy.username}</strong></p>
           </div>
           <div className="contract__top-buttons">
-            <button value={'observations'} onClick={this.toggleWindow} style={this.checkIfHasContent()}>⚠</button>
+            <Button value='observations' onClick={this.toggleWindow} className={this.checkIfHasContent()} icon="warning"/>
             {this.state.windowOpen == 'observations' ? <Observations
                                               contract={this.props.contract}
                                               toggleWindow={this.toggleWindow}
                                               updateContract={this.props.updateContract}
                                                   /> : null}
-            {/* <button value={'documents'} onClick={this.toggleWindow}>⎙</button> */}
             {this.state.windowOpen == 'documents' ? <Documents
                                               contract={this.props.contract}
                                               toggleWindow={this.toggleWindow}

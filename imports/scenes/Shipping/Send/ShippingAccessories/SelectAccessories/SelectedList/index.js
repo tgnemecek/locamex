@@ -3,7 +3,7 @@ import React from 'react';
 import tools from '/imports/startup/tools/index';
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
-
+import Button from '/imports/components/Button/index';
 import HowManyBox from './HowManyBox/index';
 
 export default class SelectedList extends React.Component {
@@ -71,7 +71,9 @@ export default class SelectedList extends React.Component {
           <td>{variationName(item)}</td>
           <td>{tools.findUsingId(this.props.placesDatabase, item.place).description}</td>
           <td>{item.selected}</td>
-          <td className="buttom-column"><button value={i} onClick={this.removeFromSelection} className="button--table-x">✖</button></td>
+          <td className="buttom-column">
+            <Button value={i} onClick={this.removeFromSelection} icon="not"/>
+          </td>
         </tr>
       )
     })

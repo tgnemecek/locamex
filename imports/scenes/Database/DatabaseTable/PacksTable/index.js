@@ -3,6 +3,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { Places } from '/imports/api/places/index';
 import { Packs } from '/imports/api/packs/index';
 import tools from '/imports/startup/tools/index';
+import Button from '/imports/components/Button/index';
 import RedirectUser from '/imports/components/RedirectUser/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';

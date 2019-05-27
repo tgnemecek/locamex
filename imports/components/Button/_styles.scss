@@ -6,6 +6,14 @@
   line-height: 1.2;
   padding: $input-spacing;
   text-transform: uppercase;
+  cursor: pointer;
+}
+
+.icon {
+  background: none;
+  border: none;
+  color: $black;
+  width: 100%;
 }
 
 .button--link {

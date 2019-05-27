@@ -24,7 +24,7 @@ class TestPage extends React.Component {
   render() {
     return (
       <div>
-        <Button onClick={this.onClick} icon="faPlus">SET!!</Button>
+        <Button onClick={this.onClick} icon="faPlusSquare">SET!!</Button>
         VALUE {this.state.value}
       </div>
 

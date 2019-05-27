@@ -1,12 +1,12 @@
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
-import { Link } from 'react-router-dom';
 import RedirectUser from '/imports/components/RedirectUser/index';
 import { Clients } from '/imports/api/clients/index';
 import { Contracts } from '/imports/api/contracts/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import tools from '/imports/startup/tools/index';
+import Button from '/imports/components/Button/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
@@ -33,9 +33,6 @@ class ContractsTable extends React.Component {
     this.setState({ filteredDatabase });
   }
   renderHeader = () => {
-    const toggleWindow = () => {
-      this.props.toggleWindow({});
-    }
     return (
       <tr>
         <th className="table__small-column">Código</th>
@@ -43,7 +40,7 @@ class ContractsTable extends React.Component {
         <th className="table__small-column">Status</th>
         <th className="table__small-column">Valor Total do Contrato</th>
         <th className="table__small-column">
-          <Link className="button--link database__table__button" to="/contract/new">+</Link>
+          <Button to="/contract/new" icon="new" />
         </th>
       </tr>
     )
@@ -93,10 +90,7 @@ class ContractsTable extends React.Component {
         if (tools.isUserAllowed("contract")) {
           return (
             <td className="table__small-column">
-              <Link
-                className="button--link database__table__button"
-                key={i}
-                to={"/contract/" + item._id}>✎</Link>
+              <Button key={i} icon="edit" to={"/contract/" + item._id} />
             </td>
           )
         } else return null;
@@ -105,10 +99,7 @@ class ContractsTable extends React.Component {
         if (tools.isUserAllowed("shipping") && item.status === "active") {
           return (
             <td className="table__small-column">
-              <Link
-                className="button--link database__table__button"
-                key={i}
-                to={"/shipping/" + item._id}>⟳</Link>
+              <Button key={i} icon="transaction" to={"/shipping/" + item._id} />
             </td>
           )
         } else return null;

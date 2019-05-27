@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactModal from 'react-modal';
 
+import Button from '/imports/components/Button/index';
+
 export default class Box extends React.Component {
   closeBox = () => {
     this.props.closeBox();
@@ -28,7 +30,11 @@ export default class Box extends React.Component {
         style={this.style()}
         overlayClassName="box-overlay"
         className={this.className()}>
-          {this.props.closeBox ? <button onClick={this.closeBox} className="box__close-button">✖</button> : null}
+          {this.props.closeBox ?
+            <div className="box__close-button">
+              <Button onClick={this.closeBox} icon="not" />
+            </div>
+          : null}
           <div className="box__header">
             <h3>{this.props.title}</h3>
           </div>

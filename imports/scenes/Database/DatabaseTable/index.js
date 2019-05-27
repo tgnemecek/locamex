@@ -28,31 +28,31 @@ export default function DatabaseTable(props) {
       return <ContainersTable {...props} generateReport={this.generateReport} />
       break;
     case 'clients':
-      return <ClientsTable {...props} />
+      return <ClientsTable {...props} generateReport={this.generateReport} />
       break;
     case 'history':
-      return <HistoryTable {...props} />
+      return <HistoryTable {...props} generateReport={this.generateReport} />
       break;
     case 'series':
-      return <SeriesTable {...props} />
+      return <SeriesTable {...props} generateReport={this.generateReport} />
       break;
     case 'modules':
-      return <ModulesTable {...props} />
+      return <ModulesTable {...props} generateReport={this.generateReport} />
       break;
     case 'packs':
-      return <PacksTable {...props} />
+      return <PacksTable {...props} generateReport={this.generateReport} />
       break;
     case 'places':
-      return <PlacesTable {...props} />
+      return <PlacesTable {...props} generateReport={this.generateReport} />
       break;
     case 'services':
-      return <ServicesTable {...props} />
+      return <ServicesTable {...props} generateReport={this.generateReport} />
       break;
     case 'users':
-      return <UsersTable {...props} />
+      return <UsersTable {...props} generateReport={this.generateReport} />
       break;
     case 'contracts':
-      return <ContractsTable {...props} />
+      return <ContractsTable {...props} generateReport={this.generateReport} />
       break;
     default:
       return null;

@@ -106,6 +106,7 @@ if (Meteor.isServer) {
       }
       Contracts.update({ _id }, { $set: data });
       Meteor.call('history.insert', data, 'contracts.update.one');
+      return _id;
     },
     'contracts.shipping.send'(_id, state) {
       var oldShipping = Contracts.findOne({ _id }).shipping;

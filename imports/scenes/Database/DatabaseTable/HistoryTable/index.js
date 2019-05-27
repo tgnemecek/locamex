@@ -4,6 +4,7 @@ import { History } from '/imports/api/history/index';
 import moment from 'moment';
 import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
+import Button from '/imports/components/Button/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import Loading from '/imports/components/Loading/index';
@@ -39,7 +40,6 @@ class HistoryTable extends React.Component {
           <td>{item.user.firstName}</td>
           <td>{tools.translateDatabase(item.type)}</td>
           <td>{item.data._id}</td>
-          <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>🔍</button></td>
         </tr>
       )
     })

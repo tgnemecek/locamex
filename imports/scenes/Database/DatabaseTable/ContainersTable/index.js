@@ -5,6 +5,7 @@ import { Containers } from '/imports/api/containers/index';
 import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
+import Button from '/imports/components/Button/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
@@ -56,8 +57,10 @@ class ContainersTable extends React.Component {
         <th>Descrição</th>
         <th className="table__small-column">Tipo</th>
         <th className="table__small-column">Valor Mensal</th>
-        <th className="table__small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
-        <th className="table__small-column"><button onClick={generateReport} className="database__table__button">G</button></th>
+        <th className="table__small-column">
+          <Button icon="report" onClick={generateReport} />
+        </th>
+        <th className="table__small-column"><Button icon="new" onClick={toggleEditWindow} /></th>
       </tr>
     )
   }
@@ -83,7 +86,7 @@ class ContainersTable extends React.Component {
           <td>{item.description}</td>
           <td className="table__small-column">{translate(item.type)}</td>
           <td className="table__small-column">{tools.format(item.price, 'currency')}</td>
-          <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>✎</button></td>
+          <td className="table__small-column"><Button icon="edit" onClick={toggleEditWindow} /></td>
         </tr>
       )
     })
