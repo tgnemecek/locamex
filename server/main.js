@@ -9,6 +9,7 @@ import '../imports/api/batch/index';
 import '../imports/api/clients/index';
 import '../imports/api/containers/index';
 import '../imports/api/contracts/index';
+// import '../imports/api/create-excel/index';
 import '../imports/api/history/index';
 import '../imports/api/slingshot/index';
 import '../imports/api/modules/index';

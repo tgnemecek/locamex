@@ -35,12 +35,29 @@ class ContainersTable extends React.Component {
     const toggleEditWindow = () => {
       this.props.toggleEditWindow({});
     }
+    const generateReport = () => {
+      debugger;
+      var header = [[
+        "Descrição",
+        "Tipo",
+        "Valor Mensal"
+      ]]
+      var body = this.state.filteredDatabase.map((item) => {
+        return [
+          item.description,
+          translate(item.type),
+          item.price
+        ]
+      })
+      this.props.generateReport(header.concat(body));
+    }
     return (
       <tr>
         <th>Descrição</th>
         <th className="table__small-column">Tipo</th>
         <th className="table__small-column">Valor Mensal</th>
         <th className="table__small-column"><button onClick={toggleEditWindow} className="database__table__button">+</button></th>
+        <th className="table__small-column"><button onClick={generateReport} className="database__table__button">G</button></th>
       </tr>
     )
   }
@@ -52,11 +69,6 @@ class ContainersTable extends React.Component {
       }
       const toggleStockVisualizer = () => {
         this.props.toggleStockVisualizer(item);
-      }
-      function translate (input) {
-        if (input === 'fixed') return 'Fixo';
-        if (input === 'modular') return 'Modular';
-        return input;
       }
       const translatePlaces = (place) => {
         if (!place) return "-";
@@ -111,6 +123,12 @@ class ContainersTable extends React.Component {
       )
     }
   }
+}
+
+function translate (input) {
+  if (input === 'fixed') return 'Fixo';
+  if (input === 'modular') return 'Modular';
+  return input;
 }
 
 export default ContainersTableWrapper = withTracker((props) => {

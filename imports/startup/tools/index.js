@@ -118,8 +118,8 @@ export default class tools {
       return "Acessórios"
     } else if (database == 'clients') {
       return "Clientes"
-    } else if (database == 'containers') {
-      return "Containers"
+    } else if (database == 'containers' || database == 'models') {
+      return "Modelos"
     } else if (database == 'history') {
       return "Histórico"
     } else if (database == 'maintenance') {

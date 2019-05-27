@@ -9,6 +9,8 @@ Version: 1.8.9
 
 ## Changelog:
 
+-  Contract/Documents now can only be opened if Billing is filled;
+
 ### Version 1.8.9
 
 -  Fixed Create-pdf products bug;

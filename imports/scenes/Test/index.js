@@ -5,7 +5,8 @@ import { Containers } from '/imports/api/containers/index';
 import { Redirect } from 'react-router-dom';
 
 import tools from '/imports/startup/tools/index';
-
+import createExcel from '/imports/api/create-excel/index';
+import Button from '/imports/components/Button/index';
 import SuggestionBar from '/imports/components/SuggestionBar/index';
 import Input from '/imports/components/Input/index';
 
@@ -16,25 +17,15 @@ class TestPage extends React.Component {
       value: 10
     }
   }
-  onChange = (e) => {
-    this.setState({ value: e.target.value })
-  }
   onClick = (e) => {
-    this.setState({ value: 999 })
+    var value = this.state.value + 1;
+    this.setState({ value })
   }
   render() {
     return (
       <div>
-        <Input
-          title="Teste"
-          name="value"
-          type="currency"
-          onChange={this.onChange}
-          value={this.state.value}
-        />
-        {/* <Test value={this.state.value} onChange={this.onChange}/> */}
-        {/* VALUE: {this.state.value} */}
-        <button onClick={this.onClick}>SET</button>
+        <Button onClick={this.onClick} icon="faPlus">SET!!</Button>
+        VALUE {this.state.value}
       </div>
 
     )
