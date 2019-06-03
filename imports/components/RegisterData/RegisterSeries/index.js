@@ -106,10 +106,13 @@ class RegisterSeries extends React.Component {
               title="Pátio:"
               type="select"
               name="place"
+              disabled={this.props.item.place === 'rented'}
               error={this.state.errorKeys.includes("place")}
               value={this.state.place}
               onChange={this.onChange}>
-                <option value=''></option>
+                {this.props.item.place === 'rented' ?
+                  <option value='rented'>Alugado</option>
+                : <option value=''></option>}
                 {this.renderPlaces()}
             </Input>
             <Input

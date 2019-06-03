@@ -213,11 +213,17 @@ if (Meteor.isServer) {
         var place = tools.deepCopy(product.place);
         var rented = product.rented;
         module.selected.forEach((moduleSelected) => {
-          var exists = place.findIndex((item) => item._id === moduleSelected.place);
+          var exists = place.findIndex((item) => item._id === module.place);
           if (exists > -1) {
             place[exists].available = place[exists].available + moduleSelected.selected;
-            rented = rented - moduleSelected.selected;
-          } else throw new Meteor.Error('product-already-rented');
+          } else {
+            place.push({
+              _id: module.place,
+              available: moduleSelected.selected,
+              inactive: 0
+            })
+          }
+          rented = rented - moduleSelected.selected;
         })
         return {
           ...product,
@@ -230,15 +236,20 @@ if (Meteor.isServer) {
         var variations = product.variations.map((variation, i) => {
           var place = tools.deepCopy(variation.place);
           var rented = variation.rented;
-          accessory.selected.forEach((accessorySelected) => {
-            if (i === accessorySelected.variationIndex) {
-              var exists = place.findIndex((item) => item._id === accessorySelected.place);
-              if (exists > -1) {
-                place[exists].available = place[exists].available + accessorySelected.selected;
-                rented = rented - accessorySelected.selected;
-              } else throw new Meteor.Error('product-already-rented' + accessorySelected.place);
+
+          if (i === accessory.variationIndex) {
+            var exists = place.findIndex((item) => item._id === accessory.place);
+            if (exists > -1) {
+              place[exists].available = place[exists].available + accessory.selected;
+            } else {
+              place.push({
+                _id: accessory.place,
+                available: accessory.selected,
+                inactive: 0
+              })
             }
-          })
+            rented = rented - accessory.selected;
+          }
           return {
             ...variation,
             rented,
@@ -252,18 +263,16 @@ if (Meteor.isServer) {
       }
 
       const executeReceive = () => {
-        shipping.fixed.forEach((fixed) => {
-          var productFromDatabase = Series.findOne({ _id: fixed.seriesId });
-          if (!productFromDatabase) throw new Meteor.Error('product-not-found');
+        state.fixed.forEach((fixed) => {
           Meteor.call('series.update', {place: fixed.place}, fixed.seriesId);
         })
-        shipping.modules.forEach((module) => {
+        state.modules.forEach((module) => {
           var productFromDatabase = Modules.findOne({ _id: module.productId });
           if (!productFromDatabase) throw new Meteor.Error('product-not-found');
           productFromDatabase = updateModule(productFromDatabase, module);
           Meteor.call('modules.shipping.receive', productFromDatabase);
         })
-        shipping.accessories.forEach((accessory) => {
+        state.accessories.forEach((accessory) => {
           var productFromDatabase = Accessories.findOne({ _id: accessory.productId });
           if (!productFromDatabase) throw new Meteor.Error('product-not-found');
           productFromDatabase = updateAccessory(productFromDatabase, accessory);
@@ -272,9 +281,11 @@ if (Meteor.isServer) {
         return true;
       }
 
+      executeReceive();
+
       var history = {
         date: new Date(),
-        type: 'sendAll',
+        type: 'receiveAll',
         _id: tools.generateId()
       };
 

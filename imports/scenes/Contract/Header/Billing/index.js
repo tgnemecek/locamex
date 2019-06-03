@@ -20,8 +20,8 @@ export default class Billing extends React.Component {
       billingProducts: this.props.contract.billingProducts || [],
       billingServices: this.props.contract.billingServices || [],
 
-      inss: this.props.contract.inss || 11,
-      iss: this.props.contract.iss || 5,
+      inss: this.props.contract.inss === undefined ? 11 : this.props.contract.inss,
+      iss: this.props.contract.iss === undefined ? 5 : this.props.contract.iss,
 
       masterValue: 0,
       productsValue: 0,

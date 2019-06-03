@@ -22,7 +22,8 @@ export default class Receive extends React.Component {
           } else tempArray.push({
             ...selected,
             description: accessory.description,
-            place: ""
+            place: "",
+            productId: accessory.productId
           });
         })
         spreadAccessories = spreadAccessories.concat(tempArray);
@@ -53,7 +54,10 @@ export default class Receive extends React.Component {
     Meteor.call('contracts.shipping.receive', this.props.contract._id, data, (err, res) => {
       if (res) {
         this.props.toggleReceive();
-      } if (err) alert("Erro de servidor!");
+      } if (err) {
+        alert("Erro de servidor!");
+        console.log(err);
+      }
     });
   }
 
