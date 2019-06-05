@@ -89,8 +89,12 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', data, 'contracts');
     },
     'contracts.activate'(state) {
-      var _id = state._id || Meteor.call('contracts.insert', state);
-      Contracts.update({ _id }, { $set: { status: 'active' } })
+      var _id = state._id;
+      if (!_id) {
+        _id = Meteor.call('contracts.insert', state);
+      } else {
+        Meteor.call('contracts.update', state);
+      }
       Meteor.call('history.insert', { _id }, 'contracts.activate');
       return _id;
     },

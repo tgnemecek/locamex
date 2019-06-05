@@ -116,33 +116,29 @@ export default class Billing extends React.Component {
           width="1000px"
           className="billing"
           closeBox={this.props.toggleWindow}>
-          <div className={this.props.contract.status !== 'inactive' ? "contract--disabled" : null}>
-            <div className="error-message">{this.state.errorMsg}</div>
-              <ProductsSection
-                // General Use
-                productsValue={this.state.productsValue}
-                charges={this.state.billingProducts}
-                updateBilling={this.updateState}
-                // Left Side
-                ChargesNumber={ChargesNumber}
-                // Right Side
-                EqualCharges={EqualCharges}/>
-              <ServicesSection
-                // General Use
-                servicesValue={this.state.servicesValue}
-                charges={this.state.billingServices}
-                updateBilling={this.updateState}
-                // Left Side
-                ChargesNumber={ChargesNumber}
-                // Middle
-                inss={this.state.inss}
-                iss={this.state.iss}
-                // Right Side
-                EqualCharges={EqualCharges}/>
-              {this.props.contract.status == 'inactive' ?
-                <FooterButtons buttons={[{text: "Salvar", onClick: this.saveEdits}]}/>
-              : null}
-          </div>
+          <div className="error-message">{this.state.errorMsg}</div>
+          <ProductsSection
+            // General Use
+            productsValue={this.state.productsValue}
+            charges={this.state.billingProducts}
+            updateBilling={this.updateState}
+            // Left Side
+            ChargesNumber={ChargesNumber}
+            // Right Side
+            EqualCharges={EqualCharges}/>
+          <ServicesSection
+            // General Use
+            servicesValue={this.state.servicesValue}
+            charges={this.state.billingServices}
+            updateBilling={this.updateState}
+            // Left Side
+            ChargesNumber={ChargesNumber}
+            // Middle
+            inss={this.state.inss}
+            iss={this.state.iss}
+            // Right Side
+            EqualCharges={EqualCharges}/>
+          <FooterButtons buttons={[{text: "Salvar", onClick: this.saveEdits}]}/>
         </Box>
       )
   }

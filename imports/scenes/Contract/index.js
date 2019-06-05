@@ -188,15 +188,9 @@ class Contract extends React.Component {
           this.props.history.push("/contract/" + res);
           this.setState({ contract });
         }
-        else if (err) console.log(err);
+        else if (err) alert(err.error);
       });
     } else Meteor.call('contracts.update', this.state.contract);
-  }
-
-  setDisabledClassName = () => {
-    if (this.state.contract.status == 'inactive') {
-      return "contract__body";
-    } else return "contract__body contract--disabled";
   }
 
   totalValue = (option) => {
@@ -241,19 +235,17 @@ class Contract extends React.Component {
             errorKeys={this.state.errorKeys}
             saveContract={this.saveEdits}
           />
-          <div className={this.setDisabledClassName()}>
-            <Information
-              clientsDatabase={this.props.databases.clientsDatabase}
-              contract={this.state.contract}
-              updateContract={this.updateContract}
-              errorKeys={this.state.errorKeys}
-            />
-            <Items
-              databases={this.props.databases}
-              contract={this.state.contract}
-              updateContract={this.updateContract}
-            />
-          </div>
+          <Information
+            clientsDatabase={this.props.databases.clientsDatabase}
+            contract={this.state.contract}
+            updateContract={this.updateContract}
+            errorKeys={this.state.errorKeys}
+          />
+          <Items
+            databases={this.props.databases}
+            contract={this.state.contract}
+            updateContract={this.updateContract}
+          />
           <Footer
             totalValue={this.totalValue()}
             productsValue={this.totalValue('products')}

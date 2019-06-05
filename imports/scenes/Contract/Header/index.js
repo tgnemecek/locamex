@@ -76,14 +76,6 @@ export default class Header extends React.Component {
                                               toggleWindow={this.toggleWindow}
                                               updateContract={this.props.updateContract}
                                                   /> : null}
-            <Button value='documents' onClick={this.toggleWindow} icon="print"/>
-            {this.state.windowOpen == 'documents' ? <Documents
-                                              databases={this.props.databases}
-                                              saveContract={this.props.saveContract}
-                                              contract={this.props.contract}
-                                              toggleWindow={this.toggleWindow}
-                                              updateContract={this.props.updateContract}
-                                              /> : null}
             <Button value='billing' onClick={this.toggleWindow} icon="money"
               style={this.props.errorKeys.includes("billing") ? {color: "red"} : null}
             />
@@ -92,6 +84,14 @@ export default class Header extends React.Component {
                                               toggleWindow={this.toggleWindow}
                                               updateContract={this.props.updateContract}
                                               errorKeys={this.props.errorKeys}
+                                              /> : null}
+            <Button value='documents' onClick={this.toggleWindow} icon="print"/>
+            {this.state.windowOpen == 'documents' ? <Documents
+                                              databases={this.props.databases}
+                                              saveContract={this.props.saveContract}
+                                              contract={this.props.contract}
+                                              toggleWindow={this.toggleWindow}
+                                              updateContract={this.props.updateContract}
                                               /> : null}
             {this.showCancelButton()}
             <ConfirmationWindow

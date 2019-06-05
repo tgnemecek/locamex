@@ -220,6 +220,8 @@ export default class tools {
 
       case 'rg':
         value = value.toString().replace(/\D+/g, '');
+        if (value.length > 12) return value;
+
         if (value.length > 2) {
           value = value.substring(0, 2) + "." + value.substring(2);
         }
@@ -228,9 +230,6 @@ export default class tools {
         }
         if (value.length > 10) {
           value = value.substring(0, 10) + "-" + value.substring(10);
-        }
-        if (value.length > 12) {
-          value = value.substring(0, 13);
         }
         return value;
 

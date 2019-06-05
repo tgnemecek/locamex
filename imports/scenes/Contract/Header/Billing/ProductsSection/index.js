@@ -123,7 +123,7 @@ export default class ProductsSection extends React.Component {
     if (this.props.productsValue) {
       return (
         <Block
-          title="Mensalidade:"
+          title="Cobranças de Locação:"
           className="billing__section"
           style={{background: "antiquewhite"}}
           columns={1}>

@@ -30,7 +30,7 @@ export default class Observations extends React.Component {
           title="Observações"
           closeBox={this.props.toggleWindow}
           width="400px">
-            <div className={this.props.contract.status !== 'inactive' ? "contract--disabled" : null}>
+            <div>
               <div className="observations__body">
                 <Input
                   title="Controle Interno:"
@@ -45,9 +45,7 @@ export default class Observations extends React.Component {
                   value={this.state.external}
                   onChange={this.onChange}/>
               </div>
-              {this.props.contract.status == 'inactive' ?
-                <FooterButtons buttons={[{text: "Salvar Edições", onClick: this.saveEdits}]}/>
-              : null}
+              <FooterButtons buttons={[{text: "Salvar Edições", onClick: this.saveEdits}]}/>
             </div>
         </Box>
       )

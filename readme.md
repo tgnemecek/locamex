@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.9.1
+Version: 1.9.2
 
 ## Information:
 
@@ -8,6 +8,12 @@ Version: 1.9.1
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.9.2
+
+-  Swaped Documents & Billing buttons positions;
+-  Removed Contract lock after activating it. Now you can change it anytime;
+-  RG field now doesn't cut numbers after 12th digit, to allow international numbers;
 
 ### Version 1.9.1
 
