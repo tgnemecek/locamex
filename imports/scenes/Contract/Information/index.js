@@ -156,6 +156,7 @@ export default class Information extends React.Component {
               name="duration"
               extra="dates"
               type="number"
+              min={1}
               max={this.props.contract.dates.timeUnit === "months" ? 999 : 30}
             />
             <Input

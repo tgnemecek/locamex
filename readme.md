@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.9.0
+Version: 1.9.1
 
 ## Information:
 
@@ -8,6 +8,13 @@ Version: 1.9.0
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.9.1
+
+-  Fixed Shipping/Receive not returning correctly;
+-  RegisterAccessories now blocks place change if item is rented;
+-  Fixed reseting INSS/ISS values when they were set to 0;
+-  Fixed Calendar dates not changing in Billing;
 
 ### Version 1.9.0
 

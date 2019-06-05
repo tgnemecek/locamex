@@ -83,14 +83,10 @@ export default class ProductsSection extends React.Component {
       }
       const changeDate = (e) => {
         var endDate = e.target.value;
-        var charges = array.map((charge, i) => {
-          return {
-            ...charge,
-            endDate: moment(endDate).toDate()
-          }
-        })
+        var charges = tools.deepCopy(array);
+        charges[i].endDate = moment(endDate).toDate();
         this.toggleCalendar();
-        this.props.updateBilling('billingProducts', array);
+        this.props.updateBilling('billingProducts', charges);
       }
       return (
         <tr key={i}>

@@ -56,7 +56,6 @@ export default class Receive extends React.Component {
         this.props.toggleReceive();
       } if (err) {
         alert("Erro de servidor!");
-        console.log(err);
       }
     });
   }
