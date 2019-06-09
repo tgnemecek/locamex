@@ -35,7 +35,7 @@ export default class RegisterClients extends React.Component {
         number: '',
         street: '',
         city: '',
-        state: '',
+        state: 'SP',
         cep: '',
         additional: ''
       },
@@ -72,12 +72,10 @@ export default class RegisterClients extends React.Component {
   }
   saveEdits = () => {
     var contacts = tools.deepCopy(this.state.contacts);
-    var contactsToCheck = [];
-    if (this.state.type == "company") contactsToCheck.push(contacts[0]);
 
     var check = checkRequiredFields({
       ...this.state,
-      contacts: contactsToCheck
+      contacts: []
     });
 
     if (check !== true) {
@@ -175,9 +173,6 @@ export default class RegisterClients extends React.Component {
             message="Deseja mesmo excluir este item do banco de dados?"
             leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
             rightButton={{text: "Sim", className: "button--danger", onClick: this.removeItem}}/>
-            {/* {this.state.tab > 1 ?
-              <button className="button button--danger" style={{width: "100%"}} onClick={this.toggleConfirmationWindow}>Excluir Contato</button>
-            : null} */}
             <FooterButtons buttons={[
               {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
               {text: "Salvar", onClick: this.saveEdits}

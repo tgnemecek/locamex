@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactModal from 'react-modal';
 
+import Help from '/imports/components/Help/index';
 import Button from '/imports/components/Button/index';
 
 export default class Box extends React.Component {
@@ -34,6 +35,11 @@ export default class Box extends React.Component {
             <div className="box__close-button">
               <Button onClick={this.closeBox} icon="not" />
             </div>
+          : null}
+          {this.props.help ?
+            <Help
+              className="box__help-button"
+              help={this.props.help}/>
           : null}
           <div className="box__header">
             <h3>{this.props.title}</h3>

@@ -1,106 +1,93 @@
 import tools from '/imports/startup/tools/index';
 
-const requiredFieldsCompany = [
-  "description",
-  "type",
-  "registry",
-  "officialName",
-  "registryMU"
-]
-
-const requiredFieldsPerson = [
-  "description",
-  "type",
-  "registry",
-  "rg",
-  "phone1",
-  "email"
-]
-
-const requiredFieldsAddress = [
-  "street",
-  "city",
-  "cep",
-  "number",
-  "state"
-]
-
-const requiredFieldsFirstContact = [
-  "name",
-  "cpf",
-  "rg",
-  "email",
-  "phone1"
-]
-
-const verificationFields = [
-  "registry",
-  "email",
-  "cpf",
-  "phone"
-]
-
 export default function checkRequiredFields (state) {
-  var currentFields;
-  var emptyFields = [];
-  var specialFields = ["address", "contacts"];
 
-  if (state.type == 'company') {
-    currentFields = requiredFieldsCompany;
-  } else currentFields = requiredFieldsPerson;
+  function checkCompany(state) {
+    var invalidFields = [];
 
-  Object.keys(state).forEach((key) => {
-    if (!specialFields.includes(key)) {
-      if (currentFields.includes(key)) {
-        if (!state[key]) {
-          emptyFields.push(key);
-        } else {
-          if (verificationFields.includes(key)) {
-            var type = key;
-            if (key == "registry") type = state.type == "company" ? "cnpj" : "cpf";
-            if (key == "phone1") type = "phone";
-            if (!validateField(state[key], type)) emptyFields.push(key);
+    Object.keys(state).forEach((key) => {
+      switch (key) {
+        case "description":
+        case "type":
+        case "registry":
+        case "officialName":
+        case "registryMU":
+        case "registryES":
+          if (!validateField(state[key], key)) {
+            invalidFields.push(key);
           }
-        }
+          break;
+        case "address":
+          invalidFields = invalidFields.concat(checkAddress(state[key]));
+          break;
       }
-    } else {
-      var object;
-      var requiredSpecialFields;
-      if (key == "address") {
-        object = state[key];
-        requiredSpecialFields = requiredFieldsAddress;
-      } else if (key == "contacts" && state.type == "company") {
-        object = state[key][0];
-        requiredSpecialFields = requiredFieldsFirstContact;
-      }
-      if (object) {
-        Object.keys(object).forEach((innerKey) => {
-          if (requiredSpecialFields.includes(innerKey)) {
-            if (!object[innerKey]) {
-              emptyFields.push(innerKey);
-            }
-          }
-        })
-      }
+    })
+    // Conditional validation: only one is necessary
+    var muIndex = invalidFields.findIndex((field) => field === "registryMU");
+    var esIndex = invalidFields.findIndex((field) => field === "registryES");
+    if (muIndex > -1 && esIndex === -1) {
+      invalidFields.splice(muIndex, 1);
+    } else if (esIndex > -1 && muIndex === -1) {
+      invalidFields.splice(esIndex, 1);
     }
-  })
-  if (emptyFields.length > 0) {
-    return emptyFields;
-  } else return true;
+    if (invalidFields.length > 0) {
+      return invalidFields;
+    } else return true;
+  }
+  function checkPerson(state) {
+    var invalidFields = [];
+
+    Object.keys(state).forEach((key) => {
+      switch (key) {
+        case "description":
+        case "type":
+        case "registry":
+        case "rg":
+        case "phone1":
+        case "email":
+          if (!validateField(state[key], key)) {
+            invalidFields.push(key);
+          }
+          break;
+        case "address":
+          invalidFields = invalidFields.concat(checkAddress(state[key]));
+          break;
+      }
+    })
+    if (invalidFields.length > 0) {
+      return invalidFields;
+    } else return true;
+  }
+  function checkAddress(address) {
+    return Object.keys(address).filter((key) => {
+      return !address[key];
+    });
+  }
+  function validateField (value, type) {
+    if (!value) return false;
+
+    var valid;
+    if (type === 'email') {
+      valid = tools.checkEmail(value);
+    } else if (type === 'registry') {
+      var isCNPJ = tools.checkCNPJ(value);
+      var isCPF = tools.checkCpf(value);
+      if  (isCNPJ || isCPF) {
+        valid = true
+      } else valid = false;
+    } else if (type === 'phone1') {
+      valid = tools.checkPhone(value);
+    } else {
+      valid = true;
+    }
+    return valid;
+  }
+
+
+
+  // Main:
+  if (state.type === "company") {
+    return checkCompany(state);
+  } else return checkPerson(state);
 }
 
-function validateField (value, type) {
-  var valid;
-  if (type === 'email') {
-    valid = tools.checkEmail(value);
-  } else if (type === 'cnpj') {
-    valid = tools.checkCNPJ(value);
-  } else if (type === 'cpf') {
-    valid = tools.checkCpf(value);
-  } else if (type === 'phone') {
-    valid = tools.checkPhone(value);
-  } else {
-    valid = false;
-  }
-  return valid;
-}

@@ -101,6 +101,7 @@ export default class DocumentsCompany extends React.Component {
         <Box
           title="Emitir Contrato:"
           width="400px"
+          help="Para o contato de Negociador aparecer na lista, é obrigatório o preenchimento do Nome, Email e Telefone #1. Para o contato de Representante Legal, é obrigatório o preenchimento do Nome, CPF e RG. Tais preenchimentos são feitos exclusivamente na página de Clientes, ao editar o respectivo registro de Cliente."
           closeBox={this.props.toggleWindow}>
             <div className="documents">
               <Input

@@ -46,6 +46,7 @@ export default function Company (props) {
         title="Ins. Estadual:"
         type="text"
         name="registryES"
+        error={props.item.errorKeys.includes("registryES")}
         value={props.item.registryES}
         onChange={props.onChange}
       />

@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.9.2
+Version: 1.9.3
 
 ## Information:
 
@@ -8,6 +8,13 @@ Version: 1.9.2
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.9.3
+
+-  Created Help component;
+-  Added Help component to Documents, explaining the contacts functionality;
+-  Clients now can be registered with no contacts checking;
+-  Now RegisterClients properly checks for just one: registryMU or registryES;
 
 ### Version 1.9.2
 
