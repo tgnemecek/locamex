@@ -11,6 +11,7 @@ import SeriesTable from './SeriesTable/index';
 import ModulesTable from './ModulesTable/index';
 import PacksTable from './PacksTable/index';
 import PlacesTable from './PlacesTable/index';
+import ProposalsTable from './ProposalsTable/index';
 import ServicesTable from './ServicesTable/index';
 import UsersTable from './UsersTable/index';
 
@@ -53,6 +54,9 @@ export default function DatabaseTable(props) {
       break;
     case 'contracts':
       return <ContractsTable {...props} generateReport={this.generateReport} />
+      break;
+    case 'proposals':
+      return <ProposalsTable {...props} generateReport={this.generateReport} />
       break;
     default:
       return null;

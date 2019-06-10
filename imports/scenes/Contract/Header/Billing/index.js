@@ -27,7 +27,6 @@ export default class Billing extends React.Component {
       productsValue: 0,
       servicesValue: 0,
 
-      errorKeys: [],
       errorMsg: ''
     }
     var duration = this.props.contract.dates.timeUnit === "months" ? this.props.contract.dates.duration : 1;

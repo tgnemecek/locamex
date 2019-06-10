@@ -95,6 +95,24 @@ export const appStructure = [
       }
     ]
   },
+  // {
+  //   groupName: "proposals",
+  //   groupTitle: "Propostas",
+  //   pages: [
+  //     {
+  //       name: "proposals",
+  //       title: "Propostas",
+  //       link: "/database/proposals",
+  //       visible: true
+  //     },
+  //     {
+  //       name: "proposal",
+  //       title: "Proposta",
+  //       link: "/proposal/",
+  //       visible: false
+  //     }
+  //   ]
+  // },
   {
     groupName: "contracts",
     groupTitle: "Contratos",

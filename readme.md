@@ -15,6 +15,7 @@ Version: 1.9.3
 -  Added Help component to Documents, explaining the contacts functionality;
 -  Clients now can be registered with no contacts checking;
 -  Now RegisterClients properly checks for just one: registryMU or registryES;
+-  ErrorKeys now reset/change everytime the states are updated;
 
 ### Version 1.9.2
 

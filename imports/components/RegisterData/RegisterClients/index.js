@@ -60,7 +60,11 @@ export default class RegisterClients extends React.Component {
   onChange = (e) => {
     var key = e.target.name;
     var value = e.target.value;
-    this.setState({ [key]: value });
+    var errorKeys = tools.deepCopy(this.state.errorKeys);
+    var fieldIndex = errorKeys.findIndex((key) => key === e.target.name);
+    errorKeys.splice(fieldIndex, 1);
+
+    this.setState({ [key]: value, errorKeys });
   }
   toggleConfirmationWindow = () => {
     var confirmationWindow = !this.state.confirmationWindow;

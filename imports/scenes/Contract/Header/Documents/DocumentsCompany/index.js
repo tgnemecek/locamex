@@ -22,7 +22,11 @@ export default class DocumentsCompany extends React.Component {
 
   onChangeMain = (e) => {
     var negociatorId = e.target.value;
-    this.setState({ negociatorId });
+    var errorKeys = tools.deepCopy(this.state.errorKeys);
+    var fieldIndex = errorKeys.findIndex((key) => key === e.target.name);
+    errorKeys.splice(fieldIndex, 1);
+
+    this.setState({ negociatorId, errorKeys });
   }
 
   onChangeRepresentatives = (e) => {

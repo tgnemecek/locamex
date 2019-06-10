@@ -18,9 +18,6 @@ export default class ImageVisualizer extends React.Component {
       lastRegistry: this.props.item.snapshots.length ? this.props.item.snapshots[this.props.item.snapshots.length-1] : {},
       currentIndex: 0,
 
-      errorMsg: '',
-      errorKeys: [],
-
       uploadWindow: false,
       confirmationWindow: false
     }

@@ -32,7 +32,10 @@ export default class RegisterAccessories extends React.Component {
     }
   }
   onChange = (e) => {
-    this.setState({ [e.target.name]: e.target.value });
+    var errorKeys = tools.deepCopy(this.state.errorKeys);
+    var fieldIndex = errorKeys.findIndex((key) => key === e.target.name);
+    errorKeys.splice(fieldIndex, 1);
+    this.setState({ [e.target.name]: e.target.value, errorKeys });
   }
   onChangeVariations = (e) => {
     var bool = e.target.value;

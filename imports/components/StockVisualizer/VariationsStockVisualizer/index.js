@@ -18,8 +18,7 @@ class VariationsStockVisualizer extends React.Component {
         return acc + (cur.available + cur.inactive);
       }, 0),
       variationIndex: 0,
-      errorMsg: '',
-      errorKeys: []
+      errorMsg: ''
     }
   }
 
@@ -28,7 +27,7 @@ class VariationsStockVisualizer extends React.Component {
   }
 
   changeTotal = (modifier) => {
-    this.setState({ totalItems: this.state.totalItems + modifier, errorMsg: '', errorKeys: [] });
+    this.setState({ totalItems: this.state.totalItems + modifier, errorMsg: '' });
   }
 
   renderVariations = () => {
@@ -61,7 +60,7 @@ class VariationsStockVisualizer extends React.Component {
 
   saveEdits = () => {
     if (this.countSumItems() !== this.state.totalItems) {
-      this.setState({ errorMsg: 'As quantidades nos pátios devem equivaler ao estoque total.', errorKeys: ['sum'] });
+      this.setState({ errorMsg: 'As quantidades nos pátios devem equivaler ao estoque total.' });
     } else {
       var _id = this.props.item._id;
       var variations = tools.deepCopy(this.props.item.variations);

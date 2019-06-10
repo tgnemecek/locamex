@@ -21,6 +21,10 @@ class RegisterSeries extends React.Component {
   }
 
   onChange = (e) => {
+    var errorKeys = tools.deepCopy(this.state.errorKeys);
+    var fieldIndex = errorKeys.findIndex((key) => key === e.target.name);
+    errorKeys.splice(fieldIndex, 1);
+    
     this.setState({ [e.target.name]: e.target.value });
   }
 

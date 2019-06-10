@@ -13,20 +13,6 @@ import Select from './Select/index';
 import TextArea from './TextArea/index';
 
 export default class Input extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: this.props.value,
-      showError: false
-    };
-  }
-  componentDidUpdate(prevProps) {
-    if (prevProps.value !== this.props.value) {
-      this.setState({ value: this.props.value });
-    } if (prevProps.error !== this.props.error) {
-      this.setState({ showError: true });
-    }
-  }
   onChange = (exportValue) => {
     if (exportValue === undefined) throw new Meteor.Error('exportValue is undefined in ' + this.props.name);
 
@@ -42,7 +28,7 @@ export default class Input extends React.Component {
     this.setState({ value: exportValue, showError: false });
   }
   style = () => {
-    if (this.props.error && this.state.showError) {
+    if (this.props.error) {
       return {
         ...this.props.style,
         borderColor: "red"
@@ -94,7 +80,6 @@ export default class Input extends React.Component {
         <ChosenComponent
           {...this.props}
           style={this.style()}
-          value={this.state.value}
           onChange={this.onChange}
           // style={this.props.style}
           // type={this.props.type}

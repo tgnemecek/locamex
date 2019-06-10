@@ -24,6 +24,10 @@ class Documents extends React.Component {
 
   onChangeMain = (e) => {
     var negociator = e.target.value;
+    var errorKeys = tools.deepCopy(this.state.errorKeys);
+    var fieldIndex = errorKeys.findIndex((key) => key === e.target.name);
+    errorKeys.splice(fieldIndex, 1);
+    
     this.setState({ negociator });
   }
 

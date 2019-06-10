@@ -113,7 +113,9 @@ class Contract extends React.Component {
   updateContract = (changes, callback) => {
     var contract = {
       ...this.state.contract,
-      ...changes
+      ...changes,
+      errorKeys: [],
+      errorMsg: ''
     };
     this.setState({ contract }, () => {
       if (callback) callback();

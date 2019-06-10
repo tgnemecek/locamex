@@ -30,8 +30,7 @@ export default class PlacesBlock extends React.Component {
         var item = {...this.props.item, place: placesInItem};
         this.props.onChange({
           item,
-          errorMsg: '',
-          errorKeys: []
+          errorMsg: ''
         })
       }
       const findQuantity = (which) => {
