@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.9.3
+Version: 1.9.4
 
 ## Information:
 
@@ -8,6 +8,10 @@ Version: 1.9.3
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.9.4
+
+-  Fixed bug in RegisterSeries;
 
 ### Version 1.9.3
 

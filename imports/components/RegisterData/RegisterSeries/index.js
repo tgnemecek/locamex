@@ -3,6 +3,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { Containers } from '/imports/api/containers/index';
 import { Places } from '/imports/api/places/index';
 
+import tools from '/imports/startup/tools/index';
 import Box from '/imports/components/Box/index';
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
@@ -24,8 +25,8 @@ class RegisterSeries extends React.Component {
     var errorKeys = tools.deepCopy(this.state.errorKeys);
     var fieldIndex = errorKeys.findIndex((key) => key === e.target.name);
     errorKeys.splice(fieldIndex, 1);
-    
-    this.setState({ [e.target.name]: e.target.value });
+
+    this.setState({ [e.target.name]: e.target.value, errorKeys });
   }
 
   renderModels = () => {
