@@ -5,11 +5,11 @@ export default function tableBillingServices(props) {
   const body = () => {
     return props.billingServices.map((charge, i, array) => {
       var index = (i + 1);
-      var endDate = moment(charge.endDate).format("DD/MM/YYYY");
+      var expiryDate = moment(charge.expiryDate).format("DD/MM/YYYY");
       var description = charge.description;
       var taxes = {text: tools.format((charge.value * (props.inss + props.iss) / 100), 'currency'), alignment: 'center'};
       var value = {text: tools.format(charge.value, 'currency'), alignment: 'right'};
-      return [index, endDate, description, taxes, value];
+      return [index, expiryDate, description, taxes, value];
     });
   }
   return props.generateTable({

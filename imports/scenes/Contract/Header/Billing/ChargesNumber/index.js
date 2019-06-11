@@ -19,6 +19,7 @@ export default class ChargesNumber extends React.Component {
           ...charge,
           startDate: moment(startDate).add((30 * i + i), 'days').toDate(),
           endDate: moment(startDate).add((30 * i + 30 + i), 'days').toDate(),
+          expiryDate: moment(startDate).add((30 * i + 30 + i), 'days').toDate(),
           description: `Parcela ${i + 1} de ${value} ${this.props.description}`
         }
       })

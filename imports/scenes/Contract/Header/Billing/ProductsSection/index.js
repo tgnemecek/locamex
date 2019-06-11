@@ -88,6 +88,13 @@ export default class ProductsSection extends React.Component {
         this.toggleCalendar();
         this.props.updateBilling('billingProducts', charges);
       }
+      const changeExpiryDate = (e) => {
+        var expiryDate = e.target.value;
+        var charges = tools.deepCopy(array);
+        charges[i].expiryDate = moment(expiryDate).toDate();
+        this.toggleCalendar();
+        this.props.updateBilling('billingProducts', charges);
+      }
       return (
         <tr key={i}>
           <td>{(i + 1) + '/' + array.length}</td>
@@ -98,8 +105,8 @@ export default class ProductsSection extends React.Component {
               style={{textAlign: 'center'}}
               calendarOpen={this.state.calendarOpen}
               toggleCalendar={this.toggleCalendar}
-              onChange={changeDate}
-              value={charge.endDate}/>
+              onChange={changeExpiryDate}
+              value={charge.expiryDate}/>
           </td>
           <td>
             <Input name={i} value={charge.description} onChange={onChangeDescription} type="textarea"/>

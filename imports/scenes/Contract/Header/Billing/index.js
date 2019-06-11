@@ -41,8 +41,6 @@ export default class Billing extends React.Component {
     var productsValue = (containersValue + accessoriesValue) * (1 - discount);
     var masterValue = productsValue + servicesValue;
 
-    var billingProducts = tools.deepCopy(this.state.billingProducts);
-
     function calcTotalValue (arr, duration) {
       if (arr.length == 0) return 0;
       return arr.reduce((acc, current) => {
@@ -50,7 +48,7 @@ export default class Billing extends React.Component {
         return acc + (current.price * renting * duration)
       }, 0);
     }
-    this.state = {...this.state, masterValue, productsValue, servicesValue, billingProducts};
+    this.state = { ...this.state, masterValue, productsValue, servicesValue };
   }
 
   componentDidMount() {
@@ -76,7 +74,6 @@ export default class Billing extends React.Component {
   }
 
   differenceIsZero = () => {
-    debugger;
     var billingProducts = this.state.billingProducts;
     var billingServices = this.state.billingServices;
     var masterValue = this.state.masterValue;

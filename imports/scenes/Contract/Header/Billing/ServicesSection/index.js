@@ -59,10 +59,10 @@ export default class ServicesSection extends React.Component {
         newCharges[i].description = value;
         this.props.updateBilling('billingServices', newCharges);
       }
-      const changeDate = (e) => {
-        var endDate = e.target.value;
+      const changeExpiryDate = (e) => {
+        var expiryDate = e.target.value;
         var charges = tools.deepCopy(array);
-        charges[i].endDate = moment(endDate).toDate();
+        charges[i].expiryDate = moment(expiryDate).toDate();
         this.toggleCalendar();
         this.props.updateBilling('billingServices', charges);
       }
@@ -84,8 +84,8 @@ export default class ServicesSection extends React.Component {
               style={{textAlign: 'center'}}
               calendarOpen={this.state.calendarOpen}
               toggleCalendar={this.toggleCalendar}
-              onChange={changeDate}
-              value={charge.endDate}/>
+              onChange={changeExpiryDate}
+              value={charge.expiryDate}/>
           </td>
           <td>
             <Input name={i} value={charge.description} onChange={onChangeDescription} type="textarea"/>

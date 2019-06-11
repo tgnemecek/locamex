@@ -12,7 +12,8 @@ Version: 1.9.5
 ### Version 1.9.5
 
 -  Because the RG field can be so unpredictable, no format is applied to it.
--  create-pdf for contracts now exports both negociator phones if they exist;
+-  Create-pdf for contracts now exports both negociator phones if they exist;
+-  Billing charges now have 'expiryDate', so it can be changed independently;
 
 ### Version 1.9.4
 
