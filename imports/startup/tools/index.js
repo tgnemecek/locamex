@@ -219,7 +219,7 @@ export default class tools {
         return value;
 
       case 'rg':
-        value = value.toString().replace(/\D+/g, '');
+        value = value.toString().replace(/[^A-Za-z0-9]/g, '');
         if (value.length > 12) return value;
 
         if (value.length > 2) {

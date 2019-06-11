@@ -15,12 +15,24 @@ function tableInformationCompany(props) {
       return props.client.registryMU;
     } else return props.client.registryES;
   }
+  const renderPhones = () => {
+    var string = '';
+    if (props.negociator.phone1) {
+      string = tools.format(props.negociator.phone1, 'phone');
+      if (props.negociator.phone2) {
+        string += ", " + tools.format(props.negociator.phone2, 'phone');
+      }
+    } else if (props.negociator.phone2) {
+      string = tools.format(props.negociator.phone2, 'phone');
+    }
+    return string;
+  }
   return [
       [ 'Razão Social', {text: props.client.officialName, colSpan: 5} ],
       [ 'CNPJ', {text: tools.format(props.client.registry, 'cnpj'), colSpan: 3}, registryLabel, showRegistry() ],
       [ 'Endereço', {text: props.client.address.street + ' ' + props.client.address.number, colSpan: 3}, 'CEP', tools.format(props.client.address.cep, 'cep') ],
       [ 'Cidade', {text: props.client.address.city, colSpan: 3}, 'UF', props.client.address.state ],
-      [ 'Contato', props.negociator.name, 'Telefone', tools.format(props.negociator.phone1, 'phone'), 'Email', props.negociator.email ]
+      [ 'Contato', props.negociator.name, 'Telefone(s)', renderPhones(), 'Email', props.negociator.email ]
     ]
 }
 

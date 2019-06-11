@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.9.4
+Version: 1.9.5
 
 ## Information:
 
@@ -8,6 +8,11 @@ Version: 1.9.4
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.9.5
+
+-  Because the RG field can be so unpredictable, no format is applied to it.
+-  create-pdf for contracts now exports both negociator phones if they exist;
 
 ### Version 1.9.4
 
