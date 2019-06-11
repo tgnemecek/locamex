@@ -20,7 +20,7 @@ function tableInformationCompany(props) {
     if (props.negociator.phone1) {
       string = tools.format(props.negociator.phone1, 'phone');
       if (props.negociator.phone2) {
-        string += ", " + tools.format(props.negociator.phone2, 'phone');
+        string += ",\n" + tools.format(props.negociator.phone2, 'phone');
       }
     } else if (props.negociator.phone2) {
       string = tools.format(props.negociator.phone2, 'phone');

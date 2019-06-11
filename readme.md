@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.9.5
+Version: 1.9.6
 
 ## Information:
 
@@ -8,6 +8,10 @@ Version: 1.9.5
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 1.9.6
+
+-  Fixed create-pdf/contract breaking email line, now if 2 phones are there, it breaks them instead;
 
 ### Version 1.9.5
 
