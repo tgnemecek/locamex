@@ -81,6 +81,7 @@ export default class Footer extends React.Component {
     } else if (this.props.contract.status === 'active') {
       return (
         <FooterButtons buttons={[
+          {text: "Salvar Edições", className: "button--secondary", onClick: this.props.saveEdits},
           {text: "Finalizar Contrato", onClick: this.toggleFinalizeWindow},
         ]}/>
       )

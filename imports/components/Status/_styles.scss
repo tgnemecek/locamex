@@ -1,0 +1,29 @@
+// Proposal status
+.status--in-progress {
+  color: $yellow
+}
+
+.status--closed {
+  color: $green;
+}
+
+// Contract status
+.status--inactive {
+  color: $yellow
+}
+
+.status--active {
+  color: $green;
+}
+
+.status--cancelled {
+  color: $red
+}
+
+.status--prorogation {
+  color: $dark-blue
+}
+
+.status--finalized {
+ color: $light-blue
+}

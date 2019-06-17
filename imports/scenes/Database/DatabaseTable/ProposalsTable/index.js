@@ -1,7 +1,6 @@
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import RedirectUser from '/imports/components/RedirectUser/index';
-import { Clients } from '/imports/api/clients/index';
 import { Proposals } from '/imports/api/proposals/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
@@ -9,6 +8,7 @@ import tools from '/imports/startup/tools/index';
 import Button from '/imports/components/Button/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
+import Status from '/imports/components/Status/index';
 
 class ProposalsTable extends React.Component {
   constructor(props) {
@@ -47,21 +47,6 @@ class ProposalsTable extends React.Component {
       const toggleWindow = () => {
         this.props.toggleWindow(item);
       }
-      function translate (input) {
-        if (input === 'active') return 'Ativo';
-        if (input === 'inactive') return 'Inativo';
-        if (input === 'cancelled') return 'Cancelado';
-        if (input === 'finalized') return 'Finalizado';
-        if (input === 'prorogation') return 'Em Prorrogação';
-        return input;
-      }
-      const clientName = () => {
-        for (var j = 0; j < this.props.clientsDatabase.length; j++) {
-          if (this.props.clientsDatabase[j]._id === item.clientId) {
-            return this.props.clientsDatabase[j].description;
-          }
-        }
-      }
       const totalValue = () => {
         var duration = item.dates.timeUnit === "months" ? item.dates.duration : 1;
         var discount = item.discount;
@@ -83,11 +68,11 @@ class ProposalsTable extends React.Component {
 
         return tools.format((productsValue + servicesValue), "currency");
       }
-      const renderContractButton = () => {
-        if (tools.isUserAllowed("contract")) {
+      const renderProposalButton = () => {
+        if (tools.isUserAllowed("proposal")) {
           return (
             <td className="table__small-column">
-              <Button key={i} icon="edit" to={"/contract/" + item._id} />
+              <Button key={i} icon="edit" to={"/proposal/" + item._id} />
             </td>
           )
         } else return null;
@@ -104,11 +89,10 @@ class ProposalsTable extends React.Component {
       return (
         <tr key={i}>
           <td className="table__small-column">{item._id}</td>
-          <td>{clientName()}</td>
-          <td className="table__small-column">{translate(item.status)}</td>
+          <td>{item.client.description}</td>
+          <td className="table__small-column"><Status status={item.status} type="proposal"/></td>
           <td className="table__small-column">{totalValue()}</td>
-          {renderContractButton()}
-          {renderShippingButton()}
+          {renderProposalButton()}
         </tr>
       )
     })
@@ -150,16 +134,13 @@ class ProposalsTable extends React.Component {
 }
 
 export default ProposalsTableWrapper = withTracker((props) => {
-  Meteor.subscribe('clientsPub');
   Meteor.subscribe('proposalsPub');
   Meteor.subscribe('usersPub');
   var fullDatabase = Proposals.find().fetch();
   fullDatabase = tools.sortObjects(fullDatabase, '_id', {reverseOrder: true});
-  var clientsDatabase = Clients.find().fetch();
   var ready = !!fullDatabase.length;
   return {
     fullDatabase,
-    clientsDatabase,
     ready
   }
 })(ProposalsTable);

@@ -7,8 +7,8 @@ import moment from 'moment';
 import header from './1-header/index';
 import definitions from './2-definitions/index';
 import tableInformation from './3-table-information/index';
-import declaration from './4-declaration/index';
-import tableRepresentatives from './5-table-representatives/index';
+import tableRepresentatives from './4-table-representatives/index';
+import declaration from './5-declaration/index';
 import clause1p1 from './6-clause-1-p1/index';
 import tableProducts from './7-table-products/index';
 import clause1p2 from './8-clause-1-p2/index';
@@ -32,15 +32,13 @@ import date from './25-date/index';
 import signatures from './26-signatures/index';
 import tableWitnesses from './27-table-witnesses/index';
 
-import generateTable from './generate-table/index';
-import styles from './styles/index';
-
-
 function resultFormat(input) {
   return {text: tools.format(input, 'currency'), alignment: 'right', bold: true};
 }
 
-export default function createPdf(contract) {
+export default function createPdf(props) {
+
+  const contract = props.master;
 
   const fileName = `Locamex - Contrato de Locação #${contract._id}_${contract.version}`;
 
@@ -66,6 +64,9 @@ export default function createPdf(contract) {
     return acc + current.restitution;
   }, 0) : 0;
   const totalValueContract = totalValueProducts + totalValueServices;
+
+  const generateTable = props.generateTable;
+  const styles = props.styles;
 
   var data = {
     ...contract,
@@ -94,8 +95,8 @@ export default function createPdf(contract) {
       header(data),
       definitions(data),
       tableInformation(data),
-      declaration(data),
       tableRepresentatives(data),
+      declaration(data),
       clause1p1(data),
       tableProducts(data),
       clause1p2(),

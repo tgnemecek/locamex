@@ -106,8 +106,8 @@ export default class Information extends React.Component {
               title="Nº de Proposta:"
               name="proposal"
               type="text"
-              error={this.props.errorKeys.includes("proposal")}
-              value={this.props.contract.proposal}
+              disabled={true}
+              value={this.props.contract.proposal + "." + this.props.contract.proposalVersion}
               onChange={this.handleChange}
             />
             <Input

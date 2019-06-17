@@ -5,7 +5,6 @@ import tools from '/imports/startup/tools/index';
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 import Calendar from '/imports/components/Calendar/index';
-import SuggestionBar from '/imports/components/SuggestionBar/index';
 
 export default class Information extends React.Component {
   constructor(props) {
@@ -88,26 +87,45 @@ export default class Information extends React.Component {
             className="proposal__information"
             columns={6}
             options={[
-              {block: 0, span: 2},
-              {block: 2, span: 2},
-              {block: 5, span: 0.5},
+              {block: 4, span: 2},
               {block: 6, span: 0.5},
-              {block: 9, span: 0.5},
-              {block: 10, span: 0.5}]}>
-            <SuggestionBar
-              title="Cliente:"
-              name="clientId"
-              database={this.props.clientsDatabase}
-              error={this.props.errorKeys.includes("clientId")}
-              value={this.props.proposal.clientId}
-              onClick={this.handleChange}>
-            </SuggestionBar>
+              {block: 7, span: 0.5},
+              {block: 10, span: 0.5},
+              {block: 11, span: 0.5}]}>
             <Input
-              title="Nº de Proposta:"
-              name="proposal"
+              title="Nome do Cliente:"
+              name="description"
+              extra="client"
               type="text"
-              error={this.props.errorKeys.includes("proposal")}
-              value={this.props.proposal.proposal}
+              error={this.props.errorKeys.includes("description")}
+              value={this.props.proposal.client.description}
+              onChange={this.handleChange}
+            />
+            <Input
+              title="Nome do Contato:"
+              name="name"
+              extra="client"
+              type="text"
+              error={this.props.errorKeys.includes("name")}
+              value={this.props.proposal.client.name}
+              onChange={this.handleChange}
+            />
+            <Input
+              title="Email:"
+              name="email"
+              extra="client"
+              type="text"
+              error={this.props.errorKeys.includes("email")}
+              value={this.props.proposal.client.email}
+              onChange={this.handleChange}
+            />
+            <Input
+              title="Telefone:"
+              name="phone"
+              extra="client"
+              type="text"
+              error={this.props.errorKeys.includes("phone")}
+              value={this.props.proposal.client.phone}
               onChange={this.handleChange}
             />
             <Input
@@ -117,16 +135,6 @@ export default class Information extends React.Component {
               extra="deliveryAddress"
               error={this.props.errorKeys.includes("street")}
               value={this.props.proposal.deliveryAddress.street}
-              onChange={this.handleChange}
-            />
-            <Input
-              title="CEP:"
-              name="cep"
-              type="cep"
-              extra="deliveryAddress"
-              error={this.props.errorKeys.includes("cep")}
-              buttonClick={this.cepButtonClick}
-              value={this.props.proposal.deliveryAddress.cep}
               onChange={this.handleChange}
             />
             <Input

@@ -9,6 +9,7 @@ import tools from '/imports/startup/tools/index';
 import Button from '/imports/components/Button/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
+import Status from '/imports/components/Status/index';
 
 class ContractsTable extends React.Component {
   constructor(props) {
@@ -36,6 +37,7 @@ class ContractsTable extends React.Component {
     return (
       <tr>
         <th className="table__small-column">Código</th>
+        <th className="table__small-column">Proposta</th>
         <th>Nome do Cliente</th>
         <th className="table__small-column">Status</th>
         <th className="table__small-column">Valor Total do Contrato</th>
@@ -49,14 +51,6 @@ class ContractsTable extends React.Component {
     return this.state.filteredDatabase.map((item, i) => {
       const toggleWindow = () => {
         this.props.toggleWindow(item);
-      }
-      function translate (input) {
-        if (input === 'active') return 'Ativo';
-        if (input === 'inactive') return 'Inativo';
-        if (input === 'cancelled') return 'Cancelado';
-        if (input === 'finalized') return 'Finalizado';
-        if (input === 'prorogation') return 'Em Prorrogação';
-        return input;
       }
       const clientName = () => {
         for (var j = 0; j < this.props.clientsDatabase.length; j++) {
@@ -107,8 +101,9 @@ class ContractsTable extends React.Component {
       return (
         <tr key={i}>
           <td className="table__small-column">{item._id}</td>
+          <td className="table__small-column">{item.proposal ? `${item.proposal}.${item.proposalVersion}` : "-"}</td>
           <td>{clientName()}</td>
-          <td className="table__small-column">{translate(item.status)}</td>
+          <td className="table__small-column"><Status status={item.status} type="contract"/></td>
           <td className="table__small-column">{totalValue()}</td>
           {renderContractButton()}
           {renderShippingButton()}

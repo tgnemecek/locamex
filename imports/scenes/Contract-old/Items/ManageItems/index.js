@@ -125,7 +125,11 @@ export default class ManageItems extends React.Component {
     addedItems.forEach((item) => {
       if (item.renting > 0) newArray.push(item);
     })
-    this.props.updateContract({ [this.props.type]: newArray });
+    this.props.updateContract({
+      [this.props.type]: newArray,
+      billingProducts: [],
+      billingServices: []
+    });
     this.toggleWindow();
   }
 

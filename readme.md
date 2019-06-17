@@ -11,7 +11,8 @@ Version: 1.9.6
 
 ### Version 1.9.6
 
--  Fixed create-pdf/contract breaking email line, now if 2 phones are there, it breaks them instead;
+-  Fixed create-pdf/contract breaking email line, now if there are 2 phones, it breaks them instead;
+-  Created Status component, to translate and paint status labels;
 
 ### Version 1.9.5
 

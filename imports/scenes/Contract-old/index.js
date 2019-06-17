@@ -17,17 +17,19 @@ import Checkmark from '/imports/components/Checkmark/index';
 import AppHeader from '/imports/components/AppHeader/index';
 import NotFound from '/imports/components/NotFound/index';
 import Loading from '/imports/components/Loading/index';
+import SceneHeader from '/imports/components/SceneHeader/index';
+import SceneItems from '/imports/components/SceneItems/index';
 
-import Header from './Header/index';
 import Information from './Information/index';
-import Items from './Items/index';
+
 import Footer from './Footer/index';
 
 class Contract extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      contract: {
+      contract: this.props.contract || {
+        _id: undefined,
         createdBy: Meteor.user() || {username: "Anônimo"},
         status: "inactive",
 
@@ -41,10 +43,8 @@ class Contract extends React.Component {
         discount: 0,
 
         observations: {
-          annotations: '',
-          generalObs: '',
-          productsObs: '',
-          servicesObs: ''
+          internal: '',
+          external: ''
         },
 
         inss: 11,
@@ -64,46 +64,23 @@ class Contract extends React.Component {
           creationDate: new Date(),
           startDate: new Date(),
           billingDate: new Date(),
-          duration: 1
+          duration: 1,
+          timeUnit: "months"
         },
         containers: [],
         accessories: [],
         services: []
       },
-      toggleCancelWindow: false,
-      toggleActivateWindow: false,
-      toggleFinalizeWindow: false,
       errorMsg: '',
       errorKeys: [],
-      ready: 0
-    }
-  }
-
-  componentDidMount() {
-    if (!this.props.match.params.contractId == 'new') {
-      this.setContract();
+      ready: false
     }
   }
 
   componentDidUpdate(prevProps) {
-    this.setContract();
-    this.setUpdatedItemInformation();
-  }
-
-  // componentDidUpdate(prevProps) {
-  //   if (prevProps.match.params.contractId !== this.props.match.params.contractId) {
-  //     this.setContract();
-  //   }
-  //   if (prevProps.databases !== this.props.databases) {
-  //     this.setUpdatedItemInformation();
-  //   }
-  // }
-
-  setContract = () => {
-    var contract = this.props.databases.contractsDatabase.find((element) => {
-      return element._id === this.props.match.params.contractId;
-    })
-    if (contract) this.setState({ contract });
+    if (prevProps.databases !== this.props.databases) {
+      this.setUpdatedItemInformation();
+    }
   }
 
   setUpdatedItemInformation = () => {
@@ -137,7 +114,9 @@ class Contract extends React.Component {
   updateContract = (changes, callback) => {
     var contract = {
       ...this.state.contract,
-      ...changes
+      ...changes,
+      errorKeys: [],
+      errorMsg: ''
     };
     this.setState({ contract }, () => {
       if (callback) callback();
@@ -158,9 +137,18 @@ class Contract extends React.Component {
     this.setState({ toggleFinalizeWindow });
   }
 
-  cancelContract = () => {
-    Meteor.call('contracts.update.one', this.state.contract._id, {status: "cancelled"});
-    this.toggleCancelWindow();
+  cancelContract = (callback) => {
+    Meteor.call('contracts.update.one', this.state.contract._id, {status: "cancelled"}, (err, res) => {
+      if (res) {
+        var contract = {
+          ...this.state.contract,
+          status: "cancelled",
+          _id: res
+        }
+        this.setState({ contract });
+      } else if (err) alert(err.reason);
+    });
+    callback();
   }
 
   activateContract = (callback) => {
@@ -171,10 +159,8 @@ class Contract extends React.Component {
           status: "active",
           _id: res
         }
-        this.props.history.push("/contract/" + res);
         this.setState({ contract });
-      }
-      else if (err) alert(err.reason);
+      } else if (err) alert(err.reason);
     });
     callback();
   }
@@ -189,8 +175,7 @@ class Contract extends React.Component {
         }
         this.props.history.push("/contract/" + res);
         this.setState({ contract });
-      }
-      else if (err) alert(err.reason);
+      } else if (err) alert(err.reason);
     });
     callback();
   }
@@ -206,19 +191,13 @@ class Contract extends React.Component {
           this.props.history.push("/contract/" + res);
           this.setState({ contract });
         }
-        else if (err) console.log(err);
+        else if (err) alert(err.error);
       });
     } else Meteor.call('contracts.update', this.state.contract);
   }
 
-  setDisabledClassName = () => {
-    if (this.state.contract.status == 'inactive') {
-      return "contract__body";
-    } else return "contract__body contract--disabled";
-  }
-
   totalValue = (option) => {
-    var duration = this.state.contract.dates.duration;
+    var duration = this.state.contract.dates.timeUnit === "months" ? this.state.contract.dates.duration : 1;
     var discount = this.state.contract.discount;
 
     var containers = this.state.contract.containers || [];
@@ -246,53 +225,55 @@ class Contract extends React.Component {
   }
 
   render () {
-    if (this.props.ready) {
-      return (
-        <div className="page-content">
-          <RedirectUser currentPage="contract"/>
-          <div className="contract">
-            <Header
-              databases={this.props.databases}
-              toggleCancelWindow={this.toggleCancelWindow}
-              contract={this.state.contract}
-              updateContract={this.updateContract}
-              errorKeys={this.state.errorKeys}
-              saveContract={this.saveEdits}
-            />
-            <div className={this.setDisabledClassName()}>
-              <Information
-                clientsDatabase={this.props.databases.clientsDatabase}
-                contract={this.state.contract}
-                updateContract={this.updateContract}
-                errorKeys={this.state.errorKeys}
-              />
-              <Items
-                databases={this.props.databases}
-                contract={this.state.contract}
-                updateContract={this.updateContract}
-              />
-            </div>
-            <Footer
-              totalValue={this.totalValue()}
-              productsValue={this.totalValue('products')}
-              servicesValue={this.totalValue('services')}
+    return (
+      <div className="page-content">
+        {/* <RedirectUser currentPage="contract"/> */}
+        <div className="contract">
+          <SceneHeader
+            master={{...this.state.contract, type: "contract"}}
+            databases={this.props.databases}
 
-              setError={this.setError}
-              errorMsg={this.state.errorMsg}
+            updateMaster={this.updateContract}
+            cancelMaster={this.cancelContract}
+            saveMaster={this.saveEdits}
 
-              contract={this.state.contract}
+            errorKeys={this.state.errorKeys}
+          />
+          <Information
+            clientsDatabase={this.props.databases.clientsDatabase}
+            contract={this.state.contract}
+            updateContract={this.updateContract}
+            errorKeys={this.state.errorKeys}
+          />
+          <SceneItems
+            databases={this.props.databases}
+            master={this.state.contract}
+            updateMaster={this.updateContract}
+          />
+          <Footer
+            totalValue={this.totalValue()}
+            productsValue={this.totalValue('products')}
+            servicesValue={this.totalValue('services')}
 
-              saveEdits={this.saveEdits}
-              activateContract={this.activateContract}
-              finalizeContract={this.finalizeContract}
-            />
-          </div>
+            setError={this.setError}
+            errorMsg={this.state.errorMsg}
+
+            contract={this.state.contract}
+
+            saveEdits={this.saveEdits}
+            activateContract={this.activateContract}
+            finalizeContract={this.finalizeContract}
+          />
         </div>
-      )
-    } else if (!this.props.ready) {
-      return <Loading/>
-    }
+      </div>
+    )
   }
+}
+
+function ContractLoader (props) {
+  if (props.match.params.contractId === 'new' || props.contract) {
+    return <Contract {...props} />
+  } else return null;
 }
 
 export default ContractWrapper = withTracker((props) => {
@@ -316,13 +297,13 @@ export default ContractWrapper = withTracker((props) => {
     servicesDatabase: Services.find().fetch()
 
   }
-  var contract = {};
-  if (!this.props.match.params.contractId == 'new') {
-    contract = Containers.findOne({_id: this.props.match.params.contractId});
+  var contract = undefined;
+  if (props.match.params.contractId !== 'new') {
+    contract = Contracts.findOne({ _id: props.match.params.contractId });
   }
   return { databases, contract }
 
-})(Contract);
+})(ContractLoader);
 
 
 

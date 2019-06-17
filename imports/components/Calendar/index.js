@@ -5,7 +5,6 @@ import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
 export default class Calendar extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {

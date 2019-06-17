@@ -17,11 +17,11 @@ import Checkmark from '/imports/components/Checkmark/index';
 import AppHeader from '/imports/components/AppHeader/index';
 import NotFound from '/imports/components/NotFound/index';
 import Loading from '/imports/components/Loading/index';
+import SceneHeader from '/imports/components/SceneHeader/index';
+import SceneItems from '/imports/components/SceneItems/index';
+import SceneFooter from '/imports/components/SceneFooter/index';
 
-import Header from './Header/index';
 import Information from './Information/index';
-import Items from './Items/index';
-import Footer from './Footer/index';
 
 class Contract extends React.Component {
   constructor(props) {
@@ -34,11 +34,13 @@ class Contract extends React.Component {
 
         clientId: '',
 
-        version: 0,
+        version: 1,
         negociatorId: '',
         representativesId: [],
 
         proposal: '',
+        proposalVersion: 1,
+
         discount: 0,
 
         observations: {
@@ -137,7 +139,7 @@ class Contract extends React.Component {
   }
 
   cancelContract = (callback) => {
-    Meteor.call('contracts.update.one', this.state.contract._id, {status: "cancelled"}, (err, res) => {
+    Meteor.call('contracts.cancel', this.state.contract, (err, res) => {
       if (res) {
         var contract = {
           ...this.state.contract,
@@ -224,44 +226,49 @@ class Contract extends React.Component {
   }
 
   render () {
+    var disabled = this.state.contract.status === "cancelled";
     return (
       <div className="page-content">
         {/* <RedirectUser currentPage="contract"/> */}
         <div className="contract">
-          <Header
+          <SceneHeader
+            master={{...this.state.contract, type: "contract"}}
             databases={this.props.databases}
-            contractId={this.state.contract._id}
-            cancelContract={this.cancelContract}
-            contract={this.state.contract}
-            updateContract={this.updateContract}
+
+            updateMaster={this.updateContract}
+            cancelMaster={this.cancelContract}
+            saveMaster={this.saveEdits}
+
             errorKeys={this.state.errorKeys}
-            saveContract={this.saveEdits}
+            disabled={disabled}
           />
-          <Information
-            clientsDatabase={this.props.databases.clientsDatabase}
-            contract={this.state.contract}
-            updateContract={this.updateContract}
-            errorKeys={this.state.errorKeys}
-          />
-          <Items
-            databases={this.props.databases}
-            contract={this.state.contract}
-            updateContract={this.updateContract}
-          />
-          <Footer
-            totalValue={this.totalValue()}
-            productsValue={this.totalValue('products')}
-            servicesValue={this.totalValue('services')}
+          <div className={disabled ? "disable-click" : ""}>
+            <Information
+              clientsDatabase={this.props.databases.clientsDatabase}
+              contract={this.state.contract}
+              updateContract={this.updateContract}
+              errorKeys={this.state.errorKeys}
+            />
+            <SceneItems
+              master={this.state.contract}
+              databases={this.props.databases}
+              updateMaster={this.updateContract}
+            />
+            <SceneFooter
+              totalValue={this.totalValue()}
+              productsValue={this.totalValue('products')}
+              servicesValue={this.totalValue('services')}
 
-            setError={this.setError}
-            errorMsg={this.state.errorMsg}
+              setError={this.setError}
+              errorMsg={this.state.errorMsg}
 
-            contract={this.state.contract}
+              master={{...this.state.contract, type: "contract"}}
 
-            saveEdits={this.saveEdits}
-            activateContract={this.activateContract}
-            finalizeContract={this.finalizeContract}
-          />
+              saveEdits={this.saveEdits}
+              activateMaster={this.activateContract}
+              finalizeMaster={this.finalizeContract}
+            />
+          </div>
         </div>
       </div>
     )

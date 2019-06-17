@@ -6,10 +6,10 @@ export default function tableBillingProducts(props) {
     return props.billingProducts.map((charge, i, array) => {
       var index = (i + 1);
       var period = {text: moment(charge.startDate).format("DD/MM/YYYY") + ' a ' +  moment(charge.endDate).format("DD/MM/YYYY"), alignment: 'center'};
-      var endDate = moment(charge.endDate).format("DD/MM/YYYY");
+      var expiryDate = moment(charge.expiryDate).format("DD/MM/YYYY");
       var description = charge.description;
       var value = {text: tools.format(charge.value, 'currency'), alignment: 'right'};
-      return [index, period, endDate, description, value];
+      return [index, period, expiryDate, description, value];
     });
   }
   return props.generateTable({

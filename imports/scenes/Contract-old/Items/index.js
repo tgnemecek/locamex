@@ -13,6 +13,7 @@ export default class Items extends React.Component {
             contract={this.props.contract}
             updateContract={this.props.updateContract}
             type="containers"
+            title="Containers"
           />
         </div>
         <div className="contract__list">
@@ -22,6 +23,7 @@ export default class Items extends React.Component {
             contract={this.props.contract}
             updateContract={this.props.updateContract}
             type="accessories"
+            title="Acessórios"
           />
         </div>
         <div className="contract__list">
@@ -31,6 +33,7 @@ export default class Items extends React.Component {
             contract={this.props.contract}
             updateContract={this.props.updateContract}
             type="services"
+            title="Serviços"
           />
         </div>
       </div>

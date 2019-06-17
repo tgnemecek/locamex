@@ -1,6 +1,7 @@
 import { Mongo } from 'meteor/mongo';
 import tools from '/imports/startup/tools/index';
 
+import { Proposals } from '/imports/api/proposals/index';
 import { Series } from '/imports/api/series/index';
 import { Modules } from '/imports/api/modules/index';
 import { Accessories } from '/imports/api/accessories/index';
@@ -33,6 +34,7 @@ if (Meteor.isServer) {
         // Contract Information
         clientId: state.clientId,
         proposal: state.proposal,
+        proposalVersion: state.proposalVersion,
         deliveryAddress: state.deliveryAddress,
         dates: state.dates,
         discount: state.discount,
@@ -63,6 +65,7 @@ if (Meteor.isServer) {
         // System Information
         _id: state._id,
         // Contract Information
+        status: state.status,
         clientId: state.clientId,
         proposal: state.proposal,
         deliveryAddress: state.deliveryAddress,
@@ -90,6 +93,7 @@ if (Meteor.isServer) {
     },
     'contracts.activate'(state) {
       var _id = state._id;
+      state.status = "active";
       if (!_id) {
         _id = Meteor.call('contracts.insert', state);
       } else {
@@ -98,19 +102,16 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', { _id }, 'contracts.activate');
       return _id;
     },
-    'contracts.finalize'(_id) {
-      Contracts.update({ _id }, { $set: { status: 'finalized' } })
-      Meteor.call('history.insert', { _id }, 'contracts.finalize');
-      return _id;
+    'contracts.finalize'(state) {
+      Meteor.call('contracts.update', {...state, status: "finalized"});
+      Meteor.call('history.insert', {_id: state._id}, 'contracts.finalize');
+      return state._id;
     },
-    'contracts.update.one'(_id, update) {
-      const data = {
-        ...update,
-        _id
-      }
-      Contracts.update({ _id }, { $set: data });
-      Meteor.call('history.insert', data, 'contracts.update.one');
-      return _id;
+    'contracts.cancel'(state) {
+      Proposals.update({_id: state.proposal}, {$set: {status: "cancelled"}});
+      Meteor.call('contracts.update', {...state, status: "cancelled"} );
+      Meteor.call('history.insert', {_id: state._id}, 'contracts.cancel');
+      return state._id;
     },
     'contracts.shipping.send'(_id, state) {
       var oldShipping = Contracts.findOne({ _id }).shipping;

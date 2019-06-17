@@ -18,10 +18,11 @@ import AppHeader from '/imports/components/AppHeader/index';
 import NotFound from '/imports/components/NotFound/index';
 import Loading from '/imports/components/Loading/index';
 
-import Header from './Header/index';
+import SceneHeader from '/imports/components/SceneHeader/index';
+import SceneItems from '/imports/components/SceneItems/index';
+import SceneFooter from '/imports/components/SceneFooter/index';
+
 import Information from './Information/index';
-import Items from './Items/index';
-import Footer from './Footer/index';
 
 class Proposal extends React.Component {
   constructor(props) {
@@ -32,13 +33,15 @@ class Proposal extends React.Component {
         createdBy: Meteor.user() || {username: "Anônimo"},
         status: "inactive",
 
-        clientId: '',
+        client: {
+          description: '',
+          name: '',
+          email: '',
+          phone: ''
+        },
 
         version: 0,
-        negociatorId: '',
-        representativesId: [],
 
-        proposal: '',
         discount: 0,
 
         observations: {
@@ -220,48 +223,52 @@ class Proposal extends React.Component {
     } else if (option === 'services') {
       return servicesValue;
     } else return productsValue + servicesValue;
-
   }
 
   render () {
+    var disabled = this.state.proposal.status !== "inactive";
     return (
       <div className="page-content">
         <RedirectUser currentPage="proposal"/>
         <div className="proposal">
-          <Header
+          <SceneHeader
+            master={{...this.state.proposal, type: "proposal"}}
             databases={this.props.databases}
-            proposalId={this.state.proposal._id}
-            cancelProposal={this.cancelProposal}
-            proposal={this.state.proposal}
-            updateProposal={this.updateProposal}
+
+            updateMaster={this.updateProposal}
+            cancelMaster={this.cancelProposal}
+            saveMaster={this.saveEdits}
+
             errorKeys={this.state.errorKeys}
-            saveProposal={this.saveEdits}
+            disabled={disabled}
           />
-          <Information
-            clientsDatabase={this.props.databases.clientsDatabase}
-            proposal={this.state.proposal}
-            updateProposal={this.updateProposal}
-            errorKeys={this.state.errorKeys}
-          />
-          <Items
-            databases={this.props.databases}
-            proposal={this.state.proposal}
-            updateProposal={this.updateProposal}
-          />
-          <Footer
-            totalValue={this.totalValue()}
-            productsValue={this.totalValue('products')}
-            servicesValue={this.totalValue('services')}
+          <div className={disabled ? "disable-click" : ""}>
+            <Information
+              clientsDatabase={this.props.databases.clientsDatabase}
+              proposal={this.state.proposal}
+              updateProposal={this.updateProposal}
+              errorKeys={this.state.errorKeys}
+            />
+            <SceneItems
+              master={this.state.proposal}
+              databases={this.props.databases}
+              updateMaster={this.updateProposal}
+            />
+            <SceneFooter
+              totalValue={this.totalValue()}
+              productsValue={this.totalValue('products')}
+              servicesValue={this.totalValue('services')}
 
-            setError={this.setError}
-            errorMsg={this.state.errorMsg}
+              setError={this.setError}
+              errorMsg={this.state.errorMsg}
 
-            proposal={this.state.proposal}
+              master={{...this.state.proposal, type: "proposal"}}
 
-            saveEdits={this.saveEdits}
-            activateProposal={this.activateProposal}
-            finalizeProposal={this.finalizeProposal}
-          />
+              saveEdits={this.saveEdits}
+              activateMaster={this.activateProposal}
+              finalizeMaster={this.finalizeProposal}
+            />
+          </div>
         </div>
       </div>
     )

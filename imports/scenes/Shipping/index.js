@@ -10,7 +10,7 @@ import { Series } from '/imports/api/series/index';
 import { Modules } from '/imports/api/modules/index';
 import { Accessories } from '/imports/api/accessories/index';
 
-import Header from './Header/index';
+import SceneHeader from '/imports/components/SceneHeader/index';
 import ShippingHistory from './ShippingHistory/index';
 import Send from './Send/index';
 import Receive from './Receive/index';
@@ -38,7 +38,17 @@ class Shipping extends React.Component {
       <div className="page-content">
         <RedirectUser currentPage="shipping"/>
         <div className="contract">
-          <Header {...this.props} />
+          <SceneHeader
+            master={{...this.props.contract, type: "shipping"}}
+            databases={this.props.databases}
+
+            updateMaster={this.updateContract}
+            cancelMaster={this.cancelContract}
+            saveMaster={this.saveEdits}
+
+            errorKeys={[]}
+            disabled={true}
+          />
           <h3 style={{textAlign: "center", margin: "20px"}}>Histórico de Remessas</h3>
           <ShippingHistory
             shipping={this.props.contract.shipping}

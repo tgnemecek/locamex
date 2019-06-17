@@ -83,14 +83,17 @@ export default class ProductsSection extends React.Component {
       }
       const changeDate = (e) => {
         var endDate = e.target.value;
-        var charges = array.map((charge, i) => {
-          return {
-            ...charge,
-            endDate: moment(endDate).toDate()
-          }
-        })
+        var charges = tools.deepCopy(array);
+        charges[i].endDate = moment(endDate).toDate();
         this.toggleCalendar();
-        this.props.updateBilling('billingProducts', array);
+        this.props.updateBilling('billingProducts', charges);
+      }
+      const changeExpiryDate = (e) => {
+        var expiryDate = e.target.value;
+        var charges = tools.deepCopy(array);
+        charges[i].expiryDate = moment(expiryDate).toDate();
+        this.toggleCalendar();
+        this.props.updateBilling('billingProducts', charges);
       }
       return (
         <tr key={i}>
@@ -102,8 +105,8 @@ export default class ProductsSection extends React.Component {
               style={{textAlign: 'center'}}
               calendarOpen={this.state.calendarOpen}
               toggleCalendar={this.toggleCalendar}
-              onChange={changeDate}
-              value={charge.endDate}/>
+              onChange={changeExpiryDate}
+              value={charge.expiryDate}/>
           </td>
           <td>
             <Input name={i} value={charge.description} onChange={onChangeDescription} type="textarea"/>
@@ -127,7 +130,7 @@ export default class ProductsSection extends React.Component {
     if (this.props.productsValue) {
       return (
         <Block
-          title="Mensalidade:"
+          title="Cobranças de Locação:"
           className="billing__section"
           style={{background: "antiquewhite"}}
           columns={1}>

@@ -17,49 +17,24 @@ class TestPage extends React.Component {
       value: 10
     }
   }
-  onClick = (e) => {
-    var value = this.state.value + 1;
-    this.setState({ value })
+  funcaoA = (e) => {
+    alert(this.funcaoB("chair"));
   }
+
+  funcaoB = (mensagem) => {
+    var resposta;
+    if (mensagem == "chair") {
+      resposta = "cadeira";
+    }
+    return resposta;
+  }
+
   render() {
     return (
       <div>
-        <Button onClick={this.onClick} icon="faPlusSquare">SET!!</Button>
-        VALUE {this.state.value}
+        <button onClick={this.funcaoA}>BOTAO</button>
       </div>
 
-    )
-  }
-}
-
-var count = 0;
-
-class Test extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isInput: false
-    }
-  }
-  componentDidUpdate(prevProps, prevState) {
-    count++;
-    if (this.state.isInput) {
-      console.table("UPDATED!", count, prevProps.value, prevState.isInput, this.props.value, this.state.isInput);
-      this.setState({ isInput: false })
-    }
-  }
-  onChange = (e) => {
-    var value = e.target.value;
-    this.setState({ isInput: true }, () => {
-      this.props.onChange({target: {value}});
-    })
-  }
-  render() {
-    return (
-      <input
-        value={this.props.value}
-        onChange={this.onChange}
-      />
     )
   }
 }

@@ -1,0 +1,15 @@
+.scene-footer {
+  padding: $space;
+}
+
+.scene-footer__total-value {
+  text-align: center;
+  font-weight: bold;
+}
+
+.scene-footer__text {
+  text-align: center;
+  font-style: italic;
+  color: $dark-grey;
+  margin-top: $space;
+}

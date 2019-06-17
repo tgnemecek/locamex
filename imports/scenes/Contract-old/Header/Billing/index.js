@@ -20,17 +20,16 @@ export default class Billing extends React.Component {
       billingProducts: this.props.contract.billingProducts || [],
       billingServices: this.props.contract.billingServices || [],
 
-      inss: this.props.contract.inss || 11,
-      iss: this.props.contract.iss || 5,
+      inss: this.props.contract.inss === undefined ? 11 : this.props.contract.inss,
+      iss: this.props.contract.iss === undefined ? 5 : this.props.contract.iss,
 
       masterValue: 0,
       productsValue: 0,
       servicesValue: 0,
 
-      errorKeys: [],
       errorMsg: ''
     }
-    var duration = this.props.contract.dates.duration || 1;
+    var duration = this.props.contract.dates.timeUnit === "months" ? this.props.contract.dates.duration : 1;
     var containers = this.props.contract.containers;
     var accessories = this.props.contract.accessories || [];
     var services = this.props.contract.services || [];
@@ -42,8 +41,6 @@ export default class Billing extends React.Component {
     var productsValue = (containersValue + accessoriesValue) * (1 - discount);
     var masterValue = productsValue + servicesValue;
 
-    var billingProducts = tools.deepCopy(this.state.billingProducts);
-
     function calcTotalValue (arr, duration) {
       if (arr.length == 0) return 0;
       return arr.reduce((acc, current) => {
@@ -51,7 +48,7 @@ export default class Billing extends React.Component {
         return acc + (current.price * renting * duration)
       }, 0);
     }
-    this.state = {...this.state, masterValue, productsValue, servicesValue, billingProducts};
+    this.state = { ...this.state, masterValue, productsValue, servicesValue };
   }
 
   componentDidMount() {
@@ -115,33 +112,29 @@ export default class Billing extends React.Component {
           width="1000px"
           className="billing"
           closeBox={this.props.toggleWindow}>
-          <div className={this.props.contract.status !== 'inactive' ? "contract--disabled" : null}>
-            <div className="error-message">{this.state.errorMsg}</div>
-              <ProductsSection
-                // General Use
-                productsValue={this.state.productsValue}
-                charges={this.state.billingProducts}
-                updateBilling={this.updateState}
-                // Left Side
-                ChargesNumber={ChargesNumber}
-                // Right Side
-                EqualCharges={EqualCharges}/>
-              <ServicesSection
-                // General Use
-                servicesValue={this.state.servicesValue}
-                charges={this.state.billingServices}
-                updateBilling={this.updateState}
-                // Left Side
-                ChargesNumber={ChargesNumber}
-                // Middle
-                inss={this.state.inss}
-                iss={this.state.iss}
-                // Right Side
-                EqualCharges={EqualCharges}/>
-              {this.props.contract.status == 'inactive' ?
-                <FooterButtons buttons={[{text: "Salvar", onClick: this.saveEdits}]}/>
-              : null}
-          </div>
+          <div className="error-message">{this.state.errorMsg}</div>
+          <ProductsSection
+            // General Use
+            productsValue={this.state.productsValue}
+            charges={this.state.billingProducts}
+            updateBilling={this.updateState}
+            // Left Side
+            ChargesNumber={ChargesNumber}
+            // Right Side
+            EqualCharges={EqualCharges}/>
+          <ServicesSection
+            // General Use
+            servicesValue={this.state.servicesValue}
+            charges={this.state.billingServices}
+            updateBilling={this.updateState}
+            // Left Side
+            ChargesNumber={ChargesNumber}
+            // Middle
+            inss={this.state.inss}
+            iss={this.state.iss}
+            // Right Side
+            EqualCharges={EqualCharges}/>
+          <FooterButtons buttons={[{text: "Salvar", onClick: this.saveEdits}]}/>
         </Box>
       )
   }

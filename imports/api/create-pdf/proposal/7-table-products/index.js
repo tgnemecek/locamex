@@ -61,19 +61,22 @@ export default function tableProducts(props) {
     } else return ['auto', '*', 'auto', 'auto', 'auto', 'auto'];
   }
 
-  return props.generateTable({
-    header: [
-      '#',
-      'Descrição',
-      {text: 'Valor Unit.', alignment: 'left'},
-      {text: 'Qtd.', alignment: 'center'},
-      timeUnitValueLabel(),
-      {text: timeUnitLabel(), alignment: 'center'},
-      {text: 'Valor Total', alignment: 'right'}
-    ],
-    body: body(),
-    footer: footer(),
-    widths: widths(),
-    styles: props.styles
-  })
+  return [
+    {text: 'Itens a Serem Locados', style: 'h2', alignment: 'center'},
+    props.generateTable({
+      header: [
+        '#',
+        'Descrição',
+        {text: 'Valor Unit.', alignment: 'left'},
+        {text: 'Qtd.', alignment: 'center'},
+        timeUnitValueLabel(),
+        {text: timeUnitLabel(), alignment: 'center'},
+        {text: 'Valor Total', alignment: 'right'}
+      ],
+      body: body(),
+      footer: footer(),
+      widths: widths(),
+      styles: props.styles
+    })
+  ]
 }

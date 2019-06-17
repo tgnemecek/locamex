@@ -21,27 +21,37 @@ export default class Information extends React.Component {
   }
 
   changeDuration = (e) => {
-    var months = e.target.value;
+    var duration = e.target.value;
     var discount = 0;
-    if (months === 1) {
-      discount = 0;
-    } else if (months > 1 && months <= 3) {
-      discount = 0.2;
-    } else if (months > 3 && months <= 6) {
-      discount = 0.25;
-    } else if (months > 6 && months <= 9) {
-      discount = 0.3;
-    } else if (months > 9 && months <= 12) {
-      discount = 0.3;
-    } else if (months > 12) {
-      discount = 0.4;
+    if (this.props.contract.dates.timeUnit === "months") {
+      if (duration >= 3 && duration <= 5) {
+        discount = 0.2;
+      } else if (duration >= 6 && duration <= 8) {
+        discount = 0.25;
+      } else if (duration >= 9 && duration <= 11) {
+        discount = 0.3;
+      } else if (duration >= 12) {
+        discount = 0.35;
+      }
     }
     var dates = {...this.props.contract.dates};
-    dates.duration = months;
+    dates.duration = duration;
     this.props.updateContract({
       dates,
       discount
     });
+  }
+
+  changeTimeUnit = (e) => {
+    var timeUnit = e.target.value;
+    var dates = {...this.props.contract.dates};
+    var discount = 0;
+    dates.duration = 1;
+    dates.timeUnit = timeUnit;
+    this.props.updateContract({
+      dates,
+      discount
+    })
   }
 
   handleChange = (e) => {
@@ -80,8 +90,10 @@ export default class Information extends React.Component {
             options={[
               {block: 0, span: 2},
               {block: 2, span: 2},
-              {block: 8, span: 0.5},
-              {block: 9, span: 0.5}]}>
+              {block: 5, span: 0.5},
+              {block: 6, span: 0.5},
+              {block: 9, span: 0.5},
+              {block: 10, span: 0.5}]}>
             <SuggestionBar
               title="Cliente:"
               name="clientId"
@@ -128,16 +140,7 @@ export default class Information extends React.Component {
               value={this.props.contract.dates.startDate}
             />
             <Input
-              title="Duração: (meses)"
-              value={this.props.contract.dates.duration}
-              onChange={this.changeDuration}
-              error={this.props.errorKeys.includes("duration")}
-              name="duration"
-              extra="dates"
-              type="number"
-            />
-            <Input
-              title="Desconto: (%)"
+              title="Desconto:"
               name="discount"
               type="number"
               max={100}
@@ -145,6 +148,27 @@ export default class Information extends React.Component {
               value={(this.props.contract.discount) * 100}
               onChange={(e) => this.handleChange({target: {value: tools.round((Number(e.target.value) / 100), 2), name: e.target.name}})}
             />
+            <Input
+              title="Duração:"
+              value={this.props.contract.dates.duration}
+              onChange={this.changeDuration}
+              error={this.props.errorKeys.includes("duration")}
+              name="duration"
+              extra="dates"
+              type="number"
+              min={1}
+              max={this.props.contract.dates.timeUnit === "months" ? 999 : 30}
+            />
+            <Input
+              title="Unidade:"
+              type="select"
+              name="timeUnit"
+              extra="dates"
+              onChange={this.changeTimeUnit}
+              value={this.props.contract.dates.timeUnit}>
+                <option value="months">Meses</option>
+                <option value="days">Dias</option>
+            </Input>
             <Input
               title="Cidade:"
               name="city"
