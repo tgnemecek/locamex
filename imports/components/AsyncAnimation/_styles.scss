@@ -1,0 +1,207 @@
+$loading-color: $brand-primary;
+$completed-color: green;
+$failed-color: red;
+
+$regular-size: 7em;
+$regular-thickness: 3px;
+$regular-height: $regular-size/2;
+$regular-width: $regular-size/4;
+
+$small-size: 1.2em;
+$small-thickness: 3px;
+$small-height: $small-size/1.9;
+$small-width: $small-size/3;
+
+.async-animation--small {
+  display: inline-block;
+  margin-bottom: $small-size/2;
+  border: 3px solid rgba(0, 0, 0, 0.2);
+  border-left-color: $loading-color;
+  animation: loader-spin 1.2s infinite linear;
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  border-radius: 50%;
+  width: $small-size;
+  height: $small-size;
+  .async-animation__checkmark {
+    &.async-animation__draw:after {
+      animation-duration: 800ms;
+      animation-timing-function: ease;
+      animation-name: checkmarkSmall;
+      transform: scaleX(-1) rotate(135deg);
+    }
+    &:after {
+      opacity: 1;
+      height: $small-height;
+      width: $small-width;
+      transform-origin: left top;
+      border-right: $small-thickness solid $completed-color;
+      border-top: $small-thickness solid $completed-color;
+      content: '';
+      left: $small-size/24;
+      top: $small-size/3;
+      position: absolute;
+    }
+  }
+}
+
+.async-animation--regular {
+  margin-bottom: $regular-height;
+  border: 2px solid rgba(0, 0, 0, 0.2);
+  border-left-color: $loading-color;
+  animation: loader-spin 1.2s infinite linear;
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  border-radius: 50%;
+  width: $regular-size;
+  height: $regular-size;
+  .async-animation__checkmark {
+    &.async-animation__draw:after {
+      animation-duration: 800ms;
+      animation-timing-function: ease;
+      animation-name: checkmarkRegular;
+      transform: scaleX(-1) rotate(135deg);
+    }
+    &:after {
+      opacity: 1;
+      height: $regular-height;
+      width: $regular-width;
+      transform-origin: left top;
+      border-right: $regular-thickness solid $completed-color;
+      border-top: $regular-thickness solid $completed-color;
+      content: '';
+      left: ($regular-size/6 + $regular-size/12);
+      top: $regular-size/2;
+      position: absolute;
+    }
+  }
+  .async-animation__crossmark {
+    &.async-animation__draw:before {
+      animation-duration: 800ms;
+      animation-timing-function: ease;
+      animation-name: crossmarkRegular;
+      transform: scaleX(-1) rotate(315deg);
+    }
+    &:before {
+      opacity: 1;
+      height: 3em;
+      width: 3em;
+      transform-origin: left top;
+      border-right: $regular-thickness solid $failed-color;
+      border-top: $regular-thickness solid $failed-color;
+      content: '';
+      left: 5.5em;
+      top: 5.5em;
+      position: absolute;
+    }
+    &.async-animation__draw:after {
+      animation-duration: 800ms;
+      animation-timing-function: ease;
+      animation-name: crossmarkRegular;
+      transform: scaleX(-1) rotate(135deg);
+    }
+    &:after {
+      opacity: 1;
+      height: 3em;
+      width: 3em;
+      transform-origin: left top;
+      border-right: $regular-thickness solid $failed-color;
+      border-top: $regular-thickness solid $failed-color;
+      content: '';
+      left: 1.25em;
+      top: 1.5em;
+      position: absolute;
+    }
+  }
+}
+
+.async-animation--completed, .async-animation--failed {
+  -webkit-animation: none;
+  animation: none;
+  transition: border 500ms ease-out;
+}
+
+.async-animation--completed {
+  border-color: $completed-color;
+}
+
+.async-animation--failed {
+  border-color: $failed-color;
+}
+
+@keyframes loader-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes checkmarkRegular {
+  0% {
+    height: 0;
+    width: 0;
+    opacity: 1;
+  }
+  20% {
+    height: 0;
+    width: $regular-width;
+    opacity: 1;
+  }
+  40% {
+    height: $regular-height;
+    width: $regular-width;
+    opacity: 1;
+  }
+  100% {
+    height: $regular-height;
+    width: $regular-width;
+    opacity: 1;
+  }
+}
+@keyframes checkmarkSmall {
+  0% {
+    height: 0;
+    width: 0;
+    opacity: 1;
+  }
+  20% {
+    height: 0;
+    width: $small-width;
+    opacity: 1;
+  }
+  40% {
+    height: $small-height;
+    width: $small-size/3;
+    opacity: 1;
+  }
+  100% {
+    height: $small-height;
+    width: $small-width;
+    opacity: 1;
+  }
+}
+@keyframes crossmarkRegular {
+  0% {
+    height: 0;
+    width: 0;
+    opacity: 1;
+  }
+  20% {
+    height: 0;
+    width: 3em;
+    opacity: 1;
+  }
+  40% {
+    height: 3em;
+    width: 3em;
+    opacity: 1;
+  }
+  100% {
+    height: 3em;
+    width: 3em;
+    opacity: 1;
+  }
+}

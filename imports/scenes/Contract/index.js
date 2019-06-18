@@ -17,9 +17,11 @@ import Checkmark from '/imports/components/Checkmark/index';
 import AppHeader from '/imports/components/AppHeader/index';
 import NotFound from '/imports/components/NotFound/index';
 import Loading from '/imports/components/Loading/index';
+
 import SceneHeader from '/imports/components/SceneHeader/index';
 import SceneItems from '/imports/components/SceneItems/index';
 import SceneFooter from '/imports/components/SceneFooter/index';
+import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 
 import Information from './Information/index';
 
@@ -74,7 +76,7 @@ class Contract extends React.Component {
       },
       errorMsg: '',
       errorKeys: [],
-      ready: false
+      databaseStatus: false
     }
   }
 
@@ -120,7 +122,7 @@ class Contract extends React.Component {
       errorMsg: ''
     };
     this.setState({ contract }, () => {
-      if (callback) callback();
+      if (typeof (callback) === "function") callback();
     })
   }
 
@@ -139,62 +141,74 @@ class Contract extends React.Component {
   }
 
   cancelContract = (callback) => {
-    Meteor.call('contracts.cancel', this.state.contract, (err, res) => {
-      if (res) {
-        var contract = {
-          ...this.state.contract,
-          status: "cancelled",
-          _id: res
-        }
-        this.setState({ contract });
-      } else if (err) alert(err.reason);
-    });
-    callback();
-  }
-
-  activateContract = (callback) => {
-    Meteor.call('contracts.activate', this.state.contract, (err, res) => {
-      if (res) {
-        var contract = {
-          ...this.state.contract,
-          status: "active",
-          _id: res
-        }
-        this.setState({ contract });
-      } else if (err) alert(err.reason);
-    });
-    callback();
-  }
-
-  finalizeContract = (callback) => {
-    Meteor.call('contracts.finalize', this.state.contract, (err, res) => {
-      if (res) {
-        var contract = {
-          ...this.state.contract,
-          status: "finalized",
-          _id: res
-        }
-        this.props.history.push("/contract/" + res);
-        this.setState({ contract });
-      } else if (err) alert(err.reason);
-    });
-    callback();
-  }
-
-  saveEdits = () => {
-    if (this.props.match.params.contractId == 'new') {
-      Meteor.call('contracts.insert', this.state.contract, (err, res) => {
+    this.setState({ databaseStatus: "loading" }, () => {
+      Meteor.call('contracts.cancel', this.state.contract, (err, res) => {
         if (res) {
           var contract = {
             ...this.state.contract,
+            status: "cancelled",
+            _id: res
+          }
+          this.setState({ contract, databaseStatus: "completed" });
+        } else if (err) this.setState({ databaseStatus: "failed" });
+      });
+      if (typeof (callback) === "function") callback();
+    })
+  }
+
+  activateContract = (callback) => {
+    this.setState({ databaseStatus: "loading" }, () => {
+      Meteor.call('contracts.activate', this.state.contract, (err, res) => {
+        if (res) {
+          var contract = {
+            ...this.state.contract,
+            status: "active",
+            _id: res
+          }
+          this.setState({ contract, databaseStatus: "completed" });
+        } else if (err) this.setState({ databaseStatus: "failed" });
+      });
+      if (typeof (callback) === "function") callback();;
+    })
+  }
+
+  finalizeContract = (callback) => {
+    this.setState({ databaseStatus: "loading" }, () => {
+      Meteor.call('contracts.finalize', this.state.contract, (err, res) => {
+        if (res) {
+          var contract = {
+            ...this.state.contract,
+            status: "finalized",
             _id: res
           }
           this.props.history.push("/contract/" + res);
-          this.setState({ contract });
-        }
-        else if (err) alert(err.error);
+          this.setState({ contract, databaseStatus: "completed" });
+        } else if (err) this.setState({ databaseStatus: "failed" });
       });
-    } else Meteor.call('contracts.update', this.state.contract);
+      if (typeof (callback) === "function") callback();
+    })
+  }
+
+  saveEdits = (callback) => {
+    this.setState({ databaseStatus: "loading" }, () => {
+      if (this.props.match.params.contractId == 'new') {
+        Meteor.call('contracts.insert', this.state.contract, (err, res) => {
+          if (res) {
+            var contract = {
+              ...this.state.contract,
+              _id: res
+            }
+            this.props.history.push("/contract/" + res);
+            this.setState({ contract, databaseStatus: "completed" });
+          }
+          else if (err) this.setState({ databaseStatus: "failed" });
+        });
+      } else Meteor.call('contracts.update', this.state.contract, (err, res) => {
+        if (res) this.setState({ databaseStatus: "completed" });
+        else if (err) this.setState({ databaseStatus: "failed" });
+      });
+      if (typeof (callback) === "function") callback();
+    })
   }
 
   totalValue = (option) => {
@@ -268,6 +282,7 @@ class Contract extends React.Component {
               activateMaster={this.activateContract}
               finalizeMaster={this.finalizeContract}
             />
+            <DatabaseStatus status={this.state.databaseStatus} />
           </div>
         </div>
       </div>
@@ -309,19 +324,3 @@ export default ContractWrapper = withTracker((props) => {
   return { databases, contract }
 
 })(ContractLoader);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

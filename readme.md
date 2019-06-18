@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 1.9.6
+Version: 2.0.0
 
 ## Information:
 
@@ -8,6 +8,12 @@ Version: 1.9.6
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
 
 ## Changelog:
+
+### Version 2.0.0
+
+-  Added new module: Proposals, including pdf generation and transformation into Contract;
+-  Created DatabaseStatus to show animation when Meteor methods are called in Contract, Shipping and Proposal;
+-  Now its impossible to create a Contract without creating a Proposal first;
 
 ### Version 1.9.6
 

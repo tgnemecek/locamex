@@ -50,8 +50,12 @@ export default class SceneHeader extends React.Component {
           return alert("Preencha antes a Tabela de Cobrança.");
         }
         this.toggleWindow(e);
-      } else new Documents().quickGenerate(this.props);
-
+      } else if (this.props.master.type === "proposal") {
+        if (!this.props.master.containers.length && !this.props.master.accessories.length) {
+          return alert("Adicione algum produto!");
+        }
+        new Documents().quickGenerate(this.props);
+      }
     }
     const renderDocuments = () => {
       if (this.state.windowOpen === "documents") {

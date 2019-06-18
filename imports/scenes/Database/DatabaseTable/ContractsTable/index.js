@@ -41,9 +41,6 @@ class ContractsTable extends React.Component {
         <th>Nome do Cliente</th>
         <th className="table__small-column">Status</th>
         <th className="table__small-column">Valor Total do Contrato</th>
-        <th className="table__small-column">
-          <Button to="/contract/new" icon="new" />
-        </th>
       </tr>
     )
   }

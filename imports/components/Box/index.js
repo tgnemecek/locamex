@@ -6,7 +6,9 @@ import Button from '/imports/components/Button/index';
 
 export default class Box extends React.Component {
   closeBox = () => {
-    this.props.closeBox();
+    if (this.props.closeBox) {
+      this.props.closeBox();
+    }
   }
   className = () => {
     return this.props.className ? "box " + this.props.className : "box";
@@ -41,9 +43,11 @@ export default class Box extends React.Component {
               className="box__help-button"
               help={this.props.help}/>
           : null}
-          <div className="box__header">
-            <h3>{this.props.title}</h3>
-          </div>
+          {this.props.title ?
+            <div className="box__header">
+              <h3>{this.props.title}</h3>
+            </div>
+          : null}
           {this.props.children}
       </ReactModal>
     )

@@ -15,12 +15,11 @@ import tools from '/imports/startup/tools/index';
 import Box from '/imports/components/Box/index';
 import Checkmark from '/imports/components/Checkmark/index';
 import AppHeader from '/imports/components/AppHeader/index';
-import NotFound from '/imports/components/NotFound/index';
-import Loading from '/imports/components/Loading/index';
 
 import SceneHeader from '/imports/components/SceneHeader/index';
 import SceneItems from '/imports/components/SceneItems/index';
 import SceneFooter from '/imports/components/SceneFooter/index';
+import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 
 import Information from './Information/index';
 
@@ -75,7 +74,7 @@ class Proposal extends React.Component {
       },
       errorMsg: '',
       errorKeys: [],
-      ready: false
+      databaseStatus: false
     }
   }
 
@@ -121,7 +120,7 @@ class Proposal extends React.Component {
       errorMsg: ''
     };
     this.setState({ proposal }, () => {
-      if (callback) callback();
+      if (typeof (callback) === "function") callback();
     })
   }
 
@@ -140,62 +139,74 @@ class Proposal extends React.Component {
   }
 
   cancelProposal = (callback) => {
-    Meteor.call('proposals.update.one', this.state.proposal._id, {status: "cancelled"}, (err, res) => {
-      if (res) {
-        var proposal = {
-          ...this.state.proposal,
-          status: "cancelled",
-          _id: res
-        }
-        this.setState({ proposal });
-      } else if (err) alert(err.reason);
-    });
-    callback();
-  }
-
-  activateProposal = (callback) => {
-    Meteor.call('proposals.activate', this.state.proposal, (err, res) => {
-      if (res) {
-        var proposal = {
-          ...this.state.proposal,
-          status: "active",
-          _id: res
-        }
-        this.setState({ proposal });
-      } else if (err) alert(err.reason);
-    });
-    callback();
-  }
-
-  finalizeProposal = (callback) => {
-    Meteor.call('proposals.finalize', this.state.proposal, (err, res) => {
-      if (res) {
-        var proposal = {
-          ...this.state.proposal,
-          status: "finalized",
-          _id: res
-        }
-        this.props.history.push("/proposal/" + res);
-        this.setState({ proposal });
-      } else if (err) alert(err.reason);
-    });
-    callback();
-  }
-
-  saveEdits = () => {
-    if (this.props.match.params.proposalId == 'new') {
-      Meteor.call('proposals.insert', this.state.proposal, (err, res) => {
+    this.setState({ databaseStatus: "loading" }, () => {
+      Meteor.call('proposals.cancel', this.state.proposal._id, (err, res) => {
         if (res) {
           var proposal = {
             ...this.state.proposal,
+            status: "cancelled",
+            _id: res
+          }
+          this.setState({ proposal, databaseStatus: "completed" });
+        } else if (err) this.setState({ databaseStatus: "failed" });
+      });
+      if (typeof (callback) === "function") callback();;
+    })
+  }
+
+  activateProposal = (callback) => {
+    this.setState({ databaseStatus: "loading" }, () => {
+      Meteor.call('proposals.activate', this.state.proposal, (err, res) => {
+        if (res) {
+          var proposal = {
+            ...this.state.proposal,
+            status: "active",
+            _id: res._id
+          }
+          this.setState({ proposal, databaseStatus: "completed" });
+        } else if (err) this.setState({ databaseStatus: "failed" });
+      });
+      if (typeof (callback) === "function") callback();;
+    })
+  }
+
+  finalizeProposal = (callback) => {
+    this.setState({ databaseStatus: "loading" }, () => {
+      Meteor.call('proposals.finalize', this.state.proposal, (err, res) => {
+        if (res) {
+          var proposal = {
+            ...this.state.proposal,
+            status: "finalized",
             _id: res
           }
           this.props.history.push("/proposal/" + res);
-          this.setState({ proposal });
-        }
-        else if (err) alert(err.error);
+          this.setState({ proposal, databaseStatus: "completed" });
+        } else if (err) this.setState({ databaseStatus: "failed" });
       });
-    } else Meteor.call('proposals.update', this.state.proposal);
+      if (typeof (callback) === "function") callback();
+    })
+  }
+
+  saveEdits = (callback) => {
+    this.setState({ databaseStatus: "loading" }, () => {
+      if (this.props.match.params.proposalId == 'new') {
+        Meteor.call('proposals.insert', this.state.proposal, (err, res) => {
+          if (res) {
+            var proposal = {
+              ...this.state.proposal,
+              _id: res
+            }
+            this.props.history.push("/proposal/" + res);
+            this.setState({ proposal, databaseStatus: "completed" });
+          }
+          else if (err) this.setState({ databaseStatus: "failed" });
+        });
+      } else Meteor.call('proposals.update', this.state.proposal, (err, res) => {
+        if (res) this.setState({ databaseStatus: "completed" });
+        else if (err) this.setState({ databaseStatus: "failed" });
+      });
+      if (typeof (callback) === "function") callback();
+    })
   }
 
   totalValue = (option) => {
@@ -268,6 +279,7 @@ class Proposal extends React.Component {
               activateMaster={this.activateProposal}
               finalizeMaster={this.finalizeProposal}
             />
+            <DatabaseStatus status={this.state.databaseStatus} />
           </div>
         </div>
       </div>

@@ -81,6 +81,7 @@ if (Meteor.isServer) {
       };
       Proposals.update({ _id: state._id }, { $set: data });
       Meteor.call('history.insert', data, 'proposals');
+      return state._id;
     },
     'proposals.activate'(state) {
       var _id = state._id;
@@ -90,19 +91,19 @@ if (Meteor.isServer) {
       } else {
         Meteor.call('proposals.update', state);
       }
-      Meteor.call('contracts.insert', {
+      var contractId = Meteor.call('contracts.insert', {
         ...state,
         status: 'inactive',
         proposal: _id,
         proposalVersion: state.version
       })
       Meteor.call('history.insert', { _id }, 'proposals.activate');
-      return _id;
+      return {_id, contractId};
     },
-    'proposals.cancel'(state) {
-      Meteor.call('proposals.update', {...state, status: "cancelled"} );
-      Meteor.call('history.insert', {_id: state._id}, 'proposals.cancel');
-      return state._id;
+    'proposals.cancel'(_id) {
+      Proposals.update({_id}, {$set: {status: "cancelled"}} );
+      Meteor.call('history.insert', {_id}, 'proposals.cancel');
+      return _id;
     }
   })
 }

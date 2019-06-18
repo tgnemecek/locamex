@@ -11,6 +11,7 @@ import { Modules } from '/imports/api/modules/index';
 import { Accessories } from '/imports/api/accessories/index';
 
 import SceneHeader from '/imports/components/SceneHeader/index';
+
 import ShippingHistory from './ShippingHistory/index';
 import Send from './Send/index';
 import Receive from './Receive/index';

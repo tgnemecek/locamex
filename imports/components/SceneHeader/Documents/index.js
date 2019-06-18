@@ -15,8 +15,7 @@ export default class DocumentsSelector extends React.Component {
     props.updateMaster({
       version: props.master.version++
     }, () => {
-      createPDF(props.master);
-      props.saveMaster();
+      props.saveMaster(createPDF(props.master));
     });
   }
 
@@ -29,12 +28,12 @@ export default class DocumentsSelector extends React.Component {
   render() {
     var newProps = {
       ...this.props,
-      master: {...this.props.master, client: getClient()},
+      master: {...this.props.master, client: this.getClient()},
       createPDF
     }
     if (this.props.master.type === "contract") {
-      if (client.type === "company") return <DocumentsCompany {...newProps}/>
-      if (client.type === "person") return <DocumentsPerson {...newProps}/>
+      if (newProps.master.client.type === "company") return <DocumentsCompany {...newProps}/>
+      if (newProps.master.client.type === "person") return <DocumentsPerson {...newProps}/>
     } else return null;
   }
 }

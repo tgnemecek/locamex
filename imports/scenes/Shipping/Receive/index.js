@@ -2,6 +2,8 @@ import React from 'react';
 
 import tools from '/imports/startup/tools/index';
 import Box from '/imports/components/Box/index';
+import DatabaseStatus from '/imports/components/DatabaseStatus/index';
+
 import ReceiveModules from './ReceiveModules/index';
 import ReceiveFixed from './ReceiveFixed/index';
 import ReceiveAccessories from './ReceiveAccessories/index';
@@ -35,7 +37,8 @@ export default class Receive extends React.Component {
     this.state = {
       fixed: this.props.contract.shipping.fixed || [],
       modules: this.props.contract.shipping.modules || [],
-      accessories: setAccessories()
+      accessories: setAccessories(),
+      databaseStatus: false
     }
   }
 
@@ -51,13 +54,17 @@ export default class Receive extends React.Component {
       ...this.state,
       type: 'receive'
     }
-    Meteor.call('contracts.shipping.receive', this.props.contract._id, data, (err, res) => {
-      if (res) {
-        this.props.toggleReceive();
-      } if (err) {
-        alert("Erro de servidor!");
-      }
-    });
+    this.setState({ databaseStatus: "loading" }, () => {
+      Meteor.call('contracts.shipping.receive', this.props.contract._id, data, (err, res) => {
+        if (res) {
+          this.setState({ databaseStatus: "completed" }, () => {
+            this.props.toggleReceive();
+          });
+        } if (err) {
+          this.setState({ databaseStatus: "failed" });
+        }
+      });
+    })
   }
 
   render() {
@@ -87,6 +94,7 @@ export default class Receive extends React.Component {
           accessories={this.state.accessories}
           receiveProducts={this.receiveProducts}
           />
+          <DatabaseStatus status={this.state.databaseStatus} />
       </Box>
     )
   }

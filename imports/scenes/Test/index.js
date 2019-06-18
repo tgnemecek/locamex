@@ -5,34 +5,37 @@ import { Containers } from '/imports/api/containers/index';
 import { Redirect } from 'react-router-dom';
 
 import tools from '/imports/startup/tools/index';
-import createExcel from '/imports/api/create-excel/index';
 import Button from '/imports/components/Button/index';
-import SuggestionBar from '/imports/components/SuggestionBar/index';
 import Input from '/imports/components/Input/index';
+import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 
 class TestPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 10
+      status: "loading"
     }
   }
-  funcaoA = (e) => {
-    alert(this.funcaoB("chair"));
+  componentDidMount() {
+// this.timeout();
   }
 
-  funcaoB = (mensagem) => {
-    var resposta;
-    if (mensagem == "chair") {
-      resposta = "cadeira";
-    }
-    return resposta;
+  timeout = () => {
+    setTimeout(() => {
+      this.setState({ status: "completed" });
+    }, 5000);
+  }
+
+  onClick = () => {
+    this.setState({ status: "failed" });
   }
 
   render() {
     return (
       <div>
-        <button onClick={this.funcaoA}>BOTAO</button>
+        {this.state.status}
+        <button onClick={this.onClick}>BOTAO</button>
+        <DatabaseStatus status={this.state.status}/>
       </div>
 
     )

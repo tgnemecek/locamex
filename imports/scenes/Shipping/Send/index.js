@@ -2,6 +2,8 @@ import React from 'react';
 
 import tools from '/imports/startup/tools/index';
 import Box from '/imports/components/Box/index';
+import DatabaseStatus from '/imports/components/DatabaseStatus/index';
+
 import ShippingModules from './ShippingModules/index';
 import ShippingFixed from './ShippingFixed/index';
 import ShippingAccessories from './ShippingAccessories/index';
@@ -14,8 +16,9 @@ export default class Send extends React.Component {
       fixed: [],
       modules: [],
       accessories: [],
+      allowedModules: [],
 
-      allowedModules: []
+      databaseStatus: false
     }
   }
 
@@ -98,11 +101,15 @@ export default class Send extends React.Component {
         return {...module, place: ""}
       })
     }
-    Meteor.call('contracts.shipping.send', this.props.contract._id, state, (err, res) => {
-      if (res) {
-        this.props.toggleSend();
-      } if (err) alert(err.error);
-    });
+    this.setState({ databaseStatus: "loading" }, () => {
+      Meteor.call('contracts.shipping.send', this.props.contract._id, state, (err, res) => {
+        if (res) {
+          this.setState({ databaseStatus: "completed"}, () => {
+            this.props.toggleSend();
+          })
+        } if (err) this.setState({ databaseStatus: "failed"});
+      });
+    })
   }
 
   sortSeriesDatabase = () => {
@@ -151,6 +158,7 @@ export default class Send extends React.Component {
           accessories={this.state.accessories}
           sendProducts={this.sendProducts}
           />
+          <DatabaseStatus status={this.state.databaseStatus} />
       </Box>
     )
   }

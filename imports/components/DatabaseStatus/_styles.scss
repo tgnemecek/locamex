@@ -1,0 +1,35 @@
+.database-status {
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.database-status__loading::after {
+  content: "Carregando";
+  animation: etc 3s infinite;
+}
+
+.database-status__completed::after {
+  content: "Feito!";
+}
+
+.database-status__failed::after {
+  content: "Erro de Servidor!";
+}
+
+@keyframes etc {
+  0% {
+    content: "Carregando"
+  }
+  25% {
+    content: "Carregando."
+  }
+  50% {
+    content: "Carregando.."
+  }
+  75% {
+    content: "Carregando..."
+  }
+  100% {
+    content: "Carregando"
+  }
+}
