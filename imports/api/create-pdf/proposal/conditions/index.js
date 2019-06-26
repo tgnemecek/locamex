@@ -12,7 +12,7 @@ export default function conditions (props) {
     if (props.dates.timeUnit === "months") {
       return 'Valores referentes à locação deverão ser pagos mensalmente, com primeiro pagamento em 15 dias da entrega.'
     } else {
-      return 'O Valor Total do Orçamento deverá ser pago com sinal no fechamento da proposta e 50% de saldo em até 3 dias antes da entrega.'
+      return 'O Valor Total do Orçamento deverá ser pago com sinal de 50% no fechamento da proposta e 50% de saldo em até 3 dias antes da entrega.'
     }
   }
 

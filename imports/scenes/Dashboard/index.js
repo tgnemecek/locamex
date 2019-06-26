@@ -10,10 +10,6 @@ export default class Dashboard extends React.Component {
           <div className="dashboard">
             <h1>Página Inicial</h1>
             <h2>Olá {this.props.user.firstName}.</h2>
-            <h2>Avisos:</h2>
-            <ul>
-              <li>Contratos para Pessoa Física e Eventos agora disponíveis.</li>
-            </ul>
           </div>
         </div>
       )

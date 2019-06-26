@@ -8,6 +8,7 @@ import { Places } from '/imports/api/places/index';
 import { Containers } from '/imports/api/containers/index';
 import { Accessories } from '/imports/api/accessories/index';
 import { Services } from '/imports/api/services/index';
+import { Users } from '/imports/api/users/index';
 
 import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
@@ -29,7 +30,7 @@ class Proposal extends React.Component {
     this.state = {
       proposal: this.props.proposal || {
         _id: undefined,
-        createdBy: Meteor.user() || {username: "Anônimo"},
+        createdBy: Meteor.user()._id,
         status: "inactive",
 
         client: {
@@ -39,7 +40,7 @@ class Proposal extends React.Component {
           phone: ''
         },
 
-        version: 0,
+        version: 1,
 
         discount: 0,
 
@@ -201,10 +202,18 @@ class Proposal extends React.Component {
           }
           else if (err) this.setState({ databaseStatus: "failed" });
         });
-      } else Meteor.call('proposals.update', this.state.proposal, (err, res) => {
-        if (res) this.setState({ databaseStatus: "completed" });
-        else if (err) this.setState({ databaseStatus: "failed" });
-      });
+      } else {
+        Meteor.call('proposals.update', this.state.proposal, (err, res) => {
+          if (res) {
+            if (res.hasChanged) {
+              var proposal = {...this.state.proposal};
+              proposal.version++;
+              this.setState({ databaseStatus: "completed", proposal });
+            } else this.setState({ databaseStatus: "completed" });
+          }
+          else if (err) this.setState({ databaseStatus: "failed" });
+        });
+      }
       if (typeof (callback) === "function") callback();
     })
   }
@@ -303,6 +312,8 @@ export default ProposalWrapper = withTracker((props) => {
   Meteor.subscribe('accessoriesPub');
   Meteor.subscribe('servicesPub');
 
+  Meteor.subscribe('usersPub');
+
   var databases = {
     proposalsDatabase: Proposals.find().fetch(),
     clientsDatabase: Clients.find().fetch(),
@@ -311,7 +322,9 @@ export default ProposalWrapper = withTracker((props) => {
 
     containersDatabase: Containers.find().fetch(),
     accessoriesDatabase: Accessories.find().fetch(),
-    servicesDatabase: Services.find().fetch()
+    servicesDatabase: Services.find().fetch(),
+
+    usersDatabase: Meteor.users.find().fetch()
 
   }
   var proposal = undefined;

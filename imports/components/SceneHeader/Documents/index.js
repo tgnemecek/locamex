@@ -12,11 +12,7 @@ import DocumentsPerson from './DocumentsPerson/index';
 
 export default class DocumentsSelector extends React.Component {
   quickGenerate(props) {
-    props.updateMaster({
-      version: props.master.version++
-    }, () => {
-      props.saveMaster(createPDF(props.master));
-    });
+    props.saveMaster(createPDF(props.master));
   }
 
   getClient = () => {

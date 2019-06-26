@@ -32,7 +32,7 @@ class ProposalsTable extends React.Component {
   renderHeader = () => {
     return (
       <tr>
-        <th className="table__small-column">Código</th>
+        <th className="table__small-column">Proposta</th>
         <th>Nome do Cliente</th>
         <th className="table__small-column">Status</th>
         <th className="table__small-column">Valor Total da Proposta</th>

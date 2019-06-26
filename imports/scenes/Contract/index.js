@@ -8,6 +8,7 @@ import { Places } from '/imports/api/places/index';
 import { Containers } from '/imports/api/containers/index';
 import { Accessories } from '/imports/api/accessories/index';
 import { Services } from '/imports/api/services/index';
+import { Users } from '/imports/api/users/index';
 
 import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
@@ -31,7 +32,7 @@ class Contract extends React.Component {
     this.state = {
       contract: this.props.contract || {
         _id: undefined,
-        createdBy: Meteor.user() || {username: "Anônimo"},
+        createdBy: Meteor.user()._id,
         status: "inactive",
 
         clientId: '',
@@ -203,10 +204,18 @@ class Contract extends React.Component {
           }
           else if (err) this.setState({ databaseStatus: "failed" });
         });
-      } else Meteor.call('contracts.update', this.state.contract, (err, res) => {
-        if (res) this.setState({ databaseStatus: "completed" });
-        else if (err) this.setState({ databaseStatus: "failed" });
-      });
+      } else {
+        Meteor.call('contracts.update', this.state.contract, (err, res) => {
+          if (res) {
+            if (res.hasChanged) {
+              var contract = {...this.state.contract};
+              contract.version++;
+              this.setState({ databaseStatus: "completed", contract });
+            } else this.setState({ databaseStatus: "completed"});
+          }
+          else if (err) this.setState({ databaseStatus: "failed" });
+        });
+      }
       if (typeof (callback) === "function") callback();
     })
   }
@@ -306,6 +315,8 @@ export default ContractWrapper = withTracker((props) => {
   Meteor.subscribe('accessoriesPub');
   Meteor.subscribe('servicesPub');
 
+  Meteor.subscribe('usersPub');
+
   var databases = {
     contractsDatabase: Contracts.find().fetch(),
     clientsDatabase: Clients.find().fetch(),
@@ -314,7 +325,9 @@ export default ContractWrapper = withTracker((props) => {
 
     containersDatabase: Containers.find().fetch(),
     accessoriesDatabase: Accessories.find().fetch(),
-    servicesDatabase: Services.find().fetch()
+    servicesDatabase: Services.find().fetch(),
+
+    usersDatabase: Meteor.users.find().fetch()
 
   }
   var contract = undefined;

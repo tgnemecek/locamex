@@ -13,6 +13,27 @@ export default class tools {
     } else return [input];
   }
 
+  static compare = (input1, input2) => {
+    function loop(input1, input2) {
+      if (typeof input1 !== typeof input2) return false;
+      if (typeof input1 === "string" || typeof input1 === "number") {
+        return input1 === input2;
+      } else if (typeof input1 === "object") {
+        if (input1 === input2) return true;
+        if (Array.isArray(input1)) {
+          return input1.every((item, i) => {
+            return loop(input1[i], input2[i]);
+          })
+        } else {
+          return Object.keys(input1).every((key) => {
+            return loop(input1[key], input2[key]);
+          })
+        }
+      } else return true;
+    }
+    return loop(input1, input2);
+  }
+
   static filterSearch = (database, state) => {
 
     const compare = (a, b) => {
@@ -92,6 +113,14 @@ export default class tools {
     return allowedPages.pages.includes(page);
   }
 
+  static countAvailableItems = (array) => {
+    var count = 0;
+    array.forEach((item) => {
+      count = count + item.available;
+    })
+    return count;
+  }
+
   // Strings
 
   static convertToLetter = (n) => {
@@ -138,7 +167,10 @@ export default class tools {
   }
 
   static format = (value, type, externalOptions) => {
-    if (value == undefined) return undefined;
+    if (value === undefined) return undefined;
+    if (value === null) return null;
+    if (value === "") return "";
+
     var options = {
       allowNegative: false,
       allowImpossible: false,
@@ -244,14 +276,6 @@ export default class tools {
       default:
         return value;
     }
-  }
-
-  static countAvailableItems = (array) => {
-    var count = 0;
-    array.forEach((item) => {
-      count = count + item.available;
-    })
-    return count;
   }
 
   static unformat = (value, type, externalOptions) => {

@@ -6,6 +6,7 @@ import moment from 'moment';
 
 import header from './header/index';
 import tableInformation from './table-information/index';
+import observations from './observations/index';
 import tableProducts from './table-products/index';
 import tableServices from './table-services/index';
 import tableTotalValue from './table-total-value/index';
@@ -22,18 +23,18 @@ export default function createPdf(props) {
 
   const logoLoader = new Promise((resolve, reject) => {
     var img = new Image();
-    img.src = 'https://locamex-app.s3-sa-east-1.amazonaws.com/app-required/logo-locamex-slogan-400x251.png';
     img.setAttribute('crossOrigin', 'Anonymous');
+    img.src = 'https://locamex-app.s3-sa-east-1.amazonaws.com/app-required/logo-locamex-slogan-400x251.png';
     img.onload = function () {
-        var canvas = document.createElement("canvas");
-        canvas.width =this.width;
-        canvas.height =this.height;
+      var canvas = document.createElement("canvas");
+      document.body.appendChild(canvas);
+      canvas.width = this.width;
+      canvas.height = this.height;
 
-        var ctx = canvas.getContext("2d");
-        ctx.drawImage(this, 0, 0);
-
-        var dataURL = canvas.toDataURL("image/png");
-        resolve({dataURL, canvas});
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(this, 0, 0);
+      var dataURL = canvas.toDataURL("image/png");
+      resolve({dataURL, canvas});
     };
     setTimeout(() => reject(), 5000);
   })
@@ -94,10 +95,11 @@ export default function createPdf(props) {
     content: [
       header(data),
       tableInformation(data),
-      conditions(data),
+      observations(data),
       tableProducts(data),
       tableServices(data),
       tableTotalValue(data),
+      conditions(data),
       documentsNeeded(data),
       closing(),
       signature()

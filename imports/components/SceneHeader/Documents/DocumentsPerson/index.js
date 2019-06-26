@@ -8,12 +8,10 @@ import tools from '/imports/startup/tools/index';
 
 export default class DocumentsPerson extends React.Component {
   generate = () => {
-    var version = this.props.master.version + 1;
     // Saves changes to master
     this.props.updateMaster({
       representativesId: '',
-      negociatorId: '',
-      version
+      negociatorId: ''
     }, () => {
       this.props.createPDF(this.props.master);
       this.props.saveMaster();

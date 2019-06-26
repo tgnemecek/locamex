@@ -82,15 +82,12 @@ export default class DocumentsCompany extends React.Component {
       })
       return people;
     }
-
-    var version = this.props.master.version + 1;
     var negociator = getPersonUsingId([negociatorId])[0];
     var representatives = getPersonUsingId(representativesId);
     // Saves changes to master
     this.props.updateMaster({
       representativesId,
-      negociatorId,
-      version
+      negociatorId
     }, () => {
       this.props.saveMaster(() => {
         this.props.createPDF({ ...this.props.master, negociator, representatives });

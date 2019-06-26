@@ -21,107 +21,111 @@ if (Meteor.isServer) {
   }
 
   Meteor.methods({
-    'contracts.insert'(state) {
+    'contracts.insert'(master) {
       const prefix = new Date().getFullYear();
       const suffix = Contracts.find({ _id: { $regex: new RegExp(prefix)} }).count().toString().padStart(3, '0');
       const _id = prefix + "-" + suffix;
       const data = {
         // System Information
         _id,
-        status: state.status,
-        createdBy: state.createdBy,
+        status: master.status,
+        createdBy: master.createdBy,
         visible: true,
         // Contract Information
-        clientId: state.clientId,
-        proposal: state.proposal,
-        proposalVersion: state.proposalVersion,
-        deliveryAddress: state.deliveryAddress,
-        dates: state.dates,
-        discount: state.discount,
+        clientId: master.clientId,
+        proposal: master.proposal,
+        proposalVersion: master.proposalVersion,
+        deliveryAddress: master.deliveryAddress,
+        dates: master.dates,
+        discount: master.discount,
 
-        version: state.version,
-        negociatorId: state.negociatorId,
-        representativesId: state.representativesId,
+        version: master.version,
+        negociatorId: master.negociatorId,
+        representativesId: master.representativesId,
 
-        inss: state.inss,
-        iss: state.iss,
-        billingProducts: state.billingProducts,
-        billingServices: state.billingServices,
+        inss: master.inss,
+        iss: master.iss,
+        billingProducts: master.billingProducts,
+        billingServices: master.billingServices,
 
-        observations: state.observations,
+        observations: master.observations,
         shipping: {},
 
-        containers: setProducts(state.containers),
-        accessories: setProducts(state.accessories),
-        services: setProducts(state.services)
+        containers: setProducts(master.containers),
+        accessories: setProducts(master.accessories),
+        services: setProducts(master.services)
 
       };
       Contracts.insert(data);
       Meteor.call('history.insert', data, 'contracts');
       return _id;
     },
-    'contracts.update'(state) {
+    'contracts.update'(master) {
+      var current = Contracts.findOne({_id: master._id});
+      var hasChanged = !tools.compare(current, master);
+      if (!hasChanged) return {hasChanged: false};
+
       const data = {
         // System Information
-        _id: state._id,
+        _id: master._id,
         // Contract Information
-        status: state.status,
-        clientId: state.clientId,
-        proposal: state.proposal,
-        deliveryAddress: state.deliveryAddress,
-        dates: state.dates,
-        discount: state.discount,
+        status: master.status,
+        clientId: master.clientId,
+        proposal: master.proposal,
+        deliveryAddress: master.deliveryAddress,
+        dates: master.dates,
+        discount: master.discount,
 
-        version: state.version,
-        negociatorId: state.negociatorId,
-        representativesId: state.representativesId,
+        version: master.version+1,
+        negociatorId: master.negociatorId,
+        representativesId: master.representativesId,
 
-        inss: state.inss,
-        iss: state.iss,
-        billingProducts: state.billingProducts,
-        billingServices: state.billingServices,
+        inss: master.inss,
+        iss: master.iss,
+        billingProducts: master.billingProducts,
+        billingServices: master.billingServices,
 
-        observations: state.observations,
+        observations: master.observations,
 
-        containers: setProducts(state.containers),
-        accessories: setProducts(state.accessories),
-        services: setProducts(state.services)
+        containers: setProducts(master.containers),
+        accessories: setProducts(master.accessories),
+        services: setProducts(master.services)
 
       };
-      Contracts.update({ _id: state._id }, { $set: data });
+      Contracts.update({ _id: master._id }, { $set: data });
       Meteor.call('history.insert', data, 'contracts');
-      return state._id;
+      return {hasChanged: true};
     },
-    'contracts.activate'(state) {
-      var _id = state._id;
-      state.status = "active";
+    'contracts.activate'(master) {
+      var _id = master._id;
+      master.status = "active";
       if (!_id) {
-        _id = Meteor.call('contracts.insert', state);
+        _id = Meteor.call('contracts.insert', master);
       } else {
-        Meteor.call('contracts.update', state);
+        Meteor.call('contracts.update', master);
       }
       Meteor.call('history.insert', { _id }, 'contracts.activate');
       return _id;
     },
-    'contracts.finalize'(state) {
-      Meteor.call('contracts.update', {...state, status: "finalized"});
-      Meteor.call('history.insert', {_id: state._id}, 'contracts.finalize');
-      return state._id;
+    'contracts.finalize'(master) {
+      Meteor.call('contracts.update', {...master, status: "finalized"});
+      Meteor.call('history.insert', {_id: master._id}, 'contracts.finalize');
+      return master._id;
     },
-    'contracts.cancel'(state) {
-      Proposals.update({_id: state.proposal}, {$set: {status: "cancelled"}});
-      Contracts.update({_id: state._id}, {$set: {status: "cancelled"}});
-      Meteor.call('history.insert', {_id: state._id}, 'contracts.cancel');
-      return state._id;
+    'contracts.cancel'(master) {
+      Proposals.update({_id: master.proposal}, {$set: {status: "cancelled"}});
+      Contracts.update({_id: master._id}, {$set: {status: "cancelled"}});
+      Meteor.call('history.insert', {_id: master._id}, 'contracts.cancel');
+      return master._id;
     },
-    'contracts.shipping.send'(_id, state) {
+    'contracts.shipping.send'(_id, master) {
       var oldShipping = Contracts.findOne({ _id }).shipping;
 
       shipping = {
         ...oldShipping,
-        fixed: state.fixed,
-        modules: state.modules,
-        accessories: state.accessories
+        fixed: master.fixed,
+        modules: master.modules,
+        accessories: master.accessories
       };
 
       function updateModule(product, module) {
@@ -205,7 +209,7 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', {...history, contractId: _id}, 'contracts.shipping.send');
       return true;
     },
-    'contracts.shipping.receive'(_id, state) {
+    'contracts.shipping.receive'(_id, master) {
       var oldShipping = Contracts.findOne({ _id }).shipping;
 
       shipping = {
@@ -269,16 +273,16 @@ if (Meteor.isServer) {
       }
 
       const executeReceive = () => {
-        state.fixed.forEach((fixed) => {
+        master.fixed.forEach((fixed) => {
           Meteor.call('series.update', {place: fixed.place}, fixed.seriesId);
         })
-        state.modules.forEach((module) => {
+        master.modules.forEach((module) => {
           var productFromDatabase = Modules.findOne({ _id: module.productId });
           if (!productFromDatabase) throw new Meteor.Error('product-not-found');
           productFromDatabase = updateModule(productFromDatabase, module);
           Meteor.call('modules.shipping.receive', productFromDatabase);
         })
-        state.accessories.forEach((accessory) => {
+        master.accessories.forEach((accessory) => {
           var productFromDatabase = Accessories.findOne({ _id: accessory.productId });
           if (!productFromDatabase) throw new Meteor.Error('product-not-found');
           productFromDatabase = updateAccessory(productFromDatabase, accessory);

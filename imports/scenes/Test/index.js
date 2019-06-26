@@ -13,8 +13,31 @@ class TestPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      status: "loading"
+      status: "loading",
+      profile: {
+        name: "thiago",
+        age: 27,
+        emails: ["t@gmail.com", "a@gmail.com"]
+      },
+      ids: [
+        {a: "123", b: "456"},
+        "outside",
+        999
+      ],
+      masterArray: [
+        [1, 2, 3],
+        "aaa"
+      ]
     }
+    this.newState = {...this.state};
+    var arr = [];
+    this.state.ids.forEach((item) => {
+      arr.push(item);
+    })
+    arr[2] = "777";
+    this.newState.ids = arr;
+    var result = tools.compare(this.state, this.newState);
+    alert(result);
   }
   componentDidMount() {
 // this.timeout();

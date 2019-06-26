@@ -22,7 +22,19 @@ export default class SceneHeader extends React.Component {
     } else label = "Contrato";
     return (
       <div className="master__title">
-        <h1>{`${label} #${this.props.master._id || ''}`}</h1>
+        <h1>{`${label} #${this.props.master._id || ''}.${this.props.master.version}`}</h1>
+      </div>
+    )
+  }
+
+  renderCreatedBy = () => {
+    var user = this.props.databases.usersDatabase.find((item) => {
+      return (item._id === this.props.master.createdBy)
+    })
+    var name = user ? user.firstName + " " + user.lastName : "anônimo";
+    return (
+      <div className="master__overtitle">
+        <p>Documento criado por: <strong>{name}</strong></p>
       </div>
     )
   }
@@ -97,9 +109,7 @@ export default class SceneHeader extends React.Component {
   render() {
       return (
         <div className="master__header">
-          <div className="master__overtitle">
-            <p>Documento criado por: <strong>{this.props.master.createdBy.username}</strong></p>
-          </div>
+          {this.renderCreatedBy()}
           <div className="master__top-buttons">
             <Button value='observations' onClick={this.toggleWindow} className={this.checkIfHasContent()} icon="warning"/>
             {this.state.windowOpen == 'observations' ? <Observations

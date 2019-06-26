@@ -20,82 +20,86 @@ if (Meteor.isServer) {
   }
 
   Meteor.methods({
-    'proposals.insert'(state) {
+    'proposals.insert'(master) {
       const prefix = new Date().getFullYear();
       const suffix = Proposals.find({ _id: { $regex: new RegExp(prefix)} }).count().toString().padStart(3, '0');
       const _id = prefix + "-" + suffix;
       const data = {
         // System Information
         _id,
-        status: state.status,
-        createdBy: state.createdBy,
+        status: master.status,
+        createdBy: master.createdBy,
         visible: true,
         // Contract Information
-        client: state.client,
-        deliveryAddress: state.deliveryAddress,
-        dates: state.dates,
-        discount: state.discount,
+        client: master.client,
+        deliveryAddress: master.deliveryAddress,
+        dates: master.dates,
+        discount: master.discount,
 
-        version: state.version,
+        version: master.version,
 
-        inss: state.inss,
-        iss: state.iss,
-        billingProducts: state.billingProducts,
-        billingServices: state.billingServices,
+        inss: master.inss,
+        iss: master.iss,
+        billingProducts: master.billingProducts,
+        billingServices: master.billingServices,
 
-        observations: state.observations,
+        observations: master.observations,
 
-        containers: setProducts(state.containers),
-        accessories: setProducts(state.accessories),
-        services: setProducts(state.services)
+        containers: setProducts(master.containers),
+        accessories: setProducts(master.accessories),
+        services: setProducts(master.services)
 
       };
       Proposals.insert(data);
       Meteor.call('history.insert', data, 'proposals');
       return _id;
     },
-    'proposals.update'(state) {
+    'proposals.update'(master) {
+      var current = Proposals.findOne({_id: master._id});
+      var hasChanged = !tools.compare(current, master);
+      if (!hasChanged) return {hasChanged: false};
+
       const data = {
         // System Information
-        _id: state._id,
+        _id: master._id,
         // Contract Information
-        status: state.status,
-        client: state.client,
-        deliveryAddress: state.deliveryAddress,
-        dates: state.dates,
-        discount: state.discount,
+        status: master.status,
+        client: master.client,
+        deliveryAddress: master.deliveryAddress,
+        dates: master.dates,
+        discount: master.discount,
 
-        version: state.version,
+        version: master.version,
 
-        inss: state.inss,
-        iss: state.iss,
-        billingProducts: state.billingProducts,
-        billingServices: state.billingServices,
+        inss: master.inss,
+        iss: master.iss,
+        billingProducts: master.billingProducts,
+        billingServices: master.billingServices,
 
-        observations: state.observations,
+        observations: master.observations,
 
-        containers: setProducts(state.containers),
-        accessories: setProducts(state.accessories),
-        services: setProducts(state.services)
+        containers: setProducts(master.containers),
+        accessories: setProducts(master.accessories),
+        services: setProducts(master.services)
 
       };
-      Proposals.update({ _id: state._id }, { $set: data });
+      Proposals.update({ _id: master._id }, { $set: data });
       Meteor.call('history.insert', data, 'proposals');
-      return state._id;
+      return {hasChanged: true};
     },
-    'proposals.activate'(state) {
-      var _id = state._id;
-      state.status = "active";
+    'proposals.activate'(master) {
+      var _id = master._id;
+      master.status = "active";
       if (!_id) {
-        _id = Meteor.call('proposals.insert', state);
+        _id = Meteor.call('proposals.insert', master);
       } else {
-        Meteor.call('proposals.update', state);
+        Meteor.call('proposals.update', master);
       }
       var contractId = Meteor.call('contracts.insert', {
-        ...state,
+        ...master,
         status: 'inactive',
         proposal: _id,
-        proposalVersion: state.version
+        proposalVersion: master.version
       })
       Meteor.call('history.insert', { _id }, 'proposals.activate');
       return {_id, contractId};

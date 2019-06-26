@@ -3,12 +3,8 @@ export default function generateTable(props) {
     if (!arr) return [[]];
     if (!arr.length) return [[]];
 
-    var filtered1 = arr.filter((row) => !!row);
-    var filtered2 = Array.isArray(filtered1[0]) ? filtered1 : [filtered1];
-    var filtered3 = filtered2.map((row) => {
-      return row.filter((item) => !!item);
-    })
-    return filtered3;
+    var filtered = arr.filter((row) => !!row);
+    return Array.isArray(filtered[0]) ? filtered : [filtered];
   }
 
   var header = cleanArray(props.header);
