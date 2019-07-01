@@ -22,7 +22,7 @@ if (Meteor.isServer) {
   Meteor.methods({
     'proposals.insert'(master) {
       const prefix = new Date().getFullYear();
-      const suffix = Proposals.find({ _id: { $regex: new RegExp(prefix)} }).count().toString().padStart(3, '0');
+      const suffix = Proposals.find({ _id: { $regex: new RegExp(prefix)} }).count().toString().padStart(4, '0');
       const _id = prefix + "-" + suffix;
       const data = {
         // System Information
