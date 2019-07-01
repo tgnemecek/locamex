@@ -191,6 +191,8 @@ class Contract extends React.Component {
   }
 
   saveEdits = (callback) => {
+    callback = typeof callback === "function" ? callback : () => {};
+
     this.setState({ databaseStatus: "loading" }, () => {
       if (this.props.match.params.contractId == 'new') {
         Meteor.call('contracts.insert', this.state.contract, (err, res) => {
@@ -200,7 +202,7 @@ class Contract extends React.Component {
               _id: res
             }
             this.props.history.push("/contract/" + res);
-            this.setState({ contract, databaseStatus: "completed" });
+            this.setState({ contract, databaseStatus: "completed" }, callback(contract));
           }
           else if (err) this.setState({ databaseStatus: "failed" });
         });
@@ -210,13 +212,12 @@ class Contract extends React.Component {
             if (res.hasChanged) {
               var contract = {...this.state.contract};
               contract.version++;
-              this.setState({ databaseStatus: "completed", contract });
-            } else this.setState({ databaseStatus: "completed"});
+              this.setState({ databaseStatus: "completed", contract }, callback(contract));
+            } else this.setState({ databaseStatus: "completed"}, callback(this.state.contract));
           }
           else if (err) this.setState({ databaseStatus: "failed" });
         });
       }
-      if (typeof (callback) === "function") callback();
     })
   }
 

@@ -89,10 +89,11 @@ export default class DocumentsCompany extends React.Component {
       representativesId,
       negociatorId
     }, () => {
-      this.props.saveMaster(() => {
-        this.props.createPDF({ ...this.props.master, negociator, representatives });
+      this.props.saveMaster((newMaster) => {
+        newMaster.type = this.props.master.type;
+        newMaster.client = this.props.master.client;
+        this.props.createPDF({ ...newMaster, negociator, representatives });
       })
-      ;
     });
     this.setState({ errorMsg, errorKeys });
   }

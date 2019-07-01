@@ -20,6 +20,7 @@ class HistoryTable extends React.Component {
       <tr>
         <th>Dia</th>
         <th>Horário</th>
+        <th>Versão</th>
         <th>Usuário</th>
         <th>Banco de Dados</th>
         <th>Item</th>
@@ -37,6 +38,7 @@ class HistoryTable extends React.Component {
         <tr key={i}>
           <td>{moment(item.insertionDate).format("DD-MM-YYYY")}</td>
           <td>{moment(item.insertionDate).format("HH:mm:ss")}</td>
+          <td>{item.version}</td>
           <td>{item.user.firstName}</td>
           <td>{tools.translateDatabase(item.type)}</td>
           <td>{item.data._id}</td>

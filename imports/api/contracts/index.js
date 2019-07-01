@@ -76,7 +76,7 @@ if (Meteor.isServer) {
         dates: master.dates,
         discount: master.discount,
 
-        version: master.version+1,
+        version: hasChanged ? master.version+1 : master.version,
         negociatorId: master.negociatorId,
         representativesId: master.representativesId,
 

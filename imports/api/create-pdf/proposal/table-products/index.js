@@ -51,7 +51,7 @@ export default function tableProducts(props) {
     return [
       discount(),
       monthlyValue(),
-      {text: 'Valor Total da Locação:', colSpan, alignment: 'right', bold: true}, props.resultFormat(props.totalValueProducts)
+      [{text: 'Valor Total da Locação:', colSpan, alignment: 'right', bold: true}, props.resultFormat(props.totalValueProducts)]
     ]
   }
 
@@ -64,7 +64,7 @@ export default function tableProducts(props) {
   return [
     {text: 'Itens a Serem Locados', style: 'h2', alignment: 'center'},
     props.generateTable({
-      header: [
+      header: [[
         '#',
         'Descrição',
         {text: 'Valor Unit.', alignment: 'left'},
@@ -72,7 +72,7 @@ export default function tableProducts(props) {
         timeUnitValueLabel(),
         {text: timeUnitLabel(), alignment: 'center'},
         {text: 'Valor Total', alignment: 'right'}
-      ],
+      ]],
       body: body(),
       footer: footer(),
       widths: widths(),

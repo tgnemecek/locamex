@@ -98,6 +98,7 @@ export default class Information extends React.Component {
               title="Cliente:"
               name="clientId"
               database={this.props.clientsDatabase}
+              fields={['description', 'registry']}
               error={this.props.errorKeys.includes("clientId")}
               value={this.props.contract.clientId}
               onClick={this.handleChange}>

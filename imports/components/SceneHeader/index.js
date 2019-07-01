@@ -108,6 +108,12 @@ export default class SceneHeader extends React.Component {
     } else return null;
   }
 
+  showDuplicateButton = () => {
+    if (this.props.master.type !== "proposal") return null;
+    if (!this.props.master._id) return null;
+    return <Button onClick={this.props.duplicateMaster} icon="copy" />
+  }
+
   showCancelButton = () => {
     if (this.props.master.status === "inactive" && this.props.master._id) {
       return <Button onClick={this.toggleCancelWindow} icon="not" />
@@ -145,6 +151,7 @@ export default class SceneHeader extends React.Component {
                                               errorKeys={this.props.errorKeys}
                                               /> : null}
             {this.showDocumentsButton()}
+            {this.showDuplicateButton()}
             {this.showCancelButton()}
             <ConfirmationWindow
               isOpen={this.state.cancelWindow}

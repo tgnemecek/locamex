@@ -1,4 +1,5 @@
 import { Mongo } from 'meteor/mongo';
+import { version } from '/package.json';
 
 export const History = new Mongo.Collection('history');
 
@@ -13,7 +14,8 @@ if (Meteor.isServer) {
         insertionDate: new Date(),
         user: Meteor.user(),
         type,
-        data
+        data,
+        version
       })
     }
   })

@@ -1,5 +1,12 @@
 # Changelog:
 
+## Version 2.0.3
+
+-  Version number now written in history and shown in DatabaseHistory;
+-  Fixed another generate-table bug in create pdf;
+-  Fixed another version bug in proposal and contract;
+-  Added Duplicate functionality in Proposal;
+
 ## Version 2.0.2
 
 -  Changed SearchBar options for contracts, enabling search for client description and proposal number;

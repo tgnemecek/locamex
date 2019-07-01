@@ -69,7 +69,7 @@ if (Meteor.isServer) {
         dates: master.dates,
         discount: master.discount,
 
-        version: master.version,
+        version: hasChanged ? master.version+1 : master.version,
 
         inss: master.inss,
         iss: master.iss,
@@ -85,7 +85,7 @@ if (Meteor.isServer) {
       };
       Proposals.update({ _id: master._id }, { $set: data });
       Meteor.call('history.insert', data, 'proposals');
-      return {hasChanged: true};
+      return {hasChanged: true, master};
     },
     'proposals.activate'(master) {
       var _id = master._id;
@@ -99,7 +99,8 @@ if (Meteor.isServer) {
         ...master,
         status: 'inactive',
         proposal: _id,
-        proposalVersion: master.version
+        proposalVersion: master.version,
+        clientId: ''
       })
       Meteor.call('history.insert', { _id }, 'proposals.activate');
       return {_id, contractId};
@@ -107,6 +108,22 @@ if (Meteor.isServer) {
     'proposals.cancel'(_id) {
       Proposals.update({_id}, {$set: {status: "cancelled"}} );
       Meteor.call('history.insert', {_id}, 'proposals.cancel');
+      return _id;
+    },
+    'proposals.duplicate'(master) {
+      var current = Proposals.findOne({_id: master._id});
+      var hasChanged = !tools.compare(current, master);
+      var newMaster = master;
+
+      if (hasChanged) {
+        newMaster = Meteor.call('proposals.update', master).master;
+      }
+
+      delete newMaster._id;
+      master.version = 1;
+
+      var _id = Meteor.call('proposals.insert', newMaster);
+      Meteor.call('history.insert', {...newMaster, _id}, 'proposals.duplicate');
       return _id;
     }
   })

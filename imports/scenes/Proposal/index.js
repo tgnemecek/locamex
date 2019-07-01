@@ -139,6 +139,17 @@ class Proposal extends React.Component {
     this.setState({ toggleFinalizeWindow });
   }
 
+  duplicateProposal = (callback) => {
+    this.setState({ databaseStatus: "loading" }, () => {
+      Meteor.call('proposals.duplicate', this.state.proposal, (err, res) => {
+        if (res) {
+          this.setState({ databaseStatus: "completed" });
+        } else if (err) this.setState({ databaseStatus: "failed" });
+      });
+      if (typeof (callback) === "function") callback();
+    })
+  }
+
   cancelProposal = (callback) => {
     this.setState({ databaseStatus: "loading" }, () => {
       Meteor.call('proposals.cancel', this.state.proposal._id, (err, res) => {
@@ -151,7 +162,7 @@ class Proposal extends React.Component {
           this.setState({ proposal, databaseStatus: "completed" });
         } else if (err) this.setState({ databaseStatus: "failed" });
       });
-      if (typeof (callback) === "function") callback();;
+      if (typeof (callback) === "function") callback();
     })
   }
 
@@ -167,7 +178,7 @@ class Proposal extends React.Component {
           this.setState({ proposal, databaseStatus: "completed" });
         } else if (err) this.setState({ databaseStatus: "failed" });
       });
-      if (typeof (callback) === "function") callback();;
+      if (typeof (callback) === "function") callback();
     })
   }
 
@@ -202,7 +213,7 @@ class Proposal extends React.Component {
             this.props.history.push("/proposal/" + res);
             this.setState({ proposal, databaseStatus: "completed" }, callback(proposal));
           }
-          else if (err) this.setState({ databaseStatus: "failed" }, callback(this.state.proposal));
+          else if (err) this.setState({ databaseStatus: "failed" });
         });
       } else {
         Meteor.call('proposals.update', this.state.proposal, (err, res) => {
@@ -210,7 +221,7 @@ class Proposal extends React.Component {
             if (res.hasChanged) {
               var proposal = {...this.state.proposal};
               proposal.version++;
-              this.setState({ databaseStatus: "completed", proposal }, callback(this.state.proposal));
+              this.setState({ databaseStatus: "completed", proposal }, callback(proposal));
             } else this.setState({ databaseStatus: "completed" }, callback(this.state.proposal));
           }
           else if (err) this.setState({ databaseStatus: "failed" }, callback(this.state.proposal));
@@ -259,6 +270,7 @@ class Proposal extends React.Component {
             updateMaster={this.updateProposal}
             cancelMaster={this.cancelProposal}
             saveMaster={this.saveEdits}
+            duplicateMaster={this.duplicateProposal}
 
             errorKeys={this.state.errorKeys}
             disabled={disabled}

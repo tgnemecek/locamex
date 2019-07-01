@@ -34,7 +34,7 @@ export default class SuggestionBar extends React.Component {
   getResults = () => {
     var database = this.props.database || [];
     var query = this.state.query;
-    var key = this.props.key || "description";
+    var fields = this.props.fields || ["description"];
     var results = [];
 
     function compareValues(input, value) {
@@ -48,9 +48,11 @@ export default class SuggestionBar extends React.Component {
     }
 
     database.forEach((item) => {
-      if (compareValues(item[key], query)) {
-        results.push(item);
-      }
+      fields.forEach((field) => {
+        if (compareValues(item[field], query)) {
+          results.push(item);
+        }
+      })
     })
     this.setState({ results });
   }
