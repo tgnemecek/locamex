@@ -51,7 +51,7 @@ export default function tableProducts(props) {
     return [
       discount(),
       monthlyValue(),
-      [ {text: 'Valor Total da Locação:', colSpan, alignment: 'right', bold: true}, props.resultFormat(props.totalValueProducts) ]
+      {text: 'Valor Total da Locação:', colSpan, alignment: 'right', bold: true}, props.resultFormat(props.totalValueProducts)
     ]
   }
 

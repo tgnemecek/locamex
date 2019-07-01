@@ -11,10 +11,6 @@ import DocumentsCompany from './DocumentsCompany/index';
 import DocumentsPerson from './DocumentsPerson/index';
 
 export default class DocumentsSelector extends React.Component {
-  quickGenerate(props) {
-    props.saveMaster(createPDF(props.master));
-  }
-
   getClient = () => {
     if (this.props.master.type === "contract") {
       return this.props.databases.clientsDatabase.find((client) => client._id === this.props.master.clientId);

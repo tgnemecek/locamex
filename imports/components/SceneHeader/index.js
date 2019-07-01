@@ -1,4 +1,5 @@
 import React from 'react';
+import createPDF from '/imports/api/create-pdf/index';
 import Documents from './Documents/index';
 import Billing from './Billing/index';
 import Observations from './Observations/index';
@@ -20,11 +21,18 @@ export default class SceneHeader extends React.Component {
     if (this.props.master.type === "proposal") {
       label = "Proposta";
     } else label = "Contrato";
-    return (
+    if (this.props.master._id) {
+      return (
+        <div className="master__title">
+          <h1>{`${label} #${this.props.master._id}.${this.props.master.version}`}</h1>
+        </div>
+      )
+    } else return (
       <div className="master__title">
-        <h1>{`${label} #${this.props.master._id || ''}.${this.props.master.version}`}</h1>
+        <h1>{this.props.master.type === "proposal" ? `Nova Proposta` : `Novo Contrato`}</h1>
       </div>
     )
+
   }
 
   renderCreatedBy = () => {
@@ -66,7 +74,15 @@ export default class SceneHeader extends React.Component {
         if (!this.props.master.containers.length && !this.props.master.accessories.length) {
           return alert("Adicione algum produto!");
         }
-        new Documents().quickGenerate(this.props);
+        this.props.saveMaster((newMaster) => {
+          var createdByUser = this.props.databases.usersDatabase.find((user) => {
+            return user._id === this.props.master.createdBy
+          });
+          var createdByFullName = createdByUser.firstName + " " + createdByUser.lastName;
+          newMaster.createdByFullName = createdByFullName;
+          newMaster.type = "proposal";
+          createPDF(newMaster);
+        })
       }
     }
     const renderDocuments = () => {

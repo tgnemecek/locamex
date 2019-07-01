@@ -1,5 +1,12 @@
 # Changelog:
 
+## Version 2.0.2
+
+-  Changed SearchBar options for contracts, enabling search for client description and proposal number;
+-  Print pdf: fixed canvas onscreen;
+-  Fixed proposal texts;
+-  Proposal pdf now shows user's name in signature;
+
 ## Version 2.0.1
 
 -  Fix proposal pdf logo-loader throwing an error on second+ print;

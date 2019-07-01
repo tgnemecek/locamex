@@ -3,8 +3,19 @@ export default function generateTable(props) {
     if (!arr) return [[]];
     if (!arr.length) return [[]];
 
-    var filtered = arr.filter((row) => !!row);
-    return Array.isArray(filtered[0]) ? filtered : [filtered];
+    // Enforce arr to be an array of arrays (rows)
+    var step1 = Array.isArray(arr[0]) ? arr : [arr];
+    return step1.map((row) => {
+      var newRow = [];
+      row.forEach((item) => {
+        if (Array.isArray(item)) {
+          newRow.concat(item);
+        } else if (item !== null && item !== undefined) {
+          newRow.push(item);
+        }
+      })
+      return newRow;
+    })
   }
 
   var header = cleanArray(props.header);
@@ -16,7 +27,9 @@ export default function generateTable(props) {
       return arr.reduce((acc, cur) => {
         var length = cur.length;
         cur.forEach((item) => {
-          if (item.colSpan) length += (item.colSpan-1);
+          if (typeof item === "object" && item !== null) {
+            if (item.colSpan) length += (item.colSpan-1);
+          }
         })
         return acc > length ? acc : length;
       }, 0)
@@ -77,6 +90,7 @@ export default function generateTable(props) {
       } else result.push(row);
     }
   })
+  debugger;
 
   return {table: {
     headerRows: header.length,

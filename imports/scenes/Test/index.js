@@ -13,31 +13,8 @@ class TestPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      status: "loading",
-      profile: {
-        name: "thiago",
-        age: 27,
-        emails: ["t@gmail.com", "a@gmail.com"]
-      },
-      ids: [
-        {a: "123", b: "456"},
-        "outside",
-        999
-      ],
-      masterArray: [
-        [1, 2, 3],
-        "aaa"
-      ]
+
     }
-    this.newState = {...this.state};
-    var arr = [];
-    this.state.ids.forEach((item) => {
-      arr.push(item);
-    })
-    arr[2] = "777";
-    this.newState.ids = arr;
-    var result = tools.compare(this.state, this.newState);
-    alert(result);
   }
   componentDidMount() {
 // this.timeout();
@@ -50,7 +27,7 @@ class TestPage extends React.Component {
   }
 
   onClick = () => {
-    this.setState({ status: "failed" });
+    new Test2().message(() => alert("bbb"));
   }
 
   render() {
@@ -58,9 +35,36 @@ class TestPage extends React.Component {
       <div>
         {this.state.status}
         <button onClick={this.onClick}>BOTAO</button>
-        <DatabaseStatus status={this.state.status}/>
+        <Test3 />
       </div>
 
+    )
+  }
+}
+
+class Test2 extends React.Component {
+  message = (callback) => {
+    new Test3().a(callback);
+  }
+}
+
+class Test3 extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      value: 0
+    }
+  }
+  a = (callback) => {
+    this.setState({ value: this.state.value+1 }, () => {
+      callback()
+    })
+  }
+  render() {
+    return (
+      <div>
+        {this.state.value}
+      </div>
     )
   }
 }

@@ -104,7 +104,7 @@ class ProposalsTable extends React.Component {
           <RedirectUser currentPage="proposals"/>
           <SearchBar
             database={this.props.fullDatabase}
-            searchHere={['_id']}
+            searchHere={['_id', 'clientName']}
             filterSearch={this.filterSearch}
           />
           <div className="database__scroll-div">
@@ -138,6 +138,9 @@ export default ProposalsTableWrapper = withTracker((props) => {
   Meteor.subscribe('usersPub');
   var fullDatabase = Proposals.find().fetch();
   fullDatabase = tools.sortObjects(fullDatabase, '_id', {reverseOrder: true});
+  fullDatabase.forEach((item) => {
+    item.clientName = item.client.description;
+  })
   var ready = !!fullDatabase.length;
   return {
     fullDatabase,

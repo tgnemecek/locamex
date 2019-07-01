@@ -27,7 +27,6 @@ export default function createPdf(props) {
     img.src = 'https://locamex-app.s3-sa-east-1.amazonaws.com/app-required/logo-locamex-slogan-400x251.png';
     img.onload = function () {
       var canvas = document.createElement("canvas");
-      document.body.appendChild(canvas);
       canvas.width = this.width;
       canvas.height = this.height;
 
@@ -41,7 +40,7 @@ export default function createPdf(props) {
 
   const proposal = props.master;
 
-  const fileName = `Locamex - Contrato de Locação #${proposal._id}_${proposal.version}`;
+  const fileName = `Locamex - Proposta de Locação #${proposal._id}_${proposal.version}`;
 
   const products = proposal.containers.concat(proposal.accessories).map((item) => {
     item.monthlyPrice = item.renting * item.price;
@@ -102,7 +101,7 @@ export default function createPdf(props) {
       conditions(data),
       documentsNeeded(data),
       closing(),
-      signature()
+      signature(data)
     ],
     pageBreakBefore: function (currentNode, followingNodesOnPage, nodesOnNextPage, previousNodesOnPage) {
       if (currentNode.headlineLevel) {
@@ -128,7 +127,6 @@ export default function createPdf(props) {
         {text: 'locamex@locamex.com.br', link: 'mailto:locamex@locamex.com.br'}
       ], style: 'p', alignment: 'right'}
     ], margin: [30, 30, 30, 30]}
-    result.canvas.parentNode.removeChild(result.canvas);
     pdfMake.createPdf(docDefinition).download(fileName);
   }).catch(() => {
     pdfMake.createPdf(docDefinition).download(fileName);

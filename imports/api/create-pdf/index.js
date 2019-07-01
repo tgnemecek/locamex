@@ -5,6 +5,7 @@ import generateTable from './generate-table/index';
 import styles from './styles/index';
 
 export default function createPDF(master) {
+  if (!master) throw new Meteor.Error("no-master");
 
   var newProps = {
     master,

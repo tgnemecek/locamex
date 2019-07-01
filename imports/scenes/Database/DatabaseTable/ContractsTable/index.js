@@ -15,8 +15,7 @@ class ContractsTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filteredDatabase: [],
-
+      filteredDatabase: []
     }
   }
 
@@ -115,7 +114,7 @@ class ContractsTable extends React.Component {
           <RedirectUser currentPage="contracts"/>
           <SearchBar
             database={this.props.fullDatabase}
-            searchHere={['_id']}
+            searchHere={['_id', 'officialName', 'description', 'registry', 'proposal']}
             filterSearch={this.filterSearch}
           />
           <div className="database__scroll-div">
@@ -149,8 +148,17 @@ export default ContractsTableWrapper = withTracker((props) => {
   Meteor.subscribe('contractsPub');
   Meteor.subscribe('usersPub');
   var fullDatabase = Contracts.find().fetch();
-  fullDatabase = tools.sortObjects(fullDatabase, '_id', {reverseOrder: true});
   var clientsDatabase = Clients.find().fetch();
+
+  fullDatabase = tools.sortObjects(fullDatabase, '_id', {reverseOrder: true});
+  fullDatabase.forEach((item) => {
+    var currentClient = clientsDatabase.find((client) => client._id === item.clientId);
+    if (currentClient) {
+      item.registry = currentClient.registry;
+      item.officialName = currentClient.officialName;
+      item.description = currentClient.description;
+    }
+  })
   var ready = !!fullDatabase.length;
   return {
     fullDatabase,
