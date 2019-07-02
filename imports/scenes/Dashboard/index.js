@@ -2,6 +2,8 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { Users } from '/imports/api/users/index';
 
+import Widgets from '/imports/components/Widgets/index';
+
 export default class Dashboard extends React.Component {
   render() {
     if (this.props.user) {
@@ -10,6 +12,7 @@ export default class Dashboard extends React.Component {
           <div className="dashboard">
             <h1>Página Inicial</h1>
             <h2>Olá {this.props.user.firstName}.</h2>
+            <Widgets/>
           </div>
         </div>
       )

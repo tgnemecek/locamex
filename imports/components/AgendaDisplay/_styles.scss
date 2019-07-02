@@ -1,0 +1,39 @@
+.agenda__month-title {
+  text-align: center;
+}
+
+.agenda__table {
+  width: 100%;
+
+  td, th {
+    position: relative;
+    text-align: center;
+    height: 60px;
+    width: 60px;
+  }
+}
+
+.agenda__day--active {
+  border: 1px solid $grey;
+}
+
+.agenda__day--content {
+  background: $brand-primary;
+  filter: invert(1);
+}
+
+.agenda__hoverbox {
+  position: absolute;
+}
+
+.agenda__star {
+  position: absolute;
+  text-align: left;
+  top: 0;
+  left: 0;
+  margin: 2px;
+}
+
+.agenda__day--inactive {
+  font-style: italic;
+}

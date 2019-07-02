@@ -4,6 +4,7 @@ import { WebApp } from 'meteor/webapp';
 import '../imports/startup/aws-configuration/index';
 import '../imports/startup/simple-schema-configuration/index';
 
+import '../imports/api/agenda/index';
 import '../imports/api/accessories/index';
 import '../imports/api/batch/index';
 import '../imports/api/clients/index';

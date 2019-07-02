@@ -16,18 +16,15 @@ class TestPage extends React.Component {
 
     }
   }
-  componentDidMount() {
-// this.timeout();
-  }
-
-  timeout = () => {
-    setTimeout(() => {
-      this.setState({ status: "completed" });
-    }, 5000);
-  }
 
   onClick = () => {
-    new Test2().message(() => alert("bbb"));
+    Meteor.call('agenda.insert', {
+      insertionDate: new Date(),
+      visibleTo: 'finances',
+      type: 'test',
+      date: new Date(),
+      repeat: 'never'
+    });
   }
 
   render() {
@@ -35,36 +32,8 @@ class TestPage extends React.Component {
       <div>
         {this.state.status}
         <button onClick={this.onClick}>BOTAO</button>
-        <Test3 />
       </div>
 
-    )
-  }
-}
-
-class Test2 extends React.Component {
-  message = (callback) => {
-    new Test3().a(callback);
-  }
-}
-
-class Test3 extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      value: 0
-    }
-  }
-  a = (callback) => {
-    this.setState({ value: this.state.value+1 }, () => {
-      callback()
-    })
-  }
-  render() {
-    return (
-      <div>
-        {this.state.value}
-      </div>
     )
   }
 }

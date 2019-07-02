@@ -17,7 +17,8 @@ import {
   faArrowLeft,
   faArrowRight,
   faQuestionCircle,
-  faCopy
+  faCopy,
+  faStar
 } from '@fortawesome/free-solid-svg-icons';
 
 const ICON_SET = {
@@ -36,7 +37,8 @@ const ICON_SET = {
   arrowLeft: faArrowLeft,
   arrowRight: faArrowRight,
   help: faQuestionCircle,
-  copy: faCopy
+  copy: faCopy,
+  star: faStar
 }
 
 export default class Button extends React.Component {
