@@ -13,18 +13,18 @@ export default function tableBillingProducts(props) {
     });
   }
   return props.generateTable({
-    header: [
+    header: [[
       '#',
       {text: 'Período', alignment: 'center'},
       'Vencimento',
       'Descrição da Cobrança',
       {text: 'Valor', alignment: 'right'}
-    ],
+    ]],
     body: body(),
-    footer: [
+    footer: [[
       {text: 'Valor Total da Locação:', colSpan: 4, alignment: 'right', bold: true},
       props.resultFormat(props.totalValueProducts)
-    ],
+    ]],
     widths: ['auto', 110, 'auto', '*', 60],
     styles: props.styles
   })

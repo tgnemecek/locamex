@@ -11,6 +11,7 @@ import tableProducts from './table-products/index';
 import tableServices from './table-services/index';
 import tableTotalValue from './table-total-value/index';
 import conditions from './conditions/index';
+import notIncluded from './not-included/index';
 import documentsNeeded from './documents-needed/index';
 import closing from './closing/index';
 import signature from './signature/index';
@@ -44,7 +45,10 @@ export default function createPdf(props) {
 
   const products = proposal.containers.concat(proposal.accessories).map((item) => {
     item.monthlyPrice = item.renting * item.price;
-    item.finalPrice = item.monthlyPrice * proposal.dates.duration;
+    if (proposal.dates.timeUnit === "months") {
+      item.finalPrice = item.monthlyPrice * proposal.dates.duration;
+    } else item.finalPrice = item.monthlyPrice;
+
     return item;
   });
   const services = proposal.services.map((item) => {
@@ -99,6 +103,7 @@ export default function createPdf(props) {
       tableServices(data),
       tableTotalValue(data),
       conditions(data),
+      notIncluded(),
       documentsNeeded(data),
       closing(),
       signature(data)

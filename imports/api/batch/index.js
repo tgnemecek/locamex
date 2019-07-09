@@ -3,14 +3,27 @@ import tools from '/imports/startup/tools/index';
 import { Accessories } from '/imports/api/accessories/index';
 import { Clients } from '/imports/api/clients/index';
 import { Containers } from '/imports/api/containers/index';
+import { Contracts } from '/imports/api/contracts/index';
 import { History } from '/imports/api/history/index';
 import { Modules } from '/imports/api/modules/index';
 import { Packs } from '/imports/api/packs/index';
 import { Places } from '/imports/api/places/index';
+import { Proposals } from '/imports/api/proposals/index';
 import { Services } from '/imports/api/services/index';
 import { Series } from '/imports/api/series/index';
 
 if (Meteor.isServer && Meteor.isDevelopment) {
+  // var c = Contracts.find().fetch();
+  // Contracts.remove({});
+  //
+  // c.forEach((doc) => {
+  //   var oldId = doc.proposalVersion;
+  //   var newId = oldId === undefined ? 1 : oldId;
+  //   Contracts.insert({
+  //     ...doc,
+  //     proposalVersion: newId
+  //   })
+  // })
   // var a = Accessories.find().fetch();
   //
   // a.forEach((item) => {

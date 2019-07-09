@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.0.4
+
+-  Fixed more pdf bugs;
+
 ## Version 2.0.3
 
 -  Version number now written in history and shown in DatabaseHistory;

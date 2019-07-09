@@ -16,6 +16,11 @@ export default function tableProducts(props) {
         return {text: tools.format(price, 'currency'), alignment: 'center'}
       } else return null;
     }
+    const duration = (duration) =>  {
+      if (props.dates.timeUnit === "months") {
+        return {text: duration.toString(), alignment: 'center'}
+      } else return {text: "até 30", alignment: 'center'};
+    }
     if (props.products) {
       return props.products.map((product, i) => {
         return [
@@ -24,11 +29,11 @@ export default function tableProducts(props) {
           tools.format(product.price, 'currency'),
           {text: product.renting.toString(), alignment: 'center'},
           monthlyPrice(product.price * product.renting),
-          {text: props.dates.duration.toString(), alignment: 'center'},
+          duration(props.dates.duration),
           {text: tools.format(product.finalPrice, 'currency'), alignment: 'right'}
         ];
       })
-    } else return {text: '', colSpan: 6};
+    } else return [{text: '', colSpan: 6}];
   }
 
   const footer = () => {
@@ -60,7 +65,7 @@ export default function tableProducts(props) {
       return ['auto', '*', 'auto', 'auto', 'auto', 'auto', 'auto'];
     } else return ['auto', '*', 'auto', 'auto', 'auto', 'auto'];
   }
-
+debugger;
   return [
     {text: 'Itens a Serem Locados', style: 'h2', alignment: 'center'},
     props.generateTable({

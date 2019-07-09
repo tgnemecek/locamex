@@ -2,20 +2,16 @@ export default function generateTable(props) {
   function cleanArray(arr) {
     if (!arr) return [[]];
     if (!arr.length) return [[]];
-
     // Enforce arr to be an array of arrays (rows)
-    var step1 = Array.isArray(arr[0]) ? arr : [arr];
-    return step1.map((row) => {
-      var newRow = [];
-      row.forEach((item) => {
-        if (Array.isArray(item)) {
-          newRow.concat(item);
-        } else if (item !== null && item !== undefined) {
-          newRow.push(item);
-        }
-      })
-      return newRow;
+    var filtered = [];
+    arr.forEach((row) => {
+      if (row !== null && row !== undefined) {
+        if (Array.isArray(row)) {
+          filtered.push(row);
+        } else throw new Meteor.Error('row-needs-to-be-array', {row, array: arr});
+      }
     })
+    return filtered;
   }
 
   var header = cleanArray(props.header);
@@ -29,7 +25,7 @@ export default function generateTable(props) {
         cur.forEach((item) => {
           if (typeof item === "object" && item !== null) {
             if (item.colSpan) length += (item.colSpan-1);
-          }
+          } else if (item === null || item === undefined) length--;
         })
         return acc > length ? acc : length;
       }, 0)
@@ -82,7 +78,11 @@ export default function generateTable(props) {
 
   var result = [];
 
-  format(header).concat(format(body), format(footer)).forEach((row) => {
+  var formattedHeader = format(header);
+  var formattedBody = format(body);
+  var formattedFooter = format(footer);
+
+  formattedHeader.concat(formattedBody, formattedFooter).forEach((row) => {
     var difference = row.length - numberOfColumns;
     if (row.length > 0) {
       if (difference !== 0) {
@@ -90,13 +90,17 @@ export default function generateTable(props) {
       } else result.push(row);
     }
   })
-  debugger;
+
+  for (var i = 0; i < (result.length-1); i++) {
+    if (result[i].length !== result[i+1].length) {
+      throw new Meteor.Error('lengths-not-equal', result);
+    }
+  }
 
   return {table: {
     headerRows: header.length,
     keepWithHeaderRows: true,
     widths: props.widths,
-    heights: props.styles.cellheight,
     body: result
   }, style: 'table'}
 }

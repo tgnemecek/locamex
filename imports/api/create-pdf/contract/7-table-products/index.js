@@ -62,7 +62,7 @@ export default function tableProducts(props) {
   }
 
   return props.generateTable({
-    header: [
+    header: [[
       '#',
       'Descrição',
       {text: 'Valor Unit.', alignment: 'left'},
@@ -70,7 +70,7 @@ export default function tableProducts(props) {
       timeUnitValueLabel(),
       {text: timeUnitLabel(), alignment: 'center'},
       {text: 'Valor Total', alignment: 'right'}
-    ],
+    ]],
     body: body(),
     footer: footer(),
     widths: widths(),

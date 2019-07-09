@@ -12,14 +12,14 @@ export default function tableDuration(props) {
   }
 
   return props.generateTable({
-    body: [
+    body: [[
       'Início em',
       {text: moment(props.dates.startDate).format("DD-MMMM-YYYY"), alignment: 'center'},
       'Término em',
       calcEndDate(),
       'Prazo mínimo de Locação',
       {text: props.dates.duration + monthPlural(), alignment: 'center'}
-    ],
+    ]],
     widths: ['auto', '*', 'auto', '*', 'auto', 'auto'],
     styles: props.styles
   })

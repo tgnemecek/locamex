@@ -13,17 +13,17 @@ export default function tableBillingServices(props) {
     });
   }
   return props.generateTable({
-    header: [
+    header: [[
       '#',
       'Vencimento',
       'Descrição da Cobrança',
       {text: 'INSS + ISS', alignment: 'center'},
       {text: 'Valor Final', alignment: 'right'}
-    ],
+    ]],
     body: body(),
-    footer: [
+    footer: [[
       {text: 'Valor Total do Pacote de Serviços:', colSpan: 4, alignment: 'right', bold: true}, props.resultFormat(props.totalValueServices)
-    ],
+    ]],
     widths: ['auto', 'auto', '*', 50, 60],
     styles: props.styles
   })
