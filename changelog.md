@@ -1,5 +1,13 @@
 # Changelog:
 
+## Version 2.0.6
+
+-  Added "clients" page to "sales" user-type;
+
+## Version 2.0.5
+
+-  Edited Proposal PDF text;
+
 ## Version 2.0.4
 
 -  Fixed more pdf bugs;

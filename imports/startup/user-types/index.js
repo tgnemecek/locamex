@@ -1,7 +1,7 @@
 export const userTypes = [
   {
     type: "sales",
-    pages: ["series", "accessories", "packs", "proposals", "proposal"]
+    pages: ["clients", "series", "accessories", "packs", "proposals", "proposal"]
   },
   {
     type: "finances",
