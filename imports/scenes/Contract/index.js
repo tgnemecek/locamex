@@ -151,7 +151,10 @@ class Contract extends React.Component {
             _id: res
           }
           this.setState({ contract, databaseStatus: "completed" });
-        } else if (err) this.setState({ databaseStatus: "failed" });
+        } else if (err) {
+          this.setState({ databaseStatus: "failed" });
+          console.log(err);
+        }
       });
       if (typeof (callback) === "function") callback();
     })
@@ -167,7 +170,10 @@ class Contract extends React.Component {
             _id: res
           }
           this.setState({ contract, databaseStatus: "completed" });
-        } else if (err) this.setState({ databaseStatus: "failed" });
+        } else if (err) {
+          this.setState({ databaseStatus: "failed" });
+          console.log(err);
+        }
       });
       if (typeof (callback) === "function") callback();;
     })
@@ -184,7 +190,10 @@ class Contract extends React.Component {
           }
           this.props.history.push("/contract/" + res);
           this.setState({ contract, databaseStatus: "completed" });
-        } else if (err) this.setState({ databaseStatus: "failed" });
+        } else if (err) {
+          this.setState({ databaseStatus: "failed" });
+          console.log(err);
+        }
       });
       if (typeof (callback) === "function") callback();
     })
@@ -204,7 +213,10 @@ class Contract extends React.Component {
             this.props.history.push("/contract/" + res);
             this.setState({ contract, databaseStatus: "completed" }, callback(contract));
           }
-          else if (err) this.setState({ databaseStatus: "failed" });
+          else if (err) {
+            this.setState({ databaseStatus: "failed" });
+            console.log(err);
+          }
         });
       } else {
         Meteor.call('contracts.update', this.state.contract, (err, res) => {
@@ -215,7 +227,10 @@ class Contract extends React.Component {
               this.setState({ databaseStatus: "completed", contract }, callback(contract));
             } else this.setState({ databaseStatus: "completed"}, callback(this.state.contract));
           }
-          else if (err) this.setState({ databaseStatus: "failed" });
+          else if (err) {
+            this.setState({ databaseStatus: "failed" });
+            console.log(err);
+          }
         });
       }
     })

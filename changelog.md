@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.0.7
+
+-  Proposal and Contract server error now print to console;
+
 ## Version 2.0.6
 
 -  Added "clients" page to "sales" user-type;

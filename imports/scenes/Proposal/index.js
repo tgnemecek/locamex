@@ -144,7 +144,10 @@ class Proposal extends React.Component {
       Meteor.call('proposals.duplicate', this.state.proposal, (err, res) => {
         if (res) {
           this.setState({ databaseStatus: "completed" });
-        } else if (err) this.setState({ databaseStatus: "failed" });
+        } else if (err) {
+          this.setState({ databaseStatus: "failed" });
+          console.log(err);
+        }
       });
       if (typeof (callback) === "function") callback();
     })
@@ -160,7 +163,10 @@ class Proposal extends React.Component {
             _id: res
           }
           this.setState({ proposal, databaseStatus: "completed" });
-        } else if (err) this.setState({ databaseStatus: "failed" });
+        } else if (err) {
+          this.setState({ databaseStatus: "failed" });
+          console.log(err);
+        }
       });
       if (typeof (callback) === "function") callback();
     })
@@ -176,7 +182,10 @@ class Proposal extends React.Component {
             _id: res._id
           }
           this.setState({ proposal, databaseStatus: "completed" });
-        } else if (err) this.setState({ databaseStatus: "failed" });
+        } else if (err) {
+          this.setState({ databaseStatus: "failed" });
+          console.log(err);
+        }
       });
       if (typeof (callback) === "function") callback();
     })
@@ -193,7 +202,10 @@ class Proposal extends React.Component {
           }
           this.props.history.push("/proposal/" + res);
           this.setState({ proposal, databaseStatus: "completed" });
-        } else if (err) this.setState({ databaseStatus: "failed" });
+        } else if (err) {
+          this.setState({ databaseStatus: "failed" });
+
+        }
       });
       if (typeof (callback) === "function") callback();
     })
@@ -213,7 +225,10 @@ class Proposal extends React.Component {
             this.props.history.push("/proposal/" + res);
             this.setState({ proposal, databaseStatus: "completed" }, callback(proposal));
           }
-          else if (err) this.setState({ databaseStatus: "failed" });
+          else if (err) {
+            this.setState({ databaseStatus: "failed" });
+            console.log(err);
+          }
         });
       } else {
         Meteor.call('proposals.update', this.state.proposal, (err, res) => {
@@ -224,7 +239,10 @@ class Proposal extends React.Component {
               this.setState({ databaseStatus: "completed", proposal }, callback(proposal));
             } else this.setState({ databaseStatus: "completed" }, callback(this.state.proposal));
           }
-          else if (err) this.setState({ databaseStatus: "failed" }, callback(this.state.proposal));
+          else if (err) {
+            this.setState({ databaseStatus: "failed" }, callback(this.state.proposal));
+            console.log(err);
+          }
         });
       }
     })
