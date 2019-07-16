@@ -13,29 +13,48 @@ class TestPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-
+      result: "nada"
     }
-  }
-  componentDidMount() {
-// this.timeout();
-  }
-
-  timeout = () => {
-    setTimeout(() => {
-      this.setState({ status: "completed" });
-    }, 5000);
   }
 
   onClick = () => {
-    new Test2().message(() => alert("bbb"));
+    var a = [
+      {
+        _id: "84f07fa8638398929e3cc541",
+        productId: "0b661bc061f28029fbbdafb7",
+        type: "fixed",
+        price: 300,
+        renting: 1
+      }
+    ]
+    var b = [
+      {
+        _id: "84f07fa8638398929e3cc541",
+        productId: "0b661bc061f28029fbbdafb7",
+        type: "fixed",
+        price: 300,
+        renting: 1
+      },
+      {
+        _id: "4b7140651203c1e1a2ca067c",
+        productId: "0b661bc061f28029fbbdafb7",
+        type: "modular",
+        price: 4000,
+        renting: 1
+      }
+    ]
+    var result = tools.compare(a, b);
+    if (result) {
+      result = "true";
+    } else result = "false";
+    this.setState({ result });
   }
 
   render() {
     return (
       <div>
-        {this.state.status}
+        {this.state.result}
         <button onClick={this.onClick}>BOTAO</button>
-        <Test3 />
       </div>
 
     )

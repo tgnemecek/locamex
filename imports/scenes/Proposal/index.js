@@ -27,10 +27,21 @@ import Information from './Information/index';
 class Proposal extends React.Component {
   constructor(props) {
     super(props);
+    const getDocument = () => {
+      if (this.props.proposal) {
+        const version = this.props.proposal.snapshots.length-1;
+        return {
+          ...this.props.proposal.snapshots[version],
+          _id: this.props.proposal._id,
+          status: this.props.proposal.status,
+          version
+        }
+      } else return null;
+    }
     this.state = {
-      proposal: this.props.proposal || {
+      proposal: getDocument() || {
         _id: undefined,
-        createdBy: Meteor.user()._id,
+        createdBy: Meteor.userId(),
         status: "inactive",
 
         client: {
@@ -40,7 +51,7 @@ class Proposal extends React.Component {
           phone: ''
         },
 
-        version: 1,
+        version: 0,
 
         discount: 0,
 
@@ -116,11 +127,9 @@ class Proposal extends React.Component {
   updateProposal = (changes, callback) => {
     var proposal = {
       ...this.state.proposal,
-      ...changes,
-      errorKeys: [],
-      errorMsg: ''
+      ...changes
     };
-    this.setState({ proposal }, () => {
+    this.setState({ proposal, errorKeys: [], errorMsg: '' }, () => {
       if (typeof (callback) === "function") callback();
     })
   }
@@ -139,19 +148,31 @@ class Proposal extends React.Component {
     this.setState({ toggleFinalizeWindow });
   }
 
-  duplicateProposal = (callback) => {
-    this.setState({ databaseStatus: "loading" }, () => {
-      Meteor.call('proposals.duplicate', this.state.proposal, (err, res) => {
-        if (res) {
-          this.setState({ databaseStatus: "completed" });
-        } else if (err) {
-          this.setState({ databaseStatus: "failed" });
-          console.log(err);
-        }
-      });
-      if (typeof (callback) === "function") callback();
-    })
+  changeVersion = (e) => {
+    var newVersion = e.target.value;
+    var proposal = {
+      ...this.props.proposal.snapshots[newVersion],
+      _id: this.state.proposal._id,
+      status: this.props.proposal.status,
+      version: newVersion
+    }
+    this.setState({ proposal });
   }
+
+  // NOT IN USE:
+  // duplicateProposal = (callback) => {
+  //   this.setState({ databaseStatus: "loading" }, () => {
+  //     Meteor.call('proposals.duplicate', this.state.proposal, (err, res) => {
+  //       if (res) {
+  //         this.setState({ databaseStatus: "completed" });
+  //       } else if (err) {
+  //         this.setState({ databaseStatus: "failed" });
+  //         console.log(err);
+  //       }
+  //     });
+  //     if (typeof (callback) === "function") callback();
+  //   })
+  // }
 
   cancelProposal = (callback) => {
     this.setState({ databaseStatus: "loading" }, () => {
@@ -220,10 +241,11 @@ class Proposal extends React.Component {
           if (res) {
             var proposal = {
               ...this.state.proposal,
-              _id: res
+              _id: res,
+
             }
             this.props.history.push("/proposal/" + res);
-            this.setState({ proposal, databaseStatus: "completed" }, callback(proposal));
+            this.setState({ proposal, databaseStatus: "completed" });
           }
           else if (err) {
             this.setState({ databaseStatus: "failed" });
@@ -235,7 +257,7 @@ class Proposal extends React.Component {
           if (res) {
             if (res.hasChanged) {
               var proposal = {...this.state.proposal};
-              proposal.version++;
+              proposal.version = res.data.snapshots.length-1;
               this.setState({ databaseStatus: "completed", proposal }, callback(proposal));
             } else this.setState({ databaseStatus: "completed" }, callback(this.state.proposal));
           }
@@ -284,11 +306,12 @@ class Proposal extends React.Component {
           <SceneHeader
             master={{...this.state.proposal, type: "proposal"}}
             databases={this.props.databases}
+            snapshots={this.props.proposal ? this.props.proposal.snapshots : []}
+            changeVersion={this.changeVersion}
 
             updateMaster={this.updateProposal}
             cancelMaster={this.cancelProposal}
             saveMaster={this.saveEdits}
-            duplicateMaster={this.duplicateProposal}
 
             errorKeys={this.state.errorKeys}
             disabled={disabled}

@@ -9,7 +9,7 @@ export const Proposals = new Mongo.Collection('proposals');
 
 if (Meteor.isServer) {
   Meteor.publish('proposalsPub', () => {
-    return Proposals.find({ visible: true }, {sort: { _id: -1 }});
+    return Proposals.find({}, {sort: { _id: -1 }});
   })
   function setProducts(array) {
     return array.map((item) => {
@@ -20,80 +20,62 @@ if (Meteor.isServer) {
   }
 
   Meteor.methods({
-    'proposals.insert'(master) {
+    'proposals.insert'(snapshot, status) {
       const prefix = new Date().getFullYear();
       const suffix = Proposals.find({ _id: { $regex: new RegExp(prefix)} }).count().toString().padStart(4, '0');
       const _id = prefix + "-" + suffix;
       const data = {
-        // System Information
         _id,
-        status: master.status,
-        createdBy: master.createdBy,
-        visible: true,
-        // Contract Information
-        client: master.client,
-        deliveryAddress: master.deliveryAddress,
-        dates: master.dates,
-        discount: master.discount,
+        status: status || "inactive",
+        snapshots: [
+          {
+            ...snapshot,
+            _id: undefined,
+            version: undefined,
+            status: undefined,
 
-        version: master.version,
-
-        inss: master.inss,
-        iss: master.iss,
-        billingProducts: master.billingProducts,
-        billingServices: master.billingServices,
-
-        observations: master.observations,
-
-        containers: setProducts(master.containers),
-        accessories: setProducts(master.accessories),
-        services: setProducts(master.services)
-
+            containers: setProducts(snapshot.containers),
+            accessories: setProducts(snapshot.accessories),
+            services: setProducts(snapshot.services)
+          }
+        ]
       };
       Proposals.insert(data);
-      Meteor.call('history.insert', data, 'proposals');
+      Meteor.call('history.insert', data, 'proposals.insert');
       return _id;
     },
-    'proposals.update'(master) {
-      var current = Proposals.findOne({_id: master._id});
-      var hasChanged = !tools.compare(current, master);
-      if (!hasChanged) return {hasChanged: false};
+    'proposals.update'(snapshot, status) {
+      var _id = snapshot._id;
+      var index = snapshot.version;
+      var data = Proposals.findOne({ _id });
+      var hasChanged = !tools.compare(data.snapshots[index], snapshot);
+      if (!hasChanged) return { hasChanged: false };
 
-      const data = {
-        // System Information
-        _id: master._id,
-        // Contract Information
-        status: master.status,
-        client: master.client,
-        deliveryAddress: master.deliveryAddress,
-        dates: master.dates,
-        discount: master.discount,
+      const newSnapshot = {
+        ...snapshot,
+        _id: undefined,
+        version: undefined,
+        status: undefined,
 
-        version: hasChanged ? master.version+1 : master.version,
-
-        inss: master.inss,
-        iss: master.iss,
-        billingProducts: master.billingProducts,
-        billingServices: master.billingServices,
-
-        observations: master.observations,
-
-        containers: setProducts(master.containers),
-        accessories: setProducts(master.accessories),
-        services: setProducts(master.services)
+        containers: setProducts(snapshot.containers),
+        accessories: setProducts(snapshot.accessories),
+        services: setProducts(snapshot.services)
 
       };
-      Proposals.update({ _id: master._id }, { $set: data });
-      Meteor.call('history.insert', data, 'proposals');
-      return {hasChanged: true, master};
+
+      data.snapshots.push(newSnapshot);
+      data.status = status || data.status;
+
+      Proposals.update({ _id }, { $set: data } );
+      Meteor.call('history.insert', data, 'proposals.update');
+      return { hasChanged: true, data };
     },
     'proposals.activate'(master) {
       var _id = master._id;
-      master.status = "active";
       if (!_id) {
-        _id = Meteor.call('proposals.insert', master);
+        _id = Meteor.call('proposals.insert', master, "active");
       } else {
-        Meteor.call('proposals.update', master);
+        Meteor.call('proposals.update', master, "active");
       }
       var contractId = Meteor.call('contracts.insert', {
         ...master,
@@ -109,22 +91,23 @@ if (Meteor.isServer) {
       Proposals.update({_id}, {$set: {status: "cancelled"}} );
       Meteor.call('history.insert', {_id}, 'proposals.cancel');
       return _id;
-    },
-    'proposals.duplicate'(master) {
-      var current = Proposals.findOne({_id: master._id});
-      var hasChanged = !tools.compare(current, master);
-      var newMaster = master;
-
-      if (hasChanged) {
-        newMaster = Meteor.call('proposals.update', master).master;
-      }
-
-      delete newMaster._id;
-      master.version = 1;
-
-      var _id = Meteor.call('proposals.insert', newMaster);
-      Meteor.call('history.insert', {...newMaster, _id}, 'proposals.duplicate');
-      return _id;
     }
+    // NOT IN USE:
+    // 'proposals.duplicate'(master) {
+    //   var current = Proposals.findOne({_id: master._id});
+    //   var hasChanged = !tools.compare(current.snapshots[master.version], master);
+    //   var newMaster = master;
+    //
+    //   if (hasChanged) {
+    //     newMaster = Meteor.call('proposals.update', master).master;
+    //   }
+    //
+    //   delete newMaster._id;
+    //   master.snapshots = [];
+    //
+    //   var _id = Meteor.call('proposals.insert', newMaster);
+    //   Meteor.call('history.insert', {...newMaster, _id}, 'proposals.duplicate');
+    //   return _id;
+    // }
   })
 }

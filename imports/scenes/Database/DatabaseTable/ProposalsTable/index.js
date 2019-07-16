@@ -44,15 +44,17 @@ class ProposalsTable extends React.Component {
   }
   renderBody = () => {
     return this.state.filteredDatabase.map((item, i) => {
+      if (!item) return null;
       const toggleWindow = () => {
         this.props.toggleWindow(item);
       }
       const totalValue = () => {
-        var duration = item.dates.timeUnit === "months" ? item.dates.duration : 1;
-        var discount = item.discount;
+        var snapshot = item.snapshots[lastIndex];
+        var duration = snapshot.dates.timeUnit === "months" ? snapshot.dates.duration : 1;
+        var discount = snapshot.discount;
 
-        var containers = item.containers || [];
-        var accessories = item.accessories || [];
+        var containers = snapshot.containers || [];
+        var accessories = snapshot.accessories || [];
         var products = containers.concat(accessories);
         var productsValue = products.reduce((acc, current) => {
           var renting = current.renting || 1;
@@ -60,7 +62,7 @@ class ProposalsTable extends React.Component {
         }, 0);
         productsValue = productsValue * (1 - discount);
 
-        var services = item.services || [];
+        var services = snapshot.services || [];
         var servicesValue = services.reduce((acc, current) => {
           var renting = current.renting ? current.renting : 1;
           return acc + (current.price * renting)
@@ -86,10 +88,12 @@ class ProposalsTable extends React.Component {
           )
         } else return null;
       }
+      var lastIndex = item.snapshots.length-1;
+      debugger;
       return (
         <tr key={i}>
           <td className="table__small-column">{item._id}</td>
-          <td>{item.client.description}</td>
+          <td>{item.snapshots[lastIndex].client.description}</td>
           <td className="table__small-column"><Status status={item.status} type="proposal"/></td>
           <td className="table__small-column">{totalValue()}</td>
           {renderProposalButton()}
@@ -138,9 +142,6 @@ export default ProposalsTableWrapper = withTracker((props) => {
   Meteor.subscribe('usersPub');
   var fullDatabase = Proposals.find().fetch();
   fullDatabase = tools.sortObjects(fullDatabase, '_id', {reverseOrder: true});
-  fullDatabase.forEach((item) => {
-    item.clientName = item.client.description;
-  })
   var ready = !!fullDatabase.length;
   return {
     fullDatabase,

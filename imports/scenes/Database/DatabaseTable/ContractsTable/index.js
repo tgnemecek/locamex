@@ -97,7 +97,7 @@ class ContractsTable extends React.Component {
       return (
         <tr key={i}>
           <td className="table__small-column">{item._id}</td>
-          <td className="table__small-column">{item.proposal ? `${item.proposal}.${item.proposalVersion}` : "-"}</td>
+          <td className="table__small-column">{item.proposal ? `${item.proposal}.${item.proposalVersion+1}` : "-"}</td>
           <td>{clientName()}</td>
           <td className="table__small-column"><Status status={item.status} type="contract"/></td>
           <td className="table__small-column">{totalValue()}</td>

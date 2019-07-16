@@ -1,11 +1,13 @@
 import React from 'react';
 import createPDF from '/imports/api/create-pdf/index';
+import tools from '/imports/startup/tools/index';
 import Documents from './Documents/index';
 import Billing from './Billing/index';
 import Observations from './Observations/index';
 import Button from '/imports/components/Button/index';
 import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 import Status from '/imports/components/Status/index';
+import Input from '/imports/components/Input/index';
 
 export default class SceneHeader extends React.Component {
   constructor(props) {
@@ -18,21 +20,40 @@ export default class SceneHeader extends React.Component {
 
   renderTitle = () => {
     var label;
-    if (this.props.master.type === "proposal") {
-      label = "Proposta";
-    } else label = "Contrato";
-    if (this.props.master._id) {
-      return (
-        <div className="master__title">
-          <h1>{`${label} #${this.props.master._id}.${this.props.master.version}`}</h1>
-        </div>
-      )
-    } else return (
+    var reverse = tools.deepCopy(this.props.snapshots);
+    var middle = Math.floor(reverse.length/2);
+    for (var i = 0; i < middle; i++) {
+      var temp = reverse[i];
+      reverse[i] = reverse[reverse.length-1-i];
+      reverse[reverse.length-1-i] = temp;
+    }
+
+    if (!this.props.master._id) {
+      if (this.props.master.type === "proposal") {
+        label = "Nova Proposta";
+      } else label = "Novo Contrato";
+    } else {
+      if (this.props.master.type === "proposal") {
+        label = "Proposta #" + this.props.master._id + ".";
+      } else label = "Contrato #" + this.props.master._id + ".";
+    }
+
+    return (
       <div className="master__title">
-        <h1>{this.props.master.type === "proposal" ? `Nova Proposta` : `Novo Contrato`}</h1>
+        <h1>{label}</h1>
+        <Input
+          style={!this.props.master._id ? {visibility: "hidden"} : {}}
+          onChange={this.props.changeVersion}
+          value={this.props.master.version}
+          className="master__version"
+          type="select">
+          {reverse.map((item, i, arr) => {
+            var index = arr.length-1-i;
+            return <option key={i} value={index}>{index+1}</option>
+          })}
+        </Input>
       </div>
     )
-
   }
 
   renderCreatedBy = () => {
@@ -42,7 +63,7 @@ export default class SceneHeader extends React.Component {
     var name = user ? user.firstName + " " + user.lastName : "anônimo";
     return (
       <div className="master__overtitle">
-        <p>Documento criado por: <strong>{name}</strong></p>
+        <p>Versão criada por: <strong>{name}</strong></p>
       </div>
     )
   }
@@ -109,9 +130,11 @@ export default class SceneHeader extends React.Component {
   }
 
   showDuplicateButton = () => {
-    if (this.props.master.type !== "proposal") return null;
-    if (!this.props.master._id) return null;
-    return <Button onClick={this.props.duplicateMaster} icon="copy" />
+    return null;
+    // NOT IN USE:
+    // if (this.props.master.type !== "proposal") return null;
+    // if (!this.props.master._id) return null;
+    // return <Button onClick={this.props.duplicateMaster} icon="copy" />
   }
 
   showCancelButton = () => {

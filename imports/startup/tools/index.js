@@ -21,6 +21,7 @@ export default class tools {
       } else if (typeof input1 === "object") {
         if (input1 === input2) return true;
         if (Array.isArray(input1)) {
+          if (input1.length !== input2.length) return false;
           return input1.every((item, i) => {
             return loop(input1[i], input2[i]);
           })

@@ -10,7 +10,7 @@ export const Contracts = new Mongo.Collection('contracts');
 
 if (Meteor.isServer) {
   Meteor.publish('contractsPub', () => {
-    return Contracts.find({ visible: true }, {sort: { _id: -1 }});
+    return Contracts.find({}, {sort: { _id: -1 }});
   })
   function setProducts(array) {
     return array.map((item) => {
