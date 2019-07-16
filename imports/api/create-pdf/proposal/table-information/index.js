@@ -7,7 +7,7 @@ export default function tableInformation(props) {
 
     function join(current, toAdd, char) {
       if (!toAdd) return current;
-      if (toAdd.trim() === "") return current;
+      if (toAdd.toString().trim() === "") return current;
       if (current.length) return current + char + toAdd;
       return toAdd;
     }

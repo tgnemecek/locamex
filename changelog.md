@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.0.8
+
+-  Fixed pdf bug;
+
 ## Version 2.0.7
 
 -  Proposal and Contract server error now print to console;
