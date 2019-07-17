@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.1.2
+
+-  Fixed error in Contract generation;
+
 ## Version 2.1.1
 
 -  Fixed how contracts are generated from proposals;

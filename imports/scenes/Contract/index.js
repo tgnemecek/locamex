@@ -43,6 +43,8 @@ class Contract extends React.Component {
           status: this.props.contract.status,
           activeVersion: this.props.contract.activeVersion,
           version,
+          proposal: this.props.contract.proposal,
+          proposalVersion: this.props.contract.proposalVersion
         }
       } else return null;
     }
@@ -59,7 +61,7 @@ class Contract extends React.Component {
         representativesId: [],
 
         proposal: '',
-        proposalVersion: 1,
+        proposalVersion: 0,
 
         discount: 0,
 
@@ -164,7 +166,9 @@ class Contract extends React.Component {
       _id: this.state.contract._id,
       status: this.props.contract.status,
       version: newVersion,
-      activeVersion: this.props.contract.activeVersion
+      activeVersion: this.props.contract.activeVersion,
+      proposal: this.props.contract.proposal,
+      proposalVersion: this.props.contract.proposalVersion
     }
     this.setState({ contract });
   }

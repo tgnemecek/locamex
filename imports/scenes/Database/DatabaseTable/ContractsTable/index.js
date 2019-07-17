@@ -45,6 +45,7 @@ class ContractsTable extends React.Component {
   }
   renderBody = () => {
     return this.state.filteredDatabase.map((item, i) => {
+      debugger;
       const toggleWindow = () => {
         this.props.toggleWindow(item);
       }
@@ -155,7 +156,7 @@ export default ContractsTableWrapper = withTracker((props) => {
   fullDatabase = tools.sortObjects(fullDatabase, '_id', {reverseOrder: true});
   fullDatabase = fullDatabase.map((item) => {
     newItem = {
-      ...item.snapshots[item.activeVersion],
+      ...item.snapshots[Number(item.activeVersion)],
       _id: item._id,
       status: item.status,
       proposal: item.proposal,

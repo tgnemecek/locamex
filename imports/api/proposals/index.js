@@ -34,6 +34,7 @@ if (Meteor.isServer) {
             _id: undefined,
             version: undefined,
             status: undefined,
+            activeVersion: undefined,
 
             containers: setProducts(snapshot.containers),
             accessories: setProducts(snapshot.accessories),
@@ -76,6 +77,7 @@ if (Meteor.isServer) {
         status: 'inactive',
         proposal: _id,
         proposalVersion: Number(master.version),
+        activeVersion: 0,
         snapshots: [
           {
             createdBy: master.createdBy,
@@ -84,13 +86,13 @@ if (Meteor.isServer) {
             observations: master.observations,
             deliveryAddress: master.deliveryAddress,
             dates: master.dates,
-            containers: master.containers,
-            accessories: master.accessories,
-            services: master.services,
             iss: 5,
             inss: 11,
             billingProducts: [],
-            billingServices: []
+            billingServices: [],
+            containers: setProducts(master.containers),
+            accessories: setProducts(master.accessories),
+            services: setProducts(master.services)
           }
         ]
       })

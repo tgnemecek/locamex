@@ -21,28 +21,13 @@ if (Meteor.isServer) {
   }
 
   Meteor.methods({
-    'contracts.insert'(snapshot) {
+    'contracts.insert'(data) {
       const prefix = new Date().getFullYear();
       const suffix = Contracts.find({ _id: { $regex: new RegExp(prefix)} }).count().toString().padStart(3, '0');
       const _id = prefix + "-" + suffix;
-      const data = {
-        _id,
-        status: "inactive",
-        shipping: {},
-        activeVersion: 0,
-        snapshots: [
-          {
-            ...snapshot,
-            _id: undefined,
-            version: undefined,
-            status: undefined,
 
-            containers: setProducts(snapshot.containers),
-            accessories: setProducts(snapshot.accessories),
-            services: setProducts(snapshot.services)
-          }
-        ]
-      };
+      data._id = _id;
+
       Contracts.insert(data);
       Meteor.call('history.insert', data, 'contracts.insert');
       return _id;
