@@ -12,13 +12,7 @@ export default class DocumentsPerson extends React.Component {
     this.props.updateMaster({
       representativesId: '',
       negociatorId: ''
-    }, () => {
-      this.props.saveMaster((newMaster) => {
-        newMaster.type = this.props.master.type;
-        newMaster.client = this.props.master.client;
-        this.props.createPDF(newMaster);
-      });
-    });
+    }, () => this.props.generateDocument());
   }
 
   render() {

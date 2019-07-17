@@ -108,7 +108,7 @@ export default class Information extends React.Component {
               name="proposal"
               type="text"
               disabled={true}
-              value={this.props.contract.proposal + "." + this.props.contract.proposalVersion+1}
+              value={this.props.contract.proposal + "." + (this.props.contract.proposalVersion+1)}
               onChange={this.handleChange}
             />
             <Input

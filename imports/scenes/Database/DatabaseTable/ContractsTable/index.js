@@ -97,7 +97,9 @@ class ContractsTable extends React.Component {
       return (
         <tr key={i}>
           <td className="table__small-column">{item._id}</td>
-          <td className="table__small-column">{item.proposal ? `${item.proposal}.${item.proposalVersion+1}` : "-"}</td>
+          <td className="table__small-column">
+            {`${item.proposal}.${Number(item.proposalVersion)+1}`}
+          </td>
           <td>{clientName()}</td>
           <td className="table__small-column"><Status status={item.status} type="contract"/></td>
           <td className="table__small-column">{totalValue()}</td>
@@ -151,13 +153,23 @@ export default ContractsTableWrapper = withTracker((props) => {
   var clientsDatabase = Clients.find().fetch();
 
   fullDatabase = tools.sortObjects(fullDatabase, '_id', {reverseOrder: true});
-  fullDatabase.forEach((item) => {
-    var currentClient = clientsDatabase.find((client) => client._id === item.clientId);
+  fullDatabase = fullDatabase.map((item) => {
+    newItem = {
+      ...item.snapshots[item.activeVersion],
+      _id: item._id,
+      status: item.status
+    };
+
+    var currentClient = clientsDatabase.find((client) => {
+      return client._id === item.clientId
+    });
+
     if (currentClient) {
-      item.registry = currentClient.registry;
-      item.officialName = currentClient.officialName;
-      item.description = currentClient.description;
+      newItem.registry = currentClient.registry;
+      newItem.officialName = currentClient.officialName;
+      newItem.description = currentClient.description;
     }
+    return newItem;
   })
   var ready = !!fullDatabase.length;
   return {

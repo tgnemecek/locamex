@@ -40,7 +40,7 @@ export default function createPdf(props) {
 
   const contract = props.master;
 
-  const fileName = `Locamex - Contrato de Locação #${contract._id}_${contract.version}`;
+  const fileName = `Locamex - Contrato de Locação #${contract._id}_${Number(contract.version)+1}`;
 
   const products = contract.containers.concat(contract.accessories).map((item) => {
     item.monthlyPrice = item.renting * item.price;
@@ -87,7 +87,7 @@ export default function createPdf(props) {
     pageSize: 'A4',
     pageMargins: [ 40, 30, 40, 45 ], //[left, top, right, bottom]
     info: {
-      title: `Contrato Locamex #${contract._id}.${contract.version}`,
+      title: `Contrato Locamex #${contract._id}.${Number(contract.version)+1}`,
       author: `Locamex`,
       subject: `Contrato de Locação de Bens Móveis e Prestação de Serviços`
     },
@@ -128,7 +128,7 @@ export default function createPdf(props) {
     },
     footer: (currentPage, pageCount) => {
       return {text: [
-          {text: `Contrato de Locação de Bens Móveis e Prestação de Serviços nº ${contract._id}.${contract.version}\n`},
+          {text: `Contrato de Locação de Bens Móveis e Prestação de Serviços nº ${contract._id}.${Number(contract.version)+1}\n`},
           {text: (currentPage + "/" + pageCount)}
         ], style: 'footer'};
     },

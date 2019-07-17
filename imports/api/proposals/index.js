@@ -27,6 +27,7 @@ if (Meteor.isServer) {
       const data = {
         _id,
         status: status || "inactive",
+        activeVersion: 0,
         snapshots: [
           {
             ...snapshot,
@@ -44,12 +45,12 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', data, 'proposals.insert');
       return _id;
     },
-    'proposals.update'(snapshot, status) {
+    'proposals.update'(snapshot) {
       var _id = snapshot._id;
       var index = snapshot.version;
       var data = Proposals.findOne({ _id });
-      var hasChanged = !tools.compare(data.snapshots[index], snapshot);
-      if (!hasChanged) return { hasChanged: false };
+      var hasChanged = !tools.compare(data.snapshots[index], snapshot, "activeVersion");
+      if (!hasChanged) return { hasChanged: false, snapshot };
 
       const newSnapshot = {
         ...snapshot,
@@ -60,11 +61,10 @@ if (Meteor.isServer) {
         containers: setProducts(snapshot.containers),
         accessories: setProducts(snapshot.accessories),
         services: setProducts(snapshot.services)
-
       };
 
       data.snapshots.push(newSnapshot);
-      data.status = status || data.status;
+      data.activeVersion = Number(snapshot.version)+1;
 
       Proposals.update({ _id }, { $set: data } );
       Meteor.call('history.insert', data, 'proposals.update');
@@ -72,24 +72,23 @@ if (Meteor.isServer) {
     },
     'proposals.activate'(master) {
       var _id = master._id;
-      if (!_id) {
-        _id = Meteor.call('proposals.insert', master, "active");
-      } else {
-        Meteor.call('proposals.update', master, "active");
-      }
       var contractId = Meteor.call('contracts.insert', {
         ...master,
         status: 'inactive',
         proposal: _id,
-        proposalVersion: master.version,
+        proposalVersion: Number(master.version),
         clientId: ''
       })
+      Proposals.update({ _id }, { $set: {
+        status: "active",
+        activeVersion: Number(master.version)
+      } })
       Meteor.call('history.insert', { _id }, 'proposals.activate');
-      return {_id, contractId};
+      return { _id, contractId };
     },
     'proposals.cancel'(_id) {
-      Proposals.update({_id}, {$set: {status: "cancelled"}} );
-      Meteor.call('history.insert', {_id}, 'proposals.cancel');
+      Proposals.update({ _id }, { $set: { status: "cancelled" } } );
+      Meteor.call('history.insert', { _id }, 'proposals.cancel');
       return _id;
     }
     // NOT IN USE:

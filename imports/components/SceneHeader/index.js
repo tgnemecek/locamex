@@ -1,5 +1,4 @@
 import React from 'react';
-import createPDF from '/imports/api/create-pdf/index';
 import tools from '/imports/startup/tools/index';
 import Documents from './Documents/index';
 import Billing from './Billing/index';
@@ -38,20 +37,38 @@ export default class SceneHeader extends React.Component {
       } else label = "Contrato #" + this.props.master._id + ".";
     }
 
+    const selectStyle = () => {
+      if (!this.props.master._id) return {visibility: "hidden"};
+      if (this.props.master.status === "active") {
+        if (this.props.master.version == this.props.master.activeVersion) {
+          return {background: "#77cc77"}
+        }
+      }
+      return {};
+    }
+
     return (
       <div className="master__title">
         <h1>{label}</h1>
+        {this.props.master.type !== "shipping" ?
         <Input
-          style={!this.props.master._id ? {visibility: "hidden"} : {}}
+          style={selectStyle()}
           onChange={this.props.changeVersion}
           value={this.props.master.version}
           className="master__version"
           type="select">
           {reverse.map((item, i, arr) => {
             var index = arr.length-1-i;
-            return <option key={i} value={index}>{index+1}</option>
+            var style = {background: "white"};
+            if (this.props.master.status === "active") {
+              if (index == this.props.master.activeVersion) {
+                style = {background: "#77cc77"}
+              }
+            }
+            return <option key={i} value={index} style={style}>{index+1}</option>
           })}
         </Input>
+        : Number(this.props.master.activeVersion)+1}
       </div>
     )
   }
@@ -95,15 +112,7 @@ export default class SceneHeader extends React.Component {
         if (!this.props.master.containers.length && !this.props.master.accessories.length) {
           return alert("Adicione algum produto!");
         }
-        this.props.saveMaster((newMaster) => {
-          var createdByUser = this.props.databases.usersDatabase.find((user) => {
-            return user._id === this.props.master.createdBy
-          });
-          var createdByFullName = createdByUser.firstName + " " + createdByUser.lastName;
-          newMaster.createdByFullName = createdByFullName;
-          newMaster.type = "proposal";
-          createPDF(newMaster);
-        })
+        this.props.generateDocument();
       }
     }
     const renderDocuments = () => {
@@ -111,7 +120,7 @@ export default class SceneHeader extends React.Component {
         return (
           <Documents
             databases={this.props.databases}
-            saveMaster={this.props.saveMaster}
+            generateDocument={this.props.generateDocument}
             master={this.props.master}
             toggleWindow={this.toggleWindow}
             updateMaster={this.props.updateMaster}/>
@@ -185,7 +194,11 @@ export default class SceneHeader extends React.Component {
           </div>
           {this.renderTitle()}
           <div className="master__subtitle">
-            <h3>Status: <Status status={this.props.master.status} type={this.props.master.type}/></h3>
+            <h3>Status: <Status
+              status={this.props.master.status}
+              extra={this.props.statusExtra}
+              type={this.props.master.type}/>
+            </h3>
           </div>
         </div>
       )

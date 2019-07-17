@@ -13,7 +13,10 @@ export default class tools {
     } else return [input];
   }
 
-  static compare = (input1, input2) => {
+  static compare = (input1, input2, exception) => {
+    console.log(input1);
+    console.log("-----------");
+    console.log(input2);
     function loop(input1, input2) {
       if (typeof input1 !== typeof input2) return false;
       if (typeof input1 === "string" || typeof input1 === "number") {
@@ -27,6 +30,7 @@ export default class tools {
           })
         } else {
           return Object.keys(input1).every((key) => {
+            if (key === exception) return true;
             return loop(input1[key], input2[key]);
           })
         }

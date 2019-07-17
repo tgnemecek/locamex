@@ -1,6 +1,5 @@
 import React from 'react';
 
-import createPDF from '/imports/api/create-pdf/index';
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 import Box from '/imports/components/Box/index';
@@ -20,8 +19,7 @@ export default class DocumentsSelector extends React.Component {
   render() {
     var newProps = {
       ...this.props,
-      master: {...this.props.master, client: this.getClient()},
-      createPDF
+      master: {...this.props.master, client: this.getClient()}
     }
     if (this.props.master.type === "contract") {
       if (newProps.master.client.type === "company") return <DocumentsCompany {...newProps}/>

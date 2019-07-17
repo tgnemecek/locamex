@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.1.0
+
+-  Proposals and Contracts have snapshots functionality;
+
 ## Version 2.0.8
 
 -  Fixed pdf bug;

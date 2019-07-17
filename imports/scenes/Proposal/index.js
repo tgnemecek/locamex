@@ -12,6 +12,7 @@ import { Users } from '/imports/api/users/index';
 
 import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
+import createPDF from '/imports/api/create-pdf/index';
 
 import Box from '/imports/components/Box/index';
 import Checkmark from '/imports/components/Checkmark/index';
@@ -29,19 +30,19 @@ class Proposal extends React.Component {
     super(props);
     const getDocument = () => {
       if (this.props.proposal) {
-        const version = this.props.proposal.snapshots.length-1;
         return {
-          ...this.props.proposal.snapshots[version],
+          ...this.props.proposal.snapshots[this.props.proposal.activeVersion],
           _id: this.props.proposal._id,
           status: this.props.proposal.status,
-          version
+          activeVersion: this.props.proposal.activeVersion,
+          version: this.props.proposal.activeVersion
         }
       } else return null;
     }
     this.state = {
       proposal: getDocument() || {
         _id: undefined,
-        createdBy: Meteor.userId(),
+        createdBy: Meteor.user()._id,
         status: "inactive",
 
         client: {
@@ -52,6 +53,7 @@ class Proposal extends React.Component {
         },
 
         version: 0,
+        activeVersion: 0,
 
         discount: 0,
 
@@ -86,12 +88,13 @@ class Proposal extends React.Component {
       },
       errorMsg: '',
       errorKeys: [],
-      databaseStatus: false
+      databaseStatus: {}
     }
   }
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.databases !== this.props.databases) {
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.databases !== this.props.databases
+      || prevState.proposal.version !== this.state.proposal.version) {
       this.setUpdatedItemInformation();
     }
   }
@@ -130,7 +133,7 @@ class Proposal extends React.Component {
       ...changes
     };
     this.setState({ proposal, errorKeys: [], errorMsg: '' }, () => {
-      if (typeof (callback) === "function") callback();
+      if (typeof (callback) === "function") callback(changes);
     })
   }
 
@@ -154,6 +157,7 @@ class Proposal extends React.Component {
       ...this.props.proposal.snapshots[newVersion],
       _id: this.state.proposal._id,
       status: this.props.proposal.status,
+      activeVersion: this.props.proposal.activeVersion,
       version: newVersion
     }
     this.setState({ proposal });
@@ -175,99 +179,109 @@ class Proposal extends React.Component {
   // }
 
   cancelProposal = (callback) => {
-    this.setState({ databaseStatus: "loading" }, () => {
-      Meteor.call('proposals.cancel', this.state.proposal._id, (err, res) => {
-        if (res) {
-          var proposal = {
-            ...this.state.proposal,
-            status: "cancelled",
-            _id: res
+    this.setState({ databaseStatus: {status: "loading"} }, () => {
+      const cancel = (proposal) => {
+        Meteor.call('proposals.cancel', proposal._id, (err, res) => {
+          if (res) {
+            var databaseStatus = {
+              status: "completed",
+              message: "Proposta Cancelada!"
+            }
+            proposal.status = "cancelled";
+            this.setState({ proposal, databaseStatus });
+          } else if (err) {
+            this.setState({ databaseStatus: {status: "failed"} });
+            console.log(err);
           }
-          this.setState({ proposal, databaseStatus: "completed" });
-        } else if (err) {
-          this.setState({ databaseStatus: "failed" });
-          console.log(err);
-        }
-      });
-      if (typeof (callback) === "function") callback();
+          callback();
+        });
+      }
+      this.saveEdits(cancel);
     })
   }
 
   activateProposal = (callback) => {
-    this.setState({ databaseStatus: "loading" }, () => {
-      Meteor.call('proposals.activate', this.state.proposal, (err, res) => {
-        if (res) {
-          var proposal = {
-            ...this.state.proposal,
-            status: "active",
-            _id: res._id
+    this.setState({ databaseStatus: {status: "loading"} }, () => {
+      const activate = (proposal) => {
+        Meteor.call('proposals.activate', proposal, (err, res) => {
+          if (res) {
+            var databaseStatus = {
+              status: "completed",
+              message: "Proposta Fechada! Gerado Contrato #" + res.contractId
+            }
+            proposal.status = "active";
+            proposal.activeVersion = proposal.version;
+            this.setState({ proposal, databaseStatus });
+          } else if (err) {
+            this.setState({ databaseStatus: {status: "failed"} });
+            console.log(err);
           }
-          this.setState({ proposal, databaseStatus: "completed" });
-        } else if (err) {
-          this.setState({ databaseStatus: "failed" });
-          console.log(err);
-        }
-      });
-      if (typeof (callback) === "function") callback();
-    })
-  }
-
-  finalizeProposal = (callback) => {
-    this.setState({ databaseStatus: "loading" }, () => {
-      Meteor.call('proposals.finalize', this.state.proposal, (err, res) => {
-        if (res) {
-          var proposal = {
-            ...this.state.proposal,
-            status: "finalized",
-            _id: res
-          }
-          this.props.history.push("/proposal/" + res);
-          this.setState({ proposal, databaseStatus: "completed" });
-        } else if (err) {
-          this.setState({ databaseStatus: "failed" });
-
-        }
-      });
-      if (typeof (callback) === "function") callback();
+          callback();
+        });
+      }
+      this.saveEdits(activate);
     })
   }
 
   saveEdits = (callback) => {
-    callback = typeof callback === "function" ? callback : () => {};
-
-    this.setState({ databaseStatus: "loading" }, () => {
+    this.setState({ databaseStatus: {status: "loading"} }, () => {
       if (this.props.match.params.proposalId == 'new') {
         Meteor.call('proposals.insert', this.state.proposal, (err, res) => {
           if (res) {
             var proposal = {
               ...this.state.proposal,
-              _id: res,
-
+              _id: res
             }
             this.props.history.push("/proposal/" + res);
-            this.setState({ proposal, databaseStatus: "completed" });
+            if (typeof callback === "function") {
+              callback(proposal);
+            } else this.setState({ proposal, databaseStatus: {status: "completed"} });
           }
           else if (err) {
-            this.setState({ databaseStatus: "failed" });
+            this.setState({ databaseStatus: {status: "failed"} });
             console.log(err);
           }
         });
       } else {
         Meteor.call('proposals.update', this.state.proposal, (err, res) => {
           if (res) {
+            var proposal = {...this.state.proposal};
+            var databaseStatus = {status: "completed"};
             if (res.hasChanged) {
-              var proposal = {...this.state.proposal};
               proposal.version = res.data.snapshots.length-1;
-              this.setState({ databaseStatus: "completed", proposal }, callback(proposal));
-            } else this.setState({ databaseStatus: "completed" }, callback(this.state.proposal));
-          }
-          else if (err) {
-            this.setState({ databaseStatus: "failed" }, callback(this.state.proposal));
+            } else databaseStatus.message = "Nenhuma alteração realizada."
+
+            if (typeof callback === "function") {
+              callback(proposal);
+            } else this.setState({ proposal, databaseStatus });
+          } else if (err) {
+            this.setState({ databaseStatus: {status: "failed"} });
             console.log(err);
           }
         });
       }
     })
+  }
+
+  generateDocument = () => {
+    const generate = (proposal) => {
+      debugger;
+      var createdByUser = this.props.databases.usersDatabase.find((user) => {
+        return user._id === proposal.createdBy;
+      });
+      var createdByFullName = createdByUser.firstName + " " + createdByUser.lastName;
+      var newProposal = {
+        ...proposal,
+        createdByFullName,
+        type: "proposal"
+      };
+      createPDF(newProposal);
+      this.setState({
+        proposal: newProposal,
+        databaseStatus: {status: "completed"}
+      });
+    }
+    this.saveEdits(generate);
   }
 
   totalValue = (option) => {
@@ -312,6 +326,7 @@ class Proposal extends React.Component {
             updateMaster={this.updateProposal}
             cancelMaster={this.cancelProposal}
             saveMaster={this.saveEdits}
+            generateDocument={this.generateDocument}
 
             errorKeys={this.state.errorKeys}
             disabled={disabled}
@@ -342,7 +357,9 @@ class Proposal extends React.Component {
               activateMaster={this.activateProposal}
               finalizeMaster={this.finalizeProposal}
             />
-            <DatabaseStatus status={this.state.databaseStatus} />
+            <DatabaseStatus
+              status={this.state.databaseStatus.status}
+              message={this.state.databaseStatus.message}/>
           </div>
         </div>
       </div>

@@ -82,19 +82,13 @@ export default class DocumentsCompany extends React.Component {
       })
       return people;
     }
-    var negociator = getPersonUsingId([negociatorId])[0];
-    var representatives = getPersonUsingId(representativesId);
+    // var negociator = getPersonUsingId([negociatorId])[0];
+    // var representatives = getPersonUsingId(representativesId);
     // Saves changes to master
     this.props.updateMaster({
       representativesId,
       negociatorId
-    }, () => {
-      this.props.saveMaster((newMaster) => {
-        newMaster.type = this.props.master.type;
-        newMaster.client = this.props.master.client;
-        this.props.createPDF({ ...newMaster, negociator, representatives });
-      })
-    });
+    }, () => this.props.generateDocument());
     this.setState({ errorMsg, errorKeys });
   }
 
