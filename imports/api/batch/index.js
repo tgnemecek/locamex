@@ -13,6 +13,41 @@ import { Services } from '/imports/api/services/index';
 import { Series } from '/imports/api/series/index';
 
 if (Meteor.isServer && Meteor.isDevelopment) {
+  // var docs = Contracts.find().fetch();
+  //
+  // Contracts.remove({});
+  //
+  // docs.forEach((doc) => {
+  //   var newDoc = {
+  //     _id: doc._id,
+  //     status: doc.status,
+  //     activeVersion: 0,
+  //     shipping: doc.shipping,
+  //     proposal: doc.proposal,
+  //     proposalVersion: Number(doc.proposalVersion),
+  //     snapshots: [
+  //       {
+  //         createdBy: doc.createdBy,
+  //         clientId: doc.clientId,
+  //         discount: doc.discount,
+  //         observations: doc.observations,
+  //         deliveryAddress: doc.deliveryAddress,
+  //         dates: doc.dates,
+  //         containers: doc.containers,
+  //         accessories: doc.accessories,
+  //         services: doc.services,
+  //         billingProducts: doc.billingProducts,
+  //         billingServices: doc.billingServices,
+  //         inss: doc.inss,
+  //         iss: doc.iss
+  //       }
+  //     ]
+  //   }
+  //   Contracts.insert(newDoc);
+  // })
+
+
+
   // var c = Contracts.find().fetch();
   // Contracts.remove({});
   //

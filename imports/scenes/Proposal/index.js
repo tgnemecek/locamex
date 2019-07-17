@@ -62,11 +62,6 @@ class Proposal extends React.Component {
           external: ''
         },
 
-        inss: 11,
-        iss: 5,
-        billingProducts: [],
-        billingServices: [],
-
         deliveryAddress: {
           street: '',
           cep: '',
@@ -75,6 +70,7 @@ class Proposal extends React.Component {
           number: '',
           additional: ''
         },
+
         dates: {
           creationDate: new Date(),
           startDate: new Date(),

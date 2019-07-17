@@ -73,11 +73,26 @@ if (Meteor.isServer) {
     'proposals.activate'(master) {
       var _id = master._id;
       var contractId = Meteor.call('contracts.insert', {
-        ...master,
         status: 'inactive',
         proposal: _id,
         proposalVersion: Number(master.version),
-        clientId: ''
+        snapshots: [
+          {
+            createdBy: master.createdBy,
+            clientId: '',
+            discount: master.discount,
+            observations: master.observations,
+            deliveryAddress: master.deliveryAddress,
+            dates: master.dates,
+            containers: master.containers,
+            accessories: master.accessories,
+            services: master.services,
+            iss: 5,
+            inss: 11,
+            billingProducts: [],
+            billingServices: []
+          }
+        ]
       })
       Proposals.update({ _id }, { $set: {
         status: "active",

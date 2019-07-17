@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.1.1
+
+-  Fixed how contracts are generated from proposals;
+
 ## Version 2.1.0
 
 -  Proposals and Contracts have snapshots functionality;
