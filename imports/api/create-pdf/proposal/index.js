@@ -41,7 +41,7 @@ export default function createPdf(props) {
 
   const proposal = props.master;
 
-  const fileName = `Locamex - Proposta de Locação #${proposal._id}_${proposal.version}`;
+  const fileName = `Locamex - Proposta de Locação #${proposal._id}_${Number(proposal.version)+1}`;
 
   const products = proposal.containers.concat(proposal.accessories).map((item) => {
     item.monthlyPrice = item.renting * item.price;

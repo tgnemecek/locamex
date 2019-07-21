@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.1.3
+
+-  Fixed version number in pdf;
+
 ## Version 2.1.2
 
 -  Fixed error in Contract generation;
