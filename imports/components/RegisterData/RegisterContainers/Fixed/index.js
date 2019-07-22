@@ -4,6 +4,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { Modules } from '/imports/api/modules/index';
 import { Places } from '/imports/api/places/index';
 import tools from '/imports/startup/tools/index';
+import FileSender from '/imports/api/FileSender/index';
 
 import Block from '/imports/components/Block/index';
 import Box from '/imports/components/Box/index';
@@ -19,6 +20,8 @@ class Fixed extends React.Component {
       description: this.props.item.description || '',
       price: this.props.item.price || '',
       restitution: this.props.item.restitution || '',
+
+      flyer: '',
 
       errorMsg: '',
       errorKeys: [],
@@ -38,6 +41,10 @@ class Fixed extends React.Component {
 
     this.setState({ [e.target.name]: e.target.value, errorKeys });
   }
+  setFlyer = (e) => {
+    var flyer = e.target.files[0];
+    this.setState({ flyer });
+  }
   toggleConfirmationWindow = () => {
     var confirmationWindow = !this.state.confirmationWindow;
     this.setState({ confirmationWindow });
@@ -47,15 +54,33 @@ class Fixed extends React.Component {
     this.props.toggleWindow();
   }
   saveEdits = () => {
+    const save = (urls) => {
+      var state = {
+        ...this.state,
+        flyer: urls ? urls[0] : undefined
+      }
+      if (this.props.item._id) {
+        Meteor.call('containers.fixed.update', state);
+      } else Meteor.call('containers.fixed.insert', state);
+      this.props.toggleWindow();
+    }
+
     var errorKeys = [];
     if (!this.state.description.trim()) {
       errorKeys.push("description");
       this.setState({ errorMsg: "Favor informar uma descrição.", errorKeys });
     } else {
-      if (this.props.item._id) {
-        Meteor.call('containers.fixed.update', this.state);
-      } else Meteor.call('containers.fixed.insert', this.state);
-      this.props.toggleWindow();
+      if (this.state.flyer) {
+        var item = {
+          ...this.state,
+          type: "fixed"
+        }
+        var fileSender = new FileSender(item, 'flyerUploads');        fileSender.send(this.state.flyer, (err, res) => {
+          if (err) {
+            console.log(err);
+          } else if (res) save(res);
+        })
+      } else save();
     }
   }
   render() {
@@ -65,7 +90,10 @@ class Fixed extends React.Component {
         closeBox={this.props.toggleWindow}
         width="800px">
         <div className="error-message">{this.state.errorMsg}</div>
-          <Block columns={4} options={[{block: 0, span: 2}]}>
+          <Block columns={4} options={[
+            {block: 0, span: 2},
+            {block: 3, span: 4}
+          ]}>
             <Input
               title="Descrição:"
               type="text"
@@ -88,6 +116,12 @@ class Fixed extends React.Component {
               value={this.state.restitution}
               onChange={this.onChange}
             />
+            <div className="register-containers__flyer">
+              <label>Folder: </label><input
+                type="file"
+                name="flyer"
+                onChange={this.setFlyer}/>
+            </div>
           </Block>
           <ConfirmationWindow
             isOpen={this.state.confirmationWindow}
@@ -106,6 +140,26 @@ class Fixed extends React.Component {
       </Box>
     )
   }
+}
+
+sendFile = (file) => {
+
+  var metaContext;
+  var sendCount = 0;
+
+  metaContext = createMetaContext(this.props.item, imageIndex, file);
+  var uploader = new Slingshot.Upload(this.props.uploadDirective, metaContext);
+  uploader.send(file, (error, downloadUrl) => {
+    sendCount++;
+    if (!error) {
+      urls[imageIndex] = downloadUrl;
+      if (sendCount === arr.length) {
+        Meteor.call('snapshot.add', metaContext, urls);
+        alert(urls.length + ' arquivo(s) enviado(s) com sucesso!');
+        this.props.toggleWindow(true);
+      }
+    } else console.error(error);
+  });
 }
 
 export default FixedWrapper = withTracker((props) => {

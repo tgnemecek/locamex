@@ -21,5 +21,8 @@ import '../imports/api/snapshots/index';
 import '../imports/api/test/index';
 import '../imports/api/users/index';
 
+//TEST:
+import '../imports/api/aws/index';
+
 Meteor.startup(() => {
 });

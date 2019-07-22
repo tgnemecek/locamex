@@ -1,5 +1,5 @@
 import { Meteor } from 'meteor/meteor';
-var AWS = require('aws-sdk');
+import AWS from 'aws-sdk';
 
 export var AWSAccessKeyId;
 export var AWSSecretAccessKey;
@@ -21,8 +21,10 @@ if (Meteor.isProduction) {
   }
 }
 
-
-
 AWS.config.AWSAccessKeyId = AWSAccessKeyId;
 AWS.config.AWSSecretAccessKey = AWSSecretAccessKey;
 AWS.config.region = AWSRegion;
+AWS.config.update({
+  region: AWSRegion,
+  credentials: new AWS.Credentials(AWSAccessKeyId, AWSSecretAccessKey)
+})

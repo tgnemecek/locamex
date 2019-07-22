@@ -21,6 +21,7 @@ if (Meteor.isServer) {
 
         price: state.price,
         restitution: state.restitution,
+        flyer: state.flyer,
 
         visible: true
       }
@@ -32,7 +33,8 @@ if (Meteor.isServer) {
       var data = {
         description: state.description,
         price: state.price,
-        restitution: state.restitution
+        restitution: state.restitution,
+        flyer: state.flyer,
       };
 
       Containers.update({ _id: state._id }, { $set: data });
