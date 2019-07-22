@@ -14,6 +14,7 @@ import '../imports/api/history/index';
 import '../imports/api/slingshot/index';
 import '../imports/api/modules/index';
 import '../imports/api/packs/index';
+import '../imports/api/pdf/index';
 import '../imports/api/places/index';
 import '../imports/api/proposals/index';
 import '../imports/api/series/index';

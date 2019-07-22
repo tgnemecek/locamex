@@ -132,8 +132,10 @@ export default function createPdf(props) {
         {text: 'locamex@locamex.com.br', link: 'mailto:locamex@locamex.com.br'}
       ], style: 'p', alignment: 'right'}
     ], margin: [30, 30, 30, 30]}
-    pdfMake.createPdf(docDefinition).download(fileName);
+    pdfMake.createPdf(docDefinition).getBlob((blob) => {
+      Meteor.call('pdf.merge', blob, products);
+    });
   }).catch(() => {
-    pdfMake.createPdf(docDefinition).download(fileName);
+    new Meteor.Error("error-in-logo");
   })
 }
