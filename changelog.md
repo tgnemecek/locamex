@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.1.4
+
+-  Fixed address in proposal and contract pdf;
+
 ## Version 2.1.3
 
 -  Fixed version number in pdf;

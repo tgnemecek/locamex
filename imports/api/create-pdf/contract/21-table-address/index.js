@@ -13,12 +13,12 @@ export default function tableAddress(props) {
 
     var string = "";
 
-    if (address.street) string = join(string, address.city, "");
+    if (address.street) string = join(string, address.street, "");
     if (address.number) string = join(string, address.number, ", ");
     if (address.city) string = join(string, address.city, " - ");
     if (address.state) string = join(string, address.state, " - ");
     if (address.additional) string = join(string, address.additional, " - ");
-    if (address.cep) string += " (" + address.additional + ")";
+    if (address.cep) string += " (" + address.cep + ")";
     return {text: string};
   }
 
