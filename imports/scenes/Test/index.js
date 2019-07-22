@@ -3,7 +3,6 @@ import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Containers } from '/imports/api/containers/index';
 import { Redirect } from 'react-router-dom';
-import aws from '/imports/api/aws/index';
 
 import tools from '/imports/startup/tools/index';
 import Button from '/imports/components/Button/index';
@@ -21,10 +20,14 @@ class TestPage extends React.Component {
   }
 
   onClick = () => {
-    Meteor.call('aws', file, (err, res) => {
-      if (err) console.log(err);
-      if (res) console.table(res);
-    })
+    var reader = new FileReader();
+    reader.onloadend = () => {
+      Meteor.call('aws', reader.result, (err, res) => {
+        if (err) console.log(err);
+        if (res) console.log("DONE!");
+      })
+    }
+    reader.readAsDataURL(this.state.file);
   }
 
   setFile = (e) => {

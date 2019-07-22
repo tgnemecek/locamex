@@ -11,7 +11,7 @@ if (Meteor.isProduction) {
   AWSSecretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
 
 } else {
-
+debugger;
   if (Meteor.settings.private) {
     AWSAccessKeyId = Meteor.settings.private.AWSAccessKeyId;
     AWSSecretAccessKey = Meteor.settings.private.AWSSecretAccessKey;

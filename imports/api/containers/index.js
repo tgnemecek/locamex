@@ -21,7 +21,6 @@ if (Meteor.isServer) {
 
         price: state.price,
         restitution: state.restitution,
-        flyer: state.flyer,
 
         visible: true
       }
@@ -33,21 +32,20 @@ if (Meteor.isServer) {
       var data = {
         description: state.description,
         price: state.price,
-        restitution: state.restitution,
-        flyer: state.flyer,
+        restitution: state.restitution
       };
 
       Containers.update({ _id: state._id }, { $set: data });
       Meteor.call('history.insert', { ...data, _id: state._id }, 'containers.fixed.update');
     },
 
-    'containers.fixed.update.one' (_id, value, key) {
+    'containers.update.one' (_id, key, value) {
       var data = {
         _id,
         [key]: value
       }
-      Containers.update({_id}, {$set: {[key]: value}});
-      Meteor.call('history.insert', data, 'containers.fixed.update.one');
+      Containers.update({ _id }, {$set: {[key]: value}});
+      Meteor.call('history.insert', data, 'containers.update.one');
     },
 
     // MODULAR

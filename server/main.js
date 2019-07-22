@@ -5,6 +5,7 @@ import '../imports/startup/aws-configuration/index';
 import '../imports/startup/simple-schema-configuration/index';
 
 import '../imports/api/accessories/index';
+import '../imports/api/aws/index';
 import '../imports/api/batch/index';
 import '../imports/api/clients/index';
 import '../imports/api/containers/index';
@@ -20,9 +21,6 @@ import '../imports/api/services/index';
 import '../imports/api/snapshots/index';
 import '../imports/api/test/index';
 import '../imports/api/users/index';
-
-//TEST:
-import '../imports/api/aws/index';
 
 Meteor.startup(() => {
 });
