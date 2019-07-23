@@ -1,6 +1,4 @@
 import AWS from 'aws-sdk';
-const fs = require('fs');
-const path = require('path');
 
 if (Meteor.isServer) {
 

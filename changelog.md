@@ -1,5 +1,12 @@
 # Changelog:
 
+## Version 2.1.5
+
+-  Added flyers functionality, including merging pdfs in proposal;
+-  AWS integration redone without using Slingshot;
+-  Create-pdf folder moved to helpers/Pdf class;
+-  Pdf is now generated server-side;
+
 ## Version 2.1.4
 
 -  Fixed address in proposal and contract pdf;

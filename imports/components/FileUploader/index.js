@@ -75,6 +75,7 @@ export default class FileUploader extends React.Component {
   }
 
   render() {
+    return null; // REMOVE THIS WHEN FIXED
     return (
       <Box
         title="Selecione os arquivos para envio"
