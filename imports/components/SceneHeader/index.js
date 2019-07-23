@@ -20,6 +20,9 @@ export default class SceneHeader extends React.Component {
   renderTitle = () => {
     var label;
     var reverse = tools.deepCopy(this.props.snapshots);
+    if (this.props.master.type === "contract") {
+      reverse = reverse.filter((item, i) => i > 0);
+    }
     var middle = Math.floor(reverse.length/2);
     for (var i = 0; i < middle; i++) {
       var temp = reverse[i];
@@ -51,7 +54,7 @@ export default class SceneHeader extends React.Component {
       if (this.props.master.type === "shipping") {
         return <h1>{Number(this.props.master.version)}</h1>
       }
-      if (reverse.length === 1 && this.props.master.type === "contract") {
+      if (reverse.length === 0 && this.props.master.type === "contract") {
         return <h1>{Number(this.props.master.version)}</h1>
       } else {
         return (
@@ -61,9 +64,10 @@ export default class SceneHeader extends React.Component {
             value={this.props.master.version}
             className="master__version"
             type="select">
-            {reverse.filter((item, i) => i > 0).map((item, i, arr) => {
-              var index = arr.length-i;
-              var label = this.props.master.type === "contract" ? index : index+1;
+            {reverse.map((item, i, arr) => {
+              var offset = this.props.master.type === "contract" ? 0 : 1;
+              var index = arr.length-i-offset;
+              var label = index + offset;
               var style = {background: "white"};
               if (this.props.master.status === "active") {
                 if (index == this.props.master.activeVersion) {

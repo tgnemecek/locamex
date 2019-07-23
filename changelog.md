@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.1.7
+
+-  Fixed error in proposal version display;
+
 ## Version 2.1.6
 
 -  UploadFlyer now shows if the product has a flyer;
