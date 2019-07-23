@@ -1,6 +1,3 @@
-var pdfmake = require('pdfmake/build/pdfmake');
-var vfs_fonts = require('pdfmake/build/vfs_fonts');
-
 import tools from '/imports/startup/tools/index';
 import moment from 'moment';
 
@@ -41,7 +38,7 @@ export default function createPdf(props) {
 
   const proposal = props.master;
 
-  const fileName = `Locamex - Proposta de Locação #${proposal._id}_${Number(proposal.version)+1}`;
+  const fileName = `Locamex - Proposta de Locação #${proposal._id}_${Number(proposal.version)+1}.pdf`;
 
   const products = proposal.containers.concat(proposal.accessories).map((item) => {
     item.monthlyPrice = item.renting * item.price;
@@ -88,6 +85,7 @@ export default function createPdf(props) {
   }
 
   var docDefinition = {
+    fileName,
     pageSize: 'A4',
     pageMargins: [ 40, 110, 40, 45 ], //[left, top, right, bottom]
     info: {
@@ -108,34 +106,24 @@ export default function createPdf(props) {
       closing(),
       signature(data)
     ],
-    pageBreakBefore: function (currentNode, followingNodesOnPage, nodesOnNextPage, previousNodesOnPage) {
-      if (currentNode.headlineLevel) {
-        var limit = currentNode.headlineLevel;
-        return (currentNode.startPosition.top > limit);
-      }
-    },
-    footer: (currentPage, pageCount) => {
-      return {text: [
-          {text: (currentPage + "/" + pageCount)}
-        ], style: 'footer'};
-    },
+    footerStatic: `Proposta de Locação de Bens Móveis e Prestação de Serviços nº ${proposal._id}.${Number(proposal.version)+1}\n`,
     styles
 };
-  logoLoader.then((result) => {
-    docDefinition.header = {columns: [
-      {image: result.dataURL, width: 110},
-      {text: [
-        'LOCAMEX - Escritório\n',
-        'Rua Monsenhor Antônio Pepe, 52 - Parque Jabaquara\n',
-        'CEP: 04357-080 - São Paulo - SP\n',
-        'Tel. (11) 5532-0790 / 5533-5614 / 5031-4762 / 3132-7175\n',
-        {text: 'locamex@locamex.com.br', link: 'mailto:locamex@locamex.com.br'}
-      ], style: 'p', alignment: 'right'}
-    ], margin: [30, 30, 30, 30]}
-    pdfMake.createPdf(docDefinition).getBlob((blob) => {
-      Meteor.call('pdf.merge', blob, products);
-    });
-  }).catch(() => {
-    new Meteor.Error("error-in-logo");
+  return new Promise((resolve, reject) => {
+    logoLoader.then((result) => {
+      docDefinition.header = {columns: [
+        {image: result.dataURL, width: 110},
+        {text: [
+          'LOCAMEX - Escritório\n',
+          'Rua Monsenhor Antônio Pepe, 52 - Parque Jabaquara\n',
+          'CEP: 04357-080 - São Paulo - SP\n',
+          'Tel. (11) 5532-0790 / 5533-5614 / 5031-4762 / 3132-7175\n',
+          {text: 'locamex@locamex.com.br', link: 'mailto:locamex@locamex.com.br'}
+        ], style: 'p', alignment: 'right'}
+      ], margin: [30, 30, 30, 30]}
+      resolve(docDefinition);
+    }).catch(() => {
+      reject("error-in-logo");
+    })
   })
 }

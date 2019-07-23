@@ -12,7 +12,7 @@ import { Users } from '/imports/api/users/index';
 
 import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
-import createPDF from '/imports/api/create-pdf/index';
+import Pdf from '/imports/helpers/Pdf/index';
 
 import Box from '/imports/components/Box/index';
 import Checkmark from '/imports/components/Checkmark/index';
@@ -260,22 +260,15 @@ class Proposal extends React.Component {
   }
 
   generateDocument = () => {
-    const generate = (proposal) => {
-      debugger;
-      var createdByUser = this.props.databases.usersDatabase.find((user) => {
-        return user._id === proposal.createdBy;
-      });
-      var createdByFullName = createdByUser.firstName + " " + createdByUser.lastName;
-      var newProposal = {
-        ...proposal,
-        createdByFullName,
-        type: "proposal"
-      };
-      createPDF(newProposal);
-      this.setState({
-        proposal: newProposal,
-        databaseStatus: {status: "completed"}
-      });
+    const generate = (master) => {
+      master.type = "proposal";
+      var pdf = new Pdf(master, this.props.databases);
+      pdf.generate().then(() => {
+        this.setState({ databaseStatus: {status: "completed"} });
+      }).catch((err) => {
+        console.log(err);
+        this.setState({ databaseStatus: {status: "failed"} });
+      })
     }
     this.saveEdits(generate);
   }

@@ -6,15 +6,7 @@ import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 import tools from '/imports/startup/tools/index';
 
-export default class DocumentsPerson extends React.Component {
-  generate = () => {
-    // Saves changes to master
-    this.props.updateMaster({
-      representativesId: '',
-      negociatorId: ''
-    }, () => this.props.generateDocument());
-  }
-
+export default class DocContractPerson extends React.Component {
   render() {
       return (
         <Box
@@ -24,7 +16,7 @@ export default class DocumentsPerson extends React.Component {
             <div className="documents">
             </div>
             <FooterButtons buttons={[
-              {text: "Salvar e Gerar Documento", className: "button--primary", onClick: this.generate},
+              {text: "Salvar e Gerar Documento", className: "button--primary", onClick: this.props.generateDocument},
             ]}/>
         </Box>
       )

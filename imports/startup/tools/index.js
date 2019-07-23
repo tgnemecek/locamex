@@ -14,9 +14,6 @@ export default class tools {
   }
 
   static compare = (input1, input2, exception) => {
-    console.log(input1);
-    console.log("-----------");
-    console.log(input2);
     function loop(input1, input2) {
       if (typeof input1 !== typeof input2) return false;
       if (typeof input1 === "string" || typeof input1 === "number") {

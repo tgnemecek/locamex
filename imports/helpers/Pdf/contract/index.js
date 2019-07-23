@@ -1,6 +1,3 @@
-var pdfmake = require('pdfmake/build/pdfmake');
-var vfs_fonts = require('pdfmake/build/vfs_fonts');
-
 import tools from '/imports/startup/tools/index';
 import moment from 'moment';
 
@@ -40,7 +37,7 @@ export default function createPdf(props) {
 
   const contract = props.master;
 
-  const fileName = `Locamex - Contrato de Locação #${contract._id}_${Number(contract.version)+1}`;
+  const fileName = `Locamex - Contrato de Locação #${contract._id}_${Number(contract.version)}.pdf`;
 
   const products = contract.containers.concat(contract.accessories).map((item) => {
     item.monthlyPrice = item.renting * item.price;
@@ -84,10 +81,11 @@ export default function createPdf(props) {
   }
 
   var docDefinition = {
+    fileName,
     pageSize: 'A4',
     pageMargins: [ 40, 30, 40, 45 ], //[left, top, right, bottom]
     info: {
-      title: `Contrato Locamex #${contract._id}.${Number(contract.version)+1}`,
+      title: `Contrato Locamex #${contract._id}.${Number(contract.version)}`,
       author: `Locamex`,
       subject: `Contrato de Locação de Bens Móveis e Prestação de Serviços`
     },
@@ -120,19 +118,8 @@ export default function createPdf(props) {
       signatures(data),
       tableWitnesses(data)
     ],
-    pageBreakBefore: function (currentNode, followingNodesOnPage, nodesOnNextPage, previousNodesOnPage) {
-      if (currentNode.headlineLevel) {
-        var limit = currentNode.headlineLevel;
-        return (currentNode.startPosition.top > limit);
-      }
-    },
-    footer: (currentPage, pageCount) => {
-      return {text: [
-          {text: `Contrato de Locação de Bens Móveis e Prestação de Serviços nº ${contract._id}.${Number(contract.version)+1}\n`},
-          {text: (currentPage + "/" + pageCount)}
-        ], style: 'footer'};
-    },
+    footerStatic: `Contrato de Locação de Bens Móveis e Prestação de Serviços nº ${contract._id}.${Number(contract.version)}\n`,
     styles
-};
-  pdfMake.createPdf(docDefinition).download(fileName);
+  };
+  return docDefinition;
 }
