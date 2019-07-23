@@ -47,28 +47,40 @@ export default class SceneHeader extends React.Component {
       return {};
     }
 
+    const renderSelect = () => {
+      if (this.props.master.type === "shipping") {
+        return <h1>{Number(this.props.master.version)}</h1>
+      }
+      if (reverse.length === 1 && this.props.master.type === "contract") {
+        return <h1>{Number(this.props.master.version)}</h1>
+      } else {
+        return (
+          <Input
+            style={selectStyle()}
+            onChange={this.props.changeVersion}
+            value={this.props.master.version}
+            className="master__version"
+            type="select">
+            {reverse.filter((item, i) => i > 0).map((item, i, arr) => {
+              var index = arr.length-i;
+              var label = this.props.master.type === "contract" ? index : index+1;
+              var style = {background: "white"};
+              if (this.props.master.status === "active") {
+                if (index == this.props.master.activeVersion) {
+                  style = {background: "#77cc77"}
+                }
+              }
+              return <option key={i} value={index} style={style}>{label}</option>
+            })}
+          </Input>
+        )
+      }
+    }
+
     return (
       <div className="master__title">
         <h1>{label}</h1>
-        {this.props.master.type !== "shipping" ?
-        <Input
-          style={selectStyle()}
-          onChange={this.props.changeVersion}
-          value={this.props.master.version}
-          className="master__version"
-          type="select">
-          {reverse.map((item, i, arr) => {
-            var index = arr.length-1-i;
-            var style = {background: "white"};
-            if (this.props.master.status === "active") {
-              if (index == this.props.master.activeVersion) {
-                style = {background: "#77cc77"}
-              }
-            }
-            return <option key={i} value={index} style={style}>{index+1}</option>
-          })}
-        </Input>
-        : Number(this.props.master.activeVersion)+1}
+        {renderSelect()}
       </div>
     )
   }

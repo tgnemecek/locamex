@@ -148,7 +148,6 @@ export default ProposalsTableWrapper = withTracker((props) => {
 
     return newItem;
   })
-  debugger;
   var ready = !!fullDatabase.length;
   return {
     fullDatabase,

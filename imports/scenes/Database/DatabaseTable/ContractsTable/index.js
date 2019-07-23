@@ -162,7 +162,6 @@ export default ContractsTableWrapper = withTracker((props) => {
       proposal: item.proposal,
       proposalVersion: item.proposalVersion
     };
-    debugger;
 
     var currentClient = clientsDatabase.find((client) => {
       return client._id === item.clientId

@@ -12,7 +12,7 @@ import { Users } from '/imports/api/users/index';
 
 import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
-import createPDF from '/imports/api/create-pdf/index';
+import Pdf from '/imports/helpers/Pdf/index';
 
 import Box from '/imports/components/Box/index';
 import Checkmark from '/imports/components/Checkmark/index';
@@ -281,41 +281,55 @@ class Contract extends React.Component {
   }
 
   generateDocument = () => {
-    const generate = (contract) => {
-      var client = this.props.databases.clientsDatabase.find((client) => {
-        return client._id === contract.clientId;
-      });
-      var negociator;
-      var representatives = [];
-      client.contacts.forEach((contact) => {
-        if (contact._id === this.state.contract.negociatorId) {
-          negociator = contact;
-        }
-        if (this.state.contract.representativesId.includes(contact._id)) {
-          representatives.push(contact);
-        }
-      });
-      var createdByUser = this.props.databases.usersDatabase.find((user) => {
-        return user._id === contract.createdBy;
-      });
-      var createdByFullName = createdByUser.firstName + " " + createdByUser.lastName;
-      var newContract = {
-        ...contract,
-        createdByFullName,
-        client,
-        negociator,
-        representatives,
-        type: "contract"
-      };
-      debugger;
-      createPDF(newContract);
-      this.setState({
-        contract: newContract,
-        databaseStatus: {status: "completed"}
-      });
+    const generate = (master) => {
+      master.type = "contract";
+      var pdf = new Pdf(master, this.props.databases);
+      pdf.generate().then(() => {
+        this.setState({ databaseStatus: {status: "completed"} });
+      }).catch((err) => {
+        console.log(err);
+        this.setState({ databaseStatus: {status: "failed"} });
+      })
     }
     this.saveEdits(generate);
   }
+
+  // generateDocument = () => {
+  //   const generate = (contract) => {
+  //     var client = this.props.databases.clientsDatabase.find((client) => {
+  //       return client._id === contract.clientId;
+  //     });
+  //     var negociator;
+  //     var representatives = [];
+  //     client.contacts.forEach((contact) => {
+  //       if (contact._id === this.state.contract.negociatorId) {
+  //         negociator = contact;
+  //       }
+  //       if (this.state.contract.representativesId.includes(contact._id)) {
+  //         representatives.push(contact);
+  //       }
+  //     });
+  //     var createdByUser = this.props.databases.usersDatabase.find((user) => {
+  //       return user._id === contract.createdBy;
+  //     });
+  //     var createdByFullName = createdByUser.firstName + " " + createdByUser.lastName;
+  //     var newContract = {
+  //       ...contract,
+  //       createdByFullName,
+  //       client,
+  //       negociator,
+  //       representatives,
+  //       type: "contract"
+  //     };
+  //     debugger;
+  //     createPDF(newContract);
+  //     this.setState({
+  //       contract: newContract,
+  //       databaseStatus: {status: "completed"}
+  //     });
+  //   }
+  //   this.saveEdits(generate);
+  // }
 
   totalValue = (option) => {
     var duration = this.state.contract.dates.timeUnit === "months" ? this.state.contract.dates.duration : 1;

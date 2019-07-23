@@ -6,7 +6,7 @@ import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 import tools from '/imports/startup/tools/index';
 
-export default class DocumentsCompany extends React.Component {
+export default class DocContractCompany extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

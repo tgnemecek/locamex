@@ -38,6 +38,10 @@ class Fixed extends React.Component {
 
     this.setState({ [e.target.name]: e.target.value, errorKeys });
   }
+  setFlyer = (e) => {
+    var flyer = e.target.files[0];
+    this.setState({ flyer });
+  }
   toggleConfirmationWindow = () => {
     var confirmationWindow = !this.state.confirmationWindow;
     this.setState({ confirmationWindow });
@@ -106,6 +110,26 @@ class Fixed extends React.Component {
       </Box>
     )
   }
+}
+
+sendFile = (file) => {
+
+  var metaContext;
+  var sendCount = 0;
+
+  metaContext = createMetaContext(this.props.item, imageIndex, file);
+  var uploader = new Slingshot.Upload(this.props.uploadDirective, metaContext);
+  uploader.send(file, (error, downloadUrl) => {
+    sendCount++;
+    if (!error) {
+      urls[imageIndex] = downloadUrl;
+      if (sendCount === arr.length) {
+        Meteor.call('snapshot.add', metaContext, urls);
+        alert(urls.length + ' arquivo(s) enviado(s) com sucesso!');
+        this.props.toggleWindow(true);
+      }
+    } else console.error(error);
+  });
 }
 
 export default FixedWrapper = withTracker((props) => {
