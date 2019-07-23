@@ -11,7 +11,6 @@ import '../imports/api/clients/index';
 import '../imports/api/containers/index';
 import '../imports/api/contracts/index';
 import '../imports/api/history/index';
-import '../imports/api/slingshot/index';
 import '../imports/api/modules/index';
 import '../imports/api/packs/index';
 import '../imports/api/pdf/index';

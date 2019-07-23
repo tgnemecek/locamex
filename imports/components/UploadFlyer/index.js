@@ -23,7 +23,26 @@ export default class UploadFlyer extends React.Component {
   }
 
   setFile = (e) => {
-    this.setState({ file: e.target.files[0] });
+    var file = e.target.files[0];
+    if (file.type !== "application/pdf") {
+      alert("Favor selecionar um arquivo PDF.")
+    } else this.setState({ file });
+  }
+
+  button = () => {
+    if (this.props.item.flyer) {
+      return (
+        <button className="button--pill" onClick={this.downloadFile}>
+          BAIXAR
+        </button>
+      )
+    } else {
+      return (
+        <button className="button--disabled">
+          FOLDER NÃO ENCONTRADO
+        </button>
+      )
+    }
   }
 
   saveEdits = () => {
@@ -53,15 +72,20 @@ export default class UploadFlyer extends React.Component {
       <Box
         className="upload-flyer"
         closeBox={this.props.toggleWindow}
-        width="700px">
-        <Block columns={2} title={"Folder: " + this.props.item.description}>
+        title={"Editar Folder do Produto: " + this.props.item.description}
+        width="800px">
+        <Block columns={2}>
           <div className="upload-flyer__new-flyer">
             <p>Novo Folder:</p>
-            <input type="file" onChange={this.setFile}/>
+            <input
+              type="file"
+              accept=".pdf"
+              files={[this.state.file]}
+              onChange={this.setFile}/>
           </div>
-          <div>
+          <div className="upload-flyer__current-flyer">
             <p>Folder Atual:</p>
-            <button className="button--pill" onClick={this.downloadFile}>Baixar</button>
+            {this.button()}
           </div>
         </Block>
         <DatabaseStatus

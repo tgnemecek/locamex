@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.1.6
+
+-  UploadFlyer now shows if the product has a flyer;
+
 ## Version 2.1.5
 
 -  Added flyers functionality, including merging pdfs in proposal;

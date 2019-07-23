@@ -1,5 +1,19 @@
 .upload-flyer {
   text-align: left;
+  h3 {
+    text-align: center;
+  }
+}
+
+.upload-flyer__new-flyer {
+  // margin-right: 1%;
+  input {
+    width: 100%;
+  }
+}
+
+.upload-flyer__current-flyer {
+  // margin-left: 1%;
   button {
     height: 35px;
     margin: 0;

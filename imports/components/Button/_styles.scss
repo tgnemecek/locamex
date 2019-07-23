@@ -30,6 +30,17 @@
   padding: .3rem .8rem;
 }
 
+.button--disabled {
+  background-color: $grey;
+  border: 1px solid $dark-grey;
+  color: $dark-grey;
+  margin: ($space /2);
+  min-width: 28px;
+  padding: .3rem .8rem;
+  font-style: italic;
+  cursor: initial;
+}
+
 .button--secondary {
   background: $button-secondary-bg;
   border: 1px solid $button-secondary-border-color;

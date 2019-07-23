@@ -46,8 +46,8 @@ export default class FooterButtons extends React.Component {
 
     return buttons.map((button, i) => {
       if (i == 0) {
-        style = {}
-      } else style = {marginLeft: "1%"}
+        style = {marginRight: "0.5%"}
+      } else style = {marginLeft: "0.5%"}
       var className = "button ";
       className += button.className || '';
       var text = button.text;
