@@ -4,7 +4,7 @@ import { Accessories } from '/imports/api/accessories/index';
 import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
@@ -68,10 +68,10 @@ class AccessoriesTable extends React.Component {
         <th className="table__small-column">Total</th>
         <th className="table__small-column">Valor Mensal</th>
         <th className="table__small-column">
-          <Button icon="report" onClick={generateReport} />
+          <Icon icon="report" onClick={generateReport} />
         </th>
         <th className="table__small-column">
-          <Button icon="new" onClick={toggleEditWindow} />
+          <Icon icon="new" onClick={toggleEditWindow} />
         </th>
       </tr>
     )
@@ -92,14 +92,14 @@ class AccessoriesTable extends React.Component {
         if (tools.isUserAllowed("accessories.edit")) {
           return (
             <td className="table__small-column">
-              <Button icon="edit" onClick={toggleEditWindow} />
+              <Icon icon="edit" onClick={toggleEditWindow} />
             </td>
           )
         } else return null;
       }
       const renderStockButton = () => {
         if (tools.isUserAllowed("accessories.stock")) {
-          return <td className="table__small-column"><Button icon="transaction" onClick={toggleStockVisualizer} /></td>
+          return <td className="table__small-column"><Icon icon="transaction" onClick={toggleStockVisualizer} /></td>
         } else return null;
       }
       var available = count(item, 'available');
@@ -116,7 +116,7 @@ class AccessoriesTable extends React.Component {
           {renderEditButton()}
           {renderStockButton()}
           <td className="table__small-column">
-            <Button icon="image" onClick={toggleImageWindow} />
+            <Icon icon="image" onClick={toggleImageWindow} />
         </td>
         </tr>
       )

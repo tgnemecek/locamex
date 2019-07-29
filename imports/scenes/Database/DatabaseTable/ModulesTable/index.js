@@ -4,7 +4,7 @@ import { Modules } from '/imports/api/modules/index';
 import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
@@ -64,9 +64,9 @@ class ModulesTable extends React.Component {
         <th className="table__small-column">Inativos</th>
         <th className="table__small-column">Total</th>
         <th className="table__small-column">
-          <Button icon="report" onClick={generateReport} />
+          <Icon icon="report" onClick={generateReport} />
         </th>
-        <th className="table__small-column"><Button icon="new" onClick={toggleEditWindow} /></th>
+        <th className="table__small-column"><Icon icon="new" onClick={toggleEditWindow} /></th>
       </tr>
     )
   }
@@ -90,9 +90,9 @@ class ModulesTable extends React.Component {
           <td className="table__small-column">{item.rented}</td>
           <td className="table__small-column">{inactive}</td>
           <td className="table__small-column">{available + item.rented + inactive}</td>
-          <td className="table__small-column"><Button icon="edit" onClick={toggleEditWindow} /></td>
-          <td className="table__small-column"><Button icon="transaction" onClick={toggleStockVisualizer} /></td>
-          <td className="table__small-column"><Button icon="image" onClick={toggleImageWindow} /></td>
+          <td className="table__small-column"><Icon icon="edit" onClick={toggleEditWindow} /></td>
+          <td className="table__small-column"><Icon icon="transaction" onClick={toggleStockVisualizer} /></td>
+          <td className="table__small-column"><Icon icon="image" onClick={toggleImageWindow} /></td>
         </tr>
       )
     })

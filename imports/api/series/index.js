@@ -19,7 +19,7 @@ if (Meteor.isServer) {
         containerId: state.containerId,
         place: state.place,
         observations: state.observations,
-        type: 'fixed',
+        type: 'series',
 
         snapshots: [],
         visible: true

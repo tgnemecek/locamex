@@ -3,7 +3,7 @@ import tools from '/imports/startup/tools/index';
 import Documents from './Documents/index';
 import Billing from './Billing/index';
 import Observations from './Observations/index';
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 import Status from '/imports/components/Status/index';
 import Input from '/imports/components/Input/index';
@@ -52,7 +52,7 @@ export default class SceneHeader extends React.Component {
 
     const renderSelect = () => {
       if (this.props.master.type === "shipping") {
-        return <h1>{Number(this.props.master.version)}</h1>
+        return <h1>{this.props.master.activeVersion}</h1>
       }
       if (reverse.length === 0 && this.props.master.type === "contract") {
         return <h1>{Number(this.props.master.version)}</h1>
@@ -147,7 +147,7 @@ export default class SceneHeader extends React.Component {
     if (this.props.master.type !== "shipping") {
       return (
         <>
-          <Button value="documents" onClick={requirements} icon="print"/>
+          <Icon value="documents" onClick={requirements} icon="print"/>
           {renderDocuments()}
         </>
       )
@@ -159,12 +159,12 @@ export default class SceneHeader extends React.Component {
     // NOT IN USE:
     // if (this.props.master.type !== "proposal") return null;
     // if (!this.props.master._id) return null;
-    // return <Button onClick={this.props.duplicateMaster} icon="copy" />
+    // return <Icon onClick={this.props.duplicateMaster} icon="copy" />
   }
 
   showCancelButton = () => {
     if (this.props.master.status === "inactive" && this.props.master._id) {
-      return <Button onClick={this.toggleCancelWindow} icon="not" />
+      return <Icon onClick={this.toggleCancelWindow} icon="not" />
     } else return null;
   }
 
@@ -181,7 +181,7 @@ export default class SceneHeader extends React.Component {
         <div className="master__header">
           {this.renderCreatedBy()}
           <div className="master__top-buttons">
-            <Button value='observations' onClick={this.toggleWindow} className={this.checkIfHasContent()} icon="warning"/>
+            <Icon value='observations' onClick={this.toggleWindow} className={this.checkIfHasContent()} icon="warning"/>
             {this.state.windowOpen == 'observations' ? <Observations
                                               master={this.props.master}
                                               toggleWindow={this.toggleWindow}
@@ -189,7 +189,7 @@ export default class SceneHeader extends React.Component {
                                               disabled={this.props.disabled}
                                                   /> : null}
             {this.props.master.type === "contract" ?
-            <Button value='billing' onClick={this.toggleWindow} icon="money"
+            <Icon value='billing' onClick={this.toggleWindow} icon="money"
               style={this.props.errorKeys.includes("billing") ? {color: "red"} : null}/>
             : null}
             {this.state.windowOpen == 'billing' ? <Billing

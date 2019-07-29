@@ -6,6 +6,7 @@ import Checkbox from './Checkbox/index';
 import Currency from './Currency/index';
 import Code from './Code/index';
 import Digits from './Digits/index';
+import File from './File/index';
 import Text from './Text/index';
 import DatePicker from './DatePicker/index';
 import Password from './Password/index';
@@ -79,6 +80,9 @@ export default class Input extends React.Component {
         break;
       case 'password':
         ChosenComponent = Password;
+        break;
+      case 'file':
+        ChosenComponent = File;
         break;
       default:
         ChosenComponent = Text;

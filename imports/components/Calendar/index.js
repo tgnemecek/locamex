@@ -1,6 +1,6 @@
 import React  from 'react';
 import moment from 'moment';
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
@@ -88,9 +88,9 @@ export default class Calendar extends React.Component {
       return (
         <Box closeBox={this.props.closeCalendar}>
           <div className="calendar__header">
-            <Button value={-1} icon="arrowLeft" onClick={this.changeMonth}/>
+            <Icon value={-1} icon="arrowLeft" onClick={this.changeMonth}/>
             <h3>{moment().month(this.state.monthIndex).format('MMMM') + "/" + this.state.yearIndex}</h3>
-            <Button value={+1} icon="arrowRight" onClick={this.changeMonth}/>
+            <Icon value={+1} icon="arrowRight" onClick={this.changeMonth}/>
           </div>
           <table className="calendar__table">
             <tbody>

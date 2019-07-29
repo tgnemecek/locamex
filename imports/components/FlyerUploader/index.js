@@ -1,13 +1,13 @@
 import React from 'react';
 
 import tools from '/imports/startup/tools/index';
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 import Box from '/imports/components/Box/index';
 import Block from '/imports/components/Block/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
-export default class UploadFlyer extends React.Component {
+export default class FlyerUploader extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

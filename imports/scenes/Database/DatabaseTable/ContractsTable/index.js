@@ -6,7 +6,7 @@ import { Contracts } from '/imports/api/contracts/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import tools from '/imports/startup/tools/index';
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 import Status from '/imports/components/Status/index';
@@ -81,7 +81,7 @@ class ContractsTable extends React.Component {
         if (tools.isUserAllowed("contract")) {
           return (
             <td className="table__small-column">
-              <Button key={i} icon="edit" to={"/contract/" + item._id} />
+              <Icon key={i} icon="edit" to={"/contract/" + item._id} />
             </td>
           )
         } else return null;
@@ -90,7 +90,7 @@ class ContractsTable extends React.Component {
         if (tools.isUserAllowed("shipping") && item.status === "active") {
           return (
             <td className="table__small-column">
-              <Button key={i} icon="transaction" to={"/shipping/" + item._id} />
+              <Icon key={i} icon="transaction" to={"/shipping/" + item._id} />
             </td>
           )
         } else return null;

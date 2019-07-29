@@ -44,6 +44,7 @@ if (Meteor.isServer) {
         _id: undefined,
         version: undefined,
         status: undefined,
+        activeVersion: undefined,
 
         containers: setProducts(snapshot.containers),
         accessories: setProducts(snapshot.accessories),
@@ -51,7 +52,7 @@ if (Meteor.isServer) {
       };
 
       data.snapshots.push(newSnapshot);
-      data.activeVersion = snapshot.version+1;
+      data.activeVersion = snapshot.version;
 
       Contracts.update({ _id }, { $set: data });
       Meteor.call('history.insert', data, 'contracts.update');

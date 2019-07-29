@@ -18,7 +18,8 @@ import {
   faArrowRight,
   faQuestionCircle,
   faCopy,
-  faFilePdf
+  faFilePdf,
+  faCloudUploadAlt
 } from '@fortawesome/free-solid-svg-icons';
 
 const ICON_SET = {
@@ -38,27 +39,25 @@ const ICON_SET = {
   arrowRight: faArrowRight,
   help: faQuestionCircle,
   copy: faCopy,
-  pdf: faFilePdf
+  pdf: faFilePdf,
+  upload: faCloudUploadAlt
 }
 
-export default class Button extends React.Component {
-  constructor(props) {
-    super(props);
-    this.Component = this.props.to ? (props) => <Link {...props} /> : (props) => <button {...props} />
-  }
-
+export default class Icon extends React.Component {
   style = () => {
-    return {
-      cursor: this.props.onClick ? "pointer" : "default",
-      ...this.props.style
-    }
+    if (this.props.onClick) {
+      return {
+        cursor: "pointer",
+        ...this.props.style
+      }
+    } else return {...this.props.style};
   }
 
-  iconStyle = () => {
-    return {
-      cursor: (this.props.onClick || this.props.to) ? "pointer" : "default",
-      ...this.props.iconStyle
-    }
+  renderIcon = () => {
+    return (
+      <FontAwesomeIcon
+        icon={ICON_SET[this.props.icon]} size={this.props.size || "1x"}/>
+    )
   }
 
   onClick = () => {
@@ -68,21 +67,25 @@ export default class Button extends React.Component {
   }
 
   conditionalRendering = () => {
+    var Component;
+    if (this.props.to) {
+      Component = (props) => <Link {...props} />
+    } else if (this.props.onClick) {
+      Component = (props) => <button {...props} />
+    } else {
+      Component = (props) => <span {...props} />
+    }
     if (this.props.icon) {
       return (
-        <this.Component
+        <Component
           {...this.props}
           onClick={this.onClick}
           className={"icon " + (this.props.className || "")}
           style={this.style()}>
-          <FontAwesomeIcon icon={ICON_SET[this.props.icon]} size={this.props.size || "1x"} style={this.iconStyle()} />
-        </this.Component>
+          {this.renderIcon()}
+        </Component>
       )
-    } else return (
-      <this.Component {...this.props}>
-        {this.props.children}
-      </this.Component>
-    )
+    }
   }
 
   render() {

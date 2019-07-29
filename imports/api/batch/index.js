@@ -1,3 +1,4 @@
+import moment from 'moment';
 import tools from '/imports/startup/tools/index';
 
 import { Accessories } from '/imports/api/accessories/index';
@@ -13,6 +14,106 @@ import { Services } from '/imports/api/services/index';
 import { Series } from '/imports/api/series/index';
 
 if (Meteor.isServer && Meteor.isDevelopment) {
+
+  // var accessories = Accessories.find().fetch();
+  // var datas = [];
+  // Accessories.remove({});
+  //
+  // accessories.forEach((s, index) => {
+  //   if (Array.isArray(s.snapshots)) {
+  //     var snapshot;
+  //     var code;
+  //     if (s.snapshots.length) {
+  //       snapshot = s.snapshots[s.snapshots.length-1].images;
+  //       s.images = snapshot.map((image, i) => {
+  //
+  //         var prefix = "https://locamex-app.s3-sa-east-1.amazonaws.com/";
+  //         var oldKey = image.replace(prefix, "");
+  //         oldKey = "backup/" + oldKey;
+  //
+  //         var date = oldKey.match(/2019-\d\d-\d\d_\d*/g)[0];
+  //         if (i === 0) {
+  //           code = date.split("_")[1];
+  //         }
+  //
+  //         date = date.replace(date.split("_")[1], code);
+  //
+  //         var substring = oldKey.split(".");
+  //         var extension = substring[substring.length-1].toLowerCase();
+  //
+  //         var filename = `img-accessory-${s._id}-${i}.jpg`
+  //
+  //
+  //         var newKey = `user-uploads/images/accessories/${s._id}/${filename}`;
+  //         var url = prefix + newKey;
+  //         datas.push({
+  //           oldKey,
+  //           newKey
+  //         });
+  //         return url;
+  //       })
+  //     } else s.images = [];
+  //   } else s.images = [];
+  //   delete s.snapshots;
+  //   Accessories.insert(s);
+  // })
+  //
+  // var promises = datas.map((data, i, arr) => {
+  //   console.log("Started Copy " + (i+1) + "/" + arr.length);
+  //   return Meteor.call('aws.changeKey', data.oldKey, data.newKey);
+  // })
+  //
+  // Promise.all(promises).then(() => {
+  //   console.log("done!!!!");
+  // })
+
+  // -------------------------------------------
+
+
+  // var accessories = Accessories.find().fetch();
+  // var datas = [];
+  // Accessories.remove({});
+  //
+  // accessories.forEach((s, index) => {
+  //   var code;
+  //   if (Array.isArray(s.images)) {
+  //     s.images = s.snapshots.map((image, i) => {
+  //
+  //       var prefix = "https://locamex-app.s3-sa-east-1.amazonaws.com/";
+  //       var oldKey = image.replace(prefix, "");
+  //
+  //       var date = oldKey.match(/2019-\d\d-\d\d_\d*/g)[0];
+  //       if (i === 0) {
+  //         code = date.split("_")[1];
+  //       }
+  //
+  //       var substring = oldKey.split(".");
+  //       var extension = substring[substring.length-1].toLowerCase();
+  //
+  //       var filename = `img-accessory-${s._id}-${code}-${i}.${extension}`
+  //
+  //
+  //       var newKey = `user-uploads/images/accessories/${s._id}/${date}/${filename}`;
+  //       var url = prefix + newKey;
+  //       datas.push({
+  //         oldKey,
+  //         newKey
+  //       });
+  //       return url;
+  //     })
+  //   } else s.images = [];
+  //   Accessories.insert(s);
+  // })
+  //
+  // var promises = datas.map((data, i, arr) => {
+  //   console.log("Started Copy " + (i+1) + "/" + arr.length);
+  //   return Meteor.call('aws.changeKey', data.oldKey, data.newKey);
+  // })
+  //
+  // Promise.all(promises).then(() => {
+  //   console.log("done!!!!");
+  // })
+
   // var docs = Contracts.find().fetch();
   //
   // Contracts.remove({});

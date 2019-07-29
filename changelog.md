@@ -1,12 +1,18 @@
 # Changelog:
 
+## Version 2.1.8
+
+-  Change in Contract text;
+-  Partial implementation of aws for products:
+    -  Series is complete, accessories/modules in progress;
+
 ## Version 2.1.7
 
 -  Fixed error in proposal version display;
 
 ## Version 2.1.6
 
--  UploadFlyer now shows if the product has a flyer;
+-  FlyerUploader now shows if the product has a flyer;
 
 ## Version 2.1.5
 

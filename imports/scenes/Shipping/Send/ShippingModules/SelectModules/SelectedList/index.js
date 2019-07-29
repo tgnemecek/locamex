@@ -3,7 +3,7 @@ import React from 'react';
 import tools from '/imports/startup/tools/index';
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 import HowManyBox from './HowManyBox/index';
 
 export default class SelectedList extends React.Component {
@@ -90,7 +90,7 @@ export default class SelectedList extends React.Component {
           <td>{tools.findUsingId(this.props.placesDatabase, item.place).description}</td>
           <td>{item.selected}</td>
           <td className="buttom-column">
-            <Button onClick={removeFromSelection} icon="not" />
+            <Icon onClick={removeFromSelection} icon="not" />
           </td>
         </tr>
       )

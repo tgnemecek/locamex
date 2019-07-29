@@ -2,7 +2,7 @@ import React from 'react';
 import ReactModal from 'react-modal';
 
 import Help from '/imports/components/Help/index';
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 
 export default class Box extends React.Component {
   closeBox = () => {
@@ -35,7 +35,7 @@ export default class Box extends React.Component {
         className={this.className()}>
           {this.props.closeBox ?
             <div className="box__close-button">
-              <Button onClick={this.closeBox} icon="not" />
+              <Icon onClick={this.closeBox} icon="not" />
             </div>
           : null}
           {this.props.help ?

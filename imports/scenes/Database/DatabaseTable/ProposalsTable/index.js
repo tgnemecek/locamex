@@ -5,7 +5,7 @@ import { Proposals } from '/imports/api/proposals/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import tools from '/imports/startup/tools/index';
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 import Status from '/imports/components/Status/index';
@@ -37,7 +37,7 @@ class ProposalsTable extends React.Component {
         <th className="table__small-column">Status</th>
         <th className="table__small-column">Valor Total da Proposta</th>
         <th className="table__small-column">
-          <Button to="/proposal/new" icon="new" />
+          <Icon to="/proposal/new" icon="new" />
         </th>
       </tr>
     )
@@ -73,7 +73,7 @@ class ProposalsTable extends React.Component {
         if (tools.isUserAllowed("proposal")) {
           return (
             <td className="table__small-column">
-              <Button key={i} icon="edit" to={"/proposal/" + item._id} />
+              <Icon key={i} icon="edit" to={"/proposal/" + item._id} />
             </td>
           )
         } else return null;
@@ -82,7 +82,7 @@ class ProposalsTable extends React.Component {
         if (tools.isUserAllowed("shipping") && item.status === "active") {
           return (
             <td className="table__small-column">
-              <Button key={i} icon="transaction" to={"/shipping/" + item._id} />
+              <Icon key={i} icon="transaction" to={"/shipping/" + item._id} />
             </td>
           )
         } else return null;

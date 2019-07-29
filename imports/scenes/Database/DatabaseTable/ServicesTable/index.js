@@ -2,7 +2,7 @@ import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Services } from '/imports/api/services/index';
 import tools from '/imports/startup/tools/index';
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 import RedirectUser from '/imports/components/RedirectUser/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
@@ -39,7 +39,7 @@ class ServicesTable extends React.Component {
       <tr>
         <th>Descrição</th>
         <th className="table__small-column">Valor</th>
-        <th className="table__small-column"><Button icon="new" onClick={toggleEditWindow} /></th>
+        <th className="table__small-column"><Icon icon="new" onClick={toggleEditWindow} /></th>
       </tr>
     )
   }
@@ -53,7 +53,7 @@ class ServicesTable extends React.Component {
         <tr key={i}>
           <td>{item.description}</td>
           <td className="table__small-column">{tools.format(item.price, 'currency')}</td>
-          <td className="table__small-column"><Button icon="edit" onClick={toggleEditWindow} /></td>
+          <td className="table__small-column"><Icon icon="edit" onClick={toggleEditWindow} /></td>
         </tr>
       )
     })

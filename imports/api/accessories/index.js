@@ -39,6 +39,10 @@ if (Meteor.isServer) {
       Accessories.update({ _id: state._id }, { $set: data });
       Meteor.call('history.insert', data, 'accessories');
     },
+    'accessories.update.one'(_id, key, value) {
+      Accessories.update({ _id }, { $set: {[key]: value} });
+      Meteor.call('history.insert', {_id, key, value}, 'accessories.update.one');
+    },
     'accessories.stock.variations.update'(_id, variations) {
       const data = {
         variations

@@ -98,6 +98,7 @@ export default ShippingWrapper = withTracker((props) => {
       shipping: contract.shipping,
       status: contract.status,
       activeVersion: contract.activeVersion,
+      shipping: contract.shipping,
       ...contract.snapshots[contract.activeVersion]
     }
   }

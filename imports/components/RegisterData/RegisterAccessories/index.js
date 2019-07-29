@@ -28,7 +28,8 @@ export default class RegisterAccessories extends React.Component {
       errorMsg: '',
       errorKeys: [],
 
-      confirmationWindow: false
+      confirmationWindow: false,
+      imageWindow: false
     }
   }
   onChange = (e) => {

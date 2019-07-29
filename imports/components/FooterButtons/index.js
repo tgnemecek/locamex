@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 
 export default class FooterButtons extends React.Component {
 
@@ -30,11 +30,11 @@ export default class FooterButtons extends React.Component {
     var onClick = button.onClick || null;
     var type = button.type || "button";
     return (
-      <Button
+      <button
         type={type}
         style={style}
         className={className}
-        onClick={onClick}>{text}</Button>
+        onClick={onClick}>{text}</button>
     )
   }
 
@@ -53,12 +53,12 @@ export default class FooterButtons extends React.Component {
       var text = button.text;
       var onClick = button.onClick || null;
       var type = button.type || "button";
-      return <Button
+      return <button
                   key={i}
                   type={type}
                   style={style}
                   className={className}
-                  onClick={onClick}>{text}</Button>
+                  onClick={onClick}>{text}</button>
     })
   }
 
@@ -81,12 +81,12 @@ export default class FooterButtons extends React.Component {
       var text = button.text;
       var onClick = button.onClick || null;
       var type = button.type || "button";
-      return <Button
+      return <button
                   key={i}
                   type={type}
                   style={style}
                   className={className}
-                  onClick={onClick}>{text}</Button>
+                  onClick={onClick}>{text}</button>
     })
   }
 

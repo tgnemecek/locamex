@@ -3,7 +3,7 @@ import React from 'react';
 
 import tools from '/imports/startup/tools/index';
 import Input from '/imports/components/Input/index';
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 
 export default class AddedItems extends React.Component {
   renderAddedItems = () => {
@@ -29,7 +29,7 @@ export default class AddedItems extends React.Component {
               onChange={this.props.changeQuantity}/>
           </td>
           <td className="buttom-column">
-            <Button value={item._id} onClick={this.props.removeItem} icon="not" />
+            <Icon value={item._id} onClick={this.props.removeItem} icon="not" />
           </td>
         </tr>
       )

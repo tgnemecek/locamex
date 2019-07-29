@@ -1,6 +1,6 @@
 import React from 'react';
 import Box from '/imports/components/Box/index';
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
 export default class Help extends React.Component {
@@ -16,7 +16,7 @@ export default class Help extends React.Component {
   render() {
     return (
       <div className={this.props.className}>
-        <Button onClick={this.toggleHelpBox} icon="help" />
+        <Icon onClick={this.toggleHelpBox} icon="help" />
         {this.state.helpBox ?
           <Box
             title="Ajuda:"

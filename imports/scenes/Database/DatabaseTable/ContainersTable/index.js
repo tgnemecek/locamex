@@ -5,11 +5,11 @@ import { Containers } from '/imports/api/containers/index';
 import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
-import UploadFlyer from '/imports/components/UploadFlyer/index';
+import FlyerUploader from '/imports/components/FlyerUploader/index';
 
 class ContainersTable extends React.Component {
   constructor(props) {
@@ -60,9 +60,9 @@ class ContainersTable extends React.Component {
         <th className="table__small-column">Tipo</th>
         <th className="table__small-column">Valor Mensal</th>
         <th className="table__small-column">
-          <Button icon="report" onClick={generateReport} />
+          <Icon icon="report" onClick={generateReport} />
         </th>
-        <th className="table__small-column"><Button icon="new" onClick={toggleEditWindow} /></th>
+        <th className="table__small-column"><Icon icon="new" onClick={toggleEditWindow} /></th>
       </tr>
     )
   }
@@ -96,8 +96,8 @@ class ContainersTable extends React.Component {
           <td>{item.description}</td>
           <td className="table__small-column">{translate(item.type)}</td>
           <td className="table__small-column">{tools.format(item.price, 'currency')}</td>
-          <td className="table__small-column"><Button icon="pdf" onClick={toggleFlyerWindow} /></td>
-          <td className="table__small-column"><Button icon="edit" onClick={toggleEditWindow} /></td>
+          <td className="table__small-column"><Icon icon="pdf" onClick={toggleFlyerWindow} /></td>
+          <td className="table__small-column"><Icon icon="edit" onClick={toggleEditWindow} /></td>
         </tr>
       )
     })
@@ -124,7 +124,7 @@ class ContainersTable extends React.Component {
             </table>
           </div>
           {this.state.flyerWindow ?
-            <UploadFlyer
+            <FlyerUploader
               item={this.state.flyerWindow}
               toggleWindow={this.toggleFlyerWindow} />
           : null}
