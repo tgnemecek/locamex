@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.1.9
+
+-  ProposalsTable now allows search for client description;
+
 ## Version 2.1.8
 
 -  Change in Contract text;

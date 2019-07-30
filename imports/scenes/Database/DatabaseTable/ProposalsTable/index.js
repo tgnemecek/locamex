@@ -14,8 +14,7 @@ class ProposalsTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filteredDatabase: [],
-
+      filteredDatabase: []
     }
   }
   componentDidMount() {
@@ -143,7 +142,8 @@ export default ProposalsTableWrapper = withTracker((props) => {
     var newItem = {
       ...item.snapshots[item.activeVersion],
       _id: item._id,
-      status: item.status
+      status: item.status,
+      clientName: item.snapshots[item.activeVersion].client.description
     };
 
     return newItem;
