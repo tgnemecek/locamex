@@ -70,12 +70,12 @@ export default class FlyerUploader extends React.Component {
   render() {
     return (
       <Box
-        className="upload-flyer"
+        className="containers-table__flyer-uploader"
         closeBox={this.props.toggleWindow}
         title={"Editar Folder do Produto: " + this.props.item.description}
         width="800px">
         <Block columns={2}>
-          <div className="upload-flyer__new-flyer">
+          <div className="containers-table__flyer-uploader__new-flyer">
             <p>Novo Folder:</p>
             <input
               type="file"
@@ -83,7 +83,7 @@ export default class FlyerUploader extends React.Component {
               files={[this.state.file]}
               onChange={this.setFile}/>
           </div>
-          <div className="upload-flyer__current-flyer">
+          <div className="containers-table__flyer-uploader__current-flyer">
             <p>Folder Atual:</p>
             {this.button()}
           </div>

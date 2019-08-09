@@ -9,8 +9,6 @@ import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 import Input from '/imports/components/Input/index';
 
-import ImageUploader from './ImageUploader/index';
-
 export default class SnapshotVisualizer extends React.Component {
   constructor(props) {
     super(props);
@@ -23,14 +21,6 @@ export default class SnapshotVisualizer extends React.Component {
       confirmationWindow: false
     }
     this.state.maxIndex = this.state.lastRegistry.images ? this.state.lastRegistry.images.length-1 : 0;
-  }
-  toggleUploadWindow = (fullClose) => {
-    if (fullClose) {
-      this.props.toggleWindow();
-    } else {
-      var uploadWindow = !this.state.uploadWindow;
-      this.setState({ uploadWindow })
-    }
   }
   indexUp = () => {
     var currentIndex = this.state.currentIndex;
@@ -68,16 +58,9 @@ export default class SnapshotVisualizer extends React.Component {
         {this.props.readOnly ? null :
           <FooterButtons buttons={[
             {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
-            {text: "Novo Registro", className: "button--green", onClick: () => this.toggleUploadWindow()}
+            {text: "Novo Registro", className: "button--green", onClick: this.props.toggleUploadWindow}
           ]}/>
         }
-        {this.state.uploadWindow ?
-          <ImageUploader
-            item={this.props.item}
-            toggleWindow={this.toggleUploadWindow}
-            closeParent={this.props.toggleWindow}
-          />
-        : null}
       </Box>
     )
   }

@@ -9,7 +9,8 @@ import Icon from '/imports/components/Icon/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
-import FlyerUploader from '/imports/components/FlyerUploader/index';
+
+import FlyerUploader from './FlyerUploader/index';
 
 class ContainersTable extends React.Component {
   constructor(props) {

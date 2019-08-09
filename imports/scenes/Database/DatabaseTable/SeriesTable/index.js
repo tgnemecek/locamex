@@ -12,15 +12,13 @@ import RedirectUser from '/imports/components/RedirectUser/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
-import SnapshotVisualizer from '/imports/components/SnapshotVisualizer/index';
 
 class SeriesTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       filterByContainerId: "",
-      filterByPlace: "",
-      visualizer: false
+      filterByPlace: ""
     }
   }
 
@@ -95,8 +93,8 @@ class SeriesTable extends React.Component {
       const toggleEditWindow = () => {
         this.props.toggleEditWindow(item);
       }
-      const toggleVisualizer = () => {
-        this.toggleVisualizer(item);
+      const toggleImageWindow = () => {
+        this.props.toggleImageWindow(item);
       }
       const renderEditButton = () => {
         if (tools.isUserAllowed("series.edit")) {
@@ -112,7 +110,7 @@ class SeriesTable extends React.Component {
           <td className="table__small-column">{translatePlaces(item.place, this.props.placesDatabase)}</td>
           <td className="table__small-column--wrap">{item.observations}</td>
           {renderEditButton()}
-          <td className="table__small-column"><Icon icon="image" onClick={toggleVisualizer} /></td>
+          <td className="table__small-column"><Icon icon="image" onClick={toggleImageWindow} /></td>
         </tr>
       )
     })
@@ -151,10 +149,6 @@ class SeriesTable extends React.Component {
               </tbody>
             </table>
           </div>
-          {this.state.visualizer ?
-            <SnapshotVisualizer
-              item={this.state.visualizer} toggleWindow={this.toggleVisualizer} />
-          : null}
         </ErrorBoundary>
       )
     } else if (!this.props.ready) {
