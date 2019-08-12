@@ -5,16 +5,19 @@ import { Containers } from '/imports/api/containers/index';
 import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
+
+import FlyerUploader from './FlyerUploader/index';
 
 class ContainersTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filteredDatabase: []
+      filteredDatabase: [],
+      flyerWindow: false
     }
   }
 
@@ -58,17 +61,25 @@ class ContainersTable extends React.Component {
         <th className="table__small-column">Tipo</th>
         <th className="table__small-column">Valor Mensal</th>
         <th className="table__small-column">
-          <Button icon="report" onClick={generateReport} />
+          <Icon icon="report" onClick={generateReport} />
         </th>
-        <th className="table__small-column"><Button icon="new" onClick={toggleEditWindow} /></th>
+        <th className="table__small-column"><Icon icon="new" onClick={toggleEditWindow} /></th>
       </tr>
     )
+  }
+
+  toggleFlyerWindow = (item) => {
+    item = item || false;
+    this.setState({ flyerWindow: item });
   }
 
   renderBody = () => {
     return this.state.filteredDatabase.map((item, i) => {
       const toggleEditWindow = () => {
         this.props.toggleEditWindow(item);
+      }
+      const toggleFlyerWindow = () => {
+        this.toggleFlyerWindow(item);
       }
       const toggleStockVisualizer = () => {
         this.props.toggleStockVisualizer(item);
@@ -86,7 +97,8 @@ class ContainersTable extends React.Component {
           <td>{item.description}</td>
           <td className="table__small-column">{translate(item.type)}</td>
           <td className="table__small-column">{tools.format(item.price, 'currency')}</td>
-          <td className="table__small-column"><Button icon="edit" onClick={toggleEditWindow} /></td>
+          <td className="table__small-column"><Icon icon="pdf" onClick={toggleFlyerWindow} /></td>
+          <td className="table__small-column"><Icon icon="edit" onClick={toggleEditWindow} /></td>
         </tr>
       )
     })
@@ -112,6 +124,11 @@ class ContainersTable extends React.Component {
               </tbody>
             </table>
           </div>
+          {this.state.flyerWindow ?
+            <FlyerUploader
+              item={this.state.flyerWindow}
+              toggleWindow={this.toggleFlyerWindow} />
+          : null}
         </ErrorBoundary>
       )
     } else if (!this.props.ready) {

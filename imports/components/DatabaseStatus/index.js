@@ -1,7 +1,7 @@
 import React from 'react';
 
 import Box from '/imports/components/Box/index';
-import AsyncAnimation from '/imports/components/AsyncAnimation/index';
+import AsyncAnimation from './AsyncAnimation/index';
 
 export default class DatabaseStatus extends React.Component {
   constructor(props) {
@@ -25,7 +25,11 @@ export default class DatabaseStatus extends React.Component {
 
   waitForAnimation = () => {
     setTimeout(() => {
-      this.setState({ showContent: false })
+      this.setState({ showContent: false }, () => {
+        if (typeof this.props.callback === "function") {
+          this.props.callback();
+        }
+      })
     }, this.timeout);
   }
 
@@ -33,11 +37,19 @@ export default class DatabaseStatus extends React.Component {
     if (!this.props.status) return "";
     return "database-status__" + this.props.status;
   }
+  message = () => {
+    if (this.props.status === "loading") return "";
+    if (!this.props.message) {
+      if (this.props.status === "completed") return "Feito!";
+      if (this.props.status === "failed") return "Erro de Servidor!";
+    } else return this.props.message;
+  }
+
   render() {
     if (this.state.showContent && this.props.status) {
       return (
         <Box className="database-status" width="40%" height="190px">
-          <h2 className={this.className()}></h2>
+          <h2 className={this.className()}>{this.message()}</h2>
           <AsyncAnimation status={this.props.status} />
         </Box>
       )

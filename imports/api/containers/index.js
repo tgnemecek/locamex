@@ -39,13 +39,13 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', { ...data, _id: state._id }, 'containers.fixed.update');
     },
 
-    'containers.fixed.update.one' (_id, value, key) {
+    'containers.update.one' (_id, key, value) {
       var data = {
         _id,
         [key]: value
       }
-      Containers.update({_id}, {$set: {[key]: value}});
-      Meteor.call('history.insert', data, 'containers.fixed.update.one');
+      Containers.update({ _id }, {$set: {[key]: value}});
+      Meteor.call('history.insert', data, 'containers.update.one');
     },
 
     // MODULAR

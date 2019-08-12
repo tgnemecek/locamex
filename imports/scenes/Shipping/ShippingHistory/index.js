@@ -2,7 +2,7 @@ import React from 'react';
 import moment from 'moment';
 
 import tools from '/imports/startup/tools/index';
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 
 export default class ShippingHistory extends React.Component {
 
@@ -17,13 +17,13 @@ export default class ShippingHistory extends React.Component {
       if (type === 'send') {
         return (
           <th className="table__small-column">
-            <Button icon="send" disabled={sendDisabled} onClick={this.props.toggleSend} />
+            <Icon icon="send" disabled={sendDisabled} onClick={this.props.toggleSend} />
           </th>
         )
       } else if (type === 'receive') {
         return (
           <th className="table__small-column">
-            <Button icon="receive" disabled={receiveDisabled} onClick={this.props.toggleReceive} />
+            <Icon icon="receive" disabled={receiveDisabled} onClick={this.props.toggleReceive} />
           </th>
         )
       }

@@ -6,7 +6,7 @@
   position: relative;
 }
 
-.master__header div {
+.master__header>div {
   position: absolute;
   margin: 10px;
 }
@@ -37,6 +37,13 @@
 }
 
 .master__title {
+  h1 {
+    display: inline;
+  }
+  .master__version {
+    display: inline-block;
+    top: -3px;
+  }
   bottom: 0;
   left: 0;
   line-height: 1px;

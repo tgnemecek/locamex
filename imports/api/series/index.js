@@ -19,7 +19,7 @@ if (Meteor.isServer) {
         containerId: state.containerId,
         place: state.place,
         observations: state.observations,
-        type: 'fixed',
+        type: 'series',
 
         snapshots: [],
         visible: true
@@ -30,7 +30,7 @@ if (Meteor.isServer) {
     },
     'series.update' (changes, _id) {
       Series.update({_id: _id}, {$set: changes} );
-      Meteor.call('history.insert', changes, 'series.update');
+      Meteor.call('history.insert', {_id, changes}, 'series.update');
     },
     'series.hide' (_id) {
       var data = { visible: false };

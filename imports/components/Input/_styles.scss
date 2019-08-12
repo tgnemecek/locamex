@@ -22,3 +22,25 @@
 .input select:disabled {
   background: $grey;
 }
+
+input[type="file"] {
+    display: none;
+}
+
+.input__file {
+  text-align: center !important;
+  background: $light-grey;
+  border: 1px solid $grey;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.input__file__icon {
+  margin-right: 10px;
+}
+
+.input__file__max {
+  font-style: italic;
+  color: $dark-grey;
+}

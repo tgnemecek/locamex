@@ -5,7 +5,7 @@ import { Places } from '/imports/api/places/index';
 import { Containers } from '/imports/api/containers/index';
 
 import tools from '/imports/startup/tools/index';
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 import RedirectUser from '/imports/components/RedirectUser/index';
@@ -38,6 +38,14 @@ class SeriesTable extends React.Component {
     }
   }
 
+  toggleVisualizer = (item) => {
+    var visualizer = false
+    if (!this.state.visualizer) {
+      visualizer = item;
+    }
+    this.setState({ visualizer });
+  }
+
   renderHeader = () => {
     const toggleEditWindow = () => {
       this.props.toggleEditWindow({});
@@ -66,9 +74,9 @@ class SeriesTable extends React.Component {
         <th className="table__small-column">Pátio</th>
         <th>Observações</th>
         <th className="table__small-column">
-          <Button icon="report" onClick={generateReport} />
+          <Icon icon="report" onClick={generateReport} />
         </th>
-        <th className="table__small-column"><Button icon="new" onClick={toggleEditWindow} /></th>
+        <th className="table__small-column"><Icon icon="new" onClick={toggleEditWindow} /></th>
       </tr>
     )
   }
@@ -90,7 +98,7 @@ class SeriesTable extends React.Component {
       }
       const renderEditButton = () => {
         if (tools.isUserAllowed("series.edit")) {
-          return <td className="table__small-column"><Button icon="edit" onClick={toggleEditWindow} /></td>
+          return <td className="table__small-column"><Icon icon="edit" onClick={toggleEditWindow} /></td>
         } else return null;
       }
       return (
@@ -102,7 +110,7 @@ class SeriesTable extends React.Component {
           <td className="table__small-column">{translatePlaces(item.place, this.props.placesDatabase)}</td>
           <td className="table__small-column--wrap">{item.observations}</td>
           {renderEditButton()}
-          <td className="table__small-column"><Button icon="image" onClick={toggleImageWindow} /></td>
+          <td className="table__small-column"><Icon icon="image" onClick={toggleImageWindow} /></td>
         </tr>
       )
     })

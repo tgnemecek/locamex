@@ -1,3 +1,5 @@
+@import './AsyncAnimation/styles';
+
 .database-status {
   overflow: hidden;
   border-radius: 20px;
@@ -6,14 +8,6 @@
 .database-status__loading::after {
   content: "Carregando";
   animation: etc 3s infinite;
-}
-
-.database-status__completed::after {
-  content: "Feito!";
-}
-
-.database-status__failed::after {
-  content: "Erro de Servidor!";
 }
 
 @keyframes etc {

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 
 export default class FooterButtons extends React.Component {
 
@@ -30,11 +30,11 @@ export default class FooterButtons extends React.Component {
     var onClick = button.onClick || null;
     var type = button.type || "button";
     return (
-      <Button
+      <button
         type={type}
         style={style}
         className={className}
-        onClick={onClick}>{text}</Button>
+        onClick={onClick}>{text}</button>
     )
   }
 
@@ -46,19 +46,19 @@ export default class FooterButtons extends React.Component {
 
     return buttons.map((button, i) => {
       if (i == 0) {
-        style = {}
-      } else style = {marginLeft: "1%"}
+        style = {marginRight: "0.5%"}
+      } else style = {marginLeft: "0.5%"}
       var className = "button ";
       className += button.className || '';
       var text = button.text;
       var onClick = button.onClick || null;
       var type = button.type || "button";
-      return <Button
+      return <button
                   key={i}
                   type={type}
                   style={style}
                   className={className}
-                  onClick={onClick}>{text}</Button>
+                  onClick={onClick}>{text}</button>
     })
   }
 
@@ -81,12 +81,12 @@ export default class FooterButtons extends React.Component {
       var text = button.text;
       var onClick = button.onClick || null;
       var type = button.type || "button";
-      return <Button
+      return <button
                   key={i}
                   type={type}
                   style={style}
                   className={className}
-                  onClick={onClick}>{text}</Button>
+                  onClick={onClick}>{text}</button>
     })
   }
 

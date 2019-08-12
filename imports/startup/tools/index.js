@@ -13,7 +13,7 @@ export default class tools {
     } else return [input];
   }
 
-  static compare = (input1, input2) => {
+  static compare = (input1, input2, exception) => {
     function loop(input1, input2) {
       if (typeof input1 !== typeof input2) return false;
       if (typeof input1 === "string" || typeof input1 === "number") {
@@ -21,11 +21,13 @@ export default class tools {
       } else if (typeof input1 === "object") {
         if (input1 === input2) return true;
         if (Array.isArray(input1)) {
+          if (input1.length !== input2.length) return false;
           return input1.every((item, i) => {
             return loop(input1[i], input2[i]);
           })
         } else {
           return Object.keys(input1).every((key) => {
+            if (key === exception) return true;
             return loop(input1[key], input2[key]);
           })
         }
@@ -143,27 +145,20 @@ export default class tools {
   }
 
   static translateDatabase = (database) => {
-    if (database == 'accessories') {
-      return "Acessórios"
-    } else if (database == 'clients') {
-      return "Clientes"
-    } else if (database == 'containers' || database == 'models') {
-      return "Modelos"
-    } else if (database == 'history') {
-      return "Histórico"
-    } else if (database == 'maintenance') {
-      return "Manutenção"
-    } else if (database == 'modules') {
-      return "Componentes"
-    } else if (database == 'packs') {
-      return "Pacotes"
-    } else if (database == 'places') {
-      return "Pátios"
-    } else if (database == 'services') {
-      return "Serviços"
-    } else if (database == 'users') {
-      return "Usuários"
-    } else return database;
+    var dictionary = {
+      accessories: "Acessórios",
+      clients: "Clientes",
+      containers: "Modelos",
+      models: "Modelos",
+      history: "Histórico",
+      maintenance: "Manutenção",
+      modules: "Componentes",
+      packs: "Montados",
+      places: "Pátios",
+      services: "Serviços",
+      users: "Usuários",
+    }
+    return dictionary[database] || database;
   }
 
   static format = (value, type, externalOptions) => {

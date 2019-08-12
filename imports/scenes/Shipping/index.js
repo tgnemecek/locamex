@@ -85,22 +85,27 @@ function ShippingLoader(props) {
 export default ShippingWrapper = withTracker((props) => {
   Meteor.subscribe('contractsPub');
   Meteor.subscribe('placesPub');
-
+  Meteor.subscribe('usersPub');
   Meteor.subscribe('containersPub');
   Meteor.subscribe('seriesPub');
   Meteor.subscribe('modulesPub');
   Meteor.subscribe('accessoriesPub');
 
   var contract = Contracts.findOne({ _id: props.match.params.contractId });
-  var placesDatabase = Places.find().fetch();
-
-  var containersDatabase = Containers.find().fetch();
-  var seriesDatabase = Series.find().fetch();
-  var modulesDatabase = Modules.find().fetch();
-  var accessoriesDatabase = Accessories.find().fetch();
+  if (contract) {
+    contract = {
+      _id: contract._id,
+      shipping: contract.shipping,
+      status: contract.status,
+      activeVersion: contract.activeVersion,
+      shipping: contract.shipping,
+      ...contract.snapshots[contract.activeVersion]
+    }
+  }
 
   var databases = {
     placesDatabase: Places.find().fetch(),
+    usersDatabase: Meteor.users.find().fetch(),
     containersDatabase: Containers.find().fetch(),
     seriesDatabase: Series.find().fetch(),
     modulesDatabase: Modules.find().fetch(),

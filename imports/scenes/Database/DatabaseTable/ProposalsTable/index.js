@@ -5,7 +5,7 @@ import { Proposals } from '/imports/api/proposals/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import tools from '/imports/startup/tools/index';
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 import Status from '/imports/components/Status/index';
@@ -14,8 +14,7 @@ class ProposalsTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filteredDatabase: [],
-
+      filteredDatabase: []
     }
   }
   componentDidMount() {
@@ -37,13 +36,14 @@ class ProposalsTable extends React.Component {
         <th className="table__small-column">Status</th>
         <th className="table__small-column">Valor Total da Proposta</th>
         <th className="table__small-column">
-          <Button to="/proposal/new" icon="new" />
+          <Icon to="/proposal/new" icon="new" />
         </th>
       </tr>
     )
   }
   renderBody = () => {
     return this.state.filteredDatabase.map((item, i) => {
+      if (!item) return null;
       const toggleWindow = () => {
         this.props.toggleWindow(item);
       }
@@ -72,7 +72,7 @@ class ProposalsTable extends React.Component {
         if (tools.isUserAllowed("proposal")) {
           return (
             <td className="table__small-column">
-              <Button key={i} icon="edit" to={"/proposal/" + item._id} />
+              <Icon key={i} icon="edit" to={"/proposal/" + item._id} />
             </td>
           )
         } else return null;
@@ -81,7 +81,7 @@ class ProposalsTable extends React.Component {
         if (tools.isUserAllowed("shipping") && item.status === "active") {
           return (
             <td className="table__small-column">
-              <Button key={i} icon="transaction" to={"/shipping/" + item._id} />
+              <Icon key={i} icon="transaction" to={"/shipping/" + item._id} />
             </td>
           )
         } else return null;
@@ -138,8 +138,15 @@ export default ProposalsTableWrapper = withTracker((props) => {
   Meteor.subscribe('usersPub');
   var fullDatabase = Proposals.find().fetch();
   fullDatabase = tools.sortObjects(fullDatabase, '_id', {reverseOrder: true});
-  fullDatabase.forEach((item) => {
-    item.clientName = item.client.description;
+  fullDatabase = fullDatabase.map((item) => {
+    var newItem = {
+      ...item.snapshots[item.activeVersion],
+      _id: item._id,
+      status: item.status,
+      clientName: item.snapshots[item.activeVersion].client.description
+    };
+
+    return newItem;
   })
   var ready = !!fullDatabase.length;
   return {

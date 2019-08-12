@@ -1,11 +1,12 @@
 import React from 'react';
-import createPDF from '/imports/api/create-pdf/index';
+import tools from '/imports/startup/tools/index';
 import Documents from './Documents/index';
 import Billing from './Billing/index';
 import Observations from './Observations/index';
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 import Status from '/imports/components/Status/index';
+import Input from '/imports/components/Input/index';
 
 export default class SceneHeader extends React.Component {
   constructor(props) {
@@ -18,21 +19,74 @@ export default class SceneHeader extends React.Component {
 
   renderTitle = () => {
     var label;
-    if (this.props.master.type === "proposal") {
-      label = "Proposta";
-    } else label = "Contrato";
-    if (this.props.master._id) {
-      return (
-        <div className="master__title">
-          <h1>{`${label} #${this.props.master._id}.${this.props.master.version}`}</h1>
-        </div>
-      )
-    } else return (
+    var reverse = tools.deepCopy(this.props.snapshots);
+    if (this.props.master.type === "contract") {
+      reverse = reverse.filter((item, i) => i > 0);
+    }
+    var middle = Math.floor(reverse.length/2);
+    for (var i = 0; i < middle; i++) {
+      var temp = reverse[i];
+      reverse[i] = reverse[reverse.length-1-i];
+      reverse[reverse.length-1-i] = temp;
+    }
+
+    if (!this.props.master._id) {
+      if (this.props.master.type === "proposal") {
+        label = "Nova Proposta";
+      } else label = "Novo Contrato";
+    } else {
+      if (this.props.master.type === "proposal") {
+        label = "Proposta #" + this.props.master._id + ".";
+      } else label = "Contrato #" + this.props.master._id + ".";
+    }
+
+    const selectStyle = () => {
+      if (!this.props.master._id) return {visibility: "hidden"};
+      if (this.props.master.status === "active") {
+        if (this.props.master.version == this.props.master.activeVersion) {
+          return {background: "#77cc77"}
+        }
+      }
+      return {};
+    }
+
+    const renderSelect = () => {
+      if (this.props.master.type === "shipping") {
+        return <h1>{this.props.master.activeVersion}</h1>
+      }
+      if (reverse.length === 0 && this.props.master.type === "contract") {
+        return <h1>{Number(this.props.master.version)}</h1>
+      } else {
+        return (
+          <Input
+            style={selectStyle()}
+            onChange={this.props.changeVersion}
+            value={this.props.master.version}
+            className="master__version"
+            type="select">
+            {reverse.map((item, i, arr) => {
+              var offset = this.props.master.type === "contract" ? 0 : 1;
+              var index = arr.length-i-offset;
+              var label = index + offset;
+              var style = {background: "white"};
+              if (this.props.master.status === "active") {
+                if (index == this.props.master.activeVersion) {
+                  style = {background: "#77cc77"}
+                }
+              }
+              return <option key={i} value={index} style={style}>{label}</option>
+            })}
+          </Input>
+        )
+      }
+    }
+
+    return (
       <div className="master__title">
-        <h1>{this.props.master.type === "proposal" ? `Nova Proposta` : `Novo Contrato`}</h1>
+        <h1>{label}</h1>
+        {renderSelect()}
       </div>
     )
-
   }
 
   renderCreatedBy = () => {
@@ -42,7 +96,7 @@ export default class SceneHeader extends React.Component {
     var name = user ? user.firstName + " " + user.lastName : "anônimo";
     return (
       <div className="master__overtitle">
-        <p>Documento criado por: <strong>{name}</strong></p>
+        <p>Versão criada por: <strong>{name}</strong></p>
       </div>
     )
   }
@@ -74,15 +128,7 @@ export default class SceneHeader extends React.Component {
         if (!this.props.master.containers.length && !this.props.master.accessories.length) {
           return alert("Adicione algum produto!");
         }
-        this.props.saveMaster((newMaster) => {
-          var createdByUser = this.props.databases.usersDatabase.find((user) => {
-            return user._id === this.props.master.createdBy
-          });
-          var createdByFullName = createdByUser.firstName + " " + createdByUser.lastName;
-          newMaster.createdByFullName = createdByFullName;
-          newMaster.type = "proposal";
-          createPDF(newMaster);
-        })
+        this.props.generateDocument();
       }
     }
     const renderDocuments = () => {
@@ -90,7 +136,7 @@ export default class SceneHeader extends React.Component {
         return (
           <Documents
             databases={this.props.databases}
-            saveMaster={this.props.saveMaster}
+            generateDocument={this.props.generateDocument}
             master={this.props.master}
             toggleWindow={this.toggleWindow}
             updateMaster={this.props.updateMaster}/>
@@ -101,7 +147,7 @@ export default class SceneHeader extends React.Component {
     if (this.props.master.type !== "shipping") {
       return (
         <>
-          <Button value="documents" onClick={requirements} icon="print"/>
+          <Icon value="documents" onClick={requirements} icon="print"/>
           {renderDocuments()}
         </>
       )
@@ -109,14 +155,16 @@ export default class SceneHeader extends React.Component {
   }
 
   showDuplicateButton = () => {
-    if (this.props.master.type !== "proposal") return null;
-    if (!this.props.master._id) return null;
-    return <Button onClick={this.props.duplicateMaster} icon="copy" />
+    return null;
+    // NOT IN USE:
+    // if (this.props.master.type !== "proposal") return null;
+    // if (!this.props.master._id) return null;
+    // return <Icon onClick={this.props.duplicateMaster} icon="copy" />
   }
 
   showCancelButton = () => {
     if (this.props.master.status === "inactive" && this.props.master._id) {
-      return <Button onClick={this.toggleCancelWindow} icon="not" />
+      return <Icon onClick={this.toggleCancelWindow} icon="not" />
     } else return null;
   }
 
@@ -133,7 +181,7 @@ export default class SceneHeader extends React.Component {
         <div className="master__header">
           {this.renderCreatedBy()}
           <div className="master__top-buttons">
-            <Button value='observations' onClick={this.toggleWindow} className={this.checkIfHasContent()} icon="warning"/>
+            <Icon value='observations' onClick={this.toggleWindow} className={this.checkIfHasContent()} icon="warning"/>
             {this.state.windowOpen == 'observations' ? <Observations
                                               master={this.props.master}
                                               toggleWindow={this.toggleWindow}
@@ -141,7 +189,7 @@ export default class SceneHeader extends React.Component {
                                               disabled={this.props.disabled}
                                                   /> : null}
             {this.props.master.type === "contract" ?
-            <Button value='billing' onClick={this.toggleWindow} icon="money"
+            <Icon value='billing' onClick={this.toggleWindow} icon="money"
               style={this.props.errorKeys.includes("billing") ? {color: "red"} : null}/>
             : null}
             {this.state.windowOpen == 'billing' ? <Billing
@@ -162,7 +210,11 @@ export default class SceneHeader extends React.Component {
           </div>
           {this.renderTitle()}
           <div className="master__subtitle">
-            <h3>Status: <Status status={this.props.master.status} type={this.props.master.type}/></h3>
+            <h3>Status: <Status
+              status={this.props.master.status}
+              extra={this.props.statusExtra}
+              type={this.props.master.type}/>
+            </h3>
           </div>
         </div>
       )

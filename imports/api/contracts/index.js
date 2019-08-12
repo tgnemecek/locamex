@@ -10,7 +10,7 @@ export const Contracts = new Mongo.Collection('contracts');
 
 if (Meteor.isServer) {
   Meteor.publish('contractsPub', () => {
-    return Contracts.find({ visible: true }, {sort: { _id: -1 }});
+    return Contracts.find({}, {sort: { _id: -1 }});
   })
   function setProducts(array) {
     return array.map((item) => {
@@ -21,104 +21,65 @@ if (Meteor.isServer) {
   }
 
   Meteor.methods({
-    'contracts.insert'(master) {
+    'contracts.insert'(data) {
       const prefix = new Date().getFullYear();
       const suffix = Contracts.find({ _id: { $regex: new RegExp(prefix)} }).count().toString().padStart(3, '0');
       const _id = prefix + "-" + suffix;
-      const data = {
-        // System Information
-        _id,
-        status: master.status,
-        createdBy: master.createdBy,
-        visible: true,
-        // Contract Information
-        clientId: master.clientId,
-        proposal: master.proposal,
-        proposalVersion: master.proposalVersion,
-        deliveryAddress: master.deliveryAddress,
-        dates: master.dates,
-        discount: master.discount,
 
-        version: master.version,
-        negociatorId: master.negociatorId,
-        representativesId: master.representativesId,
+      data._id = _id;
 
-        inss: master.inss,
-        iss: master.iss,
-        billingProducts: master.billingProducts,
-        billingServices: master.billingServices,
-
-        observations: master.observations,
-        shipping: {},
-
-        containers: setProducts(master.containers),
-        accessories: setProducts(master.accessories),
-        services: setProducts(master.services)
-
-      };
       Contracts.insert(data);
-      Meteor.call('history.insert', data, 'contracts');
+      Meteor.call('history.insert', data, 'contracts.insert');
       return _id;
     },
-    'contracts.update'(master) {
-      var current = Contracts.findOne({_id: master._id});
-      var hasChanged = !tools.compare(current, master);
-      if (!hasChanged) return {hasChanged: false};
+    'contracts.update'(snapshot) {
+      var _id = snapshot._id;
+      var index = snapshot.version;
+      var data = Contracts.findOne({ _id });
+      var hasChanged = !tools.compare(data.snapshots[index], snapshot, "activeVersion");
+      if (!hasChanged) return { hasChanged: false, snapshot };
 
-      const data = {
-        // System Information
-        _id: master._id,
-        // Contract Information
-        status: master.status,
-        clientId: master.clientId,
-        proposal: master.proposal,
-        deliveryAddress: master.deliveryAddress,
-        dates: master.dates,
-        discount: master.discount,
+      const newSnapshot = {
+        ...snapshot,
+        _id: undefined,
+        version: undefined,
+        status: undefined,
+        activeVersion: undefined,
 
-        version: hasChanged ? master.version+1 : master.version,
-        negociatorId: master.negociatorId,
-        representativesId: master.representativesId,
-
-        inss: master.inss,
-        iss: master.iss,
-        billingProducts: master.billingProducts,
-        billingServices: master.billingServices,
-
-        observations: master.observations,
-
-        containers: setProducts(master.containers),
-        accessories: setProducts(master.accessories),
-        services: setProducts(master.services)
-
+        containers: setProducts(snapshot.containers),
+        accessories: setProducts(snapshot.accessories),
+        services: setProducts(snapshot.services)
       };
-      Contracts.update({ _id: master._id }, { $set: data });
-      Meteor.call('history.insert', data, 'contracts');
-      return {hasChanged: true};
+
+      data.snapshots.push(newSnapshot);
+      data.activeVersion = snapshot.version;
+
+      Contracts.update({ _id }, { $set: data });
+      Meteor.call('history.insert', data, 'contracts.update');
+      return { hasChanged: true, data };
     },
-    'contracts.activate'(master) {
-      var _id = master._id;
-      master.status = "active";
-      if (!_id) {
-        _id = Meteor.call('contracts.insert', master);
-      } else {
-        Meteor.call('contracts.update', master);
-      }
+    'contracts.activate'(contract) {
+      var _id = contract._id;
+      Contracts.update({ _id }, { $set: {
+        status: "active",
+        activeVersion: Number(contract.version)
+      } })
       Meteor.call('history.insert', { _id }, 'contracts.activate');
+      return { _id };
+    },
+    'contracts.finalize'(_id) {
+      Contracts.update({ _id }, { $set: { status: "finalized" } } );
+      Meteor.call('history.insert', { _id }, 'contracts.finalize');
       return _id;
     },
-    'contracts.finalize'(master) {
-      Meteor.call('contracts.update', {...master, status: "finalized"});
-      Meteor.call('history.insert', {_id: master._id}, 'contracts.finalize');
-      return master._id;
+    'contracts.cancel'(_id, proposalId) {
+      Proposals.update({ _id: proposalId }, { $set: {status: "cancelled"} });
+      Contracts.update({ _id }, { $set: { status: "cancelled" } } );
+      Meteor.call('history.insert', { _id }, 'contracts.cancel');
+      return _id;
     },
-    'contracts.cancel'(master) {
-      Proposals.update({_id: master.proposal}, {$set: {status: "cancelled"}});
-      Contracts.update({_id: master._id}, {$set: {status: "cancelled"}});
-      Meteor.call('history.insert', {_id: master._id}, 'contracts.cancel');
-      return master._id;
-    },
-    'contracts.shipping.send'(_id, master) {
+    'contracts.shipping.send'(master) {
+      var _id = master._id;
       var oldShipping = Contracts.findOne({ _id }).shipping;
 
       shipping = {
@@ -209,7 +170,8 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', {...history, contractId: _id}, 'contracts.shipping.send');
       return true;
     },
-    'contracts.shipping.receive'(_id, master) {
+    'contracts.shipping.receive'(master) {
+      var _id = master._id;
       var oldShipping = Contracts.findOne({ _id }).shipping;
 
       shipping = {

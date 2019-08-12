@@ -1,7 +1,7 @@
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import tools from '/imports/startup/tools/index';
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 import RedirectUser from '/imports/components/RedirectUser/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
@@ -19,7 +19,7 @@ class UsersTable extends React.Component {
         <th className="table__small-column">Login</th>
         <th className="table__small-column">Tipo de Usuário</th>
         <th className="table__small-column">Email</th>
-        <th className="table__small-column"><Button icon="new" onClick={toggleEditWindow} /></th>
+        <th className="table__small-column"><Icon icon="new" onClick={toggleEditWindow} /></th>
       </tr>
     )
   }
@@ -52,7 +52,7 @@ class UsersTable extends React.Component {
           <td>{item.username}</td>
           <td className="table__small-column">{translate(item.type)}</td>
           <td className="table__small-column">{item.emails[0].address}</td>
-          <td className="table__small-column"><Button icon="edit" onClick={toggleEditWindow} /></td>
+          <td className="table__small-column"><Icon icon="edit" onClick={toggleEditWindow} /></td>
         </tr>
       )
     })

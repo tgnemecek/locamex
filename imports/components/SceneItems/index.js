@@ -9,6 +9,7 @@ export default class SceneItems extends React.Component {
         <div className="master__list">
           <h3>Containers:</h3>
           <ManageItems
+            key={this.props.master.version}
             fullDatabase={this.props.databases.containersDatabase}
             master={this.props.master}
             updateMaster={this.props.updateMaster}
@@ -19,6 +20,7 @@ export default class SceneItems extends React.Component {
         <div className="master__list">
           <h3>Acessórios:</h3>
           <ManageItems
+            key={this.props.master.version}
             fullDatabase={this.props.databases.accessoriesDatabase}
             master={this.props.master}
             updateMaster={this.props.updateMaster}
@@ -29,6 +31,7 @@ export default class SceneItems extends React.Component {
         <div className="master__list">
           <h3>Serviços:</h3>
           <ManageItems
+            key={this.props.master.version}
             fullDatabase={this.props.databases.servicesDatabase}
             master={this.props.master}
             updateMaster={this.props.updateMaster}

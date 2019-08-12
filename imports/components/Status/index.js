@@ -45,7 +45,12 @@ export default function Status(props) {
       label = "Finalizado";
       break;
   }
+
   return (
-    <span className={className}><strong>{label}</strong></span>
+    <>
+    <span className={className}>
+      <strong>{label}</strong>
+    </span>
+    </>
   )
 }

@@ -1,5 +1,77 @@
 # Changelog:
 
+## Version 2.2.0
+
+-  FlyerUploader reformulated;
+-  Fixed accessories and series image uploader;
+-  Batch resaved accessories and series databases with new image urls;
+-  Fixed HistoryTable bug;
+
+## Version 2.1.9
+
+-  ProposalsTable now allows search for client description;
+
+## Version 2.1.8
+
+-  Change in Contract text;
+-  Partial implementation of aws for products:
+    -  Series is complete, accessories/modules in progress;
+
+## Version 2.1.7
+
+-  Fixed error in proposal version display;
+
+## Version 2.1.6
+
+-  FlyerUploader now shows if the product has a flyer;
+
+## Version 2.1.5
+
+-  Added flyers functionality, including merging pdfs in proposal;
+-  AWS integration redone without using Slingshot;
+-  Create-pdf folder moved to helpers/Pdf class;
+-  Pdf is now generated server-side;
+
+## Version 2.1.4
+
+-  Fixed address in proposal and contract pdf;
+
+## Version 2.1.3
+
+-  Fixed version number in pdf;
+
+## Version 2.1.2
+
+-  Fixed error in Contract generation;
+
+## Version 2.1.1
+
+-  Fixed how contracts are generated from proposals;
+
+## Version 2.1.0
+
+-  Proposals and Contracts have snapshots functionality;
+
+## Version 2.0.8
+
+-  Fixed pdf bug;
+
+## Version 2.0.7
+
+-  Proposal and Contract server error now print to console;
+
+## Version 2.0.6
+
+-  Added "clients" page to "sales" user-type;
+
+## Version 2.0.5
+
+-  Edited Proposal PDF text;
+
+## Version 2.0.4
+
+-  Fixed more pdf bugs;
+
 ## Version 2.0.3
 
 -  Version number now written in history and shown in DatabaseHistory;

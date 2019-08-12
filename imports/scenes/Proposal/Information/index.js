@@ -129,7 +129,7 @@ export default class Information extends React.Component {
               onChange={this.handleChange}
             />
             <Input
-              title="Endereço de Entrega:"
+              title="Rua / Bairro de Entrega:"
               name="street"
               type="text"
               extra="deliveryAddress"

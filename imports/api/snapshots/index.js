@@ -4,30 +4,31 @@ import { Accessories } from '../accessories/index';
 import { Modules } from '../modules/index';
 import { Series } from '../series/index';
 
+var DATABASE_SET = {
+  series: Series,
+  accessory: Accessories,
+  module: Modules
+}
+
 if (Meteor.isServer) {
   Meteor.methods({
-    'snapshot.add' (metaContext, urls) {
-      var Database = null;
-      var snapshots = {
-        date: new Date(),
-        images: urls
-      };
+    'snapshot.add' (item, urls) {
+      try {
+        var Database = DATABASE_SET[item.type];
+        var _id = item._id;
+        if (!Database) throw new Meteor.Error("type-not-found: " + item.type);
 
-      switch (metaContext.type) {
-        case 'fixed':
-          Database = Series;
-        break;
-        case 'accessory':
-          Database = Accessories;
-        break;
-        case 'module':
-          Database = Modules;
-        break;
-        default:
-          throw new Meteor.Error('please-add-db-to-snapshots-api');
+        var snapshots = {
+          date: new Date(),
+          images: urls
+        };
+        Database.update({ _id }, { $push: { snapshots } });
+        Meteor.call('history.insert', { ...snapshots, _id }, 'snapshot.add');
+        return urls;
       }
-
-      Database.update({ _id: metaContext.documentId }, { $push: { snapshots } });
+      catch(err) {
+        throw new Meteor.Error(err);
+      }
     }
   })
 }

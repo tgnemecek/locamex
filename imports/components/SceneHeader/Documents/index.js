@@ -1,14 +1,14 @@
 import React from 'react';
 
-import createPDF from '/imports/api/create-pdf/index';
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 import tools from '/imports/startup/tools/index';
 
-import DocumentsCompany from './DocumentsCompany/index';
-import DocumentsPerson from './DocumentsPerson/index';
+import DocContractCompany from './DocContractCompany/index';
+import DocContractPerson from './DocContractPerson/index';
+import DocProposal from './DocProposal/index';
 
 export default class DocumentsSelector extends React.Component {
   getClient = () => {
@@ -20,12 +20,15 @@ export default class DocumentsSelector extends React.Component {
   render() {
     var newProps = {
       ...this.props,
-      master: {...this.props.master, client: this.getClient()},
-      createPDF
+      master: {...this.props.master, client: this.getClient()}
     }
     if (this.props.master.type === "contract") {
-      if (newProps.master.client.type === "company") return <DocumentsCompany {...newProps}/>
-      if (newProps.master.client.type === "person") return <DocumentsPerson {...newProps}/>
-    } else return null;
+      if (newProps.master.client.type === "company") {
+        return <DocContractCompany {...newProps}/>
+      }
+      if (newProps.master.client.type === "person") {
+        return <DocContractPerson {...newProps}/>
+      }
+    } else return <DocProposal {...this.props}/>
   }
 }

@@ -6,7 +6,7 @@ import { Contracts } from '/imports/api/contracts/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import tools from '/imports/startup/tools/index';
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 import Status from '/imports/components/Status/index';
@@ -45,6 +45,7 @@ class ContractsTable extends React.Component {
   }
   renderBody = () => {
     return this.state.filteredDatabase.map((item, i) => {
+      debugger;
       const toggleWindow = () => {
         this.props.toggleWindow(item);
       }
@@ -80,7 +81,7 @@ class ContractsTable extends React.Component {
         if (tools.isUserAllowed("contract")) {
           return (
             <td className="table__small-column">
-              <Button key={i} icon="edit" to={"/contract/" + item._id} />
+              <Icon key={i} icon="edit" to={"/contract/" + item._id} />
             </td>
           )
         } else return null;
@@ -89,7 +90,7 @@ class ContractsTable extends React.Component {
         if (tools.isUserAllowed("shipping") && item.status === "active") {
           return (
             <td className="table__small-column">
-              <Button key={i} icon="transaction" to={"/shipping/" + item._id} />
+              <Icon key={i} icon="transaction" to={"/shipping/" + item._id} />
             </td>
           )
         } else return null;
@@ -97,7 +98,9 @@ class ContractsTable extends React.Component {
       return (
         <tr key={i}>
           <td className="table__small-column">{item._id}</td>
-          <td className="table__small-column">{item.proposal ? `${item.proposal}.${item.proposalVersion}` : "-"}</td>
+          <td className="table__small-column">
+            {`${item.proposal}.${Number(item.proposalVersion)+1}`}
+          </td>
           <td>{clientName()}</td>
           <td className="table__small-column"><Status status={item.status} type="contract"/></td>
           <td className="table__small-column">{totalValue()}</td>
@@ -151,13 +154,25 @@ export default ContractsTableWrapper = withTracker((props) => {
   var clientsDatabase = Clients.find().fetch();
 
   fullDatabase = tools.sortObjects(fullDatabase, '_id', {reverseOrder: true});
-  fullDatabase.forEach((item) => {
-    var currentClient = clientsDatabase.find((client) => client._id === item.clientId);
+  fullDatabase = fullDatabase.map((item) => {
+    newItem = {
+      ...item.snapshots[Number(item.activeVersion)],
+      _id: item._id,
+      status: item.status,
+      proposal: item.proposal,
+      proposalVersion: item.proposalVersion
+    };
+
+    var currentClient = clientsDatabase.find((client) => {
+      return client._id === item.clientId
+    });
+
     if (currentClient) {
-      item.registry = currentClient.registry;
-      item.officialName = currentClient.officialName;
-      item.description = currentClient.description;
+      newItem.registry = currentClient.registry;
+      newItem.officialName = currentClient.officialName;
+      newItem.description = currentClient.description;
     }
+    return newItem;
   })
   var ready = !!fullDatabase.length;
   return {

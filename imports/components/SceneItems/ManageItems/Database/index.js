@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 import tools from '/imports/startup/tools/index';
 
 export default class Database extends React.Component {
@@ -11,7 +11,7 @@ export default class Database extends React.Component {
         <tr key={i} className="item-list__selection__db-item">
           <td>{item.description}</td>
           <td className="buttom-column">
-            <Button value={item._id} onClick={this.props.addItem} icon="arrowRight"/>
+            <Icon value={item._id} onClick={this.props.addItem} icon="arrowRight"/>
           </td>
         </tr>
       )

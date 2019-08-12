@@ -153,7 +153,7 @@ export default class ManageItems extends React.Component {
                   searchHere={['description']}
                   filterSearch={this.filterSearch}/>
                 <div style={{marginTop: "30px"}}>
-                  <label>{`${this.props.title} Adicionados no Contrato:`}</label>
+                  <label>{`${this.props.title} Adicionados:`}</label>
                 </div>
                 <Database
                   database={this.state.filteredDatabase}
