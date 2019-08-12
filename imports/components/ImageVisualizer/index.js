@@ -1,7 +1,8 @@
 import React from 'react';
+import moment from 'moment';
 import tools from '/imports/startup/tools/index';
 
-import FileUploader from '/imports/components/FileUploader/index';
+import FileUploader from './FileUploader/index';
 import WithoutSnapshots from './WithoutSnapshots/index';
 import WithSnapshots from './WithSnapshots/index';
 
@@ -18,7 +19,7 @@ export default class ImageVisualizer extends React.Component {
   }
   params = () => {
     var general = {
-      allowedFileTypes: ["jpg"],
+      allowedFileTypes: ["image/jpeg"],
       maximum: 10
     }
 

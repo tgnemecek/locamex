@@ -9,7 +9,7 @@ import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 import Input from '/imports/components/Input/index';
 
-export default class SnapshotVisualizer extends React.Component {
+export default class WithSnapshots extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

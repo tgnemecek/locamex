@@ -92,7 +92,6 @@ class ModulesTable extends React.Component {
           <td className="table__small-column">{available + item.rented + inactive}</td>
           <td className="table__small-column"><Icon icon="edit" onClick={toggleEditWindow} /></td>
           <td className="table__small-column"><Icon icon="transaction" onClick={toggleStockVisualizer} /></td>
-          <td className="table__small-column"><Icon icon="image" onClick={toggleImageWindow} /></td>
         </tr>
       )
     })

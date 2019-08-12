@@ -14,6 +14,114 @@ import { Services } from '/imports/api/services/index';
 import { Series } from '/imports/api/series/index';
 
 if (Meteor.isServer && Meteor.isDevelopment) {
+  // 
+  // // var collection = Series.find().fetch();
+  //
+  // // Series.remove({});
+  //
+  // var errors = [
+  //   "257",
+  //   "238",
+  //   "198",
+  //   "190",
+  //   "191",
+  //   "244",
+  //   "165",
+  //   "104",
+  //   "208",
+  //   "186",
+  //   "192",
+  //   "236"
+  // ]
+  //
+  // errors.forEach((_id, n, arr) => {
+  //   console.log(_id + ". STARTING: " + (n+1) + "/" + arr.length);
+  //   var item = Series.findOne({_id});
+  //
+  //   var dateWithCode = "";
+  //   var dateString = "";
+  //   var code = "";
+  //
+  //   var images = item.snapshots[item.snapshots.length-1].images.map((image, i) => {
+  //     var prefix = "https://locamex-app.s3-sa-east-1.amazonaws.com/";
+  //
+  //     if (!dateWithCode) {
+  //       dateWithCode = image.match(/2019-\d\d-\d\d_\d*/g)[0];
+  //       dateString = dateWithCode.split("_")[0];
+  //       code = dateWithCode.split("_")[1];
+  //     }
+  //     var oldKey = `user-uploads/snapshots/series/${item._id}/${dateWithCode}/ss-series-${item._id}-${code}-${i}.jpg`;
+  //     var newKey = image.replace(prefix, "");
+  //     Meteor.call("aws.copy.object", oldKey, newKey);
+  //     return prefix + newKey;
+  //   })
+  // })
+  //
+  // collection.forEach((item, n, arr) => {
+  //   var newImageArray = [];
+  //   var newSnapshots = [];
+  //   console.log("STARTING ITEM: " + (n+1) + "/" + arr.length);
+  //   if (item._id )
+  //   if (Array.isArray(item.snapshots)) {
+  //     if (item.snapshots.length) {
+  //       var lastIndex = item.snapshots.length-1;
+  //       var date = item.snapshots[lastIndex].date;
+  //
+  //       var dateWithCode = "";
+  //       var dateString = "";
+  //       var code = "";
+  //
+  //       newImageArray = item.snapshots[lastIndex].images.map((image, i) => {
+  //         var prefix = "https://locamex-app.s3-sa-east-1.amazonaws.com/";
+  //         var oldKey = image.replace(prefix, "");
+  //         if (!dateWithCode) {
+  //           dateWithCode = oldKey.match(/2019-\d\d-\d\d_\d*/g)[0];
+  //           dateString = dateWithCode.split("_")[0];
+  //           code = dateWithCode.split("_")[1];
+  //         }
+  //         var newKey = `user-uploads/images/series/${item._id}/${dateWithCode}/series-${item._id}-${code}-${i}.jpg`;
+  //         Meteor.call("aws.copy.object", oldKey, newKey);
+  //         return prefix + newKey;
+  //       })
+  //
+  //       newSnapshots = [
+  //         {
+  //           date,
+  //           images: newImageArray
+  //         }
+  //       ]
+  //
+  //     }
+  //   }
+  //
+  //   var newItem = {
+  //     ...item,
+  //     snapshots: newSnapshots
+  //   }
+  //
+  //   Series.insert(newItem);
+  // })
+
+  //// RENAMING ALL ACCESSORIES
+  // collection.forEach((item, n, arr) => {
+  //   var code = new Date().getTime();
+  //   var newImageArray = [];
+  //   console.log("STARTING ITEM: " + (n+1) + "/" + arr.length)
+  //   if (Array.isArray(item.images)) {
+  //     newImageArray = item.images.map((image, i) => {
+  //       var prefix = "https://locamex-app.s3-sa-east-1.amazonaws.com/";
+  //       var oldKey = image.replace(prefix, "");
+  //       var newKey = `user-uploads/images/accessories/${item._id}/accessory-${item._id}-${code}-${i}.jpg`;
+  //       Meteor.call("aws.rename.key", oldKey, newKey);
+  //       return prefix + newKey;
+  //     })
+  //   }
+  //
+  //   Accessories.insert({
+  //     ...item,
+  //     images: newImageArray
+  //   });
+  // })
 
   // var accessories = Accessories.find().fetch();
   // var datas = [];
@@ -60,7 +168,7 @@ if (Meteor.isServer && Meteor.isDevelopment) {
   //
   // var promises = datas.map((data, i, arr) => {
   //   console.log("Started Copy " + (i+1) + "/" + arr.length);
-  //   return Meteor.call('aws.changeKey', data.oldKey, data.newKey);
+  //   return Meteor.call('aws.rename.key', data.oldKey, data.newKey);
   // })
   //
   // Promise.all(promises).then(() => {
@@ -107,7 +215,7 @@ if (Meteor.isServer && Meteor.isDevelopment) {
   //
   // var promises = datas.map((data, i, arr) => {
   //   console.log("Started Copy " + (i+1) + "/" + arr.length);
-  //   return Meteor.call('aws.changeKey', data.oldKey, data.newKey);
+  //   return Meteor.call('aws.rename.key', data.oldKey, data.newKey);
   // })
   //
   // Promise.all(promises).then(() => {

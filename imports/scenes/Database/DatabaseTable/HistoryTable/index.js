@@ -34,14 +34,15 @@ class HistoryTable extends React.Component {
       const toggleEditWindow = () => {
         this.props.toggleEditWindow(item);
       }
+      console.log(item.data._id);
       return (
         <tr key={i}>
           <td>{moment(item.insertionDate).format("DD-MM-YYYY")}</td>
           <td>{moment(item.insertionDate).format("HH:mm:ss")}</td>
           <td>{item.version}</td>
           <td>{item.user.firstName}</td>
-          <td>{tools.translateDatabase(item.type)}</td>
-          <td>{item.data._id}</td>
+          <td>{item.type}</td>
+          <td>{item.data._id ? item.data._id.toString() : "-"}</td>
         </tr>
       )
     })

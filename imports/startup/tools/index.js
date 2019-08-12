@@ -145,27 +145,20 @@ export default class tools {
   }
 
   static translateDatabase = (database) => {
-    if (database == 'accessories') {
-      return "Acessórios"
-    } else if (database == 'clients') {
-      return "Clientes"
-    } else if (database == 'containers' || database == 'models') {
-      return "Modelos"
-    } else if (database == 'history') {
-      return "Histórico"
-    } else if (database == 'maintenance') {
-      return "Manutenção"
-    } else if (database == 'modules') {
-      return "Componentes"
-    } else if (database == 'packs') {
-      return "Pacotes"
-    } else if (database == 'places') {
-      return "Pátios"
-    } else if (database == 'services') {
-      return "Serviços"
-    } else if (database == 'users') {
-      return "Usuários"
-    } else return database;
+    var dictionary = {
+      accessories: "Acessórios",
+      clients: "Clientes",
+      containers: "Modelos",
+      models: "Modelos",
+      history: "Histórico",
+      maintenance: "Manutenção",
+      modules: "Componentes",
+      packs: "Montados",
+      places: "Pátios",
+      services: "Serviços",
+      users: "Usuários",
+    }
+    return dictionary[database] || database;
   }
 
   static format = (value, type, externalOptions) => {

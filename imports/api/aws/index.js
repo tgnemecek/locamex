@@ -47,7 +47,7 @@ if (Meteor.isServer) {
         })
       })
     },
-    'aws.changeKey' (oldKey, newKey) {
+    'aws.copy.object' (oldKey, newKey, deleteOrigin) {
       return new Promise((resolve, reject) => {
         var s3 = new AWS.S3();
         // if (Meteor.isDevelopment) {
@@ -63,19 +63,56 @@ if (Meteor.isServer) {
         }
 
         s3.copyObject(params, (err, data) => {
-          if (err) reject(error);
+          if (err) reject({
+            ...err,
+            oldKey
+          });
           if (data) {
-            var params = {
-              Bucket,
-              Key: oldKey
-            }
-            resolve(data);
-            // s3.deleteObject(params, (err, data) => {
-            //   if (err) reject(error);
-            //   if (data) {
-            //     resolve(data);
-            //   }
-            // })
+            if (deleteOrigin) {
+              var params = {
+                Bucket,
+                Key: oldKey
+              }
+              s3.deleteObject(params, (err, data) => {
+                if (err) reject(err);
+                if (data) resolve(data);
+              })
+            } else resolve(data);
+          }
+        })
+      })
+    },
+    'aws.delete.directory' (folder) {
+      return new Promise((resolve, reject) => {
+        var s3 = new AWS.S3();
+
+        if (Meteor.isDevelopment) {
+          folder = "tests/" + folder;
+        }
+
+        var params = {
+          Bucket,
+          Prefix: folder,
+          MaxKeys: 20
+        }
+        s3.listObjects(params, (err, data) => {
+          if (err) if (err) reject(err);
+          if (data) {
+            if (data.Contents.length) {
+              var Objects = data.Contents.map((item) => {
+                return { Key: item.Key }
+              })
+              var params = {
+                Bucket,
+                Delete: { Objects }
+              }
+              s3.deleteObjects(params, (err, data) => {
+                if (err) if (err) reject(err);
+                if (data) {
+                  resolve(data);
+                }
+              })
+            } else resolve(data);
           }
         })
       })

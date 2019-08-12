@@ -1,5 +1,12 @@
 # Changelog:
 
+## Version 2.2.0
+
+-  FlyerUploader reformulated;
+-  Fixed accessories and series image uploader;
+-  Batch resaved accessories and series databases with new image urls;
+-  Fixed HistoryTable bug;
+
 ## Version 2.1.9
 
 -  ProposalsTable now allows search for client description;

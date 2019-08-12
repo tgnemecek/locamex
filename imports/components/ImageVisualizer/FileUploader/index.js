@@ -26,18 +26,6 @@ export default class FileUploader extends React.Component {
 
   setFiles = (e) => {
     var files = e.target.value;
-    var allowedFileTypes = ["image/jpeg"];
-    var maximum = this.props.maximum || 1;
-
-    if (files.length > maximum) {
-      return alert(`Favor selecionar até ${maximum} imagens.`);
-    }
-    for (var file of files) {
-      if (!allowedFileTypes.includes(file.type)) {
-        alert("Favor selecionar um arquivo de Imagem JPG.");
-        return;
-      }
-    }
     this.setState({ files });
   }
 
@@ -54,21 +42,25 @@ export default class FileUploader extends React.Component {
       console.log(err);
     }
 
-    const sendWithSnapshot = () => {
+    var code = new Date().getTime();
+
+    const sendImagesForSeries = () => {
+      var date = moment().format("YYYY-MM-DD") + "_" + code;
+
       this.setState({ databaseStatus: {status: "loading"} }, () => {
         var promises = this.state.files.map((file, i) => {
           return new Promise((resolve, reject) => {
             var reader = new FileReader();
             var division = file.name.split(".");
             var extension = division[division.length-1];
-            var fileName = `ss-${type}-${this.props.item._id}-${code}-${i}`;
-            var filePath = `user-uploads/snapshots/series/` +
-            `${this.props.item._id}/${date}/${fileName}.${extension}`;
+            var fileName = `series-${this.props.item._id}-${code}-${i}.${extension}`;
+            var filePath = `user-uploads/images/series/` + `${this.props.item._id}/${date}/`;
+            var key = filePath + fileName;
 
             reader.onloadend = () => {
               resolve({
                 dataUrl: reader.result,
-                filePath
+                filePath: key
               });
             }
             reader.readAsDataURL(file);
@@ -90,34 +82,40 @@ export default class FileUploader extends React.Component {
       });
     }
 
-    const sendWithoutSnapshot = () => {
+    const sendImagesForAccessories = () => {
+      var filePath = `user-uploads/images/accessories/${this.props.item._id}/`;
+
       this.setState({ databaseStatus: {status: "loading"} }, () => {
         var promises = this.state.files.map((file, i) => {
           return new Promise((resolve, reject) => {
             var reader = new FileReader();
             var division = file.name.split(".");
             var extension = division[division.length-1];
-            var fileName = `ss-${type}-${this.props.item._id}-${code}-${i}`;
-            var filePath = `user-uploads/snapshots/series/` +
-            `${this.props.item._id}/${date}/${fileName}.${extension}`;
+            var fileName = `${type}-${this.props.item._id}-${code}-${i}.${extension}`;
+            var key = filePath + fileName;
 
             reader.onloadend = () => {
               resolve({
                 dataUrl: reader.result,
-                filePath
+                filePath: key
               });
             }
             reader.readAsDataURL(file);
           })
         })
         Promise.all(promises).then((filesWithUrl) => {
-          Meteor.call('aws.write.multiple', filesWithUrl, (err, urls) => {
+          Meteor.call('aws.delete.directory', filePath, (err, res) => {
             if (err) throwError(err);
-            if (urls) {
-              Meteor.call('accessories.update.one', this.props.item._id, "images", urls, (err, res) => {
+            if (res) {
+              Meteor.call('aws.write.multiple', filesWithUrl, (err, urls) => {
                 if (err) throwError(err);
-                if (res) {
-                  this.setState({ databaseStatus: {status: "completed"} });
+                if (urls) {
+                  Meteor.call('accessories.update.one', this.props.item._id, "images", urls, (err, res) => {
+                    if (err) throwError(err);
+                    if (res) {
+                      this.setState({ databaseStatus: {status: "completed"} });
+                    }
+                  })
                 }
               })
             }
@@ -126,44 +124,17 @@ export default class FileUploader extends React.Component {
       });
     }
 
-    if (this.props.item.type === "series") sendWithSnapshot();
-    if (this.props.item.type === "series") sendWithoutSnapshot();
-
+    if (this.props.item.type === "series") {
+      sendImagesForSeries();
+    } else if (this.props.item.type === "accessory") {
+      sendImagesForAccessories();
+    } else throw new Meteor.Error('type-not-set');
   }
 
   removeFile = (i) => {
     var files = this.state.files;
     files.splice(i, 1);
     this.setState({ files });
-  }
-
-  renderPreview = () => {
-    if (!this.state.files.length) return null;
-    return (
-      <table className="table">
-        <thead>
-          <tr>
-            <th className="table__small-column">#</th>
-            <th>Arquivos Selecionados</th>
-          </tr>
-        </thead>
-        <tbody>
-          {this.state.files.map((file, i) => {
-            return (
-              <tr key={i}>
-                <td>{i+1}</td>
-                <td>{file.name}</td>
-                <td className="table__small-column">
-                  <button onClick={() => this.removeFile(i)}>
-                    <Icon icon="not"/>
-                  </button>
-                </td>
-              </tr>
-            )
-          })}
-        </tbody>
-      </table>
-    )
   }
 
   render() {
@@ -178,9 +149,11 @@ export default class FileUploader extends React.Component {
             <Input
               type="file"
               accept=".jpg"
-              max={10}
+              preview={true}
+              removeFile={this.removeFile}
+              max={this.props.params.maximum}
+              allowedFileTypes={this.props.params.allowedFileTypes}
               onChange={this.setFiles}/>
-              {this.renderPreview()}
           </div>
         </div>
           <FooterButtons buttons={[

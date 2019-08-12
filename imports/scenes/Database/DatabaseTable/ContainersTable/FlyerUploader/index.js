@@ -2,6 +2,7 @@ import React from 'react';
 
 import tools from '/imports/startup/tools/index';
 import Icon from '/imports/components/Icon/index';
+import Input from '/imports/components/Input/index';
 import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 import Box from '/imports/components/Box/index';
 import Block from '/imports/components/Block/index';
@@ -11,7 +12,7 @@ export default class FlyerUploader extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      file: '',
+      file: [],
       databaseStatus: {}
     }
   }
@@ -23,10 +24,8 @@ export default class FlyerUploader extends React.Component {
   }
 
   setFile = (e) => {
-    var file = e.target.files[0];
-    if (file.type !== "application/pdf") {
-      alert("Favor selecionar um arquivo PDF.")
-    } else this.setState({ file });
+    var file = [e.target.value[0]];
+    this.setState({ file });
   }
 
   button = () => {
@@ -64,7 +63,11 @@ export default class FlyerUploader extends React.Component {
         }
       })
     }
-    reader.readAsDataURL(this.state.file);
+    reader.readAsDataURL(this.state.file[0]);
+  }
+
+  removeFile = () => {
+    this.setState({ file: null });
   }
 
   render() {
@@ -77,10 +80,14 @@ export default class FlyerUploader extends React.Component {
         <Block columns={2}>
           <div className="containers-table__flyer-uploader__new-flyer">
             <p>Novo Folder:</p>
-            <input
+            <Input
               type="file"
               accept=".pdf"
-              files={[this.state.file]}
+              preview={true}
+              allowedFileTypes={["application/pdf"]}
+              removeFile={this.removeFile}
+              value={this.state.file}
+              max={1}
               onChange={this.setFile}/>
           </div>
           <div className="containers-table__flyer-uploader__current-flyer">

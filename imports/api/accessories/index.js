@@ -42,6 +42,7 @@ if (Meteor.isServer) {
     'accessories.update.one'(_id, key, value) {
       Accessories.update({ _id }, { $set: {[key]: value} });
       Meteor.call('history.insert', {_id, key, value}, 'accessories.update.one');
+      return _id;
     },
     'accessories.stock.variations.update'(_id, variations) {
       const data = {
