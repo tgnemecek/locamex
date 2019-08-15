@@ -64,6 +64,7 @@ if (Meteor.isServer) {
         status: "active",
         activeVersion: Number(contract.version)
       } })
+      Meteor.call('agenda.contract.activation', _id);
       Meteor.call('history.insert', { _id }, 'contracts.activate');
       return { _id };
     },

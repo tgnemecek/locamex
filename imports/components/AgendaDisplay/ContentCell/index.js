@@ -1,37 +1,27 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import tools from '/imports/startup/tools/index';
 
-import Button from '/imports/components/Button/index';
+import Icon from '/imports/components/Icon/index';
 
 export default class ContentCell extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isWindowOpen: false,
-      x: null,
-      y: null
+  renderIcon = () => {
+    if (this.props.events) {
+      if (this.props.events.length) {
+        return <Icon icon="star" className="agenda__star"/>
+      }
     }
-  }
-
-  onMouseEnter = (e) => {
-    var x = e.clientX;
-    var y = e.clientY;
-    this.setState({ isWindowOpen: true, x, y });
-  }
-
-  onMouseLeave = (e) => {
-    this.setState({ isWindowOpen: false });
+    return null;
   }
 
   render() {
     return (
-      <td className={this.props.className} onMouseEnter={this.onMouseEnter} onMouseLeave={this.onMouseLeave}>
-        <Button icon="star" className="agenda__star" iconStyle={{color: "black"}}/>
-        {this.props.date.format("DD")}
+      <td className={this.props.className}>
+        {this.renderIcon()}
+        <p className={this.props.isToday ? "agenda__day--today" : ""}>
+          {this.props.date.format("DD")}
+        </p>
         <HoverWindow
-          isWindowOpen={this.state.isWindowOpen}
-          x={this.state.x}
-          y={this.state.y}
           events={this.props.events}
         />
       </td>
@@ -40,22 +30,21 @@ export default class ContentCell extends React.Component {
 }
 
 function HoverWindow(props) {
-  if (!props.isWindowOpen) return null;
-
   renderEvents = () => {
     return props.events.map((event, i) => {
-      return <span key={i}>aaa</span>
+      return (
+        <li key={i}>
+          <Link to={"/" + event.link}>Contrato 2019-0100: Vencimento da Cobrança 5/10</Link>
+        </li>
+      )
     })
   }
-
-  style = () => {
-    return {transform: `translate3d(${props.x}px, ${props.y}.px, 0px)`};
-  }
-
-
   return (
-    <div className="agenda__hoverbox" style={style()}>
-      {renderEvents()}
+    <div className="agenda__hoverbox">
+      <h4>Eventos:</h4>
+      <ul>
+        {renderEvents()}
+      </ul>
     </div>
   )
 }
