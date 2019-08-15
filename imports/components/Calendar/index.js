@@ -11,7 +11,7 @@ export default class Calendar extends React.Component {
       monthIndex: new Date(this.props.value).getMonth() || new Date().getMonth(),
       yearIndex: new Date(this.props.value).getFullYear() || new Date().getFullYear(),
       dayIndex: 1,
-      selectedDate: new Date(this.props.value) || new Date()
+      selectedDate: this.props.value || new Date()
     }
   }
 

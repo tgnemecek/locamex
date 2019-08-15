@@ -70,27 +70,28 @@ export default class ProductsSection extends React.Component {
   renderBody = () => {
     return this.props.charges.map((charge, i, array) => {
       const onChangePrice = (e) => {
+        debugger;
         var value = Number(e.target.value);
-        var newCharges = tools.deepCopy(array);
+        var newCharges = [...array];
         newCharges[i].value = value;
         this.props.updateBilling('billingProducts', newCharges);
       }
       const onChangeDescription = (e) => {
         var value = e.target.value;
-        var newCharges = tools.deepCopy(array);
+        var newCharges = [...array];
         newCharges[i].description = value;
         this.props.updateBilling('billingProducts', newCharges);
       }
       const changeDate = (e) => {
         var endDate = e.target.value;
-        var charges = tools.deepCopy(array);
+        var charges = [...array];
         charges[i].endDate = moment(endDate).toDate();
         this.toggleCalendar();
         this.props.updateBilling('billingProducts', charges);
       }
       const changeExpiryDate = (e) => {
         var expiryDate = e.target.value;
-        var charges = tools.deepCopy(array);
+        var charges = [...array];
         charges[i].expiryDate = moment(expiryDate).toDate();
         this.toggleCalendar();
         this.props.updateBilling('billingProducts', charges);
@@ -109,7 +110,11 @@ export default class ProductsSection extends React.Component {
               value={charge.expiryDate}/>
           </td>
           <td>
-            <Input name={i} value={charge.description} onChange={onChangeDescription} type="textarea"/>
+            <Input
+              name={i}
+              value={charge.description}
+              onChange={onChangeDescription}
+              type="textarea"/>
           </td>
           <td>
             <Input name={i} type="currency"

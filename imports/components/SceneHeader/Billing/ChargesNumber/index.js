@@ -4,7 +4,6 @@ import moment from 'moment';
 import tools from '/imports/startup/tools/index';
 import Input from '/imports/components/Input/index';
 
-// This has to be a class because we are using it more than once, requring different instances
 export default class ChargesNumber extends React.Component {
   onChange = (e) => {
     var value = Number(e.target.value);

@@ -59,7 +59,17 @@ export default class Billing extends React.Component {
 
 
   updateState = (key, value) => {
-    this.setState({ [key]: value })
+    if (Array.isArray(value)) {
+      if (value[0]) {
+        console.log("before: " + value[0].startDate);
+      }
+    }
+
+    this.setState({ [key]: value }, () => {
+      this.state.billingProducts.forEach((charge) => {
+        if (charge) console.log("after: " + typeof charge.startDate);
+      })
+    })
   }
 
 

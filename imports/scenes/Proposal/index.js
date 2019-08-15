@@ -74,7 +74,6 @@ class Proposal extends React.Component {
         dates: {
           creationDate: new Date(),
           startDate: new Date(),
-          billingDate: new Date(),
           duration: 1,
           timeUnit: "months"
         },
