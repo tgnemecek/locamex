@@ -38,10 +38,11 @@ class Shipping extends React.Component {
     return (
       <div className="page-content">
         <RedirectUser currentPage="shipping"/>
-        <div className="contract">
+        <div className="shipping">
           <SceneHeader
             master={{...this.props.contract, type: "shipping"}}
             databases={this.props.databases}
+            snapshots={this.props.contract ? this.props.contract.snapshots : []}
 
             updateMaster={this.updateContract}
             cancelMaster={this.cancelContract}
@@ -94,11 +95,7 @@ export default ShippingWrapper = withTracker((props) => {
   var contract = Contracts.findOne({ _id: props.match.params.contractId });
   if (contract) {
     contract = {
-      _id: contract._id,
-      shipping: contract.shipping,
-      status: contract.status,
-      activeVersion: contract.activeVersion,
-      shipping: contract.shipping,
+      ...contract,
       ...contract.snapshots[contract.activeVersion]
     }
   }

@@ -15,10 +15,5 @@ function Widgets (props) {
 export default WidgetsWrapper = withTracker((props) => {
   Meteor.subscribe('agendaPub');
   var agendaDatabase = Agenda.find().fetch();
-  var userType = Meteor.user().type;
-  agendaDatabase.filter((item) => {
-    if (userType === 'administrator') return true;
-    return item.visibleTo.includes(userType);
-  })
   return { agendaDatabase }
 })(Widgets);

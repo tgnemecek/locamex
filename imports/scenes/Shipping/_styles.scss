@@ -6,3 +6,9 @@
   cursor: pointer;
   background: $brand-primary;
 }
+
+.shipping {
+  button:enabled {
+    cursor: pointer;
+  }
+}

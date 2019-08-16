@@ -5,13 +5,18 @@ import tools from '/imports/startup/tools/index';
 import Icon from '/imports/components/Icon/index';
 
 import ContentCell from './ContentCell/index';
+import ContentDisplay from './ContentDisplay/index';
+import Legend from './Legend/index';
+
 
 export default class AgendaDisplay extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedMonth: new Date().getMonth(),
-      selectedYear: new Date().getFullYear()
+      selectedMonth: moment().month(),
+      selectedYear: moment().year(),
+      selectedDate: moment(),
+      events: []
     }
   }
 
@@ -27,6 +32,10 @@ export default class AgendaDisplay extends React.Component {
       selectedYear--;
     }
     this.setState({ selectedMonth, selectedYear });
+  }
+
+  changeSelectedDate = (selectedDate, events) => {
+    this.setState({ selectedDate, events });
   }
 
   renderTitle = () => {
@@ -69,7 +78,10 @@ export default class AgendaDisplay extends React.Component {
     var days = [];
 
     const getDate = (num) => {
-      return moment().year(this.state.selectedYear).month(this.state.selectedMonth).date(num);
+      return moment()
+      .year(this.state.selectedYear)
+      .month(this.state.selectedMonth)
+      .date(num);
     }
 
     var filteredAgenda = this.props.agendaDatabase.filter((event) => {
@@ -84,7 +96,6 @@ export default class AgendaDisplay extends React.Component {
 
     for (var i = (lastMonthLength - startingWeekDay + 1); i <= lastMonthLength; i++) {
       days.push({
-        dayIndex: i,
         date: getDate(i),
         isActive: false,
         events: []
@@ -95,7 +106,6 @@ export default class AgendaDisplay extends React.Component {
         return event.date.getDate() === i;
       })
       days.push({
-        dayIndex: i,
         date: getDate(i),
         isActive: true,
         events
@@ -103,7 +113,6 @@ export default class AgendaDisplay extends React.Component {
     }
     for (var i = 1; i <= nextMonthDays; i++) {
       days.push({
-        dayIndex: i,
         date: getDate(i),
         isActive: false,
         events: []
@@ -120,33 +129,18 @@ export default class AgendaDisplay extends React.Component {
     var allWeeks = [weekOne, weekTwo, weekThree, weekFour, weekFive, weekSix];
 
     const mapDays = (days) => {
-      const className = (day) => {
-        if (day.isActive) {
-          if (day.events.length) {
-            return "agenda__day--active agenda__day--content";
-          } else return "agenda__day--active";
-        } else return "agenda__day--inactive";
-      }
-      const isToday = (day) => {
-        if (this.state.selectedMonth === new Date().getMonth()
-          && this.state.selectedYear === new Date().getFullYear()
-          && day.dayIndex === moment().date()) {
-            return true;
-          }
-          return false;
-      }
       return days.map((day, i) => {
         return (
           <ContentCell
             key={i}
             {...day}
-            className={className(day)}
-            isToday={isToday(day)}
+            selectedYear={this.state.selectedYear}
+            selectedMonth={this.state.selectedMonth}
+            selectedDate={this.state.selectedDate}
+
+            changeSelectedDate={this.changeSelectedDate}
           />
         )
-        // if (day.events.length) {
-        //   return <ContentCell key={i} {...day} className={className(day)}/>
-        // } else return <td key={i} className={className(day)}>{day.date.format("DD")}</td>
       })
     }
 
@@ -162,7 +156,6 @@ export default class AgendaDisplay extends React.Component {
   render() {
     return (
       <div className="agenda">
-        <h2>Agenda</h2>
         {this.renderTitle()}
         <table className="agenda__table">
           {this.renderHeader()}
@@ -170,6 +163,11 @@ export default class AgendaDisplay extends React.Component {
             {this.renderBody()}
           </tbody>
         </table>
+        <Legend agendaDatabase={this.props.agendaDatabase}/>
+        <ContentDisplay
+          selectedDate={this.state.selectedDate}
+          events={this.state.events}
+        />
       </div>
     )
   }

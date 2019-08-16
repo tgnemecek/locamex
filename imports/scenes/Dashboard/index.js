@@ -2,7 +2,7 @@ import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { Users } from '/imports/api/users/index';
 
-import Widgets from '/imports/components/Widgets/index';
+import Widgets from './Widgets/index';
 
 export default class Dashboard extends React.Component {
   render() {

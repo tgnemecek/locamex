@@ -20,8 +20,9 @@ class TestPage extends React.Component {
   }
 
   onClick = () => {
-    Meteor.call('agenda.contract.activation', "2019-008");
+    Meteor.call('agenda.contract.activation', "2019-007");
   }
+
 
   render() {
     return (

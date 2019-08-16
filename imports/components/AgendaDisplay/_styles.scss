@@ -5,6 +5,9 @@
     width: 200px;
     text-align: center;
   }
+  button {
+    width: 50px;
+  }
 }
 
 .agenda__table {
@@ -19,7 +22,10 @@
   button {
     width: 100%;
     height: 100%;
-    cursor: inherit;
+    cursor: pointer !important;
+  }
+  button:focus {
+    outline: none;
   }
 }
 
@@ -28,6 +34,10 @@
   padding: 10px;
   border-radius: 100%;
   border: 7px solid $grey;
+}
+
+.agenda__day--selected {
+  border: 3px solid $brand-primary !important;
 }
 
 .agenda__day--active {
@@ -41,31 +51,24 @@
   }
 }
 
-.agenda__day--content {
-  background: $brand-complementary;
-}
-
 .agenda__day--content:hover .agenda__hoverbox {
   transform: scaleY(1);
 }
 
-.agenda__hoverbox {
-  position: absolute;
-  display: block;
-  background: $light-grey;
-  z-index: 100;
-  overflow: hidden;
-  margin-top: 14px;
-  padding: 10px;
-  transform: scaleY(0);
-  transform-origin: top;
-  transition: transform 0.25s;
-  text-align: left;
-  white-space: nowrap;
+.agenda__day--inactive {
+  font-style: italic;
+}
 
-  -webkit-box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.3);
-  -moz-box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.3);
-  box-shadow: 2px 2px 5px 0px rgba(0,0,0,0.3);
+.agenda__content-display {
+  border: 1px solid $grey;
+  padding: $space;
+  margin-top: $space;
+  p {
+    font-style: italic;
+  }
+  li {
+    cursor: pointer !important;
+  }
 }
 
 .agenda__star {
@@ -76,6 +79,31 @@
   margin: 2px;
 }
 
-.agenda__day--inactive {
-  font-style: italic;
+.agenda__legend {
+  display: flex;
+  justify-content: center;
+  margin-top: ($space /2);
+}
+
+.agenda__legend__title {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.agenda__legend-unit {
+  display: grid;
+  grid-template-columns: 35px auto;
+  width: 200px;
+}
+
+.agenda__color-box {
+  margin-right: 10px;
+  border-radius: 10px;
+}
+
+.agenda__referral-link {
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 35px auto;
+  margin-bottom: 5px;
 }

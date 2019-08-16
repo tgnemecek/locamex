@@ -41,7 +41,9 @@ export default class AppHeader extends React.Component {
     var currentUserType = this.props.user.type;
     if (!this.props.user.type) return null;
     var allowedPages = [];
-    if (currentUserType !== "administrator") allowedPages = userTypes.find((types) => types.type === currentUserType).pages;
+    if (currentUserType !== "administrator") {
+      allowedPages = userTypes[currentUserType].pages;
+    }
     appStructure.forEach((group, i) => {
       var tempObject = { ...group, pages: [] };
       group.pages.forEach((page) => {

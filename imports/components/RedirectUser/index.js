@@ -22,11 +22,11 @@ export default function RedirectUser (props) {
 
   if (user.type === 'administrator') return allowed();
 
-  var allowedPages = userTypes.find((userType) => user.type === userType.type);
+  var allowedPages = userTypes[user.type].pages;
 
 
   if (!allowedPages) return notAllowed();
-  if (allowedPages.pages.includes(props.currentPage)) {
+  if (allowedPages.includes(props.currentPage)) {
     return allowed();
   } else return notAllowed();
 }

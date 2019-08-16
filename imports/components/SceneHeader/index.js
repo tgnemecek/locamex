@@ -19,6 +19,7 @@ export default class SceneHeader extends React.Component {
 
   renderTitle = () => {
     var label;
+    debugger;
     var reverse = [...this.props.snapshots];
     if (this.props.master.type === "contract") {
       reverse = reverse.filter((item, i) => i > 0);
@@ -102,6 +103,7 @@ export default class SceneHeader extends React.Component {
   }
 
   checkIfHasContent = () => {
+    debugger;
     var hasContent = (this.props.master.observations.internal || this.props.master.observations.external);
     return hasContent ? "content-inside" : "";
   }

@@ -1,21 +1,24 @@
-export const userTypes = [
-  {
-    type: "sales",
-    pages: ["clients", "series", "accessories", "packs", "proposals", "proposal"]
+export const userTypes = {
+  sales: {
+    pages: ["clients", "series", "accessories", "packs", "proposals", "proposal"],
+    events: []
   },
-  {
-    type: "finances",
-    pages: ["clients", "contracts", "contract"]
-  },
-  {
-    type: "maintenance",
-    pages: [
-    "series", "series.edit",
-    "accessories", "accessories.edit", "accessories.stock",
-    "modules",
-    "packs",
-    "contracts",
-    "shipping"
+  finances: {
+    pages: ["clients", "contracts", "contract"],
+    events: [
+      "billingProducts",
+      "billingServices"
     ]
+  },
+  maintenance: {
+    pages: [
+      "series", "series.edit",
+      "accessories", "accessories.edit", "accessories.stock",
+      "modules",
+      "packs",
+      "contracts",
+      "shipping"
+    ],
+    events: ["deliveryDate"]
   }
-]
+}

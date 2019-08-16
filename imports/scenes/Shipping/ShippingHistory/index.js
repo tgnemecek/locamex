@@ -17,13 +17,21 @@ export default class ShippingHistory extends React.Component {
       if (type === 'send') {
         return (
           <th className="table__small-column">
-            <Icon icon="send" disabled={sendDisabled} onClick={this.props.toggleSend} />
+            <button
+              disabled={sendDisabled}
+              onClick={this.props.toggleSend}>
+              ENTREGA
+            </button>
           </th>
         )
       } else if (type === 'receive') {
         return (
           <th className="table__small-column">
-            <Icon icon="receive" disabled={receiveDisabled} onClick={this.props.toggleReceive} />
+            <button
+              disabled={receiveDisabled}
+              onClick={this.props.toggleReceive}>
+              DEVOLUÇÃO
+            </button>
           </th>
         )
       }

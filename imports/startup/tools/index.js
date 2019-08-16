@@ -13,6 +13,24 @@ export default class tools {
     } else return [input];
   }
 
+  static translateAgendaEvent = (type) => {
+    var dictionary = {
+      billingProducts: "Cobrança de Locação",
+      billingServices: "Cobrança de Serviço",
+      deliveryDate: "Entrega de Produtos"
+    }
+    return dictionary[type];
+  }
+
+  static getAgendaEventColor = (type) => {
+    var dictionary = {
+      billingProducts: "rgb(232, 151, 151)",
+      billingServices: "rgb(147, 230, 163)",
+      deliveryDate: "rgb(197, 207, 128)"
+    }
+    return dictionary[type];
+  }
+
   static compare = (input1, input2, exception) => {
     function loop(input1, input2) {
       if (typeof input1 !== typeof input2) return false;
@@ -110,9 +128,9 @@ export default class tools {
   static isUserAllowed = (page) => {
     var user = Meteor.user();
     if (user.type === 'administrator') return true;
-    var allowedPages = userTypes.find((userType) => userType.type === user.type);
+    var allowedPages = userTypes[user.type].pages;
     if (!allowedPages) return false;
-    return allowedPages.pages.includes(page);
+    return allowedPages.includes(page);
   }
 
   static countAvailableItems = (array) => {

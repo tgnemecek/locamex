@@ -293,43 +293,6 @@ class Contract extends React.Component {
     this.saveEdits(generate);
   }
 
-  // generateDocument = () => {
-  //   const generate = (contract) => {
-  //     var client = this.props.databases.clientsDatabase.find((client) => {
-  //       return client._id === contract.clientId;
-  //     });
-  //     var negociator;
-  //     var representatives = [];
-  //     client.contacts.forEach((contact) => {
-  //       if (contact._id === this.state.contract.negociatorId) {
-  //         negociator = contact;
-  //       }
-  //       if (this.state.contract.representativesId.includes(contact._id)) {
-  //         representatives.push(contact);
-  //       }
-  //     });
-  //     var createdByUser = this.props.databases.usersDatabase.find((user) => {
-  //       return user._id === contract.createdBy;
-  //     });
-  //     var createdByFullName = createdByUser.firstName + " " + createdByUser.lastName;
-  //     var newContract = {
-  //       ...contract,
-  //       createdByFullName,
-  //       client,
-  //       negociator,
-  //       representatives,
-  //       type: "contract"
-  //     };
-  //     debugger;
-  //     createPDF(newContract);
-  //     this.setState({
-  //       contract: newContract,
-  //       databaseStatus: {status: "completed"}
-  //     });
-  //   }
-  //   this.saveEdits(generate);
-  // }
-
   totalValue = (option) => {
     var duration = this.state.contract.dates.timeUnit === "months" ? this.state.contract.dates.duration : 1;
     var discount = this.state.contract.discount;
