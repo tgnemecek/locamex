@@ -32,11 +32,16 @@ export default class ContentCell extends React.Component {
 function HoverWindow(props) {
   renderEvents = () => {
     return props.events.map((event, i) => {
-      return (
-        <li key={i}>
-          <Link to={"/" + event.link}>Contrato 2019-0100: Vencimento da Cobrança 5/10</Link>
-        </li>
-      )
+      if (event.type === "billingProducts"
+          || event.type === "billingServices") {
+          return (
+            <li key={i} style={{cursor: "pointer"}}>
+              <Link to={"/contract/" + event.referral}>
+                Contrato {event.referral}: Vencimento da Cobrança de Locação {event.description}
+              </Link>
+            </li>
+          )
+          }
     })
   }
   return (

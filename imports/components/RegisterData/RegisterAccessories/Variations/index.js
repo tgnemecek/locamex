@@ -16,7 +16,7 @@ export default class Variations extends React.Component {
     return this.props.variations.map((model, i) => {
 
       const onChange = (e) => {
-        var variations = tools.deepCopy(this.props.variations);
+        var variations = [...this.props.variations];
         variations[i].observations = e.target.value;
 
         var obj = {target: {
@@ -48,7 +48,7 @@ export default class Variations extends React.Component {
     }
 
     const addNewItem = () => {
-      var variations = tools.deepCopy(this.props.variations);
+      var variations = [...this.props.variations];
       variations.push({
         _id: tools.generateId(),
         observations: this.state.observations,

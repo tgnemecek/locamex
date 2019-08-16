@@ -49,19 +49,19 @@ export default class ServicesSection extends React.Component {
     return this.props.charges.map((charge, i, array) => {
       const onChangePrice = (e) => {
         var value = Number(e.target.value);
-        var newCharges = tools.deepCopy(array);
+        var newCharges = [...array];
         newCharges[i].value = value;
         this.props.updateBilling('billingServices', newCharges);
       }
       const onChangeDescription = (e) => {
         var value = e.target.value;
-        var newCharges = tools.deepCopy(array);
+        var newCharges = [...array];
         newCharges[i].description = value;
         this.props.updateBilling('billingServices', newCharges);
       }
       const changeExpiryDate = (e) => {
         var expiryDate = e.target.value;
-        var charges = tools.deepCopy(array);
+        var charges = [...array];
         charges[i].expiryDate = moment(expiryDate).toDate();
         this.toggleCalendar();
         this.props.updateBilling('billingServices', charges);

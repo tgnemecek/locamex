@@ -20,7 +20,7 @@ export default class SelectModules extends React.Component {
   }
 
   addToSelection = (howManyToMove, place) => {
-    var selectedList = tools.deepCopy(this.state.selectedList);
+    var selectedList = [...this.state.selectedList];
     var existing = selectedList.find((item) => item.place === place);
 
     if (existing) {
@@ -35,7 +35,7 @@ export default class SelectModules extends React.Component {
   }
 
   removeFromSelection = (selectedToRemoveIndex, place) => {
-    var selectedList = tools.deepCopy(this.state.selectedList);
+    var selectedList = [...this.state.selectedList];
     var quantity = selectedList[selectedToRemoveIndex].selected;
     selectedList.splice(selectedToRemoveIndex, 1);
 
@@ -43,7 +43,7 @@ export default class SelectModules extends React.Component {
   }
 
   changeAvailable = (toChange, variationId, placeId) => {
-    var variations = tools.deepCopy(this.state.variations);
+    var variations = [...this.state.variations];
     var variationToChangeIndex = variations.findIndex((item) => {
       return item._id === variationId;
     })

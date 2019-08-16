@@ -70,7 +70,6 @@ export default class ProductsSection extends React.Component {
   renderBody = () => {
     return this.props.charges.map((charge, i, array) => {
       const onChangePrice = (e) => {
-        debugger;
         var value = Number(e.target.value);
         var newCharges = [...array];
         newCharges[i].value = value;

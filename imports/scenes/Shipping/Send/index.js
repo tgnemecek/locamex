@@ -112,7 +112,7 @@ export default class Send extends React.Component {
   }
 
   sortSeriesDatabase = () => {
-    var seriesDatabase = tools.deepCopy(this.props.databases.seriesDatabase);
+    var seriesDatabase = [...this.props.databases.seriesDatabase];
     return seriesDatabase.sort((a, b) => {
       var comparison = a.place.localeCompare(b.place);
       if (comparison === 0) {

@@ -54,7 +54,7 @@ class ModelsStockVisualizer extends React.Component {
     var placesDatabase = this.props.placesDatabase;
 
     var itemId = this.props.item._id;
-    var placesInItem = tools.deepCopy(this.state.item.place);
+    var placesInItem = [...this.state.item.place];
 
     return placesDatabase.map((place, i) => {
       const changeValue = (e) => {
@@ -101,7 +101,7 @@ class ModelsStockVisualizer extends React.Component {
       this.setState({ errorMsg: 'As quantidades nos pátios devem equivaler ao estoque total.', errorKeys: ['sum'] });
     } else {
       var _id = this.props.item._id;
-      var models = tools.deepCopy(this.props.item.models);
+      var models = [...this.props.item.models];
       models[this.state.modelIndex] = this.state.item;
 
       Meteor.call('accessories.stock.models.update', _id, models);

@@ -5,7 +5,7 @@ import tools from '/imports/startup/tools/index';
 export default class SortButton extends React.Component {
   onClick = (e) => {
     var order = e.target.value;
-    var database = tools.deepCopy(this.props.database);
+    var database = [...this.props.database];
     var attribute = this.props.attribute;
     if (typeof(database[0][attribute] === 'number')) {
       database.sort(function(a, b){return a - b});

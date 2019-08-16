@@ -63,7 +63,7 @@ class VariationsStockVisualizer extends React.Component {
       this.setState({ errorMsg: 'As quantidades nos pátios devem equivaler ao estoque total.' });
     } else {
       var _id = this.props.item._id;
-      var variations = tools.deepCopy(this.props.item.variations);
+      var variations = [...this.props.item.variations];
       variations[this.state.variationIndex] = this.state.item;
 
       Meteor.call('accessories.stock.variations.update', _id, variations);

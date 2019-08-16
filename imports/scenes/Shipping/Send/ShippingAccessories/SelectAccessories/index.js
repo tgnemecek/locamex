@@ -23,7 +23,7 @@ export default class SelectAccessories extends React.Component {
 
   addToSelection = (howManyToMove, variationPlace) => {
 
-    var selectedList = tools.deepCopy(this.state.selectedList);
+    var selectedList = [...this.state.selectedList];
     var variationToAdd = this.props.productFromDatabase.variations[this.state.currentVariationIndex];
     var existingVariation = tools.findUsingId(selectedList, variationToAdd._id);
 
@@ -41,7 +41,7 @@ export default class SelectAccessories extends React.Component {
   }
 
   removeFromSelection = (selectedToRemoveIndex, place) => {
-    var selectedList = tools.deepCopy(this.state.selectedList);
+    var selectedList = [...this.state.selectedList];
     var quantity = selectedList[selectedToRemoveIndex].selected;
     selectedList.splice(selectedToRemoveIndex, 1);
 

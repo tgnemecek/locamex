@@ -91,7 +91,7 @@ if (Meteor.isServer) {
       };
 
       function updateModule(product, module) {
-        var place = tools.deepCopy(product.place);
+        var place = [...product.place];
         var rented = product.rented;
         module.selected.forEach((moduleSelected) => {
           var exists = place.findIndex((item) => item._id === moduleSelected.place);
@@ -110,7 +110,7 @@ if (Meteor.isServer) {
 
       function updateAccessory(product, accessory) {
         var variations = product.variations.map((variation, i) => {
-          var place = tools.deepCopy(variation.place);
+          var place = [...variation.place];
           var rented = variation.rented;
           accessory.selected.forEach((accessorySelected) => {
             if (i === accessorySelected.variationIndex) {
@@ -183,7 +183,7 @@ if (Meteor.isServer) {
       };
 
       function updateModule(product, module) {
-        var place = tools.deepCopy(product.place);
+        var place = [...product.place];
         var rented = product.rented;
         module.selected.forEach((moduleSelected) => {
           var exists = place.findIndex((item) => item._id === module.place);
@@ -207,7 +207,7 @@ if (Meteor.isServer) {
 
       function updateAccessory(product, accessory) {
         var variations = product.variations.map((variation, i) => {
-          var place = tools.deepCopy(variation.place);
+          var place = [...variation.place];
           var rented = variation.rented;
 
           if (i === accessory.variationIndex) {

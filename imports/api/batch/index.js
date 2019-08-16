@@ -14,7 +14,34 @@ import { Services } from '/imports/api/services/index';
 import { Series } from '/imports/api/series/index';
 
 if (Meteor.isServer && Meteor.isDevelopment) {
-  // 
+  // var collection = Contracts.find().fetch();
+  //
+  // function convertToDate(value) {
+  //   if (typeof value !== "object") {
+  //     return new Date(value);
+  //   } else return value;
+  // }
+  //
+  // collection.forEach((contract) => {
+  //   contract.snapshots.forEach((s) => {
+  //     s.billingProducts.forEach((b) => {
+  //       b.startDate = convertToDate(b.startDate);
+  //       b.endDate = convertToDate(b.endDate);
+  //       b.expiryDate = convertToDate(b.expiryDate);
+  //     })
+  //     s.billingServices.forEach((b) => {
+  //       b.startDate = convertToDate(b.startDate);
+  //       b.endDate = convertToDate(b.endDate);
+  //       b.expiryDate = convertToDate(b.expiryDate);
+  //     })
+  //   })
+  //   var _id = contract._id;
+  //   delete contract._id;
+  //   Contracts.update({ _id }, {
+  //     ...contract,
+  //   })
+  // })
+  //
   // // var collection = Series.find().fetch();
   //
   // // Series.remove({});
@@ -355,8 +382,8 @@ if (Meteor.isServer && Meteor.isDevelopment) {
   // var modules = Modules.find().fetch();
   // var containers = Containers.find().fetch();
   //
-  // var backModules = tools.deepCopy(modules);
-  // var backContainers = tools.deepCopy(containers);
+  // var backModules = [...modules];
+  // var backContainers = [...containers];
   //
   // const restore = (type) => {
   //   if (type === 'modules') {
@@ -387,7 +414,7 @@ if (Meteor.isServer && Meteor.isDevelopment) {
   //
   // containers.forEach((container, i) => {
   //   if (container.type === 'modular') {
-  //     var modules = tools.deepCopy(container.modules);
+  //     var modules = [...container.modules];
   //     for (var j = 0; j < modules.length; j++) {
   //       modules[j] = dictionary[modules[j]];
   //     }

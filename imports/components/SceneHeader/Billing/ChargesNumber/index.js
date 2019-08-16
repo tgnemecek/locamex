@@ -7,7 +7,7 @@ import Input from '/imports/components/Input/index';
 export default class ChargesNumber extends React.Component {
   onChange = (e) => {
     var value = Number(e.target.value);
-    var charges = tools.deepCopy(this.props.charges);
+    var charges = [...this.props.charges];
     var newCharges = [];
     var difference = Math.abs(charges.length - value);
 

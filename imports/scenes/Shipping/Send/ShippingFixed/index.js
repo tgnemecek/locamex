@@ -40,7 +40,7 @@ export default class ShippingFixed extends React.Component {
 
     const onChange = (e) => {
       var seriesId = e.target.value;
-      var fixed = tools.deepCopy(this.props.fixed);
+      var fixed = [...this.props.fixed];
       var index = e.target.name;
       fixed[index].seriesId = seriesId;
       this.props.onChange({ fixed });

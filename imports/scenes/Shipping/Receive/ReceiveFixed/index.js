@@ -27,7 +27,7 @@ export default class ReceiveFixed extends React.Component {
 
     const onChange = (e) => {
       var place = e.target.value;
-      var fixed = tools.deepCopy(this.props.fixed);
+      var fixed = [...this.props.fixed];
       var index = e.target.name;
       fixed[index].place = place;
       this.props.onChange({ fixed });

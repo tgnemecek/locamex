@@ -10,7 +10,7 @@ export default function ContactTab (props) {
   const tab = (Number(props.item.tab) - 2);
 
   onChange = (e) => {
-    var contacts = tools.deepCopy(props.item.contacts);
+    var contacts = [...props.item.contacts];
     contacts[tab] = {
       ...props.item.contacts[tab],
       [e.target.name]: e.target.value

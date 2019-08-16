@@ -60,7 +60,7 @@ export default class RegisterClients extends React.Component {
   onChange = (e) => {
     var key = e.target.name;
     var value = e.target.value;
-    var errorKeys = tools.deepCopy(this.state.errorKeys);
+    var errorKeys = [...this.state.errorKeys];
     var fieldIndex = errorKeys.findIndex((key) => key === e.target.name);
     errorKeys.splice(fieldIndex, 1);
 
@@ -75,7 +75,7 @@ export default class RegisterClients extends React.Component {
     this.props.toggleWindow();
   }
   saveEdits = () => {
-    var contacts = tools.deepCopy(this.state.contacts);
+    var contacts = [...this.state.contacts];
 
     var check = checkRequiredFields({
       ...this.state,
@@ -128,7 +128,7 @@ export default class RegisterClients extends React.Component {
     return arr1.concat(arr2, arr3);
   }
   addNewTab = () => {
-    var contacts = tools.deepCopy(this.state.contacts);
+    var contacts = [...this.state.contacts];
     contacts.push({
       _id: '',
       name: '',

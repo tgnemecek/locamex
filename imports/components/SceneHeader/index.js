@@ -19,7 +19,7 @@ export default class SceneHeader extends React.Component {
 
   renderTitle = () => {
     var label;
-    var reverse = tools.deepCopy(this.props.snapshots);
+    var reverse = [...this.props.snapshots];
     if (this.props.master.type === "contract") {
       reverse = reverse.filter((item, i) => i > 0);
     }

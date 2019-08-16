@@ -27,7 +27,7 @@ class ModuleList extends React.Component {
   onChange = (e) => {
     var value = e.target.value;
     var key = e.target.name;
-    var allowedModules = tools.deepCopy(this.props.item.allowedModules);
+    var allowedModules = [...this.props.item.allowedModules];
     (() => {
       if (value === true) {
         if (allowedModules.includes(key)) return

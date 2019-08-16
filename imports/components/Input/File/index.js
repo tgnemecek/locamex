@@ -5,7 +5,7 @@ import Icon from '/imports/components/Icon/index';
 
 export default class File extends React.Component {
   removeFile = (e) => {
-    var files = tools.deepCopy(this.props.files);
+    var files = [...this.props.files];
     var i = e.target.value;
     files.splice(i, 1);
     this.onChange({

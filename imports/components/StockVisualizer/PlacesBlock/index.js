@@ -9,7 +9,7 @@ export default class PlacesBlock extends React.Component {
     var placesDatabase = this.props.placesDatabase;
 
     var itemId = this.props.itemId;
-    var placesInItem = tools.deepCopy(this.props.item.place);
+    var placesInItem = [...this.props.item.place];
 
     return placesDatabase.map((place, i) => {
       const changeValue = (e) => {

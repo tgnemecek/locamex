@@ -75,7 +75,7 @@ export default class ShippingAccessories extends React.Component {
   }
 
   onChange = (changedItem) => {
-    var accessories = tools.deepCopy(this.props.accessories);
+    var accessories = [...this.props.accessories];
     var itemIndex = accessories.findIndex((element) => {
       return element._id === changedItem._id;
     })

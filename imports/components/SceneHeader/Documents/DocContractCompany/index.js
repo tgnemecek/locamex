@@ -20,7 +20,7 @@ export default class DocContractCompany extends React.Component {
 
   onChangeMain = (e) => {
     var negociatorId = e.target.value;
-    var errorKeys = tools.deepCopy(this.state.errorKeys);
+    var errorKeys = [...this.state.errorKeys];
     var fieldIndex = errorKeys.findIndex((key) => key === e.target.name);
     errorKeys.splice(fieldIndex, 1);
 
@@ -30,7 +30,7 @@ export default class DocContractCompany extends React.Component {
   onChangeRepresentatives = (e) => {
     var _id = e.target.value;
     var i = Number(e.target.name);
-    var representativesId = tools.deepCopy(this.state.representativesId);
+    var representativesId = [...this.state.representativesId];
     representativesId[i] = _id;
     this.setState({ representativesId });
   }

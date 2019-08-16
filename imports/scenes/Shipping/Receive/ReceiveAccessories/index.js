@@ -27,7 +27,7 @@ export default class ReceiveAccessories extends React.Component {
 
     const onChange = (e) => {
       var place = e.target.value;
-      var accessories = tools.deepCopy(this.props.accessories);
+      var accessories = [...this.props.accessories];
       var index = e.target.name;
       accessories[index].place = place;
       this.props.onChange({ accessories });

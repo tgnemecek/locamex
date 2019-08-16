@@ -39,7 +39,7 @@ export default class ManageItems extends React.Component {
   changePrice = (e) => {
     var _id = e.target.name;
     var value = e.target.value;
-    var addedItems = tools.deepCopy(this.state.addedItems);
+    var addedItems = [...this.state.addedItems];
     addedItems.forEach((item) => {
       if (item._id === _id) {
         item.price = value;
@@ -51,7 +51,7 @@ export default class ManageItems extends React.Component {
   changeQuantity = (e) => {
     var _id = e.target.name;
     var value = e.target.value;
-    var addedItems = tools.deepCopy(this.state.addedItems);
+    var addedItems = [...this.state.addedItems];
     addedItems.forEach((item) => {
       if (item._id === _id) {
         item.renting = value;
@@ -85,7 +85,7 @@ export default class ManageItems extends React.Component {
   addItem = (e) => {
     var _id = e.target.value;
     var filteredDatabase = this.state.filteredDatabase;
-    var addedItems = tools.deepCopy(this.state.addedItems);
+    var addedItems = [...this.state.addedItems];
 
     for (var i = 0; i < filteredDatabase.length; i++) {
       if (filteredDatabase[i]._id === _id) {
@@ -108,7 +108,7 @@ export default class ManageItems extends React.Component {
   removeItem = (e) => {
     var _id = e.target.value;
     var filteredDatabase;
-    var addedItems = tools.deepCopy(this.state.addedItems);
+    var addedItems = [...this.state.addedItems];
 
     for (var i = 0; i < addedItems.length; i++) {
       if (addedItems[i]._id === _id) {

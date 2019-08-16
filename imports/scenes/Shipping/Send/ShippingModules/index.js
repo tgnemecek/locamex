@@ -23,7 +23,7 @@ export default class ShippingModules extends React.Component {
 
   renderHeader = () => {
     const addNew = () =>  {
-      var modules = tools.deepCopy(this.props.modules);
+      var modules = [...this.props.modules];
       modules.push({
         _id: tools.generateId(),
         productId: '',
@@ -75,13 +75,13 @@ export default class ShippingModules extends React.Component {
 
     const removeItem = (e) => {
       var index = e.target.value;
-      var modules = tools.deepCopy(this.props.modules);
+      var modules = [...this.props.modules];
       modules.splice(index, 1);
       this.props.onChange({ modules });
     }
 
     const onClick = (e, module) => {
-      var modules = tools.deepCopy(this.props.modules);
+      var modules = [...this.props.modules];
       var i = e.target.name;
       modules[i] = {
         ...modules[i],
@@ -126,7 +126,7 @@ export default class ShippingModules extends React.Component {
   }
 
   onChange = (changedItem) => {
-    var modules = tools.deepCopy(this.props.modules);
+    var modules = [...this.props.modules];
     var itemIndex = modules.findIndex((element) => {
       return element._id === changedItem._id;
     })

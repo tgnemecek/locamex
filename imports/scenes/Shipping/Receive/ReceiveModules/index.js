@@ -26,7 +26,7 @@ export default class ReceiveModules extends React.Component {
 
     const onChange = (e) => {
       var place = e.target.value;
-      var modules = tools.deepCopy(this.props.modules);
+      var modules = [...this.props.modules];
       var index = e.target.name;
       modules[index].place = place;
       this.props.onChange({ modules });

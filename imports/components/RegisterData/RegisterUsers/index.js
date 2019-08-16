@@ -35,7 +35,7 @@ export default class RegisterUsers extends React.Component {
     }
   }
   onChange = (e) => {
-    var errorKeys = tools.deepCopy(this.state.errorKeys);
+    var errorKeys = [...this.state.errorKeys];
     var fieldIndex = errorKeys.findIndex((key) => key === e.target.name);
     errorKeys.splice(fieldIndex, 1);
     

@@ -73,10 +73,10 @@ export default class AgendaDisplay extends React.Component {
     }
 
     var filteredAgenda = this.props.agendaDatabase.filter((event) => {
-      if (moment(event.date).getFullYear() !== this.state.selectedYear) {
+      if (moment(event.date).year() !== this.state.selectedYear) {
         return false;
       }
-      if (moment(event.date).getMonth() !== this.state.selectedMonth) {
+      if (moment(event.date).month() !== this.state.selectedMonth) {
         return false;
       }
       return true;
