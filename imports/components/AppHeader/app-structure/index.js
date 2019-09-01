@@ -130,6 +130,12 @@ export const appStructure = [
         visible: false
       },
       {
+        name: "billing",
+        title: "Faturamento",
+        link: "/billing/",
+        visible: false
+      },
+      {
         name: "shipping",
         title: "Remessa",
         link: "/shipping/",

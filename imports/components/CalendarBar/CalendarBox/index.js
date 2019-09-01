@@ -4,7 +4,7 @@ import Icon from '/imports/components/Icon/index';
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
-export default class Calendar extends React.Component {
+export default class CalendarBox extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -42,18 +42,18 @@ export default class Calendar extends React.Component {
       var monthIndex = this.state.monthIndex;
       var dayIndex = this.state.dayIndex;
       if (selectedDate.getFullYear() == yearIndex && selectedDate.getMonth() == monthIndex) {
-        return day == selectedDate.getDate() ? "calendar__day--active" : null;
+        return day == selectedDate.getDate() ? "calendar-bar__box__day--active" : null;
       }
     }
 
     for (var i = (lastMonthLength - startingWeekDay + 1); i <= lastMonthLength; i++) {
-      days.push(<td key={i} className="calendar__day--grayed">{i}</td>);
+      days.push(<td key={i} className="calendar-bar__box__day--grayed">{i}</td>);
     }
     for (var i = 1; i <= monthLength; i++) {
       days.push(<td key={i}><button value={i} className={determineClassName(i)} onClick={this.selectDay}>{i}</button></td>);
     }
     for (var i = 1; i <= nextMonthDays; i++) {
-      days.push(<td key={i} className="calendar__day--grayed">{i}</td>);
+      days.push(<td key={i} className="calendar-bar__box__day--grayed">{i}</td>);
     }
 
     var weekOne = days.slice(0, 7);
@@ -87,12 +87,12 @@ export default class Calendar extends React.Component {
   render() {
       return (
         <Box closeBox={this.props.closeCalendar}>
-          <div className="calendar__header">
+          <div className="calendar-bar__box__header">
             <Icon value={-1} icon="arrowLeft" onClick={this.changeMonth}/>
             <h3>{moment().month(this.state.monthIndex).format('MMMM') + "/" + this.state.yearIndex}</h3>
             <Icon value={+1} icon="arrowRight" onClick={this.changeMonth}/>
           </div>
-          <table className="calendar__table">
+          <table className="calendar-bar__box__table">
             <tbody>
               <tr>
                 <th>Dom</th>

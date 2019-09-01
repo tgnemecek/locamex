@@ -4,7 +4,7 @@ import moment from 'moment';
 import tools from '/imports/startup/tools/index';
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
-import Calendar from '/imports/components/Calendar/index';
+import CalendarBar from '/imports/components/CalendarBar/index';
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
@@ -48,7 +48,12 @@ export default class Billing extends React.Component {
         return acc + (current.price * renting * duration)
       }, 0);
     }
-    this.state = { ...this.state, masterValue, productsValue, servicesValue };
+    this.state = {
+      ...this.state,
+      masterValue,
+      productsValue,
+      servicesValue
+    };
   }
 
   componentDidMount() {
@@ -115,6 +120,7 @@ export default class Billing extends React.Component {
           <div className="error-message">{this.state.errorMsg}</div>
           <ProductsSection
             // General Use
+            startDate={this.props.master.dates.startDate}
             productsValue={this.state.productsValue}
             charges={this.state.billingProducts}
             updateBilling={this.updateState}

@@ -7,6 +7,7 @@ import NotFound from '/imports/components/NotFound/index';
 import Test from '/imports/scenes/Test/index';
 import Login from '/imports/scenes/Login/index';
 import Contract from '/imports/scenes/Contract/index';
+import Billing from '/imports/scenes/Billing/index';
 import Database from '/imports/scenes/Database/index';
 import Dashboard from '/imports/scenes/Dashboard/index';
 import Shipping from '/imports/scenes/Shipping/index';
@@ -40,6 +41,7 @@ export default class App extends React.Component {
           <Switch>
             <Route path="/dashboard" render={(props) => <Dashboard {...props} user={this.state.user}/>}/>
             <Route path="/contract/:contractId" render={(props) => <Contract {...props} user={this.state.user}/>}/>
+            <Route path="/billing/:contractId" render={(props) => <Billing {...props} user={this.state.user}/>}/>
             <Route path="/shipping/:contractId" render={(props) => <Shipping {...props} user={this.state.user}/>}/>
             <Route path="/proposal/:proposalId" render={(props) => <Proposal {...props} user={this.state.user}/>}/>
             <Route path="/database/:database" render={(props) => <Database {...props} user={this.state.user}/>}/>

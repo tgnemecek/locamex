@@ -25,6 +25,7 @@ import SceneItems from '/imports/components/SceneItems/index';
 import SceneFooter from '/imports/components/SceneFooter/index';
 import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 
+import BillingSchedule from './BillingSchedule/index';
 import Information from './Information/index';
 
 class Contract extends React.Component {
@@ -70,8 +71,6 @@ class Contract extends React.Component {
           external: ''
         },
 
-        inss: 11,
-        iss: 5,
         billingProducts: [],
         billingServices: [],
 
@@ -85,7 +84,7 @@ class Contract extends React.Component {
         },
         dates: {
           creationDate: new Date(),
-          startDate: new Date(),
+          deliveryDate: new Date(),
           duration: 1,
           timeUnit: "months"
         },
@@ -332,6 +331,8 @@ class Contract extends React.Component {
             databases={this.props.databases}
             snapshots={this.props.contract ? this.props.contract.snapshots : []}
             changeVersion={this.changeVersion}
+
+            BillingSchedule={BillingSchedule}
 
             updateMaster={this.updateContract}
             cancelMaster={this.cancelContract}

@@ -8,7 +8,6 @@ import Code from './Code/index';
 import Digits from './Digits/index';
 import File from './File/index';
 import Text from './Text/index';
-import DatePicker from './DatePicker/index';
 import Password from './Password/index';
 import Select from './Select/index';
 import TextArea from './TextArea/index';
@@ -26,6 +25,7 @@ export default class Input extends React.Component {
     }
   }
   onChange = (exportValue) => {
+    if (!this.props.onChange) return;
     if (exportValue === undefined) throw new Meteor.Error('exportValue is undefined in ' + this.props.name);
 
     var e = {
@@ -38,6 +38,12 @@ export default class Input extends React.Component {
     }
     this.props.onChange(e);
     this.setState({ value: exportValue });
+  }
+  className = () => {
+    var result = "input";
+    result = this.props.type ? result + " input--" + this.props.type : result;
+    result = this.props.className ? result + " " + this.props.className : result;
+    return result;
   }
   style = () => {
     if (this.props.error) {
@@ -88,7 +94,7 @@ export default class Input extends React.Component {
         ChosenComponent = Text;
     }
     return (
-      <div className={"input " + "input--"+ this.props.type + " " + this.props.className}>
+      <div className={this.className()}>
         {this.props.title ?
           <label style={this.props.labelStyle}>{this.props.title}</label>
         : null}

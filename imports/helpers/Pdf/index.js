@@ -1,15 +1,16 @@
 import { saveAs } from 'file-saver';
 import contractPDF from './contract/index';
 import proposalPDF from './proposal/index';
+import billPDF from './bill/index';
 
 import generateTable from './generate-table/index';
 import styles from './styles/index';
 
 export default class Pdf {
-  constructor(master, databases) {
+  constructor(master, databases, extra) {
     this.master = master;
     this.databases = databases;
-
+    this.extra = extra;
     if (!master) throw new Meteor.Error("no-master");
   }
 
@@ -46,6 +47,8 @@ export default class Pdf {
       return this.contractGenerator();
     } else if (this.master.type === "proposal") {
       return this.proposalGenerator();
+    } else if (this.master.type === "billing") {
+      return this.billingGenerator();
     }
   }
 
@@ -101,6 +104,36 @@ export default class Pdf {
           resolve();
         }
       })
+    })
+  }
+
+  billingGenerator = () => {
+    return new Promise((resolve, reject) => {
+      var master = this.master;
+      master.createdByFullName = this.getCreatedBy();
+      master.client = this.getClient();
+
+      var charge = this.extra;
+
+      var props = {
+        master,
+        charge,
+        generateTable,
+        styles
+      }
+
+      billPDF(props).then((docDefinition) => {
+        Meteor.call('pdf.bill.create', docDefinition, (err, res) => {
+          if (err) {
+            console.log(err);
+            reject();
+          }
+          if (res) {
+            saveAs(res, docDefinition.fileName);
+            resolve();
+          }
+        })
+      }).catch((err) => reject(err));
     })
   }
 }

@@ -52,6 +52,15 @@ if (Meteor.isServer) {
           reject(err);
         }
       })
+    },
+    'pdf.bill.create'(docDefinition) {
+      docDefinition.footer = generateFooter(docDefinition);
+      docDefinition.pageBreakBefore = setPageBreaks();
+      return new Promise((resolve, reject) => {
+        generateBuffer(docDefinition).then((res) => {
+          resolve('data:application/pdf;base64,' + res.toString('base64'));
+        });
+      })
     }
   })
 }

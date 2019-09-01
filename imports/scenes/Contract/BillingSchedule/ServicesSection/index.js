@@ -2,22 +2,16 @@ import React from 'react';
 import moment from 'moment';
 
 import tools from '/imports/startup/tools/index';
-import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
-import Calendar from '/imports/components/Calendar/index';
+import CalendarBar from '/imports/components/CalendarBar/index';
+
+import ChargesNumber from './ChargesNumber/index';
 
 export default class ServicesSection extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      calendarOpen: false
-    }
-  }
-
   // Calculations: -------------------------------------------------------------
 
   sumValues = () => {
-    var value = this.props.charges.reduce((acc, cur) => {
+    var value = this.props.billingServices.reduce((acc, cur) => {
       return acc + cur.value;
     }, 0);
     value = tools.round(value, 2);
@@ -26,52 +20,65 @@ export default class ServicesSection extends React.Component {
 
   displayDifference = () => {
     var difference = 0 - (this.props.servicesValue - this.sumValues());
-    var className = difference !== 0 ? "billing__difference--danger" : "billing__difference--zero";
+    var className = difference !== 0 ? "billing-schedule__difference--danger" : "billing-schedule__difference--zero";
     return <span className={className}>{tools.format(difference, "currency")}</span>
+  }
+
+  updateCharges = (billingServices) => {
+    this.props.updateBilling({
+      billingServices
+    })
   }
 
   // Changing States: ----------------------------------------------------------
 
   onChangeTaxes = (e) => {
     var value = Number(e.target.value);
-    this.props.updateBilling(e.target.name, value);
-  }
-
-  toggleCalendar = (e) => {
-    e ? e.stopPropagation() : null;
-    var calendarOpen = !this.state.calendarOpen;
-    this.setState({ calendarOpen });
+    var billingServices = this.props.billingServices.map((charge) => {
+      return {
+        ...charge,
+        [e.target.name]: e.target.value
+      }
+    })
+    this.props.updateBilling({
+      billingServices
+    });
   }
 
   // Rendering: ----------------------------------------------------------------
 
   renderBody = () => {
-    return this.props.charges.map((charge, i, array) => {
+    return this.props.billingServices.map((charge, i, array) => {
       const onChangePrice = (e) => {
         var value = Number(e.target.value);
-        var newCharges = [...array];
-        newCharges[i].value = value;
-        this.props.updateBilling('billingServices', newCharges);
+        var billingServices = [...array];
+        billingServices[i].value = value;
+        this.props.updateBilling({
+          billingServices
+        });
       }
       const onChangeDescription = (e) => {
         var value = e.target.value;
-        var newCharges = [...array];
-        newCharges[i].description = value;
-        this.props.updateBilling('billingServices', newCharges);
+        var billingServices = [...array];
+        billingServices[i].description = value;
+        this.props.updateBilling({
+          billingServices
+        });
       }
       const changeExpiryDate = (e) => {
         var expiryDate = e.target.value;
-        var charges = [...array];
-        charges[i].expiryDate = moment(expiryDate).toDate();
-        this.toggleCalendar();
-        this.props.updateBilling('billingServices', charges);
+        var billingServices = [...array];
+        billingServices[i].expiryDate = moment(expiryDate).toDate();
+        this.props.updateBilling({
+          billingServices
+        });
       }
       const calculateTaxes = () => {
         var value = charge.value;
         if (!value) return tools.format(0, "currency");
 
-        var inssDiscount = (value * this.props.inss) / 100;
-        var issDiscount = (value * this.props.iss) / 100;
+        var inssDiscount = (value * this.props.billingServices[0].inss) / 100;
+        var issDiscount = (value * this.props.billingServices[0].iss) / 100;
         value = inssDiscount + issDiscount;
         return tools.format(value, "currency");
       }
@@ -79,11 +86,7 @@ export default class ServicesSection extends React.Component {
         <tr key={i}>
           <td>{(i + 1) + '/' + array.length}</td>
           <td>
-            <Input
-              type="calendar"
-              style={{textAlign: 'center'}}
-              calendarOpen={this.state.calendarOpen}
-              toggleCalendar={this.toggleCalendar}
+            <CalendarBar
               onChange={changeExpiryDate}
               value={charge.expiryDate}/>
           </td>
@@ -105,43 +108,33 @@ export default class ServicesSection extends React.Component {
   }
 
   render() {
-    var ChargesNumber = this.props.ChargesNumber;
     var EqualCharges = this.props.EqualCharges;
-
     if (this.props.servicesValue) {
       return (
-        <Block
-          title="Pacote de Serviços:"
-          className="billing__section"
-          style={{background: "honeydew"}}
-          columns={1}>
-          <Block columns={3} options={[{block: 1, span: 0.5}, {block: 2, span: 0.5}, {block: 3, span: 1, className: "billing__equal-charges"}]}>
+        <section className="billing-schedule__services-section">
+          <h4>Pacote de Serviços:</h4>
+          <div className="billing-schedule__services-header">
             <ChargesNumber
-              masterValue={this.props.servicesValue}
-              startDate={this.state.startDate}
-              stateKey="billingServices"
-              charges={this.props.charges}
-              description="Pacote de Serviços - Informamos: Pagamentos de Notas Fiscais Eletrônicas (NFe) são exclusivos através de Depósito Bancário junto ao Banco Itaú S.A. (341) Agência 1571 C/C 02313-2 a favor da LOCADORA."
-              updateBilling={this.props.updateBilling}/>
+              billingServices={this.props.billingServices}
+              setCharges={this.props.setCharges}/>
             <Input
               title="INSS: (%)"
               type="number"
               name="inss"
-              value={this.props.inss}
+              value={this.props.billingServices[0].inss}
               onChange={this.onChangeTaxes}/>
             <Input
               title="ISS: (%)"
               type="number"
               name="iss"
-              value={this.props.iss}
+              value={this.props.billingServices[0].iss}
               onChange={this.onChangeTaxes}/>
             <EqualCharges
               masterValue={this.props.servicesValue}
-              stateKey="billingServices"
-              charges={this.props.charges}
-              updateBilling={this.props.updateBilling}/>
-          </Block>
-          <table className="table table--billing--services">
+              charges={this.props.billingServices}
+              updateCharges={this.updateCharges}/>
+          </div>
+          <table className="table table--billing-schedule--services">
             <thead>
               <tr>
                 <th>Número</th>
@@ -156,16 +149,16 @@ export default class ServicesSection extends React.Component {
             </tbody>
             <tfoot>
               <tr>
-                <td colSpan="3" className="billing__table__footer">Diferença:</td>
+                <td colSpan="3" className="billing-schedule__table__footer">Diferença:</td>
                 <td className="table__small-column">{this.displayDifference()}</td>
               </tr>
               <tr>
-                <th colSpan="3" className="billing__table__footer"><b>Valor Total do Pacote de Serviços:</b></th>
+                <th colSpan="3" className="billing-schedule__table__footer"><b>Valor Total do Pacote de Serviços:</b></th>
                 <th className="table__small-column">{tools.format(this.props.servicesValue, "currency")}</th>
               </tr>
             </tfoot>
           </table>
-        </Block>
+        </section>
       )
     } else return null;
   }

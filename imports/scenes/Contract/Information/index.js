@@ -4,22 +4,10 @@ import tools from '/imports/startup/tools/index';
 
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
-import Calendar from '/imports/components/Calendar/index';
+import CalendarBar from '/imports/components/CalendarBar/index';
 import SuggestionBar from '/imports/components/SuggestionBar/index';
 
 export default class Information extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      calendarOpen: false
-    }
-  }
-
-  toggleCalendar = (e) => {
-    var calendarOpen = !this.state.calendarOpen;
-    this.setState({ calendarOpen });
-  }
-
   changeDuration = (e) => {
     var duration = e.target.value;
     var discount = 0;
@@ -38,7 +26,9 @@ export default class Information extends React.Component {
     dates.duration = duration;
     this.props.updateContract({
       dates,
-      discount
+      discount,
+      billingProducts: [],
+      billingServices: []
     });
   }
 
@@ -50,7 +40,9 @@ export default class Information extends React.Component {
     dates.timeUnit = timeUnit;
     this.props.updateContract({
       dates,
-      discount
+      discount,
+      billingProducts: {},
+      billingServices: {}
     })
   }
 
@@ -130,15 +122,12 @@ export default class Information extends React.Component {
               value={this.props.contract.deliveryAddress.cep}
               onChange={this.handleChange}
             />
-            <Input
+            <CalendarBar
               title="Data da Entrega:"
-              type="calendar"
-              name="startDate"
+              name="deliveryDate"
               extra="dates"
-              calendarOpen={this.state.calendarOpen}
-              toggleCalendar={this.toggleCalendar}
               onChange={this.handleChange}
-              value={this.props.contract.dates.startDate}
+              value={this.props.contract.dates.deliveryDate}
             />
             <Input
               title="Desconto:"

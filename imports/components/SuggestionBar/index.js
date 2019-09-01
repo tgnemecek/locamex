@@ -18,13 +18,26 @@ export default class SuggestionBar extends React.Component {
 
   componentDidMount() {
     if (this.props.value) {
-      this.props.database.forEach((item) => {
-        if (item._id === this.props.value) {
-          this.props.onClick({target: {value: item._id, name: this.props.name}});
-          this.setState({ query: item.description, buttonMode: true })
-        }
-      })
+      this.setup();
     }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.database !== this.props.database) {
+      this.setup();
+    }
+  }
+
+  setup = () => {
+    this.props.database.find((item) => {
+      if (item._id === this.props.value) {
+        this.props.onClick({
+          target: {value: item._id, name: this.props.name}
+        });
+        this.setState({ query: item.description, buttonMode: true });
+        return true;
+      }
+    })
   }
 
   hideDropbox = () => {
@@ -127,9 +140,7 @@ export default class SuggestionBar extends React.Component {
             {this.renderResults()}
           </ul>
         : null}
-
       </div>
-
     )
   }
 }

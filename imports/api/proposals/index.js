@@ -87,8 +87,6 @@ if (Meteor.isServer) {
             observations: master.observations,
             deliveryAddress: master.deliveryAddress,
             dates: master.dates,
-            iss: 5,
-            inss: 11,
             billingProducts: [],
             billingServices: [],
             containers: setProducts(master.containers),

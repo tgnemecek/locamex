@@ -2,12 +2,14 @@ import tools from '/imports/startup/tools/index';
 import moment from 'moment';
 
 export default function tableBillingServices(props) {
+  var inss = props.billingServices.inss;
+  var iss = props.billingServices.iss;
   const body = () => {
-    return props.billingServices.map((charge, i, array) => {
+    return props.billingServices.charges.map((charge, i, array) => {
       var index = (i + 1);
       var expiryDate = moment(charge.expiryDate).format("DD/MM/YYYY");
       var description = charge.description;
-      var taxes = {text: tools.format((charge.value * (props.inss + props.iss) / 100), 'currency'), alignment: 'center'};
+      var taxes = {text: tools.format((charge.value * (inss + iss) / 100), 'currency'), alignment: 'center'};
       var value = {text: tools.format(charge.value, 'currency'), alignment: 'right'};
       return [index, expiryDate, description, taxes, value];
     });

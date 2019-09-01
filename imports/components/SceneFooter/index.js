@@ -32,6 +32,9 @@ export default class SceneFooter extends React.Component {
 
     const isBillingCorrect = () => {
       if (this.props.master.type === "proposal") return true;
+      if (!this.props.master.billingProducts) return false;
+      if (!this.props.master.billingServices) return false;
+
       var productsGoalValue = this.props.productsValue;
       var productsValue = this.props.master.billingProducts.reduce((acc, cur) => {
         return acc + cur.value;

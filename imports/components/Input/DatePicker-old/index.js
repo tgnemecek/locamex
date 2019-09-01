@@ -1,7 +1,9 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import moment from 'moment';
-import Calendar from '/imports/components/Calendar/index';
+
+import Icon from '/imports/components/Icon/index';
+import CalendarBar from '/imports/components/CalendarBar/index';
 
 export default class DatePicker extends React.Component {
   constructor(props) {
@@ -19,7 +21,10 @@ export default class DatePicker extends React.Component {
   }
   render() {
     return (
-      <>
+      <div>
+        <div>
+          <Icon icon="calendar"/>
+        </div>
         <input
           value={moment(this.props.value).format("DD-MMMM-YYYY")}
           onClick={this.toggleCalendar}
@@ -32,7 +37,7 @@ export default class DatePicker extends React.Component {
           {this.state.toggleCalendar ?
             <Calendar value={this.props.value || new Date()} closeCalendar={this.toggleCalendar} changeDate={this.changeDate}/>
           : null}
-      </>
+      </div>
     )
   }
 }

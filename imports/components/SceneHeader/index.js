@@ -1,12 +1,13 @@
 import React from 'react';
 import tools from '/imports/startup/tools/index';
-import Documents from './Documents/index';
-import Billing from './Billing/index';
-import Observations from './Observations/index';
+
 import Icon from '/imports/components/Icon/index';
 import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 import Status from '/imports/components/Status/index';
 import Input from '/imports/components/Input/index';
+
+import Documents from './Documents/index';
+import Observations from './Observations/index';
 
 export default class SceneHeader extends React.Component {
   constructor(props) {
@@ -19,7 +20,6 @@ export default class SceneHeader extends React.Component {
 
   renderTitle = () => {
     var label;
-    debugger;
     var reverse = [...this.props.snapshots];
     if (this.props.master.type === "contract") {
       reverse = reverse.filter((item, i) => i > 0);
@@ -52,7 +52,7 @@ export default class SceneHeader extends React.Component {
     }
 
     const renderSelect = () => {
-      if (this.props.master.type === "shipping") {
+      if (this.props.master.type === "shipping" || this.props.master.type === "billing") {
         return <h1>{this.props.master.activeVersion}</h1>
       }
       if (reverse.length === 0 && this.props.master.type === "contract") {
@@ -103,7 +103,6 @@ export default class SceneHeader extends React.Component {
   }
 
   checkIfHasContent = () => {
-    debugger;
     var hasContent = (this.props.master.observations.internal || this.props.master.observations.external);
     return hasContent ? "content-inside" : "";
   }
@@ -121,8 +120,8 @@ export default class SceneHeader extends React.Component {
         if (this.props.master.clientId == '') {
           return alert("Escolha antes um cliente.");
         }
-        if (!this.props.master.billingProducts.length &&
-            !this.props.master.billingServices.length) {
+        if (!this.props.master.billingProducts.charges &&
+            !this.props.master.billingServices.charges) {
           return alert("Preencha antes a Tabela de Cobrança.");
         }
         this.toggleWindow(e);
@@ -191,15 +190,19 @@ export default class SceneHeader extends React.Component {
                                               disabled={this.props.disabled}
                                                   /> : null}
             {this.props.master.type === "contract" ?
-            <Icon value='billing' onClick={this.toggleWindow} icon="money"
-              style={this.props.errorKeys.includes("billing") ? {color: "red"} : null}/>
+            <button onClick={() => this.toggleWindow({target: {value: "billing"} })}>
+              <Icon
+                icon="money"
+                style={this.props.errorKeys.includes("billing") ? {color: "red"} : null}/>
+            </button>
             : null}
-            {this.state.windowOpen == 'billing' ? <Billing
-                                              master={this.props.master}
-                                              toggleWindow={this.toggleWindow}
-                                              updateMaster={this.props.updateMaster}
-                                              errorKeys={this.props.errorKeys}
-                                              /> : null}
+            {this.state.windowOpen == 'billing' ?
+            <this.props.BillingSchedule
+              master={this.props.master}
+              toggleWindow={this.toggleWindow}
+              updateMaster={this.props.updateMaster}
+              errorKeys={this.props.errorKeys}
+              /> : null}
             {this.showDocumentsButton()}
             {this.showDuplicateButton()}
             {this.showCancelButton()}

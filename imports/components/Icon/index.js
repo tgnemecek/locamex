@@ -20,7 +20,9 @@ import {
   faCopy,
   faFilePdf,
   faCloudUploadAlt,
-  faStar
+  faStar,
+  faCalendarAlt,
+  faFileInvoiceDollar
 } from '@fortawesome/free-solid-svg-icons';
 
 const ICON_SET = {
@@ -42,7 +44,9 @@ const ICON_SET = {
   copy: faCopy,
   pdf: faFilePdf,
   upload: faCloudUploadAlt,
-  star: faStar
+  star: faStar,
+  calendar: faCalendarAlt,
+  invoice: faFileInvoiceDollar
 }
 
 export default class Icon extends React.Component {

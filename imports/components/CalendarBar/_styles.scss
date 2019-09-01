@@ -1,4 +1,27 @@
-.calendar__header {
+.calendar-bar {
+  position: relative;
+  overflow: visible;
+}
+
+.calendar-bar__input {
+  input {
+    padding-left: 32px !important;
+    cursor: pointer;
+    color: black !important;
+    background: white !important;
+  }
+}
+
+.calendar-bar__icon {
+  position: absolute;
+  z-index: 1;
+  left: 1rem;
+  pointer-events: none;
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+
+.calendar-bar__box__header {
   display: flex;
   justify-content: space-between;
   margin-bottom: $space;
@@ -6,7 +29,7 @@
     cursor: pointer;
   }
 }
-.calendar__table {
+.calendar-bar__box__table {
   border: 1px solid $black;
   border-collapse: collapse;
   th {
@@ -27,14 +50,14 @@
     padding: ($space /4);
   }
 }
-.calendar__table tr:nth-child(even) {
+.calendar-bar__box__table tr:nth-child(even) {
   background-color: $grey;
 }
-.calendar__day--grayed {
+.calendar-bar__box__day--grayed {
   background-color: $dark-grey;
   cursor: default !important;
   font-style: italic;
 }
-.calendar__day--active {
+.calendar-bar__box__day--active {
   background-color: $green !important;
 }

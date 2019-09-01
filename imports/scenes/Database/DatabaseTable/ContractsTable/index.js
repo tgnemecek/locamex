@@ -45,7 +45,6 @@ class ContractsTable extends React.Component {
   }
   renderBody = () => {
     return this.state.filteredDatabase.map((item, i) => {
-      debugger;
       const toggleWindow = () => {
         this.props.toggleWindow(item);
       }
@@ -86,6 +85,15 @@ class ContractsTable extends React.Component {
           )
         } else return null;
       }
+      const renderBillingButton = () => {
+        if (tools.isUserAllowed("billing") && item.status === "active") {
+          return (
+            <td className="table__small-column">
+              <Icon key={i} icon="money" to={"/billing/" + item._id} />
+            </td>
+          )
+        } else return null;
+      }
       const renderShippingButton = () => {
         if (tools.isUserAllowed("shipping") && item.status === "active") {
           return (
@@ -105,6 +113,7 @@ class ContractsTable extends React.Component {
           <td className="table__small-column"><Status status={item.status} type="contract"/></td>
           <td className="table__small-column">{totalValue()}</td>
           {renderContractButton()}
+          {renderBillingButton()}
           {renderShippingButton()}
         </tr>
       )
