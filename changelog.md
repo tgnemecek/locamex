@@ -1,5 +1,12 @@
 # Changelog:
 
+## Version 2.2.1
+
+-  Added Billing functionality;
+-  Added Agenda functionality;
+-  Redone generateTable function in Pdf class;
+-  Redone BillingSchedule in Contract;
+
 ## Version 2.2.0
 
 -  FlyerUploader reformulated;

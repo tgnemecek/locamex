@@ -80,7 +80,7 @@ export default class BillingSchedule extends React.Component {
     var billingProducts = [];
     for (var i = 0; i < this.state.duration; i++) {
       billingProducts.push({
-        description: `Parcela ${i + 1} de ${this.state.duration}. Locação - Informamos: Locações são cobradas através de Faturas de Locação de Bens Móveis plenamente contabilizáveis.`,
+        description: `Parcela ${i + 1} de ${this.state.duration} de Locação - Informamos: Locações são cobradas através de Faturas de Locação de Bens Móveis plenamente contabilizáveis.`,
         value: 0
       })
     }
@@ -92,7 +92,7 @@ export default class BillingSchedule extends React.Component {
 
   setBillingServices = (quantity, firstSetup) => {
     function getDescription(i, length) {
-      return `Parcela ${i + 1} de ${length}. Pacote de Serviços - Informamos: Pagamentos de Notas Fiscais Eletrônicas (NFe) são exclusivos através de Depósito Bancário junto ao Banco Itaú S.A. (341) Agência 1571 C/C 02313-2 a favor da LOCADORA.`
+      return `Parcela ${i + 1} de ${length} do Pacote de Serviços - Informamos: Pagamentos de Notas Fiscais Eletrônicas (NFe) são exclusivos através de Depósito Bancário junto ao Banco Itaú S.A. (341) Agência 1571 C/C 02313-2 a favor da LOCADORA.`
     }
     if (firstSetup) {
       if (this.props.master.billingServices) {
@@ -109,7 +109,7 @@ export default class BillingSchedule extends React.Component {
                       .add(1, 'months').toDate(),
           inss: 11,
           iss: 5,
-          description: getDescription(0, length),
+          description: getDescription(0, 1),
           value: 0
         }
       ]
@@ -118,7 +118,10 @@ export default class BillingSchedule extends React.Component {
       var billingServices = [];
       for (var i = 0; i < quantity; i++) {
         if (currentCharges[i]) {
-          billingServices.push(currentCharges[i])
+          billingServices.push({
+            ...currentCharges[i],
+            description: getDescription(i, quantity)
+          });
         } else {
 
           var expiryDate = moment(billingServices[i-1].expiryDate)
@@ -213,20 +216,24 @@ export default class BillingSchedule extends React.Component {
           className="billing-schedule"
           closeBox={this.props.toggleWindow}>
           <div className="error-message">{this.state.errorMsg}</div>
-          <ProductsSection
-            updateBilling={this.updateBilling}
-            changeStartDate={this.changeStartDate}
-            billingProducts={this.state.billingProducts}
-            productsValue={this.state.productsValue}
-            EqualCharges={EqualCharges}/>
-          <ServicesSection
-            updateBilling={this.updateBilling}
-            billingServices={this.state.billingServices}
-            startDate={this.state.billingProducts.startDate}
-            setCharges={this.setBillingServices}
-            servicesValue={this.state.servicesValue}
-            EqualCharges={EqualCharges}/>
-          <FooterButtons buttons={[{text: "Salvar", onClick: this.saveEdits}]}/>
+          <div className={this.props.master.status !== "inactive" ? "disable-click" : ""}>
+            <ProductsSection
+              updateBilling={this.updateBilling}
+              changeStartDate={this.changeStartDate}
+              billingProducts={this.state.billingProducts}
+              productsValue={this.state.productsValue}
+              EqualCharges={EqualCharges}/>
+            <ServicesSection
+              updateBilling={this.updateBilling}
+              billingServices={this.state.billingServices}
+              startDate={this.state.billingProducts.startDate}
+              setCharges={this.setBillingServices}
+              servicesValue={this.state.servicesValue}
+              EqualCharges={EqualCharges}/>
+          </div>
+          {this.props.master.status === "inactive" ?
+            <FooterButtons buttons={[{text: "Salvar", onClick: this.saveEdits}]}/>
+          : null}
         </Box>
       )
   }

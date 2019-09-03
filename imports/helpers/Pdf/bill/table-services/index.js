@@ -2,31 +2,73 @@ import tools from '/imports/startup/tools/index';
 
 export default function tableServices(props) {
 
+  var timeUnitLabel = props.dates.timeUnit === "months" ? "Meses" : "Dias";
+
+  var timeUnitValueLabel = props.dates.timeUnit === "months" ?
+                        {text: 'Valor Mensal', alignment: 'left'} : null;
+
   const body = () => {
-    return props.services.map((service, i) => {
-      return [
-        (i+1), service.description, tools.format(service.price, 'currency'), {text: service.renting, alignment: 'center'}, props.resultFormat(service.finalPrice)
-      ];
-    });
+    const monthlyPrice = (price) => {
+      if (props.dates.timeUnit === "months") {
+        return {text: tools.format(price, 'currency'), alignment: 'center'}
+      } else return null;
+    }
+    const duration = (duration) =>  {
+      if (props.dates.timeUnit === "months") {
+        return {text: duration.toString(), alignment: 'center'}
+      } else return {text: "até 30", alignment: 'center'};
+    }
+    if (props.products) {
+      return props.products.map((product, i) => {
+        return [
+          (i+1),
+          product.description,
+          tools.format(product.price, 'currency'),
+          {text: product.renting.toString(), alignment: 'center'},
+          monthlyPrice(product.price * product.renting)
+        ];
+      })
+    } else return [{text: '', colSpan: 6}];
+  }
+
+  const footer = () => {
+    const discount = () => {
+      if (props.discount) {
+        return [
+          {text: 'Desconto por tempo de Locação:', colSpan: 'fill', alignment: 'right', bold: true},
+          {text: `-${props.discount * 100}%`, alignment: 'right', bold: true}
+        ]
+      } else return null
+    }
+    return [
+      discount(),
+      [
+        {text: 'Valor Total Desta Fatura:', colSpan: 'fill', alignment: 'right', bold: true}, props.resultFormat(props.totalValueProducts)
+      ]
+    ]
+  }
+
+  const widths = () => {
+    if (props.dates.timeUnit === "months") {
+      return ['auto', '*', 'auto', 'auto', 'auto'];
+    } else return ['auto', '*', 'auto', 'auto', 'auto'];
   }
 
   return [
-    {text: 'Pacote de Serviços', style: 'h2', alignment: 'center'},
+    {text: 'Itens Locados', style: 'h2', alignment: 'center'},
     props.generateTable({
-      header: [[
+      header: [
+        [
         '#',
         'Descrição',
-        {text: 'Valor Unitário', alignment: 'left'},
+        {text: 'Valor Unit.', alignment: 'left'},
         {text: 'Qtd.', alignment: 'center'},
-        {text: 'Valor Total', alignment: 'right'}
-      ]],
+        timeUnitValueLabel
+      ]
+    ],
       body: body(),
-      footer: [[
-        {text: 'Valor Total do Pacote de Serviços:', colSpan: 4, alignment: 'right', bold: true}, props.resultFormat(props.totalValueServices)
-      ]],
-      widths: [ 'auto', '*', 'auto', 'auto', 'auto' ],
-      styles: props.styles
+      footer: footer(),
+      widths: widths()
     })
   ]
 }
-

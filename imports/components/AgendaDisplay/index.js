@@ -9,7 +9,7 @@ import ContentDisplay from './ContentDisplay/index';
 import Legend from './Legend/index';
 
 
-export default class AgendaDisplay extends React.Component {
+class AgendaDisplay extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -38,6 +38,14 @@ export default class AgendaDisplay extends React.Component {
     this.setState({ selectedDate, events });
   }
 
+  jumpToToday = () => {
+    this.setState({
+      selectedMonth: moment().month(),
+      selectedYear: moment().year(),
+      selectedDate: moment()
+    })
+  }
+
   renderTitle = () => {
     return (
       <div className="agenda__month-title">
@@ -49,6 +57,9 @@ export default class AgendaDisplay extends React.Component {
         </h3>
         <button onClick={() => this.changeMonth(1)}>
           <Icon icon="arrowRight"/>
+        </button>
+        <button className="button--pill agenda__jump-to-today" onClick={this.jumpToToday}>
+          HOJE
         </button>
       </div>
     )
@@ -170,5 +181,35 @@ export default class AgendaDisplay extends React.Component {
         />
       </div>
     )
+  }
+}
+
+export default class AgendaDisplayWrapper extends React.Component {
+  agendaDatabase = () => {
+    var agendaDatabase = [...this.props.databases.agendaDatabase];
+    this.props.databases.contractsDatabase.forEach((contract) => {
+      if (contract.status === "active" || contract.status === "prorogation") {
+        contract.snapshots[contract.activeVersion].billingProducts.forEach((item, i, arr) => {
+          agendaDatabase.push({
+            description: `${i+1}/${arr.length}`,
+            type: "billingProducts",
+            date: item.expiryDate,
+            referral: contract._id
+          })
+        })
+        contract.snapshots[contract.activeVersion].billingServices.forEach((item, i, arr) => {
+          agendaDatabase.push({
+            description: `${i+1}/${arr.length}`,
+            type: "billingServices",
+            date: item.expiryDate,
+            referral: contract._id
+          })
+        })
+      }
+    })
+    return agendaDatabase;
+  }
+  render() {
+    return <AgendaDisplay agendaDatabase={this.agendaDatabase()}/>
   }
 }

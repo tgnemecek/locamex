@@ -1,7 +1,7 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 import { withTracker } from 'meteor/react-meteor-data';
-import { Containers } from '/imports/api/containers/index';
+import { Agenda } from '/imports/api/agenda/index';
 import { Redirect } from 'react-router-dom';
 import moment from 'moment';
 
@@ -10,20 +10,10 @@ import Icon from '/imports/components/Icon/index';
 import Input from '/imports/components/Input/index';
 import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 
-
 class TestPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      file: ''
-    }
-  }
-
   onClick = () => {
     Meteor.call('agenda.contract.activation', "2019-007");
   }
-
-
   render() {
     return (
       <div>
@@ -34,11 +24,9 @@ class TestPage extends React.Component {
 }
 
 export default TestWrap = withTracker((props) => {
-  Meteor.subscribe('containersPub');
-  var database = Containers.find().fetch();
-  var ready = !!database.length;
+  Meteor.subscribe('agendaPub');
+  var agenda = Agenda.find().fetch();
   return {
-    database,
-    ready
+    agenda
   }
 })(TestPage);

@@ -7,6 +7,9 @@ import Icon from '/imports/components/Icon/index';
 import RedirectUser from '/imports/components/RedirectUser/index';
 import { Contracts } from '/imports/api/contracts/index';
 import { Clients } from '/imports/api/clients/index';
+import { Containers } from '/imports/api/containers/index';
+import { Accessories } from '/imports/api/accessories/index';
+import { Services } from '/imports/api/services/index';
 
 import SceneHeader from '/imports/components/SceneHeader/index';
 import BillBox from './BillBox/index';
@@ -19,18 +22,23 @@ class Billing extends React.Component {
     }
   }
 
-  translateStatus = (status) => {
+  renderStatus = (status) => {
     var dictionary = {
-      payed: "Fatura Paga",
-      billed: "Fatura Gerada",
-      ready: "Fatura Pronta",
-      late: "Fatura Atrasada",
-      notReady: "Fatura Pendente"
+      payed: {text: "Fatura Paga", className: "billing__payed"},
+      billed: {text: "Fatura Gerada", className: "billing__billed"},
+      ready: {text: "Fatura Pronta", className: "billing__ready"},
+      late: {text: "Fatura Atrasada", className: "billing__late"},
+      notReady: {text: "Fatura Pendente", className: "billing__notReady"}
     }
-    return dictionary[status];
+    var current = dictionary[status]
+    return (
+      <span className={current.className}>
+        {current.text}
+      </span>
+    )
   }
 
-  chargeStatus = (charge) => {
+  billStatus = (charge) => {
     if (charge.status === "payed" || charge.status === "billed") {
       return charge.status;
     }
@@ -50,16 +58,18 @@ class Billing extends React.Component {
   }
 
   renderProductsBody = () => {
+    debugger;
     return this.props.contract.billingProducts.map((charge, i, arr) => {
       const toggleBox = () => {
         this.setState({ billBox: {
           ...charge,
           index: i,
           length: arr.length,
-          type: "billingProducts"
+          type: "billingProducts",
+          status: this.billStatus(charge)
         } });
       }
-      var status = this.chargeStatus(charge);
+      var status = this.billStatus(charge);
       return (
         <tr key={i}>
           <td className="table__small-column">{(i+1) + "/" + arr.length}</td>
@@ -69,11 +79,12 @@ class Billing extends React.Component {
           }</td>
           <td className="table__small-column">{moment(charge.expiryDate).format("DD/MM/YYYY")}</td>
           <td className="table__small-column">{tools.format(charge.value, 'currency')}</td>
-          <td className="table__small-column">{this.translateStatus(status)}</td>
-          {status === "ready" || status === "late" ?
+          <td className="table__small-column">{this.renderStatus(status)}</td>
+          {true ?
+          // {status === "ready" || status === "late" ?
             <td className="table__small-column">
               <button onClick={toggleBox}>
-                <Icon icon="invoice"/>
+                <Icon icon="money"/>
               </button>
             </td>
           : null}
@@ -84,18 +95,26 @@ class Billing extends React.Component {
 
   renderServicesBody = () => {
     return this.props.contract.billingServices.map((charge, i, arr) => {
-      var status = this.chargeStatus(charge);
+      const toggleBox = () => {
+        this.setState({ billBox: {
+          ...charge,
+          index: i,
+          length: arr.length,
+          type: "billingServices"
+        } });
+      }
+      var status = this.billStatus(charge);
       return (
         <tr key={i}>
           <td className="table__small-column">{(i+1) + "/" + arr.length}</td>
           <td>{charge.description}</td>
           <td className="table__small-column">{moment(charge.expiryDate).format("DD/MM/YYYY")}</td>
           <td className="table__small-column">{tools.format(charge.value, 'currency')}</td>
-          <td className="table__small-column">{this.translateStatus(status)}</td>
+          <td className="table__small-column">{this.renderStatus(status)}</td>
           {status === "ready" || status === "late" ?
             <td className="table__small-column">
-              <button>
-                <Icon icon="invoice"/>
+              <button onClick={toggleBox}>
+                <Icon icon="money"/>
               </button>
             </td>
           : null}
@@ -121,7 +140,7 @@ class Billing extends React.Component {
             errorKeys={[]}
             disabled={true}
           />
-          <h3 style={{textAlign: "center", margin: "20px"}}>Cobranças</h3>
+          <h3 style={{textAlign: "center", margin: "20px"}}>Histórico de Faturas</h3>
           <h4>Cobranças de Locação</h4>
           <table className="table">
             <thead>
@@ -159,6 +178,8 @@ class Billing extends React.Component {
           : null}
           {this.state.billBox ?
             <BillBox
+              closeBox={() => this.setState({ billBox: false })}
+              renderStatus={this.renderStatus}
               contract={this.props.contract}
               charge={this.state.billBox}
               databases={this.props.databases}
@@ -180,6 +201,27 @@ export default BillingWrapper = withTracker((props) => {
   Meteor.subscribe('contractsPub');
   Meteor.subscribe('usersPub');
   Meteor.subscribe('clientsPub');
+  Meteor.subscribe('containersPub');
+  Meteor.subscribe('accessoriesPub');
+  Meteor.subscribe('servicesPub');
+
+  var databases = {
+    usersDatabase: Meteor.users.find().fetch(),
+    clientsDatabase: Clients.find().fetch(),
+    containersDatabase: Containers.find().fetch(),
+    accessoriesDatabase: Accessories.find().fetch(),
+    servicesDatabase: Services.find().fetch()
+  }
+
+  const getDescription = (arr, database) => {
+    return arr.map((item) => {
+      var product = databases[database].find((product) => product._id === item.productId);
+      return {
+        ...item,
+        description: product ? product.description : ""
+      }
+    })
+  }
 
   var contract = Contracts.findOne({ _id: props.match.params.contractId });
   if (contract) {
@@ -187,11 +229,9 @@ export default BillingWrapper = withTracker((props) => {
       ...contract,
       ...contract.snapshots[contract.activeVersion]
     }
-  }
-
-  var databases = {
-    usersDatabase: Meteor.users.find().fetch(),
-    clientsDatabase: Clients.find().fetch(),
+    contract.containers = getDescription(contract.containers, 'containersDatabase');
+    contract.accessories = getDescription(contract.accessories, 'accessoriesDatabase');
+    contract.services = getDescription(contract.services, 'servicesDatabase');
   }
 
   return { contract, databases }

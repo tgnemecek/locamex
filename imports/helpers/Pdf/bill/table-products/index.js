@@ -2,13 +2,10 @@ import tools from '/imports/startup/tools/index';
 
 export default function tableProducts(props) {
 
-  const timeUnitLabel = () => {
-    return props.dates.timeUnit === "months" ? "Meses" : "Dias";
-  }
+  var timeUnitLabel = props.dates.timeUnit === "months" ? "Meses" : "Dias";
 
-  const timeUnitValueLabel = () => {
-    return props.dates.timeUnit === "months" ? {text: 'Valor Mensal', alignment: 'left'} : null;
-  }
+  var timeUnitValueLabel = props.dates.timeUnit === "months" ?
+                        {text: 'Valor Mensal', alignment: 'left'} : null;
 
   const body = () => {
     const monthlyPrice = (price) => {
@@ -28,60 +25,50 @@ export default function tableProducts(props) {
           product.description,
           tools.format(product.price, 'currency'),
           {text: product.renting.toString(), alignment: 'center'},
-          monthlyPrice(product.price * product.renting),
-          duration(props.dates.duration),
-          {text: tools.format(product.finalPrice, 'currency'), alignment: 'right'}
+          monthlyPrice(product.price * product.renting)
         ];
       })
     } else return [{text: '', colSpan: 6}];
   }
 
   const footer = () => {
-    var colSpan = props.dates.timeUnit === "months" ? 6 : 5;
-    const monthlyValue = () => {
-      if (props.dates.timeUnit === "months") {
-        return [
-          {text: 'Valor Mensal de Locação:', colSpan: 6, alignment: 'right', bold: true}, props.resultFormat(props.totalValueProrogation)
-        ]
-      } else return null
-    }
     const discount = () => {
       if (props.discount) {
         return [
-          {text: 'Desconto por tempo de Locação:', colSpan, alignment: 'right', bold: true},
+          {text: 'Desconto por tempo de Locação:', colSpan: 'fill', alignment: 'right', bold: true},
           {text: `-${props.discount * 100}%`, alignment: 'right', bold: true}
         ]
       } else return null
     }
     return [
       discount(),
-      monthlyValue(),
-      [{text: 'Valor Total da Locação:', colSpan, alignment: 'right', bold: true}, props.resultFormat(props.totalValueProducts)]
+      [
+        {text: 'Valor Total Desta Fatura:', colSpan: 'fill', alignment: 'right', bold: true}, props.resultFormat(props.totalValueProducts)
+      ]
     ]
   }
 
   const widths = () => {
     if (props.dates.timeUnit === "months") {
-      return ['auto', '*', 'auto', 'auto', 'auto', 'auto', 'auto'];
-    } else return ['auto', '*', 'auto', 'auto', 'auto', 'auto'];
+      return ['auto', '*', 'auto', 'auto', 'auto'];
+    } else return ['auto', '*', 'auto', 'auto', 'auto'];
   }
-debugger;
+
   return [
-    {text: 'Itens a Serem Locados', style: 'h2', alignment: 'center'},
+    {text: 'Itens Locados', style: 'h2', alignment: 'center'},
     props.generateTable({
-      header: [[
+      header: [
+        [
         '#',
         'Descrição',
         {text: 'Valor Unit.', alignment: 'left'},
         {text: 'Qtd.', alignment: 'center'},
-        timeUnitValueLabel(),
-        {text: timeUnitLabel(), alignment: 'center'},
-        {text: 'Valor Total', alignment: 'right'}
-      ]],
+        timeUnitValueLabel
+      ]
+    ],
       body: body(),
       footer: footer(),
-      widths: widths(),
-      styles: props.styles
+      widths: widths()
     })
   ]
 }

@@ -120,8 +120,8 @@ export default class SceneHeader extends React.Component {
         if (this.props.master.clientId == '') {
           return alert("Escolha antes um cliente.");
         }
-        if (!this.props.master.billingProducts.charges &&
-            !this.props.master.billingServices.charges) {
+        if (!this.props.master.billingProducts.length &&
+            !this.props.master.billingServices.length) {
           return alert("Preencha antes a Tabela de Cobrança.");
         }
         this.toggleWindow(e);
@@ -145,7 +145,7 @@ export default class SceneHeader extends React.Component {
       } else return null;
     }
 
-    if (this.props.master.type !== "shipping") {
+    if (this.props.master.type !== "shipping" && this.props.master.type !== "billing") {
       return (
         <>
           <Icon value="documents" onClick={requirements} icon="print"/>

@@ -2,12 +2,11 @@ import tools from '/imports/startup/tools/index';
 import moment from 'moment';
 
 export default function tableBillingProducts(props) {
-  var billingProducts = props.billingProducts.charges.map((charge, i) => {
-    var startDate = moment(props.billingProducts.startDate)
-                    .add((i * 30 + (i * 1)), 'days');
-    var endDate = moment(startDate).add(29, 'days');
-    var expiryDate = moment(startDate)
-                    .set('date', props.billingProducts.expiryDay);
+  var billingProducts = props.billingProducts.map((charge, i) => {
+    var startDate = moment(charge.startDate);
+    var endDate = moment(charge.endDate);
+    var expiryDate = moment(expiryDate);
+    
     return {
       ...charge,
       startDate,

@@ -20,10 +20,10 @@ export default class ContentDisplay extends React.Component {
         var link = "";
         if (event.type === "billingProducts") {
           description = `Contrato ${event.referral}: Vencimento da Cobrança de Locação ${event.description}`;
-          link = "/contract/" + event.referral;
+          link = "/billing/" + event.referral;
         } else if (event.type === "billingServices") {
           description = `Contrato ${event.referral}: Vencimento da Cobrança de Serviço ${event.description}`;
-          link = "/contract/" + event.referral;
+          link = "/billing/" + event.referral;
         } else if (event.type === "deliveryDate") {
           description = `Contrato ${event.referral}: Entrega de Produtos`;
           link = "/shipping/" + event.referral;

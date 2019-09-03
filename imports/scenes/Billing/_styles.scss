@@ -1,0 +1,45 @@
+.billing {
+  box-shadow: $box-shadow-spread;
+  background: $light-grey;
+
+  h4 {
+    margin: $space;
+  }
+}
+
+.billing__bill-box {
+  width: 60vw;
+}
+
+.billing__bill-box__body {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  text-align: left;
+  label {
+    font-weight: bold;
+  }
+}
+
+.billing__payed {
+  color: green;
+  font-weight: bold;
+}
+
+.billing__billed {
+  color: blue;
+  font-weight: bold;
+}
+
+.billing__ready {
+  color: gold;
+  font-weight: bold;
+}
+
+.billing__late {
+  color: red;
+  font-weight: bold;
+}
+
+.billing__notReady {
+  color: black;
+}

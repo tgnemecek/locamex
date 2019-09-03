@@ -267,6 +267,13 @@ if (Meteor.isServer) {
       Contracts.update({ _id }, { $set: { shipping } });
       Meteor.call('history.insert', {...history, contractId: _id}, 'contracts.shipping.receive');
       return true;
+    },
+    'contracts.billing.update' (_id, billing, type) {
+      var contract = Contracts.findOne({_id});
+      var snapshot = contract.snapshots[contract.activeVersion];
+      snapshot[type] = billing;
+      Contracts.update({_id}, { $set: contract })
+      return _id;
     }
   })
 }

@@ -1,12 +1,21 @@
 .agenda__month-title {
+  position: relative;
   display: flex;
   justify-content: center;
+  align-items: center;
+  height: 50px;
   h3 {
     width: 200px;
     text-align: center;
   }
   button {
     width: 50px;
+  }
+  .agenda__jump-to-today {
+    position: absolute;
+    right: 0;
+    margin: auto;
+    padding: 1px;
   }
 }
 

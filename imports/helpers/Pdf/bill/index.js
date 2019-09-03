@@ -3,22 +3,32 @@ import moment from 'moment';
 
 import header from './header/index';
 import tableInformation from './table-information/index';
-import observations from './observations/index';
-import tableProducts from './table-products/index';
-import tableServices from './table-services/index';
-import tableTotalValue from './table-total-value/index';
+import tableClient from './table-client/index';
 import conditions from './conditions/index';
-import notIncluded from './not-included/index';
-import documentsNeeded from './documents-needed/index';
-import closing from './closing/index';
-import signature from './signature/index';
+import tableProducts from './table-products/index';
+import tableCharge from './table-charge/index';
+import notService from './not-service/index';
+
+import tableServices from './table-services/index';
 
 export default function createPdf(props) {
-
   const contract = props.master;
   const generateTable = props.generateTable;
   const styles = props.styles;
   const charge = props.charge;
+
+  const products = contract.containers.concat(contract.accessories).map((item) => {
+    item.monthlyPrice = item.renting * item.price;
+    item.finalPrice = item.monthlyPrice * contract.dates.duration;
+    return item;
+  });
+  const totalValueProducts = products.length ? (products.reduce((acc, current) => {
+    return acc + current.finalPrice;
+  }, 0) * (1 - contract.discount)) : 0;
+
+  function resultFormat(input) {
+    return {text: tools.format(input, 'currency'), alignment: 'right', bold: true};
+  }
 
   const logoLoader = new Promise((resolve, reject) => {
     var img = new Image();
@@ -42,7 +52,10 @@ export default function createPdf(props) {
   var data = {
     ...contract,
     charge,
+    products,
+    totalValueProducts,
     generateTable,
+    resultFormat,
     styles
   }
 
@@ -58,17 +71,13 @@ export default function createPdf(props) {
     content: [
       header(data),
       tableInformation(data),
+      tableClient(data),
       conditions(data),
-      // tableProducts(data),
-      // observations(data),
-      // tableServices(data),
-      // tableTotalValue(data),
-      // notIncluded(),
-      // documentsNeeded(data),
-      // closing(),
-      // signature(data)
+      data.charge.type === "billingProducts" ? tableProducts(data) : tableServices(data),
+      tableCharge(data),
+      notService()
     ],
-    footerStatic: `Contrato de Locação de Bens Móveis e Prestação de Serviços nº ${contract._id}.${Number(contract.version)}\n`,
+    footerStatic: `Locamex - Contrato #${contract._id}.${contract.activeVersion} - Fatura ${charge.index+1} de ${charge.length}\n`,
     styles
   };
   return new Promise((resolve, reject) => {

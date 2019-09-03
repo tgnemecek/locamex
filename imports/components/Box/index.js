@@ -16,8 +16,8 @@ export default class Box extends React.Component {
   style = () => {
     return {
       content: {
-        height: this.props.height ? this.props.height : "auto",
-        width: this.props.width ? this.props.width : "auto",
+        height: this.props.height || "",
+        width: this.props.width || "",
         ...this.props.style
       }
     };

@@ -184,6 +184,8 @@ export default class tools {
     if (value === null) return null;
     if (value === "") return "";
 
+    type = type.toLowerCase();
+
     var options = {
       allowNegative: false,
       allowImpossible: false,
