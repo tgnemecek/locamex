@@ -11,36 +11,70 @@
   height: 40px;
 }
 
+@media screen and (max-width: 1250px) {
+  .header__logo {
+    display: none;
+  }
+}
+
 .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   max-width: ($site-max-width /1.5);
   margin: 0 auto;
   padding: 0 $space;
   h1 { color: white }
 }
 
+.header__mobile-menu-icon {
+  display: none;
+  padding: 10px 0;
+  svg {
+    color: white;
+  }
+}
+
 .header__menu {
   display: inline-flex;
-  width: 85%;
   align-items: center;
   justify-content: flex-end;
+}
+
+@media screen and (max-width: 700px) {
+  .header__mobile-menu-icon {
+    display: inherit;
+  }
+  .header__mobile-dropdown:hover > .header__menu {
+    visibility: visible;
+    transform: scaleY(1);
+  }
+  .header__menu {
+    visibility: hidden;
+    transform-origin: top;
+    transition: transform 0.25s;
+    transform: scaleY(0);
+    position: absolute;
+    flex-direction: column;
+    right: 0;
+    top: 47px;
+    background: $brand-primary;
+    align-items: flex-start;
+    z-index: 999;
+  }
+  .menu-item {
+    width: 100%
+  }
+  .menu-item__dropbox {
+    left: -98%;
+    top: -31%;
+  }
 }
 
 .header__title {
   display: inline-block;
   margin: 0 !important;
-  width: 15%;
   vertical-align: middle;
-}
-
-.header__logout {
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  padding: $space ($space /2);
-  text-decoration: none;
-  position: relative;
-  margin-left: $space;
 }
 
 .header__logout:hover {

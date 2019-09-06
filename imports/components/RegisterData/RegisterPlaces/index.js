@@ -51,7 +51,7 @@ export default class RegisterPlaces extends React.Component {
   }
   render() {
     return (
-      <Box
+      <Box className="register-data"
         title={this.props.item._id ? "Editar Pátio" : "Criar Novo Pátio"}
         closeBox={this.props.toggleWindow}
         width="800px">

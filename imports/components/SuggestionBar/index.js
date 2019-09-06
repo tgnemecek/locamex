@@ -123,7 +123,7 @@ export default class SuggestionBar extends React.Component {
 
   render() {
     return (
-      <div className="suggestion-bar" onBlur={this.onBlur} onFocus={this.conditionalShowAll}>
+      <div className={this.props.className ? this.props.className + " suggestion-bar" : "suggestion-bar"} onBlur={this.onBlur} onFocus={this.conditionalShowAll}>
         <div className="suggestion-bar__magnifier" style={this.props.title ? {top: "2.5rem"} : {top: "1rem"}}>
           <Icon icon="search" />
         </div>

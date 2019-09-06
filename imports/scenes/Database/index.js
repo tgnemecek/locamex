@@ -49,8 +49,8 @@ export default class Database extends React.Component {
 
   render () {
     return (
-      <>
-        <div className="page-content">
+      <div className="page-content">
+        <div className="base-scene database">
           <DatabaseTable
             type={this.props.match.params.database}
             item={this.state.item}
@@ -79,7 +79,7 @@ export default class Database extends React.Component {
             toggleWindow={this.toggleEditWindow}
           />
         : null}
-      </>
+      </div>
     )
   }
 }

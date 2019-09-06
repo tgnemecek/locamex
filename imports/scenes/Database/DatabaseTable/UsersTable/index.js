@@ -18,7 +18,7 @@ class UsersTable extends React.Component {
         <th>Nome</th>
         <th className="table__small-column">Login</th>
         <th className="table__small-column">Tipo de Usuário</th>
-        <th className="table__small-column">Email</th>
+        <th className="table__small-column hide-at-700px">Email</th>
         <th className="table__small-column"><Icon icon="new" onClick={toggleEditWindow} /></th>
       </tr>
     )
@@ -51,7 +51,7 @@ class UsersTable extends React.Component {
           <td>{item.firstName + " " + item.lastName}</td>
           <td>{item.username}</td>
           <td className="table__small-column">{translate(item.type)}</td>
-          <td className="table__small-column">{item.emails[0].address}</td>
+          <td className="table__small-column hide-at-700px">{item.emails[0].address}</td>
           <td className="table__small-column"><Icon icon="edit" onClick={toggleEditWindow} /></td>
         </tr>
       )

@@ -325,7 +325,7 @@ class Contract extends React.Component {
     return (
       <div className="page-content">
         {/* <RedirectUser currentPage="contract"/> */}
-        <div className="contract">
+        <div className="base-scene contract">
           <SceneHeader
             master={{...this.state.contract, type: "contract"}}
             databases={this.props.databases}
@@ -342,7 +342,7 @@ class Contract extends React.Component {
             errorKeys={this.state.errorKeys}
             disabled={disabled}
           />
-          <div className={this.state.contract.status !== "inactive" ? "disable-click" : ""}>
+          <div className={this.state.contract.status !== "inactive" ? "contract__body disable-click" : "contract__body"}>
             <Information
               clientsDatabase={this.props.databases.clientsDatabase}
               contract={this.state.contract}

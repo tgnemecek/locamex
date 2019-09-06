@@ -72,7 +72,7 @@ export default class RegisterPacks extends React.Component {
   }
   render() {
     return (
-      <Box
+      <Box className="register-data"
         title="Editar Pacote"
         closeBox={this.props.toggleWindow}
         width="700px">

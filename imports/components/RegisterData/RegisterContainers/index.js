@@ -26,7 +26,7 @@ export default class RegisterContainers extends React.Component {
     } else if (this.state.type === 'modular') {
       return <Modular {...this.props} />
     } else return (
-      <Box
+      <Box className="register-data"
         title="Selecione o Tipo de Container"
         closeBox={this.props.toggleWindow}
         width="800px">

@@ -79,7 +79,7 @@ export default class RegisterAccessories extends React.Component {
   }
   render() {
     return (
-      <Box
+      <Box className="register-data"
         title={this.props.item._id ? "Editar Acessório" : "Criar Novo Acessório"}
         closeBox={this.props.toggleWindow}
         width="800px">

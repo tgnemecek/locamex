@@ -29,7 +29,7 @@ export default class CalendarBar extends React.Component {
   render() {
     return (
       <>
-        <div className="calendar-bar">
+        <div className={this.props.className ? this.props.className + " calendar-bar" : "calendar-bar"}>
           <div className="calendar-bar__icon" style={this.props.title ? {top: "2.5rem"} : {top: "1rem"}}>
             <Icon icon="calendar"/>
           </div>

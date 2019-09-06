@@ -30,8 +30,9 @@ export default function tableClient(props) {
       ]
     } else {
       return props.client.contacts.map((contact) => {
+        var phone = contact.phone1 || contact.phone2;
         return [
-          'Contato', contact.name, 'Telefone', tools.format(props.client.phone, 'phone'), 'Email', contact.email
+          'Contato', contact.name, 'Telefone', tools.format(phone, 'phone'), 'Email', contact.email
         ]
       })
     }

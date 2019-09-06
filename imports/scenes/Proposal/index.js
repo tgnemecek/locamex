@@ -304,7 +304,7 @@ class Proposal extends React.Component {
     return (
       <div className="page-content">
         <RedirectUser currentPage="proposal"/>
-        <div className="proposal">
+        <div className="base-scene proposal">
           <SceneHeader
             master={{...this.state.proposal, type: "proposal"}}
             databases={this.props.databases}

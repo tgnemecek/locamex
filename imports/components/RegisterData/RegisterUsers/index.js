@@ -88,7 +88,7 @@ export default class RegisterUsers extends React.Component {
   render() {
     return (
       <ErrorBoundary>
-        <Box
+        <Box className="register-data"
           title={this.props.item._id ? "Editar Usuário" : "Criar Novo Usuário"}
           closeBox={this.props.toggleWindow}
           width="800px">

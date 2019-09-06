@@ -1,5 +1,4 @@
 import React from 'react';
-
 import Icon from '/imports/components/Icon/index';
 
 export default class FooterButtons extends React.Component {
@@ -19,11 +18,8 @@ export default class FooterButtons extends React.Component {
   }
 
   renderOneButton = () => {
-    var style = {flexBasis: "100%"};
     var button = this.props.buttons[0];
-
     if (!button) return null;
-
     var className = "button ";
     className += button.className || '';
     var text = button.text;
@@ -32,22 +28,15 @@ export default class FooterButtons extends React.Component {
     return (
       <button
         type={type}
-        style={style}
         className={className}
         onClick={onClick}>{text}</button>
     )
   }
 
   renderTwoButtons = () => {
-    var style = {};
     var buttons = this.props.buttons;
-
     if (!buttons) return null;
-
     return buttons.map((button, i) => {
-      if (i == 0) {
-        style = {marginRight: "0.5%"}
-      } else style = {marginLeft: "0.5%"}
       var className = "button ";
       className += button.className || '';
       var text = button.text;
@@ -56,26 +45,15 @@ export default class FooterButtons extends React.Component {
       return <button
                   key={i}
                   type={type}
-                  style={style}
                   className={className}
                   onClick={onClick}>{text}</button>
     })
   }
 
   renderThreeButtons = () => {
-    var style = {};
     var buttons = this.props.buttons;
-
     if (!buttons) return null;
-
     return buttons.map((button, i) => {
-      if (i === 0) {
-        style = {flexBasis: "100%"};
-      } else if (i === 1) {
-        style = {};
-      } else if (i === 2) {
-        style = {marginLeft: "1%"};
-      }
       var className = "button ";
       className += button.className || '';
       var text = button.text;
@@ -84,7 +62,6 @@ export default class FooterButtons extends React.Component {
       return <button
                   key={i}
                   type={type}
-                  style={style}
                   className={className}
                   onClick={onClick}>{text}</button>
     })

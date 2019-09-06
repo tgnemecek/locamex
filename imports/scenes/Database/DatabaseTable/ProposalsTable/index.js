@@ -34,7 +34,7 @@ class ProposalsTable extends React.Component {
         <th className="table__small-column">Proposta</th>
         <th>Nome do Cliente</th>
         <th className="table__small-column">Status</th>
-        <th className="table__small-column">Valor Total da Proposta</th>
+        <th className="table__small-column hide-at-700px">Valor Total da Proposta</th>
         <th className="table__small-column">
           <Icon to="/proposal/new" icon="new" />
         </th>
@@ -91,7 +91,7 @@ class ProposalsTable extends React.Component {
           <td className="table__small-column">{item._id}</td>
           <td>{item.client.description}</td>
           <td className="table__small-column"><Status status={item.status} type="proposal"/></td>
-          <td className="table__small-column">{totalValue()}</td>
+          <td className="table__small-column hide-at-700px">{totalValue()}</td>
           {renderProposalButton()}
         </tr>
       )

@@ -60,7 +60,7 @@ export default class Modular extends React.Component {
   }
   render() {
     return (
-      <Box
+      <Box className="register-data"
         title={this.props.item._id ? "Editar Container Modular" : "Criar Novo Container Modular"}
         closeBox={this.props.toggleWindow}
         width="800px">

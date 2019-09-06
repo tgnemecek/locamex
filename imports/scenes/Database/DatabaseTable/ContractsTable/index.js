@@ -36,10 +36,10 @@ class ContractsTable extends React.Component {
     return (
       <tr>
         <th className="table__small-column">Contrato</th>
-        <th className="table__small-column">Proposta</th>
+        <th className="table__small-column hide-at-700px">Proposta</th>
         <th>Nome do Cliente</th>
         <th className="table__small-column">Status</th>
-        <th className="table__small-column">Valor Total do Contrato</th>
+        <th className="table__small-column hide-at-700px">Valor Total do Contrato</th>
       </tr>
     )
   }
@@ -106,12 +106,12 @@ class ContractsTable extends React.Component {
       return (
         <tr key={i}>
           <td className="table__small-column">{item._id}</td>
-          <td className="table__small-column">
+          <td className="table__small-column hide-at-700px">
             {`${item.proposal}.${Number(item.proposalVersion)+1}`}
           </td>
           <td>{clientName()}</td>
           <td className="table__small-column"><Status status={item.status} type="contract"/></td>
-          <td className="table__small-column">{totalValue()}</td>
+          <td className="table__small-column hide-at-700px">{totalValue()}</td>
           {renderContractButton()}
           {renderBillingButton()}
           {renderShippingButton()}

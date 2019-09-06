@@ -127,7 +127,7 @@ class Billing extends React.Component {
     return (
       <div className="page-content">
         <RedirectUser currentPage="billing"/>
-        <div className="billing">
+        <div className="base-scene billing">
           <SceneHeader
             master={{...this.props.contract, type: "billing"}}
             databases={this.props.databases}

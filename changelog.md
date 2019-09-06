@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.2.2
+
+-  Basic responsiveness added;
+
 ## Version 2.2.1
 
 -  Added Billing functionality;

@@ -25,7 +25,7 @@ export default class RegisterModules extends React.Component {
     var errorKeys = [...this.state.errorKeys];
     var fieldIndex = errorKeys.findIndex((key) => key === e.target.name);
     errorKeys.splice(fieldIndex, 1);
-    
+
     this.setState({ [e.target.name]: e.target.value });
   }
   toggleConfirmationWindow = () => {
@@ -50,7 +50,7 @@ export default class RegisterModules extends React.Component {
   }
   render() {
     return (
-      <Box
+      <Box className="register-data"
         title={this.props.item._id ? "Editar Componente" : "Criar Novo Componente"}
         closeBox={this.props.toggleWindow}
         width="800px">

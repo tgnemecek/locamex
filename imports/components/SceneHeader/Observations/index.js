@@ -28,6 +28,7 @@ export default class Observations extends React.Component {
       return (
         <Box
           title="Observações"
+          className="observations"
           closeBox={this.props.toggleWindow}
           width="400px">
             <Input

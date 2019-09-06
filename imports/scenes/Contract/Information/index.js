@@ -76,19 +76,12 @@ export default class Information extends React.Component {
 
   render() {
       return (
-          <Block
-            className="contract__information"
-            columns={6}
-            options={[
-              {block: 0, span: 2},
-              {block: 2, span: 2},
-              {block: 5, span: 0.5},
-              {block: 6, span: 0.5},
-              {block: 9, span: 0.5},
-              {block: 10, span: 0.5}]}>
+        <div className="contract__information">
+          <div>
             <SuggestionBar
               title="Cliente:"
               name="clientId"
+              className="span4"
               database={this.props.clientsDatabase}
               fields={['description', 'registry']}
               error={this.props.errorKeys.includes("clientId")}
@@ -96,36 +89,19 @@ export default class Information extends React.Component {
               onClick={this.handleChange}>
             </SuggestionBar>
             <Input
-              title="Nº de Proposta:"
+              title="Proposta:"
               name="proposal"
               type="text"
+              className="span2"
               disabled={true}
               value={this.props.contract.proposal + "." + (this.props.contract.proposalVersion+1)}
-              onChange={this.handleChange}
-            />
-            <Input
-              title="Endereço de Entrega:"
-              name="street"
-              type="text"
-              extra="deliveryAddress"
-              error={this.props.errorKeys.includes("street")}
-              value={this.props.contract.deliveryAddress.street}
-              onChange={this.handleChange}
-            />
-            <Input
-              title="CEP:"
-              name="cep"
-              type="cep"
-              extra="deliveryAddress"
-              error={this.props.errorKeys.includes("cep")}
-              buttonClick={this.cepButtonClick}
-              value={this.props.contract.deliveryAddress.cep}
               onChange={this.handleChange}
             />
             <CalendarBar
               title="Data da Entrega:"
               name="deliveryDate"
               extra="dates"
+              className="span2"
               onChange={this.handleChange}
               value={this.props.contract.dates.deliveryDate}
             />
@@ -154,15 +130,41 @@ export default class Information extends React.Component {
               type="select"
               name="timeUnit"
               extra="dates"
+              className="span2"
               onChange={this.changeTimeUnit}
               value={this.props.contract.dates.timeUnit}>
                 <option value="months">Meses</option>
                 <option value="days">Dias</option>
             </Input>
+          </div>
+          <div>
+            <Input
+              title="Endereço de Entrega:"
+              name="street"
+              type="text"
+              className="span4"
+              extra="deliveryAddress"
+              error={this.props.errorKeys.includes("street")}
+              value={this.props.contract.deliveryAddress.street}
+              onChange={this.handleChange}
+            />
+            <Input
+              title="CEP:"
+              name="cep"
+              type="cep"
+              className="span2"
+              extra="deliveryAddress"
+              error={this.props.errorKeys.includes("cep")}
+              buttonClick={this.cepButtonClick}
+              value={this.props.contract.deliveryAddress.cep}
+              onChange={this.handleChange}
+            />
+
             <Input
               title="Cidade:"
               name="city"
               type="text"
+              className="span2"
               extra="deliveryAddress"
               error={this.props.errorKeys.includes("city")}
               value={this.props.contract.deliveryAddress.city}
@@ -193,11 +195,13 @@ export default class Information extends React.Component {
               title="Complemento:"
               name="additional"
               type="text"
+              className="span2"
               extra="deliveryAddress"
               value={this.props.contract.deliveryAddress.additional}
               onChange={this.handleChange}
             />
-          </Block>
+          </div>
+        </div>
       )
   }
 }

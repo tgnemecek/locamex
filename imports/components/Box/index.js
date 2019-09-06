@@ -14,13 +14,14 @@ export default class Box extends React.Component {
     return this.props.className ? "box " + this.props.className : "box";
   }
   style = () => {
-    return {
-      content: {
-        height: this.props.height || "",
-        width: this.props.width || "",
-        ...this.props.style
-      }
-    };
+    return {};
+    // return {
+    //   content: {
+    //     height: this.props.height || "",
+    //     width: this.props.width || "",
+    //     ...this.props.style
+    //   }
+    // };
   }
   render() {
     return (

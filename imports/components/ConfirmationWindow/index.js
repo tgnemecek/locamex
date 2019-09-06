@@ -15,6 +15,7 @@ export default function ConfirmationWindow (props) {
   if (props.isOpen) {
     return (
       <Box
+        className="confirmation-window"
         title={props.title || "Aviso:"}
         closeBox={props.closeBox}>
         <p>{props.message || null}</p>

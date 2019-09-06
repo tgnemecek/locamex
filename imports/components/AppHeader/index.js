@@ -1,7 +1,7 @@
 import React from 'react';
 import { Accounts } from 'meteor/accounts-base';
 import { Link, Redirect } from 'react-router-dom';
-
+import Icon from '/imports/components/Icon/index';
 import { appStructure } from './app-structure/index';
 import { userTypes } from '/imports/startup/user-types/index';
 import MenuItem from './MenuItem/index'
@@ -78,9 +78,16 @@ export default class AppHeader extends React.Component {
         </Link>
         <div className="header">
           <h1 className="header__title">{this.state.currentPage.title}</h1>
-          <div className="header__menu">
-          {this.renderMenuItems()}
-          <button className="header__logout" onClick={() => Meteor.logout()}>Sair</button>
+          <div className="header__mobile-dropdown">
+            <button className="header__mobile-menu-icon">
+              <Icon icon="menu" size="2x"/>
+            </button>
+            <div className="header__menu">
+            {this.renderMenuItems()}
+            <div className="menu-item">
+              <button onClick={() => Meteor.logout()}>Sair</button>
+            </div>
+          </div>
           </div>
         </div>
       </div>

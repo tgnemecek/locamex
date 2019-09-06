@@ -64,7 +64,7 @@ class Fixed extends React.Component {
   }
   render() {
     return (
-      <Box
+      <Box className="register-data"
         title={this.props.item._id ? "Editar Container Fixo" : "Criar Novo Container Fixo"}
         closeBox={this.props.toggleWindow}
         width="800px">

@@ -24,7 +24,7 @@ export default class RegisterHistory extends React.Component {
 
   render() {
     return (
-      <Box
+      <Box className="register-data"
         title="Detalhes da Alteração"
         closeBox={this.props.toggleWindow}
         width="800px">

@@ -1,3 +1,7 @@
 @import './RegisterAccessories/styles';
 @import './RegisterContainers/styles';
 @import './RegisterHistory/styles';
+
+.register-data {
+  width: ($site-max-width /1.5);
+}

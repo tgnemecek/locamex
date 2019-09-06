@@ -82,7 +82,7 @@ class RegisterSeries extends React.Component {
 
   render() {
     return (
-      <Box
+      <Box className="register-data"
         title={this.props.item._id ? "Editar Série" : "Adicionar Nova Série"}
         closeBox={this.props.toggleWindow}
         width="800px">
