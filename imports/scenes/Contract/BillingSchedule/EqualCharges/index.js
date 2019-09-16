@@ -19,7 +19,7 @@ export default class EqualCharges extends React.Component {
     }
 
     var charges = setEqualValues(this.props.charges);
-    this.props.updateCharges(charges);
+    this.props.updateBilling(charges);
   }
   render() {
     return (

@@ -40,12 +40,10 @@ export default function tableClient(props) {
 
   var name = props.client.officialName;
   var registryLabel = "CNPJ";
-  var contact = props.client.name;
 
   if (props.client.type === "person") {
     name = props.client.description;
     registryLabel = "CPF";
-    contact = props.client.description;
   }
 
   return props.generateTable({

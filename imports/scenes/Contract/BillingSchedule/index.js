@@ -8,6 +8,7 @@ import CalendarBar from '/imports/components/CalendarBar/index';
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
+import AccountsSelector from './AccountsSelector/index';
 import EqualCharges from './EqualCharges/index';
 import ProductsSection from './ProductsSection/index';
 import ServicesSection from './ServicesSection/index';
@@ -59,7 +60,8 @@ export default class BillingSchedule extends React.Component {
       this.setState({ errorMsg: 'O Valor Total do Contrato não pode ser zero. Adicione produtos antes.' });
     } else {
       this.setBillingProducts();
-      this.setBillingServices(1, true);
+      var hasServices = this.props.master.services.length > 0;
+      this.setBillingServices(hasServices ? 1 : 0, true);
     }
   }
 
@@ -80,7 +82,7 @@ export default class BillingSchedule extends React.Component {
     var billingProducts = [];
     for (var i = 0; i < this.state.duration; i++) {
       billingProducts.push({
-        description: `Parcela ${i + 1} de ${this.state.duration} de Locação - Informamos: Locações são cobradas através de Faturas de Locação de Bens Móveis plenamente contabilizáveis.`,
+        description: `Parcela ${i + 1} de ${this.state.duration} de Locação`,
         value: 0
       })
     }
@@ -92,9 +94,10 @@ export default class BillingSchedule extends React.Component {
 
   setBillingServices = (quantity, firstSetup) => {
     function getDescription(i, length) {
-      return `Parcela ${i + 1} de ${length} do Pacote de Serviços - Informamos: Pagamentos de Notas Fiscais Eletrônicas (NFe) são exclusivos através de Depósito Bancário junto ao Banco Itaú S.A. (341) Agência 1571 C/C 02313-2 a favor da LOCADORA.`
+      return `Parcela ${i + 1} de ${length} do Pacote de Serviços`
     }
     if (firstSetup) {
+      if (!quantity) return;
       if (this.props.master.billingServices) {
         if (this.props.master.billingServices.length) {
           this.setState({
@@ -134,7 +137,8 @@ export default class BillingSchedule extends React.Component {
             inss,
             iss,
             description: getDescription(i, quantity),
-            value: 0
+            value: 0,
+            accountId: currentCharges[0].accountId
           })
         }
       }
@@ -193,7 +197,18 @@ export default class BillingSchedule extends React.Component {
       return masterValue - total !== 0;
     }
 
-    if (hasInvalidValue()) {
+    const hasInvalidAccount = () => {
+      if (!this.state.billingProducts[0].accountId) {
+        return true;
+      } else if (this.state.billingServices.length) {
+        return !this.state.billingServices[0].accountId;
+      }
+      return false;
+    }
+
+    if (hasInvalidAccount()) {
+      this.setState({ errorMsg: 'Favor selecionar a Conta.' });
+    } else if (hasInvalidValue()) {
       this.setState({ errorMsg: 'Não devem haver cobranças com valor zero.' });
     } else if (hasInvalidDifference()) {
       this.setState({ errorMsg: 'O valor resultante das parcelas não coincide com os Valores Totais.' });
@@ -222,6 +237,8 @@ export default class BillingSchedule extends React.Component {
               changeStartDate={this.changeStartDate}
               billingProducts={this.state.billingProducts}
               productsValue={this.state.productsValue}
+              AccountsSelector={AccountsSelector}
+              accountsDatabase={this.props.accountsDatabase}
               EqualCharges={EqualCharges}/>
             <ServicesSection
               updateBilling={this.updateBilling}
@@ -229,6 +246,8 @@ export default class BillingSchedule extends React.Component {
               startDate={this.state.billingProducts.startDate}
               setCharges={this.setBillingServices}
               servicesValue={this.state.servicesValue}
+              AccountsSelector={AccountsSelector}
+              accountsDatabase={this.props.accountsDatabase}
               EqualCharges={EqualCharges}/>
           </div>
           {this.props.master.status === "inactive" ?

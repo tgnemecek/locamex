@@ -20,6 +20,8 @@ export default class Checkbox extends React.Component {
           className="input--checkbox__box"
           checked={this.props.value}
           onChange={this.onChange}
+          readOnly={this.props.readOnly}
+          disabled={this.props.readOnly}
           />
         <label htmlFor={this.props.id} className="input--checkbox__toggle"><span></span></label>
       </>

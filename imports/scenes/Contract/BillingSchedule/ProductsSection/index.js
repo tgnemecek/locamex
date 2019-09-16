@@ -23,7 +23,7 @@ export default class ProductsSection extends React.Component {
     return <span className={className}>{tools.format(difference, "currency")}</span>
   }
 
-  updateCharges = (billingProducts) => {
+  updateBilling = (billingProducts) => {
     this.props.updateBilling({
       billingProducts
     })
@@ -83,8 +83,6 @@ export default class ProductsSection extends React.Component {
   }
 
   render() {
-    var EqualCharges = this.props.EqualCharges;
-
     if (this.props.productsValue) {
       return (
         <section className="billing-schedule__products-section">
@@ -103,10 +101,15 @@ export default class ProductsSection extends React.Component {
               billingProducts={this.props.billingProducts}
               updateBilling={this.props.updateBilling}
             />
-            <EqualCharges
+            <this.props.AccountsSelector
+              accountsDatabase={this.props.accountsDatabase}
+              charges={this.props.billingProducts}
+              updateBilling={this.updateBilling}
+            />
+            <this.props.EqualCharges
               masterValue={this.props.productsValue}
               charges={this.props.billingProducts}
-              updateCharges={this.updateCharges}/>
+              updateBilling={this.updateBilling}/>
           </div>
           <table className="table table--billing-schedule--products">
             <thead>

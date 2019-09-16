@@ -25,7 +25,10 @@ export default class Input extends React.Component {
     }
   }
   onChange = (exportValue) => {
-    if (!this.props.onChange) return;
+    if (!this.props.onChange) {
+      this.setState({ value: exportValue });
+      return;
+    }
     if (exportValue === undefined) throw new Meteor.Error('exportValue is undefined in ' + this.props.name);
 
     var e = {

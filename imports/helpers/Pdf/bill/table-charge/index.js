@@ -12,7 +12,7 @@ export default function tableCharge(props) {
 
   return props.generateTable({
     body: [
-      [ 'Vencimento', expiry, 'Valor Total da Fatura', tools.format(props.totalValueProducts, 'currency') ],
+      [ 'Vencimento', expiry, 'Valor Total da Fatura', tools.format(props.charge.value, 'currency') ],
       [ 'Período de Locação', period, 'Contrato', contractNumber ]
     ],
     widths: ['*', '*', '*', '*']

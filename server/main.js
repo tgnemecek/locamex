@@ -6,6 +6,7 @@ import '../imports/startup/simple-schema-configuration/index';
 
 import '../imports/api/agenda/index';
 import '../imports/api/accessories/index';
+import '../imports/api/accounts/index';
 import '../imports/api/aws/index';
 import '../imports/api/batch/index';
 import '../imports/api/clients/index';

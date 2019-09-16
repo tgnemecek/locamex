@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.2.3
+
+-  Fixed Billing based on feedback;
+
 ## Version 2.2.2
 
 -  Basic responsiveness added;

@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Mongo } from 'meteor/mongo';
-
+import moment from 'moment';
 import { userTypes } from '/imports/startup/user-types/index';
 
 export default class tools {
@@ -13,22 +13,63 @@ export default class tools {
     } else return [input];
   }
 
+  static getBillingStatus = (charge) => {
+    if (charge.status === "finished") {
+      return charge.status;
+    }
+    var limit = moment().add(30, 'days');
+
+    // Determine if is ready to be payed
+    if (moment(charge.expiryDate).isBetween(moment(), limit)) {
+      return charge.status === "billed" ? "billed" : "ready";
+    }
+
+    // Determine if is late
+    // If its late, but client hasn't been billed,
+    // show as ready to be billed
+    if (moment(charge.expiryDate).isBefore(moment())) {
+      return charge.status === "billed" ? "late" : "ready";
+    }
+
+    return "notReady";
+  }
+
+  static renderBillingStatus = (status, type) => {
+    var dictionary = {
+      notReady: {text: "Em Aguardo", className: "billing__notReady"},
+      late: {text: "Pagamento Atrasado", className: "billing__late"},
+      finished: {text: "Pagamento Quitado", className: "billing__finished"}
+    };
+    if (type === 'billingServices') {
+      dictionary = {
+        ...dictionary,
+        billed: {text: "NFE Enviada", className: "billing__billed"},
+        ready: {text: "Enviar NFE", className: "billing__ready"}
+      }
+    } else {
+      dictionary = {
+        ...dictionary,
+        billed: {text: "Fatura Gerada", className: "billing__billed"},
+        ready: {text: "Fatura Pronta", className: "billing__ready"}
+      }
+    }
+    return dictionary[status];
+  }
+
   static translateAgendaEvent = (type) => {
     var dictionary = {
-      billingProducts: "Cobrança de Locação",
-      billingServices: "Cobrança de Serviço",
-      deliveryDate: "Entrega de Produtos"
+      notReady: "Cobrança Não Pronta",
+      ready: "Cobrança Pronta",
+      billed: "Aguardando Pagamento",
+      finished: "Cobrança Quitada",
+      late: "Pagamento Atrasado"
     }
     return dictionary[type];
   }
 
-  static getAgendaEventColor = (type) => {
-    var dictionary = {
-      billingProducts: "rgb(232, 151, 151)",
-      billingServices: "rgb(147, 230, 163)",
-      deliveryDate: "rgb(197, 207, 128)"
-    }
-    return dictionary[type];
+  static getAccountInfo = (account) => {
+    if (!account) return '';
+    return `Banco ${account.bank} (${account.bankNumber}), Agência: ${account.branch}, C/C: ${account.number}`;
   }
 
   static compare = (input1, input2, exception) => {

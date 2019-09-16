@@ -7,19 +7,22 @@ import Icon from '/imports/components/Icon/index';
 
 export default class Legend extends React.Component {
   renderLegend = () => {
-    var types = [];
+    var legends = [];
+    var exceptions = []; // Add exceptions here
     this.props.agendaDatabase.forEach((event) => {
-      if (!types.includes(event.type)) {
-        types.push(event.type);
+      if (event.type === "billing") {
+        if (!exceptions.includes(event.status)) {
+          if (!legends.includes(event.status)) {
+            legends.push(event.status);
+          }
+        }
       }
     })
-    return types.map((type, i) => {
+    return legends.map((legend, i) => {
       return (
         <div className="agenda__legend-unit" key={i}>
-          <div
-            className="agenda__color-box"
-            style={{background: tools.getAgendaEventColor(type)}}/>
-            <div>{tools.translateAgendaEvent(type)}</div>
+          <this.props.ColorBox type={legend}/>
+            <div><this.props.Status status={legend}/></div>
         </div>
       )
     })

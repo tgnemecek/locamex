@@ -20,7 +20,7 @@ export default class FooterButtons extends React.Component {
   renderOneButton = () => {
     var button = this.props.buttons[0];
     if (!button) return null;
-    var className = "button ";
+    var className = "button grid-span-2 ";
     className += button.className || '';
     var text = button.text;
     var onClick = button.onClick || null;
@@ -56,6 +56,7 @@ export default class FooterButtons extends React.Component {
     return buttons.map((button, i) => {
       var className = "button ";
       className += button.className || '';
+      className += i === 0 ? " grid-span-2" : "";
       var text = button.text;
       var onClick = button.onClick || null;
       var type = button.type || "button";

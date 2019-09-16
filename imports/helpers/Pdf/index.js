@@ -20,6 +20,13 @@ export default class Pdf {
     });
   }
 
+  getAccount = (billingName) => {
+    var accountId = this.master[billingName][0].account;
+    return this.databases.accountsDatabase.find((account) => {
+      return account._id === accountId;
+    })
+  }
+
   getSignatures = (master) => {
     master.representatives = [];
     master.client.contacts.forEach((contact) => {
@@ -85,6 +92,8 @@ export default class Pdf {
       master.createdByFullName = this.getCreatedBy();
       master.client = this.getClient();
       master = this.getSignatures(master);
+      master.accountServices = this.getAccount('billingServices');
+      master.accountProducts = this.getAccount('billingProducts');
 
       var props = {
         master,
@@ -112,6 +121,7 @@ export default class Pdf {
       var master = this.master;
       master.createdByFullName = this.getCreatedBy();
       master.client = this.getClient();
+      master.accountProducts = this.getAccount('billingProducts');
 
       var charge = this.extra;
 

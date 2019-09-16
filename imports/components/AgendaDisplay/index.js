@@ -7,7 +7,8 @@ import Icon from '/imports/components/Icon/index';
 import ContentCell from './ContentCell/index';
 import ContentDisplay from './ContentDisplay/index';
 import Legend from './Legend/index';
-
+import ColorBox from './ColorBox/index';
+import Status from './Status/index';
 
 class AgendaDisplay extends React.Component {
   constructor(props) {
@@ -144,7 +145,9 @@ class AgendaDisplay extends React.Component {
         return (
           <ContentCell
             key={i}
+            index={i}
             {...day}
+            ColorBox={ColorBox}
             selectedYear={this.state.selectedYear}
             selectedMonth={this.state.selectedMonth}
             selectedDate={this.state.selectedDate}
@@ -174,8 +177,14 @@ class AgendaDisplay extends React.Component {
             {this.renderBody()}
           </tbody>
         </table>
-        <Legend agendaDatabase={this.props.agendaDatabase}/>
+        <Legend
+          ColorBox={ColorBox}
+          Status={Status}
+          agendaDatabase={this.props.agendaDatabase}
+        />
         <ContentDisplay
+          ColorBox={ColorBox}
+          Status={Status}
           selectedDate={this.state.selectedDate}
           events={this.state.events}
         />
@@ -188,21 +197,42 @@ export default class AgendaDisplayWrapper extends React.Component {
   agendaDatabase = () => {
     var agendaDatabase = [...this.props.databases.agendaDatabase];
     this.props.databases.contractsDatabase.forEach((contract) => {
-      if (contract.status === "active" || contract.status === "prorogation") {
+      if (contract.status === "active") {
         contract.snapshots[contract.activeVersion].billingProducts.forEach((item, i, arr) => {
+          var status = tools.getBillingStatus(item);
+          var statusText = tools.renderBillingStatus(status, 'billingProducts');
+
           agendaDatabase.push({
-            description: `${i+1}/${arr.length}`,
-            type: "billingProducts",
+            description: `Contrato ${contract._id}: Vencimento da Cobrança de Locação ${i+1}/${arr.length}. Status: `,
+            type: "billing",
             date: item.expiryDate,
-            referral: contract._id
+            referral: contract._id,
+            status
+          })
+        })
+        var billingProrogation = contract.snapshots[contract.activeVersion].billingProrogation || [];
+        billingProrogation.forEach((item, i, arr) => {
+          var status = tools.getBillingStatus(item);
+          var statusText = tools.renderBillingStatus(status, 'billingProducts');
+
+          agendaDatabase.push({
+            description: `Contrato ${contract._id}: Vencimento da Cobrança de Locação PRO #${i+1}. Status: `,
+            type: "billing",
+            date: item.expiryDate,
+            referral: contract._id,
+            status
           })
         })
         contract.snapshots[contract.activeVersion].billingServices.forEach((item, i, arr) => {
+          var status = tools.getBillingStatus(item);
+          var statusText = tools.renderBillingStatus(status, 'billingServices');
+
           agendaDatabase.push({
-            description: `${i+1}/${arr.length}`,
-            type: "billingServices",
+            description: `Contrato ${contract._id}: Vencimento da Cobrança de Serviço ${i+1}/${arr.length}. Status: `,
+            type: "billing",
             date: item.expiryDate,
-            referral: contract._id
+            referral: contract._id,
+            status
           })
         })
       }

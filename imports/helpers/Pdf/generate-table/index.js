@@ -40,11 +40,31 @@ export default function generateTable(data) {
     return firstPart.concat(lastPart);
   }
 
+  function explodeInnerArrays(body) {
+    var newBody = [];
+    body.forEach((row) => {
+      for (var i = 0; i < row.length; i++) {
+        if (Array.isArray(row[i])) {
+          newBody.push(row[i]);
+        } else {
+          newBody.push(row);
+          break;
+        }
+      }
+    })
+    return newBody;
+  }
+
+  body = explodeInnerArrays(body);
+
   body = body.map((row) => {
-    if (!Array.isArray(row)) throw new Meteor.Error("row-must-be-array-of-arrays", row);
+    if (!Array.isArray(row)) {
+      throw new Meteor.Error("row-must-be-array-of-arrays", row);
+    }
     if (row.length > widths.length) {
       throw new Meteor.Error("rows-cant-be-bigger-than-widths", row);
     }
+
     var newRow = [];
     var fillCellIndex;
     row.forEach((cell) => {

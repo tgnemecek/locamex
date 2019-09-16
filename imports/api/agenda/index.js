@@ -27,54 +27,6 @@ if (Meteor.isServer) {
         referral: data.referral,
         description: data.description
       })
-    },
-    'agenda.contract.activation'(_id) {
-      var contract = Contracts.findOne({ _id });
-      var snapshot = contract.snapshots[contract.activeVersion];
-      // Adds events for billingProducts and billingServices
-      snapshot.billingProducts.forEach((charge, i, arr) => {
-        var data = {
-          type: "billingProducts",
-          date: charge.expiryDate,
-          referral: _id,
-          description: `${i+1}/${arr.length}`
-        }
-        Meteor.call('agenda.insert', data)
-      })
-      snapshot.billingServices.forEach((charge, i, arr) => {
-        var data = {
-          type: "billingServices",
-          date: charge.expiryDate,
-          referral: _id,
-          description: `${i+1}/${arr.length}`
-        }
-        Meteor.call('agenda.insert', data)
-      })
-      // Adds event for deliveryDate
-      Meteor.call('agenda.insert', {
-        type: "deliveryDate",
-        date: snapshot.dates.startDate,
-        referral: _id,
-        description: ""
-      });
-      //// Other idea, endDate:
-      // var duration;
-      // var endDate = moment(snapshot.dates.startDate);
-      //
-      // if (snapshot.dates.timeUnit === "months") {
-      //   endDate = endDate.add((snapshot.dates.duration), 'months').toDate();
-      // } else {
-      //   endDate = endDate.add((snapshot.dates.duration), 'days').toDate();
-      // }
-      //
-      // Meteor.call('agenda.insert', {
-      //   type: "endDate",
-      //   date: endDate,
-      //   referral: _id,
-      //   description: ""
-      // })
-
-      return contract;
     }
   })
 }

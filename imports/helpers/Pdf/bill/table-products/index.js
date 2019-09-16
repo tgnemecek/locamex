@@ -43,7 +43,7 @@ export default function tableProducts(props) {
     return [
       discount(),
       [
-        {text: 'Valor Total Desta Fatura:', colSpan: 'fill', alignment: 'right', bold: true}, props.resultFormat(props.totalValueProducts)
+        {text: 'Valor Total Desta Fatura:', colSpan: 'fill', alignment: 'right', bold: true}, props.resultFormat(props.charge.value)
       ]
     ]
   }

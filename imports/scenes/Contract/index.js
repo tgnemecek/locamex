@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 
+import { Accounts } from '/imports/api/accounts/index';
 import { Contracts } from '/imports/api/contracts/index';
 import { Clients } from '/imports/api/clients/index';
 import { Places } from '/imports/api/places/index';
@@ -387,6 +388,7 @@ function ContractLoader (props) {
 export default ContractWrapper = withTracker((props) => {
   Meteor.subscribe('contractsPub');
   Meteor.subscribe('clientsPub');
+  Meteor.subscribe('accountsPub');
 
   Meteor.subscribe('placesPub');
 
@@ -399,6 +401,7 @@ export default ContractWrapper = withTracker((props) => {
   var databases = {
     contractsDatabase: Contracts.find().fetch(),
     clientsDatabase: Clients.find().fetch(),
+    accountsDatabase: Accounts.find().fetch(),
 
     placesDatabase: Places.find().fetch(),
 

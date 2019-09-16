@@ -26,3 +26,11 @@
   min-width: 300px;
   white-space: normal;
 }
+
+.table__td-button {
+  padding: 0 !important;
+  button {
+    min-width: 35px;
+    min-height: 35px;
+  }
+}

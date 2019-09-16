@@ -1,5 +1,6 @@
 .footer-buttons {
   display: grid;
-  grid-auto-flow: column;
-  grid-column-gap: ($space /2);
+  grid-template-columns: 1fr 1fr;
+  grid-gap: $space /2;
+  margin-top: $space;
 }

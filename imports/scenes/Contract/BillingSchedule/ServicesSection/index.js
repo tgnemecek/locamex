@@ -24,7 +24,7 @@ export default class ServicesSection extends React.Component {
     return <span className={className}>{tools.format(difference, "currency")}</span>
   }
 
-  updateCharges = (billingServices) => {
+  updateBilling = (billingServices) => {
     this.props.updateBilling({
       billingServices
     })
@@ -108,7 +108,6 @@ export default class ServicesSection extends React.Component {
   }
 
   render() {
-    var EqualCharges = this.props.EqualCharges;
     if (this.props.servicesValue) {
       return (
         <section className="billing-schedule__services-section">
@@ -129,10 +128,15 @@ export default class ServicesSection extends React.Component {
               name="iss"
               value={this.props.billingServices[0].iss}
               onChange={this.onChangeTaxes}/>
-            <EqualCharges
+            <this.props.AccountsSelector
+              accountsDatabase={this.props.accountsDatabase}
+              charges={this.props.billingServices}
+              updateBilling={this.updateBilling}
+            />
+            <this.props.EqualCharges
               masterValue={this.props.servicesValue}
               charges={this.props.billingServices}
-              updateCharges={this.updateCharges}/>
+              updateBilling={this.updateBilling}/>
           </div>
           <table className="table table--billing-schedule--services">
             <thead>

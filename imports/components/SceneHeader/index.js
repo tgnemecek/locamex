@@ -199,6 +199,7 @@ export default class SceneHeader extends React.Component {
             {this.state.windowOpen == 'billing' ?
             <this.props.BillingSchedule
               master={this.props.master}
+              accountsDatabase={this.props.databases.accountsDatabase}
               toggleWindow={this.toggleWindow}
               updateMaster={this.props.updateMaster}
               errorKeys={this.props.errorKeys}

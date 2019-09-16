@@ -6,7 +6,7 @@ export default function tableBillingProducts(props) {
     var startDate = moment(charge.startDate);
     var endDate = moment(charge.endDate);
     var expiryDate = moment(expiryDate);
-    
+
     return {
       ...charge,
       startDate,
@@ -14,12 +14,13 @@ export default function tableBillingProducts(props) {
       expiryDate
     }
   })
+  var accountBaseText = ` - Informamos: Locações são cobradas através de Faturas de Locação de Bens Móveis plenamente contabilizáveis.`
   const body = () => {
     return billingProducts.map((charge, i, array) => {
       var index = (i + 1);
       var period = {text: moment(charge.startDate).format("DD/MM/YYYY") + ' a ' +  moment(charge.endDate).format("DD/MM/YYYY"), alignment: 'center'};
       var expiryDate = moment(charge.expiryDate).format("DD/MM/YYYY");
-      var description = charge.description;
+      var description = charge.description + accountBaseText;
       var value = {text: tools.format(charge.value, 'currency'), alignment: 'right'};
       return [index, period, expiryDate, description, value];
     });

@@ -8,6 +8,7 @@ import conditions from './conditions/index';
 import tableProducts from './table-products/index';
 import tableCharge from './table-charge/index';
 import notService from './not-service/index';
+import observations from './observations/index';
 
 import tableServices from './table-services/index';
 
@@ -19,11 +20,10 @@ export default function createPdf(props) {
 
   const products = contract.containers.concat(contract.accessories).map((item) => {
     item.monthlyPrice = item.renting * item.price;
-    item.finalPrice = item.monthlyPrice * contract.dates.duration;
     return item;
   });
   const totalValueProducts = products.length ? (products.reduce((acc, current) => {
-    return acc + current.finalPrice;
+    return acc + current.monthlyPrice;
   }, 0) * (1 - contract.discount)) : 0;
 
   function resultFormat(input) {
@@ -75,7 +75,8 @@ export default function createPdf(props) {
       conditions(data),
       data.charge.type === "billingProducts" ? tableProducts(data) : tableServices(data),
       tableCharge(data),
-      notService()
+      notService(),
+      observations(data)
     ],
     footerStatic: `Locamex - Contrato #${contract._id}.${contract.activeVersion} - Fatura ${charge.index+1} de ${charge.length}\n`,
     styles

@@ -2,11 +2,13 @@ import tools from '/imports/startup/tools/index';
 import moment from 'moment';
 
 export default function tableBillingServices(props) {
+  var accountBaseText = ` - Informamos: Pagamentos de Notas Fiscais Eletrônicas (NFe) são exclusivos através de Depósito Bancário junto ao Banco ${props.accountServices.bank} (${props.accountServices.bankNumber}) Agência ${props.accountServices.branch} C/C ${props.accountServices.account} a favor da LOCADORA.`
+
   const body = () => {
     return props.billingServices.map((charge, i, array) => {
       var index = (i + 1);
       var expiryDate = moment(charge.expiryDate).format("DD/MM/YYYY");
-      var description = charge.description;
+      var description = charge.description + accountBaseText;
       var taxes = {text: tools.format((charge.value * (charge.inss + charge.iss) / 100), 'currency'), alignment: 'center'};
       var value = {text: tools.format(charge.value, 'currency'), alignment: 'right'};
       return [index, expiryDate, description, taxes, value];

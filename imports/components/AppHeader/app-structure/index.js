@@ -40,6 +40,12 @@ export const appStructure = [
         visible: true
       },
       {
+        name: "accounts",
+        title: "Contas",
+        link: "/database/accounts",
+        visible: true
+      },
+      {
         name: "history",
         title: "Histórico",
         link: "/database/history",

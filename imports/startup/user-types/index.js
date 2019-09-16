@@ -4,7 +4,7 @@ export const userTypes = {
     events: []
   },
   finances: {
-    pages: ["clients", "contracts", "contract", "billing"],
+    pages: ["clients", "contracts", "contract", "billing", "accounts"],
     events: [
       "billingProducts",
       "billingServices"

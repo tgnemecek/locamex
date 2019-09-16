@@ -2,9 +2,20 @@
   box-shadow: $box-shadow-spread;
   background: $light-grey;
 
+  h3 {
+    text-align: center;
+    margin: $space;
+  }
   h4 {
     margin: $space;
   }
+}
+
+.billing__information {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: ($space /2);
+  margin: ($space /2);
 }
 
 .billing__bill-box {
@@ -13,30 +24,37 @@
 
 .billing__bill-box__body {
   display: grid;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: 1fr 1fr;
   text-align: left;
   label {
     font-weight: bold;
   }
 }
 
-.billing__payed {
-  color: green;
+.billing__bill-box__inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: ($space /2);
+  margin: $space 0;
+}
+
+.billing__finished {
+  color: $billing-finished;
   font-weight: bold;
 }
 
 .billing__billed {
-  color: blue;
+  color: $billing-billed;
   font-weight: bold;
 }
 
 .billing__ready {
-  color: gold;
+  color: $billing-ready;
   font-weight: bold;
 }
 
 .billing__late {
-  color: red;
+  color: $billing-late;
   font-weight: bold;
 }
 

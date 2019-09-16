@@ -1,6 +1,7 @@
 import React from 'react';
 
 import RegisterAccessories from './RegisterAccessories/index';
+import RegisterAccounts from './RegisterAccounts/index';
 import RegisterClients from './RegisterClients/index';
 import RegisterContainers from './RegisterContainers/index';
 import RegisterHistory from './RegisterHistory/index';
@@ -19,6 +20,9 @@ export default function RegisterData(props) {
   switch (props.type) {
     case 'accessories':
       return <RegisterAccessories {...props} Footer={Footer} />
+      break;
+    case 'accounts':
+      return <RegisterAccounts {...props} Footer={Footer} />
       break;
     case 'models':
       return <RegisterContainers {...props} Footer={Footer} />

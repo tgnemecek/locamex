@@ -3,6 +3,7 @@ import React from 'react';
 import createExcel from '/imports/api/create-excel/index';
 
 import AccessoriesTable from './AccessoriesTable/index';
+import AccountsTable from './AccountsTable/index';
 import ClientsTable from './ClientsTable/index';
 import ContainersTable from './ContainersTable/index';
 import ContractsTable from './ContractsTable/index';
@@ -24,6 +25,9 @@ export default function DatabaseTable(props) {
   switch (props.type) {
     case 'accessories':
       return <AccessoriesTable {...props} generateReport={this.generateReport} />
+      break;
+    case 'accounts':
+      return <AccountsTable {...props} generateReport={this.generateReport} />
       break;
     case 'models':
       return <ContainersTable {...props} generateReport={this.generateReport} />
