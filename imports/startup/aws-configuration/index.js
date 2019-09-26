@@ -23,7 +23,17 @@ if (Meteor.isProduction) {
 AWS.config.AWSAccessKeyId = AWSAccessKeyId;
 AWS.config.AWSSecretAccessKey = AWSSecretAccessKey;
 AWS.config.region = AWSRegion;
-AWS.config.update({
-  region: AWSRegion,
-  credentials: new AWS.Credentials(AWSAccessKeyId, AWSSecretAccessKey)
-})
+// AWS.config.update({
+//   region: AWSRegion
+//   // credentials: new AWS.Credentials(AWSAccessKeyId, AWSSecretAccessKey)
+// })
+AWS.config.credentials = new AWS.Credentials(
+  AWSAccessKeyId,
+  AWSSecretAccessKey
+)
+AWS.config.region = AWSRegion;
+
+
+
+
+

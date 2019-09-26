@@ -15,7 +15,7 @@ export default class ServicesBox extends React.Component {
       databaseStatus: {},
       status: this.props.charge.status,
       valuePayed: this.props.charge.valuePayed || 0,
-      observations: this.props.charge.observations || "",
+      annotations: this.props.charge.annotations || "",
     }
   }
 
@@ -35,7 +35,7 @@ export default class ServicesBox extends React.Component {
       ...billing[index],
       status,
       valuePayed: this.state.valuePayed,
-      observations: this.state.observations
+      annotations: this.state.annotations
     }
 
     this.setState({ databaseStatus: {status: "loading"} }, () => {
@@ -145,15 +145,13 @@ export default class ServicesBox extends React.Component {
         <div className="billing__bill-box__inputs">
           {this.renderInputs()}
           <Input
-            title="Observações"
+            title="Anotações: (Controle Interno)"
             type="textarea"
-            value={this.state.observations}
-            name="observations"
+            value={this.state.annotations}
+            name="annotations"
             className="grid-span-2"
-            disabled={this.props.charge.status === "finished"}
             onChange={this.handleChange}
           />
-
         </div>
         {this.footerButtons()}
         <DatabaseStatus

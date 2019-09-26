@@ -6,11 +6,10 @@ import tableInformation from './table-information/index';
 import tableClient from './table-client/index';
 import conditions from './conditions/index';
 import tableProducts from './table-products/index';
+import tableAddress from './table-address/index';
 import tableCharge from './table-charge/index';
 import notService from './not-service/index';
 import observations from './observations/index';
-
-import tableServices from './table-services/index';
 
 export default function createPdf(props) {
   const contract = props.master;
@@ -73,7 +72,8 @@ export default function createPdf(props) {
       tableInformation(data),
       tableClient(data),
       conditions(data),
-      data.charge.type === "billingProducts" ? tableProducts(data) : tableServices(data),
+      tableProducts(data),
+      tableAddress(data),
       tableCharge(data),
       notService(),
       observations(data)

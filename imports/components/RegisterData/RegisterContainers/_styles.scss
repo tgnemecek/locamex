@@ -1,5 +1,15 @@
 @import './Modular/styles';
 
+.register-containers--choose-type {
+  width: 50vw;
+  .register-containers--choose-type__buttons {
+    .button--pill {
+      padding: 20px;
+      width: 300px;
+    }
+  }
+}
+
 .register-containers__flyer {
   display: flex;
   align-items: center;

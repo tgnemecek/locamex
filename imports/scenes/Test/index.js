@@ -15,30 +15,21 @@ class TestPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      mounted: true
+      value: ''
     }
   }
-  onClick = () => {
-    this.setState({ mounted: !this.state.mounted })
+  onChange = (e) => {
+    this.setState({ value: e.target.value })
   }
   render() {
     return (
       <div>
-        <Animation
-          mounted={this.state.mounted}
-          tag="div"
-          fadeIn={{duration: 5000, offset: 0}}
-          // fadeOut={2000}
-          >
-          <div style={{
-            height: "300px",
-            width: "300px",
-            background: "blue"
-          }}>
-            CONTENT
-          </div>
-        </Animation>
-        <button onClick={this.onClick}>DESTROY</button>
+        <Input
+          type="phone"
+          value={this.state.value}
+          onChange={this.onChange}
+        />
+        Value: {tools.format(this.state.value, 'phone')}
       </div>
     )
   }

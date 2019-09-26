@@ -129,7 +129,7 @@ export default class SceneHeader extends React.Component {
         if (!this.props.master.containers.length && !this.props.master.accessories.length) {
           return alert("Adicione algum produto!");
         }
-        this.props.generateDocument();
+        this.toggleWindow(e);
       }
     }
     const renderDocuments = () => {
@@ -145,7 +145,8 @@ export default class SceneHeader extends React.Component {
       } else return null;
     }
 
-    if (this.props.master.type !== "shipping" && this.props.master.type !== "billing") {
+    if (this.props.master.type !== "shipping"
+        && this.props.master.type !== "billing") {
       return (
         <>
           <Icon value="documents" onClick={requirements} icon="print"/>

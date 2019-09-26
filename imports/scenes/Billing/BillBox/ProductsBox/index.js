@@ -16,6 +16,7 @@ export default class ProductsBox extends React.Component {
       finished: this.props.charge.status === "finished",
       valuePayed: this.props.charge.valuePayed || 0,
       observations: this.props.charge.observations || "",
+      annotations: this.props.charge.annotations || "",
     }
   }
 
@@ -57,7 +58,8 @@ export default class ProductsBox extends React.Component {
       type: charge.type,
       value: charge.value,
       valuePayed: this.state.valuePayed,
-      observations: this.state.observations
+      observations: this.state.observations,
+      annotations: this.state.annotations
     }
 
     this.setState({ databaseStatus: {status: "loading"} }, () => {
@@ -189,7 +191,7 @@ export default class ProductsBox extends React.Component {
         <div className="billing__bill-box__inputs">
           {this.renderInputs()}
           <Input
-            title="Observações"
+            title="Observações: (Impresso na Fatura)"
             type="textarea"
             value={this.state.observations}
             name="observations"
@@ -197,7 +199,14 @@ export default class ProductsBox extends React.Component {
             disabled={this.props.charge.status === "finished"}
             onChange={this.handleChange}
           />
-
+          <Input
+            title="Anotações: (Controle Interno)"
+            type="textarea"
+            value={this.state.annotations}
+            name="annotations"
+            className="grid-span-2"
+            onChange={this.handleChange}
+          />
         </div>
         {this.footerButtons()}
         <DatabaseStatus

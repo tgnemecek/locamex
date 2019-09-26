@@ -1,5 +1,12 @@
 # Changelog:
 
+## Version 2.2.4
+
+-  Added 'annotations' field on Billings;
+-  Added option to exclude flyers from pdf (Proposal);
+-  Improved phone format, adding a ' ' for cellphones after first digit;
+-  Changed input/number functionality, allowing '' and '-' even with 'min' set;
+
 ## Version 2.2.3
 
 -  Fixed Billing based on feedback;

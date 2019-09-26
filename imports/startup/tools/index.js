@@ -257,17 +257,37 @@ export default class tools {
 
       case 'phone':
         value = value.toString().replace(/\D+/g, '');
-        if (value.length > 0) {
-          value = value.substring(0, 0) + "(" + value.substring(0);
-        }
-        if (value.length > 3) {
-          value = value.substring(0, 3) + ") " + value.substring(3);
-        }
-        if (value.length > 9) {
-          value = value.substring(0, 9) + "-" + value.substring(9);
-        }
-        if (value.length > 14) {
-          value = value.substring(0, 15);
+        if (value.length > 10) {
+          // If cellphone
+          if (value.length > 0) {
+            value = value.substring(0, 0) + "(" + value.substring(0);
+          }
+          if (value.length > 3) {
+            value = value.substring(0, 3) + ") " + value.substring(3);
+          }
+          if (value.length > 6) {
+            value = value.substring(0, 6) + " " + value.substring(6);
+          }
+          if (value.length > 11) {
+            value = value.substring(0, 11) + "-" + value.substring(11);
+          }
+          if (value.length > 15) {
+            value = value.substring(0, 16);
+          }
+        } else {
+          // If home phone
+          if (value.length > 0) {
+            value = value.substring(0, 0) + "(" + value.substring(0);
+          }
+          if (value.length > 3) {
+            value = value.substring(0, 3) + ") " + value.substring(3);
+          }
+          if (value.length > 9) {
+            value = value.substring(0, 9) + "-" + value.substring(9);
+          }
+          if (value.length > 14) {
+            value = value.substring(0, 15);
+          }
         }
         return value;
 

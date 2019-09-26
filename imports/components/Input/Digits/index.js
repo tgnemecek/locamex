@@ -7,7 +7,8 @@ export default class Digits extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      displayValue: ''
+      displayValue: '',
+      blurValue: false
     }
   }
   componentDidMount() {
@@ -32,56 +33,71 @@ export default class Digits extends React.Component {
       allowFloat: this.props.allowFloat === false ? false : true,
     }
     if (displayValue === "") {
-      this.setValues({displayValue, exportValue: 0});
-    } else if (displayValue === "-" && options.allowNegative) {
-      this.setValues({displayValue, exportValue: 0});
-    } else {
-
-      function generalReplace(displayValue) {
-        var forbidden = options.allowNegative ? RegExp('[^0-9,-]', 'g') : RegExp('[^0-9,]', 'g');
-        return displayValue.replace(forbidden, '');
-      }
-
-      function commaProcess(displayValue, options) {
-        if (!options.allowFloat) return {displayValue, exportValue: displayValue};
-
-        var commaAtEndOfString = RegExp(',$', 'g');
-        var commasAnywhere = RegExp(',', 'g');
-        var commasFound = displayValue.match(commasAnywhere) || [];
-        var exportValue = displayValue;
-
-        if (commasFound.length === 1) {
-          if (commaAtEndOfString.test(displayValue)) {
-            exportValue = displayValue.replace(commaAtEndOfString, '');
-          } else {
-            exportValue = displayValue.replace(commasAnywhere, '.');
-          }
-        }
-        return {displayValue, exportValue};
-      }
-      displayValue = generalReplace(displayValue);
-      this.setValues(commaProcess(displayValue, options));
+      this.setValues({ displayValue });
+      return;
     }
+    if (displayValue === "-" && options.allowNegative) {
+      this.setValues({ displayValue });
+      return;
+    }
+    function generalReplace(displayValue) {
+      // First we remove all bad characters
+      displayValue = displayValue.replace(/[^0-9,-]/g, '');
+      // Then we replace all '-' except the first
+      return displayValue.replace(/(-?)([^-]*)(-*)/g, '$1$2');
+    }
+    function commaProcess(displayValue, options) {
+      if (!options.allowFloat) return {displayValue, exportValue: displayValue};
+
+      var commaAtEndOfString = RegExp(',$', 'g');
+      var commasAnywhere = RegExp(',', 'g');
+      var commasFound = displayValue.match(commasAnywhere) || [];
+      var exportValue = displayValue;
+
+      if (commasFound.length === 1) {
+        if (commaAtEndOfString.test(displayValue)) {
+          exportValue = displayValue.replace(commaAtEndOfString, '');
+        } else {
+          exportValue = displayValue.replace(commasAnywhere, '.');
+        }
+      }
+      return {displayValue, exportValue};
+    }
+    displayValue = generalReplace(displayValue);
+    this.setValues(commaProcess(displayValue, options));
   }
 
   setValues = ({displayValue, exportValue}) => {
-    exportValue = Number(exportValue);
-    if (!isNaN(exportValue)) {
+    exportValue = Number(exportValue || 0);
 
-      var min = this.props.min;
-      var max = this.props.max;
+    var blurValue;
+    var skipExport = false;
+    var min = this.props.min;
+    var max = this.props.max;
 
+    if (displayValue === "-" || displayValue === "") {
+      blurValue = this.state.blurValue;
+      skipExport = true;
+    } else {
       if (exportValue > max) {
         exportValue = max;
         displayValue = max.toString();
-      } else if (exportValue < min && displayValue !== "-" && displayValue !== "") {
+      } else if (exportValue < min) {
         exportValue = min;
         displayValue = min.toString();
       }
+      blurValue = displayValue;
+    }
+    this.setState({ displayValue, blurValue }, () => {
+      if (!skipExport) this.props.onChange(exportValue);
+    })
+  }
 
-      this.setState({ displayValue }, () => {
-        this.props.onChange(exportValue);
-      })
+  onBlur = () => {
+    var blurValue = this.state.blurValue;
+    var displayValue = this.state.displayValue;
+    if (blurValue !== displayValue) {
+      this.setState({ displayValue: blurValue });
     }
   }
 
@@ -90,6 +106,7 @@ export default class Digits extends React.Component {
       <input
         value={this.state.displayValue}
         onChange={this.onChange}
+        onBlur={this.onBlur}
 
         min={this.props.min}
         max={this.props.max}

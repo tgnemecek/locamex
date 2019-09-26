@@ -26,18 +26,24 @@ export default class RegisterContainers extends React.Component {
     } else if (this.state.type === 'modular') {
       return <Modular {...this.props} />
     } else return (
-      <Box className="register-data"
+      <Box
+        className="register-data register-containers--choose-type"
         title="Selecione o Tipo de Container"
-        closeBox={this.props.toggleWindow}
-        width="800px">
-        <Block columns={2}>
-          <div>
-            <button style={{width: "100%"}} className="button" value="fixed" onClick={this.onClick}>Fixo</button>
-          </div>
-          <div>
-            <button style={{width: "100%"}} className="button" value="modular" onClick={this.onClick}>Modular</button>
-          </div>
-        </Block>
+        closeBox={this.props.toggleWindow}>
+        <div className="register-containers--choose-type__buttons">
+          <button
+            className="button--pill"
+            value="fixed"
+            onClick={this.onClick}>
+            CONTAINER FIXO
+          </button>
+          <button
+            className="button--pill"
+            value="modular"
+            onClick={this.onClick}>
+            CONTAINER MODULAR
+          </button>
+        </div>
         <FooterButtons buttons={[{text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow}]}/>
       </Box>
     )

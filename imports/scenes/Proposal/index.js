@@ -258,9 +258,10 @@ class Proposal extends React.Component {
     })
   }
 
-  generateDocument = () => {
+  generateDocument = (includeFlyer) => {
     const generate = (master) => {
       master.type = "proposal";
+      master.includeFlyer = includeFlyer;
       var pdf = new Pdf(master, this.props.databases);
       pdf.generate().then(() => {
         this.setState({ databaseStatus: {status: "completed"} });

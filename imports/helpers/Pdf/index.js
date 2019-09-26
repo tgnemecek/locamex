@@ -69,7 +69,7 @@ export default class Pdf {
         generateTable,
         styles
       }
-      var containers = master.containers;
+      var containers = master.includeFlyer ? master.containers : [];
 
       proposalPDF(props).then((docDefinition) => {
         Meteor.call('pdf.proposal.create', docDefinition, containers, (err, res) => {
