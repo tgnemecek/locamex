@@ -113,7 +113,7 @@ function getFlyers (containers) {
         var request = require('request').defaults({ encoding: null });
         promises.push(new Promise((resolve, reject) => {
           request.get(item.flyer, (err, res, buffer) => {
-            if (err) reject();
+            if (err) reject(err);
             if (buffer) {
               buffers.push(buffer);
               resolve();
@@ -124,6 +124,8 @@ function getFlyers (containers) {
     })
     Promise.all(promises).then(() => {
       resolve(buffers);
+    }).catch((err) => {
+      throw new Meteor.Error('error-in-flyers', err);
     })
   })
 }
