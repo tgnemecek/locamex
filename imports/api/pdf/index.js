@@ -108,7 +108,7 @@ function getFlyers (containers) {
     var promises = [];
     var buffers = [];
     containers.forEach((product, i, arr) => {
-      var item = Containers.findOne({ _id: product.productId });
+      var item = Containers.findOne({ _id: product.productId }) || {};
       if (item.flyer) {
         var request = require('request').defaults({ encoding: null });
         promises.push(new Promise((resolve, reject) => {
