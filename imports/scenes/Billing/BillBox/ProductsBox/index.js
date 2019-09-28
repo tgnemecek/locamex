@@ -12,7 +12,7 @@ export default class ProductsBox extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      databaseStatus: {},
+      databaseStatus: '',
       finished: this.props.charge.status === "finished",
       valuePayed: this.props.charge.valuePayed || 0,
       observations: this.props.charge.observations || "",
@@ -62,19 +62,19 @@ export default class ProductsBox extends React.Component {
       annotations: this.state.annotations
     }
 
-    this.setState({ databaseStatus: {status: "loading"} }, () => {
+    this.setState({ databaseStatus: "loading" }, () => {
       Meteor.call('contracts.billing.update', _id, billing, type, (err, res) => {
-        if (err) this.setState({ databaseStatus: {status: "failed"} });
+        if (err) this.setState({ databaseStatus: "failed" });
         if (res) {
           if (this.props.charge.status === "ready") {
             this.printBilling();
-          } else this.setState({ databaseStatus: {status: "completed"} });
+          } else this.setState({ databaseStatus: "completed" });
         }
       })
     });
   }
   printBilling = () => {
-    this.setState({ databaseStatus: {status: "loading"} }, () => {
+    this.setState({ databaseStatus: "loading" }, () => {
       var pdf = new Pdf(
         {...this.props.contract, type: "billing"},
         this.props.databases,
@@ -84,10 +84,10 @@ export default class ProductsBox extends React.Component {
         });
 
       pdf.generate().then(() => {
-        this.setState({ databaseStatus: {status: "completed"} });
+        this.setState({ databaseStatus: "completed" });
       }).catch((err) => {
         console.log(err);
-        this.setState({ databaseStatus: {status: "failed"} });
+        this.setState({ databaseStatus: "failed" });
       })
     });
   }
@@ -211,8 +211,7 @@ export default class ProductsBox extends React.Component {
         {this.footerButtons()}
         <DatabaseStatus
           callback={this.props.toggleWindow}
-          status={this.state.databaseStatus.status}
-          message={this.state.databaseStatus.message}/>
+          status={this.state.databaseStatus}/>
       </div>
     )
   }

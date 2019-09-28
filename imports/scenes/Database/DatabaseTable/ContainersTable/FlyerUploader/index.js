@@ -13,7 +13,7 @@ export default class FlyerUploader extends React.Component {
     super(props);
     this.state = {
       file: [],
-      databaseStatus: {}
+      databaseStatus: ''
     }
   }
 
@@ -50,7 +50,7 @@ export default class FlyerUploader extends React.Component {
     var type = this.props.item.type;
     var filename = this.props.item.description;
     var filePath = `user-uploads/flyers/${type}/${_id}/${filename}.pdf`;
-    this.setState({ databaseStatus: {status: "loading"} });
+    this.setState({ databaseStatus: "loading" });
     reader.onloadend = () => {
       Meteor.call('aws.write', reader.result, filePath, (err, res) => {
         if (err) console.log(err);
@@ -58,7 +58,7 @@ export default class FlyerUploader extends React.Component {
           var key = "flyer";
           var value = res.Location;
           Meteor.call('containers.update.one', _id, key, value, () => {
-            this.setState({ databaseStatus: {status: "completed"} });
+            this.setState({ databaseStatus: "completed" });
           });
         }
       })
@@ -97,8 +97,7 @@ export default class FlyerUploader extends React.Component {
         </Block>
         <DatabaseStatus
           callback={this.props.toggleWindow}
-          status={this.state.databaseStatus.status}
-          message={this.state.databaseStatus.message}/>
+          status={this.state.databaseStatus}/>
         <FooterButtons buttons={[
           {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
           {text: "Enviar", onClick: this.saveEdits}

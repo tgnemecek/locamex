@@ -38,7 +38,7 @@ export default class Receive extends React.Component {
       fixed: this.props.contract.shipping.fixed || [],
       modules: this.props.contract.shipping.modules || [],
       accessories: setAccessories(),
-      databaseStatus: {}
+      databaseStatus: ''
     }
   }
 
@@ -55,12 +55,12 @@ export default class Receive extends React.Component {
       _id: this.props.contract._id,
       type: 'receive'
     }
-    this.setState({ databaseStatus: {status: "loading"} }, () => {
+    this.setState({ databaseStatus: "loading" }, () => {
       Meteor.call('contracts.shipping.receive', state, (err, res) => {
         if (res) {
-          this.setState({ databaseStatus: {status: "completed"} });
+          this.setState({ databaseStatus: "completed" });
         } if (err) {
-          this.setState({ databaseStatus: {status: "failed"} });
+          this.setState({ databaseStatus: "failed" });
         }
       });
     })
@@ -94,8 +94,7 @@ export default class Receive extends React.Component {
           receiveProducts={this.receiveProducts}
           />
           <DatabaseStatus
-            status={this.state.databaseStatus.status}
-            message={this.state.databaseStatus.message}
+            status={this.state.databaseStatus}
             callback={this.props.toggleReceive}
           />
       </Box>

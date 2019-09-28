@@ -18,7 +18,7 @@ export default class Send extends React.Component {
       accessories: [],
       allowedModules: [],
 
-      databaseStatus: {}
+      databaseStatus: ''
     }
   }
 
@@ -102,11 +102,11 @@ export default class Send extends React.Component {
         return {...module, place: ""}
       })
     }
-    this.setState({ databaseStatus: {status: "loading"} }, () => {
+    this.setState({ databaseStatus: "loading" }, () => {
       Meteor.call('contracts.shipping.send', state, (err, res) => {
         if (res) {
-          this.setState({ databaseStatus: {status: "completed"} });
-        } if (err) this.setState({ databaseStatus: {status: "failed"}});
+          this.setState({ databaseStatus: "completed" });
+        } if (err) this.setState({ databaseStatus: "failed"});
       });
     })
   }
@@ -158,8 +158,7 @@ export default class Send extends React.Component {
           sendProducts={this.sendProducts}
           />
           <DatabaseStatus
-            status={this.state.databaseStatus.status}
-            message={this.state.databaseStatus.message}
+            status={this.state.databaseStatus}
             callback={this.props.toggleSend}
           />
       </Box>

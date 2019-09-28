@@ -1,5 +1,10 @@
 # Changelog:
 
+## Version 2.2.5
+
+-  Fixed pdf bug;
+-  Redone DatabaseStatus, allowing for easy state use on parent;
+
 ## Version 2.2.4
 
 -  Added 'annotations' field on Billings;

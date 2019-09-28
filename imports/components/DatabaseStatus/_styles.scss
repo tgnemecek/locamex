@@ -3,27 +3,28 @@
 .database-status {
   overflow: hidden;
   border-radius: 20px;
+  width: 30vw;
 }
 
 .database-status__loading::after {
-  content: "Carregando";
+  content: "";
   animation: etc 3s infinite;
 }
 
 @keyframes etc {
   0% {
-    content: "Carregando"
+    content: ""
   }
   25% {
-    content: "Carregando."
+    content: "."
   }
   50% {
-    content: "Carregando.."
+    content: ".."
   }
   75% {
-    content: "Carregando..."
+    content: "..."
   }
   100% {
-    content: "Carregando"
+    content: ""
   }
 }

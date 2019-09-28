@@ -20,7 +20,7 @@ export default class FileUploader extends React.Component {
     super(props);
     this.state = {
       files: [],
-      databaseStatus: {}
+      databaseStatus: ''
     }
   }
 
@@ -38,7 +38,7 @@ export default class FileUploader extends React.Component {
     var type = this.props.item.type;
 
     const throwError = (err) => {
-      this.setState({ databaseStatus: {status: "failed"} });
+      this.setState({ databaseStatus: "failed" });
       console.log(err);
     }
 
@@ -47,7 +47,7 @@ export default class FileUploader extends React.Component {
     const sendImagesForSeries = () => {
       var date = moment().format("YYYY-MM-DD") + "_" + code;
 
-      this.setState({ databaseStatus: {status: "loading"} }, () => {
+      this.setState({ databaseStatus: "loading" }, () => {
         var promises = this.state.files.map((file, i) => {
           return new Promise((resolve, reject) => {
             var reader = new FileReader();
@@ -73,7 +73,7 @@ export default class FileUploader extends React.Component {
               Meteor.call('snapshot.add', this.props.item, urls, (err, res) => {
                 if (err) throwError(err);
                 if (res) {
-                  this.setState({ databaseStatus: {status: "completed"} });
+                  this.setState({ databaseStatus: "completed" });
                 }
               })
             }
@@ -85,7 +85,7 @@ export default class FileUploader extends React.Component {
     const sendImagesForAccessories = () => {
       var filePath = `user-uploads/images/accessories/${this.props.item._id}/`;
 
-      this.setState({ databaseStatus: {status: "loading"} }, () => {
+      this.setState({ databaseStatus: "loading" }, () => {
         var promises = this.state.files.map((file, i) => {
           return new Promise((resolve, reject) => {
             var reader = new FileReader();
@@ -113,7 +113,7 @@ export default class FileUploader extends React.Component {
                   Meteor.call('accessories.update.one', this.props.item._id, "images", urls, (err, res) => {
                     if (err) throwError(err);
                     if (res) {
-                      this.setState({ databaseStatus: {status: "completed"} });
+                      this.setState({ databaseStatus: "completed" });
                     }
                   })
                 }
@@ -162,8 +162,7 @@ export default class FileUploader extends React.Component {
           ]}/>
           <DatabaseStatus
             callback={this.props.closeParent}
-            status={this.state.databaseStatus.status}
-            message={this.state.databaseStatus.message}/>
+            status={this.state.databaseStatus}/>
       </Box>
     )
   }

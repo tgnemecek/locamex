@@ -12,7 +12,7 @@ export default class ServicesBox extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      databaseStatus: {},
+      databaseStatus: '',
       status: this.props.charge.status,
       valuePayed: this.props.charge.valuePayed || 0,
       annotations: this.props.charge.annotations || "",
@@ -38,10 +38,10 @@ export default class ServicesBox extends React.Component {
       annotations: this.state.annotations
     }
 
-    this.setState({ databaseStatus: {status: "loading"} }, () => {
+    this.setState({ databaseStatus: "loading" }, () => {
       Meteor.call('contracts.billing.update', _id, billing, type, (err, res) => {
-        if (err) this.setState({ databaseStatus: {status: "failed"} });
-        if (res) this.setState({ databaseStatus: {status: "completed"} });
+        if (err) this.setState({ databaseStatus: "failed" });
+        if (res) this.setState({ databaseStatus: "completed" });
       })
     });
   }
@@ -156,8 +156,7 @@ export default class ServicesBox extends React.Component {
         {this.footerButtons()}
         <DatabaseStatus
           callback={this.props.toggleWindow}
-          status={this.state.databaseStatus.status}
-          message={this.state.databaseStatus.message}/>
+          status={this.state.databaseStatus}/>
       </div>
     )
   }

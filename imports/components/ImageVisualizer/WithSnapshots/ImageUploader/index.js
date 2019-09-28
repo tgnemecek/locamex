@@ -16,7 +16,7 @@ export default class ImageUploader extends React.Component {
     super(props);
     this.state = {
       files: [],
-      databaseStatus: {}
+      databaseStatus: ''
     }
     this.maximum = 10;
   }
@@ -53,11 +53,11 @@ export default class ImageUploader extends React.Component {
 
 
     const throwError = (err) => {
-      this.setState({ databaseStatus: {status: "failed"} });
+      this.setState({ databaseStatus: "failed" });
       console.log(err);
     }
 
-    this.setState({ databaseStatus: {status: "loading"} }, () => {
+    this.setState({ databaseStatus: "loading" }, () => {
       var promises = this.state.files.map((file, i) => {
         return new Promise((resolve, reject) => {
           var reader = new FileReader();
@@ -92,14 +92,14 @@ export default class ImageUploader extends React.Component {
               Meteor.call('snapshot.add', this.props.item, urls, (err, res) => {
                 if (err) throwError(err);
                 if (res) {
-                  this.setState({ databaseStatus: {status: "completed"} });
+                  this.setState({ databaseStatus: "completed" });
                 }
               });
             } else {
               Meteor.call('accessories.update.one', this.props.item._id, "images", urls, () => {
                 if (err) throwError(err);
                 if (res) {
-                  this.setState({ databaseStatus: {status: "completed"} });
+                  this.setState({ databaseStatus: "completed" });
                 }
               })
             }
@@ -167,8 +167,7 @@ export default class ImageUploader extends React.Component {
           ]}/>
           <DatabaseStatus
             callback={this.props.closeParent}
-            status={this.state.databaseStatus.status}
-            message={this.state.databaseStatus.message}/>
+            status={this.state.databaseStatus}/>
       </Box>
     )
   }

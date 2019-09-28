@@ -33,7 +33,7 @@ export default function createPdf(props) {
       var dataURL = canvas.toDataURL("image/png");
       resolve({dataURL, canvas});
     };
-    setTimeout(() => reject(), 5000);
+    setTimeout(() => reject(), 10000);
   })
 
   const proposal = props.master;

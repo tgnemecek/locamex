@@ -95,7 +95,7 @@ class Contract extends React.Component {
       },
       errorMsg: '',
       errorKeys: [],
-      databaseStatus: {}
+      databaseStatus: ''
     }
   }
 
@@ -173,7 +173,7 @@ class Contract extends React.Component {
   }
 
   cancelContract = (callback) => {
-    this.setState({ databaseStatus: {status: "loading"} }, () => {
+    this.setState({ databaseStatus: "loading" }, () => {
       const cancel = (contract) => {
         Meteor.call('contracts.cancel', contract._id, (err, res) => {
           if (res) {
@@ -184,7 +184,7 @@ class Contract extends React.Component {
             contract.status = "cancelled";
             this.setState({ contract, databaseStatus });
           } else if (err) {
-            this.setState({ databaseStatus: {status: "failed"} });
+            this.setState({ databaseStatus: "failed" });
             console.log(err);
           }
           callback();
@@ -195,7 +195,7 @@ class Contract extends React.Component {
   }
 
   activateContract = (callback) => {
-    this.setState({ databaseStatus: {status: "loading"} }, () => {
+    this.setState({ databaseStatus: "loading" }, () => {
       const activate = (contract) => {
         Meteor.call('contracts.activate', contract, (err, res) => {
           if (res) {
@@ -207,7 +207,7 @@ class Contract extends React.Component {
             contract.activeVersion = contract.version;
             this.setState({ contract, databaseStatus });
           } else if (err) {
-            this.setState({ databaseStatus: {status: "failed"} });
+            this.setState({ databaseStatus: "failed" });
             console.log(err);
           }
           callback();
@@ -218,7 +218,7 @@ class Contract extends React.Component {
   }
 
   finalizeContract = (callback) => {
-    this.setState({ databaseStatus: {status: "loading"} }, () => {
+    this.setState({ databaseStatus: "loading" }, () => {
       const finalize = (contract) => {
         Meteor.call('contracts.finalize', contract._id, (err, res) => {
           if (res) {
@@ -229,7 +229,7 @@ class Contract extends React.Component {
             contract.status = "finalized";
             this.setState({ contract, databaseStatus });
           } else if (err) {
-            this.setState({ databaseStatus: {status: "failed"} });
+            this.setState({ databaseStatus: "failed" });
             console.log(err);
           }
           callback();
@@ -240,7 +240,7 @@ class Contract extends React.Component {
   }
 
   saveEdits = (callback) => {
-    this.setState({ databaseStatus: {status: "loading"} }, () => {
+    this.setState({ databaseStatus: "loading" }, () => {
       if (this.props.match.params.contractId == 'new') {
         Meteor.call('contracts.insert', this.state.contract, (err, res) => {
           if (res) {
@@ -251,10 +251,10 @@ class Contract extends React.Component {
             this.props.history.push("/contract/" + res);
             if (typeof callback === "function") {
               callback(contract);
-            } else this.setState({ contract, databaseStatus: {status: "completed"} });
+            } else this.setState({ contract, databaseStatus: "completed" });
           }
           else if (err) {
-            this.setState({ databaseStatus: {status: "failed"} });
+            this.setState({ databaseStatus: "failed" });
             console.log(err);
           }
         });
@@ -271,7 +271,7 @@ class Contract extends React.Component {
               callback(contract);
             } else this.setState({ contract, databaseStatus });
           } else if (err) {
-            this.setState({ databaseStatus: {status: "failed"} });
+            this.setState({ databaseStatus: "failed" });
             console.log(err);
           }
         });
@@ -284,10 +284,10 @@ class Contract extends React.Component {
       master.type = "contract";
       var pdf = new Pdf(master, this.props.databases);
       pdf.generate().then(() => {
-        this.setState({ databaseStatus: {status: "completed"} });
+        this.setState({ databaseStatus: "completed" });
       }).catch((err) => {
         console.log(err);
-        this.setState({ databaseStatus: {status: "failed"} });
+        this.setState({ databaseStatus: "failed" });
       })
     }
     this.saveEdits(generate);
@@ -369,9 +369,7 @@ class Contract extends React.Component {
               activateMaster={this.activateContract}
               finalizeMaster={this.finalizeContract}
             />
-            <DatabaseStatus
-              status={this.state.databaseStatus.status}
-              message={this.state.databaseStatus.message}/>
+            <DatabaseStatus status={this.state.databaseStatus}/>
           </div>
         </div>
       </div>

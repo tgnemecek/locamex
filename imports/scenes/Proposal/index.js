@@ -83,7 +83,7 @@ class Proposal extends React.Component {
       },
       errorMsg: '',
       errorKeys: [],
-      databaseStatus: {}
+      databaseStatus: ''
     }
   }
 
@@ -174,7 +174,7 @@ class Proposal extends React.Component {
   // }
 
   cancelProposal = (callback) => {
-    this.setState({ databaseStatus: {status: "loading"} }, () => {
+    this.setState({ databaseStatus: "loading" }, () => {
       const cancel = (proposal) => {
         Meteor.call('proposals.cancel', proposal._id, (err, res) => {
           if (res) {
@@ -185,7 +185,7 @@ class Proposal extends React.Component {
             proposal.status = "cancelled";
             this.setState({ proposal, databaseStatus });
           } else if (err) {
-            this.setState({ databaseStatus: {status: "failed"} });
+            this.setState({ databaseStatus: "failed" });
             console.log(err);
           }
           callback();
@@ -196,7 +196,7 @@ class Proposal extends React.Component {
   }
 
   activateProposal = (callback) => {
-    this.setState({ databaseStatus: {status: "loading"} }, () => {
+    this.setState({ databaseStatus: "loading" }, () => {
       const activate = (proposal) => {
         Meteor.call('proposals.activate', proposal, (err, res) => {
           if (res) {
@@ -208,7 +208,7 @@ class Proposal extends React.Component {
             proposal.activeVersion = proposal.version;
             this.setState({ proposal, databaseStatus });
           } else if (err) {
-            this.setState({ databaseStatus: {status: "failed"} });
+            this.setState({ databaseStatus: "failed" });
             console.log(err);
           }
           callback();
@@ -219,7 +219,7 @@ class Proposal extends React.Component {
   }
 
   saveEdits = (callback) => {
-    this.setState({ databaseStatus: {status: "loading"} }, () => {
+    this.setState({ databaseStatus: "loading" }, () => {
       if (this.props.match.params.proposalId == 'new') {
         Meteor.call('proposals.insert', this.state.proposal, (err, res) => {
           if (res) {
@@ -230,10 +230,10 @@ class Proposal extends React.Component {
             this.props.history.push("/proposal/" + res);
             if (typeof callback === "function") {
               callback(proposal);
-            } else this.setState({ proposal, databaseStatus: {status: "completed"} });
+            } else this.setState({ proposal, databaseStatus: "completed" });
           }
           else if (err) {
-            this.setState({ databaseStatus: {status: "failed"} });
+            this.setState({ databaseStatus: "failed" });
             console.log(err);
           }
         });
@@ -250,7 +250,7 @@ class Proposal extends React.Component {
               callback(proposal);
             } else this.setState({ proposal, databaseStatus });
           } else if (err) {
-            this.setState({ databaseStatus: {status: "failed"} });
+            this.setState({ databaseStatus: "failed" });
             console.log(err);
           }
         });
@@ -264,10 +264,10 @@ class Proposal extends React.Component {
       master.includeFlyer = includeFlyer;
       var pdf = new Pdf(master, this.props.databases);
       pdf.generate().then(() => {
-        this.setState({ databaseStatus: {status: "completed"} });
+        this.setState({ databaseStatus: "completed" });
       }).catch((err) => {
         console.log(err);
-        this.setState({ databaseStatus: {status: "failed"} });
+        this.setState({ databaseStatus: "failed" });
       })
     }
     this.saveEdits(generate);
@@ -346,9 +346,7 @@ class Proposal extends React.Component {
               activateMaster={this.activateProposal}
               finalizeMaster={this.finalizeProposal}
             />
-            <DatabaseStatus
-              status={this.state.databaseStatus.status}
-              message={this.state.databaseStatus.message}/>
+            <DatabaseStatus status={this.state.databaseStatus}/>
           </div>
         </div>
       </div>

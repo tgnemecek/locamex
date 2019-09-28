@@ -1,3 +1,5 @@
+var data;
+
 export default function generateTable(data) {
   if (!data.body) throw new Meteor.Error("table-must-have-body", data);
   if (!Array.isArray(data.body)) throw new Meteor.Error("body-must-be-array", data);
@@ -31,7 +33,13 @@ export default function generateTable(data) {
     }, 0);
     var fill = widths.length - currentCells;
     if (fill < 0) {
-      throw new Meteor.Error("rows-with-spans-cant-be-smaller-than-widths", row);
+      throw new Meteor.Error(
+        "rows-with-spans-cant-be-smaller-than-widths",
+        {
+          row,
+          data
+        }
+      );
     }
     firstPart[index].colSpan = fill+1;
     for (var i = 0; i < fill; i++) {
@@ -59,10 +67,15 @@ export default function generateTable(data) {
 
   body = body.map((row) => {
     if (!Array.isArray(row)) {
-      throw new Meteor.Error("row-must-be-array-of-arrays", row);
+      throw new Meteor.Error("row-must-be-array-of-arrays", {
+        row, data
+      });
     }
     if (row.length > widths.length) {
-      throw new Meteor.Error("rows-cant-be-bigger-than-widths", row);
+      throw new Meteor.Error("rows-cant-be-bigger-than-widths", {
+        row,
+        data
+      });
     }
 
     var newRow = [];
@@ -92,9 +105,13 @@ export default function generateTable(data) {
       newRow = fillColSpan(newRow, fillCellIndex, widths);
     }
     if (newRow.length > widths.length) {
-      throw new Meteor.Error("rows-with-spans-cant-be-bigger-than-widths", row);
+      throw new Meteor.Error("rows-with-spans-cant-be-bigger-than-widths", {
+        row, data
+      });
     } else if (newRow.length < widths.length) {
-      throw new Meteor.Error("rows-with-spans-cant-be-smaller-than-widths", row);
+      throw new Meteor.Error("rows-with-spans-cant-be-smaller-than-widths", {
+        row, data
+      });
     }
     return newRow;
   });
