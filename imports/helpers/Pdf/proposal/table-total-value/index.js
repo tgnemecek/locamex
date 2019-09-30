@@ -12,7 +12,7 @@ export default function tableTotalValue(props) {
         [{text: 'Valor Total do Pacote de Serviços:', alignment: 'right', bold: true}, props.resultFormat(props.totalValueServices)],
         [{text: 'Valor Total do Orçamento:', alignment: 'right', bold: true}, {text: props.resultFormat(totalValue), fillColor: 'yellow'}]
       ],
-      widths: [ '*', 'auto' ],
+      widths: [ '*', 60 ],
       styles: props.styles
     })
   ]

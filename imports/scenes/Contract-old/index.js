@@ -104,19 +104,6 @@ class Contract extends React.Component {
       || prevState.contract.version !== this.state.contract.version) {
       this.setUpdatedItemInformation();
     }
-    // Auto change to newest version
-    if (this.props.contract) {
-      if (!prevProps.contract) {
-        this.changeVersion({target: {
-          value: this.props.contract.snapshots.length-1
-        }})
-      } else if (this.props.contract.snapshots.length !==
-        prevProps.contract.snapshots.length) {
-          this.changeVersion({target: {
-            value: this.props.contract.snapshots.length-1
-          }})
-      }
-    }
   }
 
   setUpdatedItemInformation = () => {

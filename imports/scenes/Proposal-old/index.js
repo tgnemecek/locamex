@@ -2,8 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 
-import { Accounts } from '/imports/api/accounts/index';
-import { Contracts } from '/imports/api/contracts/index';
+import { Proposals } from '/imports/api/proposals/index';
 import { Clients } from '/imports/api/clients/index';
 import { Places } from '/imports/api/places/index';
 import { Containers } from '/imports/api/containers/index';
@@ -18,52 +17,43 @@ import Pdf from '/imports/helpers/Pdf/index';
 import Box from '/imports/components/Box/index';
 import Checkmark from '/imports/components/Checkmark/index';
 import AppHeader from '/imports/components/AppHeader/index';
-import NotFound from '/imports/components/NotFound/index';
-import Loading from '/imports/components/Loading/index';
 
 import SceneHeader from '/imports/components/SceneHeader/index';
 import SceneItems from '/imports/components/SceneItems/index';
 import SceneFooter from '/imports/components/SceneFooter/index';
 import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 
-import BillingSchedule from './BillingSchedule/index';
 import Information from './Information/index';
 
-class Contract extends React.Component {
+class Proposal extends React.Component {
   constructor(props) {
     super(props);
     const getDocument = () => {
-      if (this.props.contract) {
-        var version;
-        if (this.props.contract.status === "active") {
-          version = this.props.contract.activeVersion;
-        } else version = this.props.contract.snapshots.length-1;
-
+      if (this.props.proposal) {
         return {
-          ...this.props.contract.snapshots[version],
-          _id: this.props.contract._id,
-          status: this.props.contract.status,
-          activeVersion: this.props.contract.activeVersion,
-          version,
-          proposal: this.props.contract.proposal,
-          proposalVersion: this.props.contract.proposalVersion
+          ...this.props.proposal.snapshots[this.props.proposal.activeVersion],
+          _id: this.props.proposal._id,
+          status: this.props.proposal.status,
+          activeVersion: this.props.proposal.activeVersion,
+          version: this.props.proposal.activeVersion
         }
       } else return null;
     }
     this.state = {
-      contract: getDocument() || {
+      proposal: getDocument() || {
         _id: undefined,
         createdBy: Meteor.user()._id,
         status: "inactive",
 
-        clientId: '',
+        client: {
+          description: '',
+          name: '',
+          email: '',
+          phone: ''
+        },
 
         version: 0,
-        negociatorId: '',
-        representativesId: [],
-
-        proposal: '',
-        proposalVersion: 0,
+        activeVersion: 0,
 
         discount: 0,
 
@@ -71,9 +61,6 @@ class Contract extends React.Component {
           internal: '',
           external: ''
         },
-
-        billingProducts: [],
-        billingServices: [],
 
         deliveryAddress: {
           street: '',
@@ -83,6 +70,7 @@ class Contract extends React.Component {
           number: '',
           additional: ''
         },
+
         dates: {
           creationDate: new Date(),
           deliveryDate: new Date(),
@@ -101,27 +89,14 @@ class Contract extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.databases !== this.props.databases
-      || prevState.contract.version !== this.state.contract.version) {
+      || prevState.proposal.version !== this.state.proposal.version) {
       this.setUpdatedItemInformation();
-    }
-    // Auto change to newest version
-    if (this.props.contract) {
-      if (!prevProps.contract) {
-        this.changeVersion({target: {
-          value: this.props.contract.snapshots.length-1
-        }})
-      } else if (this.props.contract.snapshots.length !==
-        prevProps.contract.snapshots.length) {
-          this.changeVersion({target: {
-            value: this.props.contract.snapshots.length-1
-          }})
-      }
     }
   }
 
   setUpdatedItemInformation = () => {
-    var contract = { ...this.state.contract };
-    var arrayOfArrays = [contract.containers, contract.accessories, contract.services];
+    var proposal = { ...this.state.proposal };
+    var arrayOfArrays = [proposal.containers, proposal.accessories, proposal.services];
     arrayOfArrays.forEach((itemArray) => {
       itemArray.forEach((item) => {
         var database;
@@ -144,16 +119,16 @@ class Contract extends React.Component {
         item.restitution = productFromDatabase.restitution;
       })
     })
-    this.setState({ contract });
+    this.setState({ proposal });
   }
 
-  updateContract = (changes, callback) => {
-    var contract = {
-      ...this.state.contract,
-      ...changes,
+  updateProposal = (changes, callback) => {
+    var proposal = {
+      ...this.state.proposal,
+      ...changes
     };
-    this.setState({ contract, errorKeys: [], errorMsg: '' }, () => {
-      if (typeof (callback) === "function") callback();
+    this.setState({ proposal, errorKeys: [], errorMsg: '' }, () => {
+      if (typeof (callback) === "function") callback(changes);
     })
   }
 
@@ -171,31 +146,48 @@ class Contract extends React.Component {
     this.setState({ toggleFinalizeWindow });
   }
 
-  changeVersion = (e) => {
+  changeVersion = (e, callback) => {
     var newVersion = e.target.value;
-    var contract = {
-      ...this.props.contract.snapshots[newVersion],
-      _id: this.state.contract._id,
-      status: this.props.contract.status,
-      version: newVersion,
-      activeVersion: this.props.contract.activeVersion,
-      proposal: this.props.contract.proposal,
-      proposalVersion: this.props.contract.proposalVersion
+    var proposal = {
+      ...this.props.proposal.snapshots[newVersion],
+      _id: this.state.proposal._id,
+      status: this.props.proposal.status,
+      activeVersion: this.props.proposal.activeVersion,
+      version: newVersion
     }
-    this.setState({ contract });
+    this.setState({ proposal }, () => {
+      if (typeof callback === "function") {
+        callback();
+      }
+    });
   }
 
-  cancelContract = (callback) => {
+  // NOT IN USE:
+  // duplicateProposal = (callback) => {
+  //   this.setState({ databaseStatus: "loading" }, () => {
+  //     Meteor.call('proposals.duplicate', this.state.proposal, (err, res) => {
+  //       if (res) {
+  //         this.setState({ databaseStatus: "completed" });
+  //       } else if (err) {
+  //         this.setState({ databaseStatus: "failed" });
+  //         console.log(err);
+  //       }
+  //     });
+  //     if (typeof (callback) === "function") callback();
+  //   })
+  // }
+
+  cancelProposal = (callback) => {
     this.setState({ databaseStatus: "loading" }, () => {
-      const cancel = (contract) => {
-        Meteor.call('contracts.cancel', contract._id, (err, res) => {
+      const cancel = (proposal) => {
+        Meteor.call('proposals.cancel', proposal._id, (err, res) => {
           if (res) {
             var databaseStatus = {
               status: "completed",
               message: "Proposta Cancelada!"
             }
-            contract.status = "cancelled";
-            this.setState({ contract, databaseStatus });
+            proposal.status = "cancelled";
+            this.setState({ proposal, databaseStatus });
           } else if (err) {
             this.setState({ databaseStatus: "failed" });
             console.log(err);
@@ -207,18 +199,18 @@ class Contract extends React.Component {
     })
   }
 
-  activateContract = (callback) => {
+  activateProposal = (callback) => {
     this.setState({ databaseStatus: "loading" }, () => {
-      const activate = (contract) => {
-        Meteor.call('contracts.activate', contract, (err, res) => {
+      const activate = (proposal) => {
+        Meteor.call('proposals.activate', proposal, (err, res) => {
           if (res) {
             var databaseStatus = {
               status: "completed",
-              message: "Contrato Ativado!"
+              message: "Proposta Fechada! Gerado Contrato #" + res.contractId
             }
-            contract.status = "active";
-            contract.activeVersion = contract.version;
-            this.setState({ contract, databaseStatus });
+            proposal.status = "active";
+            proposal.activeVersion = proposal.version;
+            this.setState({ proposal, databaseStatus });
           } else if (err) {
             this.setState({ databaseStatus: "failed" });
             console.log(err);
@@ -230,41 +222,19 @@ class Contract extends React.Component {
     })
   }
 
-  finalizeContract = (callback) => {
-    this.setState({ databaseStatus: "loading" }, () => {
-      const finalize = (contract) => {
-        Meteor.call('contracts.finalize', contract._id, (err, res) => {
-          if (res) {
-            var databaseStatus = {
-              status: "completed",
-              message: "Contrato Finalizado!"
-            }
-            contract.status = "finalized";
-            this.setState({ contract, databaseStatus });
-          } else if (err) {
-            this.setState({ databaseStatus: "failed" });
-            console.log(err);
-          }
-          callback();
-        });
-      }
-      this.saveEdits(finalize);
-    })
-  }
-
   saveEdits = (callback) => {
     this.setState({ databaseStatus: "loading" }, () => {
-      if (this.props.match.params.contractId == 'new') {
-        Meteor.call('contracts.insert', this.state.contract, (err, res) => {
+      if (this.props.match.params.proposalId == 'new') {
+        Meteor.call('proposals.insert', this.state.proposal, (err, res) => {
           if (res) {
-            var contract = {
-              ...this.state.contract,
+            var proposal = {
+              ...this.state.proposal,
               _id: res
             }
-            this.props.history.push("/contract/" + res);
+            this.props.history.push("/proposal/" + res);
             if (typeof callback === "function") {
-              callback(contract);
-            } else this.setState({ contract, databaseStatus: "completed" });
+              callback(proposal);
+            } else this.setState({ proposal, databaseStatus: "completed" });
           }
           else if (err) {
             this.setState({ databaseStatus: "failed" });
@@ -272,17 +242,26 @@ class Contract extends React.Component {
           }
         });
       } else {
-        Meteor.call('contracts.update', this.state.contract, (err, res) => {
+        Meteor.call('proposals.update', this.state.proposal, (err, res) => {
           if (res) {
-            var contract = {...this.state.contract};
-            var databaseStatus = {status: "completed"};
+            var proposal = {...this.state.proposal};
             if (res.hasChanged) {
-              contract.version = res.data.snapshots.length-1;
-            } else databaseStatus.message = "Nenhuma alteração realizada."
-
-            if (typeof callback === "function") {
-              callback(contract);
-            } else this.setState({ contract, databaseStatus });
+              this.changeVersion({target: {value: res.data.activeVersion+1}},
+                () => {
+                  this.setState({ proposal, databaseStatus: "completed" },
+                  () => {
+                    if (typeof callback === "function") {
+                      callback(proposal);
+                    }
+                  })
+              })
+            } else this.setState({
+              proposal,
+              databaseStatus : {
+                status: "completed",
+                message: "Nenhuma alteração realizada."
+              }
+            });
           } else if (err) {
             this.setState({ databaseStatus: "failed" });
             console.log(err);
@@ -292,9 +271,10 @@ class Contract extends React.Component {
     })
   }
 
-  generateDocument = () => {
+  generateDocument = (includeFlyer) => {
     const generate = (master) => {
-      master.type = "contract";
+      master.type = "proposal";
+      master.includeFlyer = includeFlyer;
       var pdf = new Pdf(master, this.props.databases);
       pdf.generate().then(() => {
         this.setState({ databaseStatus: "completed" });
@@ -307,11 +287,11 @@ class Contract extends React.Component {
   }
 
   totalValue = (option) => {
-    var duration = this.state.contract.dates.timeUnit === "months" ? this.state.contract.dates.duration : 1;
-    var discount = this.state.contract.discount;
+    var duration = this.state.proposal.dates.timeUnit === "months" ? this.state.proposal.dates.duration : 1;
+    var discount = this.state.proposal.discount;
 
-    var containers = this.state.contract.containers || [];
-    var accessories = this.state.contract.accessories || [];
+    var containers = this.state.proposal.containers || [];
+    var accessories = this.state.proposal.accessories || [];
 
     var products = containers.concat(accessories);
     var productsValue = products.reduce((acc, current) => {
@@ -320,7 +300,7 @@ class Contract extends React.Component {
     }, 0);
     productsValue = productsValue * (1 - discount);
 
-    var services = this.state.contract.services || [];
+    var services = this.state.proposal.services || [];
     var servicesValue = services.reduce((acc, current) => {
       var renting = current.renting ? current.renting : 1;
       return acc + (current.price * renting)
@@ -331,42 +311,39 @@ class Contract extends React.Component {
     } else if (option === 'services') {
       return servicesValue;
     } else return productsValue + servicesValue;
-
   }
 
   render () {
-    var disabled = this.state.contract.status === "cancelled";
+    var disabled = this.state.proposal.status !== "inactive";
     return (
       <div className="page-content">
-        {/* <RedirectUser currentPage="contract"/> */}
-        <div className="base-scene contract">
+        <RedirectUser currentPage="proposal"/>
+        <div className="base-scene proposal">
           <SceneHeader
-            master={{...this.state.contract, type: "contract"}}
+            master={{...this.state.proposal, type: "proposal"}}
             databases={this.props.databases}
-            snapshots={this.props.contract ? this.props.contract.snapshots : []}
+            snapshots={this.props.proposal ? this.props.proposal.snapshots : []}
             changeVersion={this.changeVersion}
 
-            BillingSchedule={BillingSchedule}
-
-            updateMaster={this.updateContract}
-            cancelMaster={this.cancelContract}
+            updateMaster={this.updateProposal}
+            cancelMaster={this.cancelProposal}
             saveMaster={this.saveEdits}
             generateDocument={this.generateDocument}
 
             errorKeys={this.state.errorKeys}
             disabled={disabled}
           />
-          <div className={this.state.contract.status !== "inactive" ? "contract__body disable-click" : "contract__body"}>
+          <div className={disabled ? "disable-click" : ""}>
             <Information
               clientsDatabase={this.props.databases.clientsDatabase}
-              contract={this.state.contract}
-              updateContract={this.updateContract}
+              proposal={this.state.proposal}
+              updateProposal={this.updateProposal}
               errorKeys={this.state.errorKeys}
             />
             <SceneItems
-              master={this.state.contract}
+              master={this.state.proposal}
               databases={this.props.databases}
-              updateMaster={this.updateContract}
+              updateMaster={this.updateProposal}
             />
             <SceneFooter
               totalValue={this.totalValue()}
@@ -376,11 +353,11 @@ class Contract extends React.Component {
               setError={this.setError}
               errorMsg={this.state.errorMsg}
 
-              master={{...this.state.contract, type: "contract"}}
+              master={{...this.state.proposal, type: "proposal"}}
 
               saveEdits={this.saveEdits}
-              activateMaster={this.activateContract}
-              finalizeMaster={this.finalizeContract}
+              activateMaster={this.activateProposal}
+              finalizeMaster={this.finalizeProposal}
             />
             <DatabaseStatus status={this.state.databaseStatus}/>
           </div>
@@ -390,16 +367,15 @@ class Contract extends React.Component {
   }
 }
 
-function ContractLoader (props) {
-  if (props.match.params.contractId === 'new' || props.contract) {
-    return <Contract {...props} />
+function ProposalLoader (props) {
+  if (props.match.params.proposalId === 'new' || props.proposal) {
+    return <Proposal {...props} />
   } else return null;
 }
 
-export default ContractWrapper = withTracker((props) => {
-  Meteor.subscribe('contractsPub');
+export default ProposalWrapper = withTracker((props) => {
+  Meteor.subscribe('proposalsPub');
   Meteor.subscribe('clientsPub');
-  Meteor.subscribe('accountsPub');
 
   Meteor.subscribe('placesPub');
 
@@ -410,9 +386,8 @@ export default ContractWrapper = withTracker((props) => {
   Meteor.subscribe('usersPub');
 
   var databases = {
-    contractsDatabase: Contracts.find().fetch(),
+    proposalsDatabase: Proposals.find().fetch(),
     clientsDatabase: Clients.find().fetch(),
-    accountsDatabase: Accounts.find().fetch(),
 
     placesDatabase: Places.find().fetch(),
 
@@ -423,10 +398,10 @@ export default ContractWrapper = withTracker((props) => {
     usersDatabase: Meteor.users.find().fetch()
 
   }
-  var contract = undefined;
-  if (props.match.params.contractId !== 'new') {
-    contract = Contracts.findOne({ _id: props.match.params.contractId });
+  var proposal = undefined;
+  if (props.match.params.proposalId !== 'new') {
+    proposal = Proposals.findOne({ _id: props.match.params.proposalId });
   }
-  return { databases, contract }
+  return { databases, proposal }
 
-})(ContractLoader);
+})(ProposalLoader);

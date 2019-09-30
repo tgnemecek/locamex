@@ -108,7 +108,7 @@ export default class SceneFooter extends React.Component {
       <div className="scene-footer">
         <div className="error-message">{this.props.errorMsg}</div>
         <div className="scene-footer__total-value">
-          <h3>Valor Total do Contrato: {tools.format(this.props.totalValue, 'currency')}</h3>
+          <h3>Valor Total: {tools.format(this.props.totalValue, 'currency')}</h3>
         </div>
         {this.renderButtons()}
         <div className="scene-footer__text">Contrato criado dia {moment(this.props.master.dates.creationDate).format("DD/MM/YYYY")}</div>

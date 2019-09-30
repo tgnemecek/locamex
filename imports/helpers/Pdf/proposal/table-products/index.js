@@ -3,52 +3,51 @@ import tools from '/imports/startup/tools/index';
 export default function tableProducts(props) {
 
   const timeUnitLabel = () => {
-    return props.dates.timeUnit === "months" ? "Meses" : "Dias";
+    return props.dates.timeUnit === "months" ? {text: 'Meses', alignment: 'center'} : {text: 'Dias', alignment: 'center'};
   }
 
   const timeUnitValueLabel = () => {
-    return props.dates.timeUnit === "months" ? {text: 'Valor Mensal', alignment: 'left'} : null;
+    return props.dates.timeUnit === "months" ? {text: 'Valor Mensal', alignment: 'right'} : null;
   }
 
   const body = () => {
     const monthlyPrice = (price) => {
       if (props.dates.timeUnit === "months") {
-        return {text: tools.format(price, 'currency'), alignment: 'center'}
+        return {text: tools.format(price, 'currency'), alignment: 'right'}
       } else return null;
     }
     const duration = (duration) =>  {
       if (props.dates.timeUnit === "months") {
         return {text: duration.toString(), alignment: 'center'}
-      } else return {text: "até 30", alignment: 'center'};
+      } else return {text: "até 30", alignment: 'right'};
     }
     if (props.products) {
       return props.products.map((product, i) => {
         return [
           (i+1),
           product.description,
-          tools.format(product.price, 'currency'),
+          {text: tools.format(product.price, 'currency'), alignment: 'right'},
           {text: product.renting.toString(), alignment: 'center'},
           monthlyPrice(product.price * product.renting),
           duration(props.dates.duration),
           {text: tools.format(product.finalPrice, 'currency'), alignment: 'right'}
         ];
       })
-    } else return [{text: '', colSpan: 6}];
+    } else return [{text: '', colSpan: 'fill'}];
   }
 
   const footer = () => {
-    var colSpan = props.dates.timeUnit === "months" ? 6 : 5;
     const monthlyValue = () => {
       if (props.dates.timeUnit === "months") {
         return [
-          {text: 'Valor Mensal de Locação:', colSpan: 6, alignment: 'right', bold: true}, props.resultFormat(props.totalValueProrogation)
+          {text: 'Valor Mensal de Locação:', colSpan: 'fill', alignment: 'right', bold: true}, props.resultFormat(props.totalValueProrogation)
         ]
       } else return null
     }
     const discount = () => {
       if (props.discount) {
         return [
-          {text: 'Desconto por tempo de Locação:', colSpan, alignment: 'right', bold: true},
+          {text: 'Desconto por tempo de Locação:', colSpan: 'fill', alignment: 'right', bold: true},
           {text: `-${props.discount * 100}%`, alignment: 'right', bold: true}
         ]
       } else return null
@@ -56,14 +55,14 @@ export default function tableProducts(props) {
     return [
       discount(),
       monthlyValue(),
-      [{text: 'Valor Total da Locação:', colSpan, alignment: 'right', bold: true}, props.resultFormat(props.totalValueProducts)]
+      [{text: 'Valor Total da Locação:', colSpan: 'fill', alignment: 'right', bold: true}, props.resultFormat(props.totalValueProducts)]
     ]
   }
 
   const widths = () => {
     if (props.dates.timeUnit === "months") {
-      return ['auto', '*', 'auto', 'auto', 'auto', 'auto', 'auto'];
-    } else return ['auto', '*', 'auto', 'auto', 'auto', 'auto'];
+      return ['auto', '*', 60, 'auto', 60, 'auto', 60];
+    } else return ['auto', '*', 60, 'auto', 'auto', 60];
   }
 debugger;
   return [
@@ -72,10 +71,10 @@ debugger;
       header: [[
         '#',
         'Descrição',
-        {text: 'Valor Unit.', alignment: 'left'},
-        {text: 'Qtd.', alignment: 'center'},
+        {text: 'Valor Unit.', alignment: 'right'},
+        {text: 'Qtd.', alignment: 'right'},
         timeUnitValueLabel(),
-        {text: timeUnitLabel(), alignment: 'center'},
+        {text: timeUnitLabel(), alignment: 'right'},
         {text: 'Valor Total', alignment: 'right'}
       ]],
       body: body(),

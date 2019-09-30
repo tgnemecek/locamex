@@ -92,6 +92,19 @@ class Proposal extends React.Component {
       || prevState.proposal.version !== this.state.proposal.version) {
       this.setUpdatedItemInformation();
     }
+    // Auto change to newest version
+    if (this.props.proposal) {
+      if (!prevProps.proposal) {
+        this.changeVersion({target: {
+          value: this.props.proposal.snapshots.length-1
+        }})
+      } else if (this.props.proposal.snapshots.length !==
+        prevProps.proposal.snapshots.length) {
+          this.changeVersion({target: {
+            value: this.props.proposal.snapshots.length-1
+          }})
+      }
+    }
   }
 
   setUpdatedItemInformation = () => {
@@ -146,7 +159,7 @@ class Proposal extends React.Component {
     this.setState({ toggleFinalizeWindow });
   }
 
-  changeVersion = (e) => {
+  changeVersion = (e, callback) => {
     var newVersion = e.target.value;
     var proposal = {
       ...this.props.proposal.snapshots[newVersion],
@@ -155,7 +168,11 @@ class Proposal extends React.Component {
       activeVersion: this.props.proposal.activeVersion,
       version: newVersion
     }
-    this.setState({ proposal });
+    this.setState({ proposal }, () => {
+      if (typeof callback === "function") {
+        callback();
+      }
+    });
   }
 
   // NOT IN USE:
@@ -241,14 +258,12 @@ class Proposal extends React.Component {
         Meteor.call('proposals.update', this.state.proposal, (err, res) => {
           if (res) {
             var proposal = {...this.state.proposal};
-            var databaseStatus = {status: "completed"};
-            if (res.hasChanged) {
-              proposal.version = res.data.snapshots.length-1;
-            } else databaseStatus.message = "Nenhuma alteração realizada."
-
-            if (typeof callback === "function") {
-              callback(proposal);
-            } else this.setState({ proposal, databaseStatus });
+            var databaseStatus = res.hasChanged ? "completed" : {
+              status: "completed",
+              message: "Nenhuma alteração realizada."
+            }
+            this.setState({ proposal, databaseStatus });
+            if (typeof callback === "function") callback(proposal);
           } else if (err) {
             this.setState({ databaseStatus: "failed" });
             console.log(err);

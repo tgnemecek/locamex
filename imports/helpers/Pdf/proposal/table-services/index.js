@@ -5,7 +5,11 @@ export default function tableServices(props) {
   const body = () => {
     return props.services.map((service, i) => {
       return [
-        (i+1), service.description, tools.format(service.price, 'currency'), {text: service.renting, alignment: 'center'}, props.resultFormat(service.finalPrice)
+        (i+1),
+        service.description,
+        {text: tools.format(service.price, 'currency'), alignment: 'right'},
+        {text: service.renting, alignment: 'center'},
+        {text: tools.format(service.finalPrice, 'currency'), alignment: 'right'}
       ];
     });
   }
@@ -16,7 +20,7 @@ export default function tableServices(props) {
       header: [[
         '#',
         'Descrição',
-        {text: 'Valor Unitário', alignment: 'left'},
+        {text: 'Valor Unitário', alignment: 'right'},
         {text: 'Qtd.', alignment: 'center'},
         {text: 'Valor Total', alignment: 'right'}
       ]],
@@ -24,7 +28,7 @@ export default function tableServices(props) {
       footer: [[
         {text: 'Valor Total do Pacote de Serviços:', colSpan: 4, alignment: 'right', bold: true}, props.resultFormat(props.totalValueServices)
       ]],
-      widths: [ 'auto', '*', 'auto', 'auto', 'auto' ],
+      widths: [ 'auto', '*', 60, 'auto', 60 ],
       styles: props.styles
     })
   ]

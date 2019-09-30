@@ -11,25 +11,47 @@ import Input from '/imports/components/Input/index';
 import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 import Animation from '/imports/components/Animation/index';
 
+import generateTable from '/imports/helpers/Pdf/generate-table/index';
+
 class TestPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       value: ''
     }
+    var body = [
+      [
+        '1',
+        '2',
+        '3'
+      ],
+      [
+        {text: 'a', colSpan: 'fill'},
+        'b'
+      ],
+      [
+        {text: 'x', colSpan: 2},
+        {text: 'y'}
+      ],
+      [
+        {text: 'I', colSpan: 2},
+        {text: 'II', colSpan: 2}
+      ]
+    ]
+    var widths = ['auto', 'auto', 'auto', 'auto'];
+
+    this.data = {
+      body,
+      widths
+    }
   }
-  onChange = (e) => {
-    this.setState({ value: e.target.value })
+  onClick = (e) => {
+    generateTable(this.data);
   }
   render() {
     return (
       <div>
-        <Input
-          type="phone"
-          value={this.state.value}
-          onChange={this.onChange}
-        />
-        Value: {tools.format(this.state.value, 'phone')}
+        <button onClick={this.onClick}>GERAR!</button>
       </div>
     )
   }

@@ -1,0 +1,29 @@
+@import './BillingSchedule/styles';
+@import './Information/styles';
+
+.contract {
+  box-shadow: $box-shadow-spread;
+  background: $light-grey;
+}
+
+.contract__body {
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+}
+
+.contract__footer {
+  padding: $space;
+}
+
+.contract__total-value {
+  text-align: center;
+  font-weight: bold;
+}
+
+.contract__footer-text {
+  text-align: center;
+  font-style: italic;
+  color: $dark-grey;
+  margin-top: $space;
+}

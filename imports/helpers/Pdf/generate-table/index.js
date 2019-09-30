@@ -1,122 +1,133 @@
-var data;
-
 export default function generateTable(data) {
-  if (!data.body) throw new Meteor.Error("table-must-have-body", data);
-  if (!Array.isArray(data.body)) throw new Meteor.Error("body-must-be-array", data);
-  if (!data.widths) throw new Meteor.Error("table-must-have-widths", data);
-
-  var widths = data.widths;
-
-  var header = data.header ? data.header.map((row) => {
-    return row.map((cell) => {
-      var newCell = typeof cell === "string" ? {text: cell} : cell;
-      return {
-        ...newCell,
-        bold: true
-      }
-    })
-  }) : [];
-
+debugger;
+  var header = data.header || [];
+  var body = data.body || [];
   var footer = data.footer || [];
 
-  var body = header.concat(data.body, footer).filter((row) => !!row);
 
-  function fillColSpan(row, index, widths) {
-    var firstPart = row.slice(0, index+1);
-    var lastPart = row.slice(index+1);
-    var currentCells = row.reduce((acc, cur) => {
-      var toAdd = 1;
-      if (typeof cur.colSpan === "number") {
-        toAdd = cur.colSpan
-      }
-      return acc + toAdd;
-    }, 0);
-    var fill = widths.length - currentCells;
-    if (fill < 0) {
-      throw new Meteor.Error(
-        "rows-with-spans-cant-be-smaller-than-widths",
-        {
-          row,
-          data
-        }
-      );
-    }
-    firstPart[index].colSpan = fill+1;
-    for (var i = 0; i < fill; i++) {
-      firstPart.push("");
-    }
-    return firstPart.concat(lastPart);
-  }
+  header = explodeInnerArrays(header);
+  header = styleHeader(header);
 
-  function explodeInnerArrays(body) {
-    var newBody = [];
-    body.forEach((row) => {
-      for (var i = 0; i < row.length; i++) {
-        if (Array.isArray(row[i])) {
-          newBody.push(row[i]);
-        } else {
-          newBody.push(row);
-          break;
-        }
-      }
-    })
-    return newBody;
-  }
+  var completeTable = header.concat(body, footer);
 
-  body = explodeInnerArrays(body);
+  completeTable = explodeInnerArrays(completeTable);
+  completeTable = removeNull(completeTable);
+  completeTable = fillRows(completeTable, data.widths);
 
-  body = body.map((row) => {
-    if (!Array.isArray(row)) {
-      throw new Meteor.Error("row-must-be-array-of-arrays", {
-        row, data
-      });
-    }
-    if (row.length > widths.length) {
-      throw new Meteor.Error("rows-cant-be-bigger-than-widths", {
-        row,
-        data
-      });
-    }
+  return {table: {
+    widths: data.widths,
+    body: completeTable
+  }, style: 'table'}
 
-    var newRow = [];
-    var fillCellIndex;
-    row.forEach((cell) => {
-      var newCell = cell;
-      if (!cell) {
-        newCell = "";
-      } else if (typeof cell === "object" && !cell.text) {
-        newCell = {
-          ...cell,
-          text: ""
-        }
-      }
-      newRow.push(newCell);
-      if (typeof newCell === "object") {
-        if (newCell.colSpan === "fill") {
-          fillCellIndex = newRow.length-1;
-        } else if (newCell.colSpan > 1) {
-          for (var j = 0; j < newCell.colSpan-1; j++) {
-            newRow.push("");
+}
+
+function styleHeader(header) {
+  if (!header) return header;
+  var newHeader = [];
+  header.forEach((row) => {
+    if (row) {
+      var newRow = row.map((cell) => {
+        if (cell) {
+          if (typeof cell === "object") {
+            return {
+              ...cell,
+              bold: true
+            }
+          } else {
+            return {
+              text: cell,
+              bold: true
+            }
           }
         }
+      })
+      newHeader.push(newRow);
+    }
+  })
+  return newHeader;
+}
+
+function explodeInnerArrays(arrayOfRows) {
+  if (!arrayOfRows) return arrayOfRows;
+  return arrayOfRows.map((row) => {
+    if (!row) return row;
+
+    var newRow = [];
+    row.forEach((cell) => {
+      if (Array.isArray(cell)) {
+        newRow = newRow.concat(cell);
+      } else {
+        newRow.push(cell);
       }
     })
-    if (fillCellIndex !== undefined) {
-      newRow = fillColSpan(newRow, fillCellIndex, widths);
-    }
-    if (newRow.length > widths.length) {
-      throw new Meteor.Error("rows-with-spans-cant-be-bigger-than-widths", {
-        row, data
-      });
-    } else if (newRow.length < widths.length) {
-      throw new Meteor.Error("rows-with-spans-cant-be-smaller-than-widths", {
-        row, data
-      });
-    }
     return newRow;
-  });
-  return {table: {
-    widths,
-    body
-  }, style: 'table'}
+  })
+}
+
+function removeNull(arrayOfRows) {
+  if (!arrayOfRows) return arrayOfRows;
+  var newArrayOfRows = [];
+  arrayOfRows.forEach((row) => {
+    if (row) {
+      var newRow = [];
+      row.forEach((cell) => {
+        if (cell !== undefined && cell !== null) {
+          newRow.push(cell);
+        }
+      })
+      newArrayOfRows.push(newRow);
+    }
+  })
+  return newArrayOfRows;
+}
+
+function fillRows(arrayOfRows, widths) {
+  if (!arrayOfRows) return arrayOfRows;
+
+  return arrayOfRows.map((row) => {
+    var fillCellIndex;
+    var newRow = [];
+
+    row.forEach((cell) => {
+      newRow.push(cell);
+      if (typeof cell === "object") {
+        if (typeof cell.colSpan === "number") {
+          for (var i = 0; i < cell.colSpan-1; i++) {
+            newRow.push('');
+          }
+        } else if (cell.colSpan === "fill") {
+          fillCellIndex = newRow.length-1;
+        }
+      }
+    })
+
+    var difference = widths.length - newRow.length;
+    if (difference < 0) {
+      throw new Meteor.Error('difference-error', `Error in fillRows function: The sum of cells + colSpan for this row is ${newRow.length} while the number of widths is ${widths.length}, and this is invalid. Widths must be equal or greater.`,
+      {
+        originalRow: row,
+        newRow
+      });
+    } else if (difference === 0) {
+      return newRow;
+    }
+
+    if (fillCellIndex === undefined) {
+      fillCellIndex = newRow.length-1;
+      if (typeof newRow[fillCellIndex] !== 'object') {
+        newRow[fillCellIndex] = {
+          text: newRow[fillCellIndex],
+          colSpan: difference+1
+        }
+      } else newRow[fillCellIndex].colSpan = difference+1;
+    } else newRow[fillCellIndex].colSpan = difference+1;
+
+    var firstPart = newRow.slice(0, fillCellIndex+1);
+    var lastPart = newRow.slice(fillCellIndex+1);
+
+    for (var i = 0; i < difference; i++) {
+      firstPart.push('');
+    }
+    return firstPart.concat(lastPart);
+  })
 }

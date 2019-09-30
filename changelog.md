@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.2.6
+
+-  Fixed generateTable in Pdf;
+
 ## Version 2.2.5
 
 -  Fixed pdf bug;

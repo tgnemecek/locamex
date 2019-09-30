@@ -4,7 +4,7 @@ import Box from '/imports/components/Box/index';
 import AsyncAnimation from './AsyncAnimation/index';
 
 // The wrapper receives the prop status, which is a string or object
-// Usually its a string: 'loading', 'completed' and 'failed'
+// Usually its a string: 'loading', 'completed' or 'failed'
 // As a string, its behavior will be standard
 // If its an object, its custom: {status: 'string', message: 'string'}
 
@@ -59,7 +59,6 @@ class DatabaseStatus extends React.Component {
 }
 
 export default function DatabaseStatusWrapper(props) {
-  debugger;
   var status;
   var message;
   var dictionary = {
