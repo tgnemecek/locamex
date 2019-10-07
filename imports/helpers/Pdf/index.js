@@ -21,7 +21,7 @@ export default class Pdf {
   }
 
   getAccount = (billingName) => {
-    var accountId = this.master[billingName][0].account;
+    var accountId = this.master[billingName][0].accountId;
     return this.databases.accountsDatabase.find((account) => {
       return account._id === accountId;
     })

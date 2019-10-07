@@ -2,7 +2,7 @@ import tools from '/imports/startup/tools/index';
 import moment from 'moment';
 
 export default function tableBillingServices(props) {
-  var accountBaseText = ` - Informamos: Pagamentos de Notas Fiscais Eletrônicas (NFe) são exclusivos através de Depósito Bancário junto ao Banco ${props.accountServices.bank} (${props.accountServices.bankNumber}) Agência ${props.accountServices.branch} C/C ${props.accountServices.account} a favor da LOCADORA.`
+  var accountBaseText = ` - Informamos: Pagamentos de Notas Fiscais Eletrônicas (NFe) são exclusivos através de Depósito Bancário junto ao Banco ${props.accountServices.bank} (${props.accountServices.bankNumber}) Agência ${props.accountServices.branch} C/C ${props.accountServices.number} a favor da LOCADORA.`
 
   const body = () => {
     return props.billingServices.map((charge, i, array) => {
