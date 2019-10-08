@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.2.8
+
+-  Trying to add an existing series will show an error explaining;
+
 ## Version 2.2.7
 
 -  Fixed error in Pdf;

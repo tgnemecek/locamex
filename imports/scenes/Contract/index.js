@@ -13,7 +13,6 @@ import { Users } from '/imports/api/users/index';
 
 import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
-import Pdf from '/imports/helpers/Pdf/index';
 
 import Box from '/imports/components/Box/index';
 import Checkmark from '/imports/components/Checkmark/index';
@@ -295,12 +294,16 @@ class Contract extends React.Component {
   generateDocument = () => {
     const generate = (master) => {
       master.type = "contract";
-      var pdf = new Pdf(master, this.props.databases);
-      pdf.generate().then(() => {
-        this.setState({ databaseStatus: "completed" });
-      }).catch((err) => {
-        console.log(err);
-        this.setState({ databaseStatus: "failed" });
+
+      Meteor.call('pdf.generate', master, (err, res) => {
+        if (res) {
+          saveAs(res.data, res.fileName);
+          this.setState({ databaseStatus: "completed" });
+        }
+        if (err) {
+          this.setState({ databaseStatus: "failed" });
+          console.log(err);
+        }
       })
     }
     this.saveEdits(generate);

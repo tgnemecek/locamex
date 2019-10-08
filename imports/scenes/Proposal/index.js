@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
+import { saveAs } from 'file-saver';
 
 import { Proposals } from '/imports/api/proposals/index';
 import { Clients } from '/imports/api/clients/index';
@@ -12,7 +13,6 @@ import { Users } from '/imports/api/users/index';
 
 import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
-import Pdf from '/imports/helpers/Pdf/index';
 
 import Box from '/imports/components/Box/index';
 import Checkmark from '/imports/components/Checkmark/index';
@@ -258,12 +258,15 @@ class Proposal extends React.Component {
         Meteor.call('proposals.update', this.state.proposal, (err, res) => {
           if (res) {
             var proposal = {...this.state.proposal};
-            var databaseStatus = res.hasChanged ? "completed" : {
-              status: "completed",
-              message: "Nenhuma alteração realizada."
+            if (typeof callback === "function") {
+              callback(proposal);
+            } else {
+              var databaseStatus = res.hasChanged ? "completed" : {
+                status: "completed",
+                message: "Nenhuma alteração realizada."
+              }
+              this.setState({ proposal, databaseStatus });
             }
-            this.setState({ proposal, databaseStatus });
-            if (typeof callback === "function") callback(proposal);
           } else if (err) {
             this.setState({ databaseStatus: "failed" });
             console.log(err);
@@ -277,12 +280,16 @@ class Proposal extends React.Component {
     const generate = (master) => {
       master.type = "proposal";
       master.includeFlyer = includeFlyer;
-      var pdf = new Pdf(master, this.props.databases);
-      pdf.generate().then(() => {
-        this.setState({ databaseStatus: "completed" });
-      }).catch((err) => {
-        console.log(err);
-        this.setState({ databaseStatus: "failed" });
+
+      Meteor.call('pdf.generate', master, (err, res) => {
+        if (res) {
+          saveAs(res.data, res.fileName);
+          this.setState({ databaseStatus: "completed" });
+        }
+        if (err) {
+          this.setState({ databaseStatus: "failed" });
+          console.log(err);
+        }
       })
     }
     this.saveEdits(generate);

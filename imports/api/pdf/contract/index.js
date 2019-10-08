@@ -1,7 +1,7 @@
 import tools from '/imports/startup/tools/index';
 import moment from 'moment';
 
-import header from './1-header/index';
+import title from './1-title/index';
 import definitions from './2-definitions/index';
 import tableInformation from './3-table-information/index';
 import tableRepresentatives from './4-table-representatives/index';
@@ -33,7 +33,7 @@ function resultFormat(input) {
   return {text: tools.format(input, 'currency'), alignment: 'right', bold: true};
 }
 
-export default function createPdf(props) {
+export default function contractPdf(props) {
 
   const contract = props.master;
 
@@ -80,46 +80,50 @@ export default function createPdf(props) {
     styles
   }
 
-  var docDefinition = {
-    fileName,
-    pageSize: 'A4',
-    pageMargins: [ 40, 30, 40, 45 ], //[left, top, right, bottom]
-    info: {
-      title: `Contrato Locamex #${contract._id}.${Number(contract.version)}`,
-      author: `Locamex`,
-      subject: `Contrato de Locação de Bens Móveis e Prestação de Serviços`
-    },
-    content: [
-      header(data),
-      definitions(data),
-      tableInformation(data),
-      tableRepresentatives(data),
-      declaration(data),
-      clause1p1(data),
-      tableProducts(data),
-      clause1p2(),
-      tableServices(data),
-      observations(data),
-      clause1p3p4(data),
-      clause2(),
-      tableDuration(data),
-      clause2p1p2(data),
-      clause3p1(),
-      tableBillingProducts(data),
-      clause3p2p3p4p5(data),
-      tableBillingServices(data),
-      clause3p6p7p8p9(),
-      clause4(),
-      tableAddress(data),
-      clause4p1toClause8(),
-      tableRestitution(data),
-      clause9toClause12(data),
-      date(),
-      signatures(data),
-      tableWitnesses(data)
-    ],
-    footerStatic: `Contrato de Locação de Bens Móveis e Prestação de Serviços nº ${contract._id}.${Number(contract.version)}\n`,
-    styles
-  };
-  return docDefinition;
+  try {
+    return {
+      fileName,
+      pageSize: 'A4',
+      pageMargins: [ 40, 30, 40, 45 ], //[left, top, right, bottom]
+      info: {
+        title: `Contrato Locamex #${contract._id}.${Number(contract.version)}`,
+        author: `Locamex`,
+        subject: `Contrato de Locação de Bens Móveis e Prestação de Serviços`
+      },
+      content: [
+        title(data),
+        definitions(data),
+        tableInformation(data),
+        tableRepresentatives(data),
+        declaration(data),
+        clause1p1(data),
+        tableProducts(data),
+        clause1p2(),
+        tableServices(data),
+        observations(data),
+        clause1p3p4(data),
+        clause2(),
+        tableDuration(data),
+        clause2p1p2(data),
+        clause3p1(),
+        tableBillingProducts(data),
+        clause3p2p3p4p5(data),
+        tableBillingServices(data),
+        clause3p6p7p8p9(),
+        clause4(),
+        tableAddress(data),
+        clause4p1toClause8(),
+        tableRestitution(data),
+        clause9toClause12(data),
+        date(),
+        signatures(data),
+        tableWitnesses(data)
+      ],
+      footerStatic: `Contrato de Locação de Bens Móveis e Prestação de Serviços nº ${contract._id}.${Number(contract.version)}\n`,
+      styles
+    };
+  }
+  catch(err) {
+    console.log(err);
+  }
 }

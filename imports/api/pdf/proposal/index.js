@@ -1,7 +1,7 @@
 import tools from '/imports/startup/tools/index';
 import moment from 'moment';
 
-import header from './header/index';
+import title from './title/index';
 import tableInformation from './table-information/index';
 import observations from './observations/index';
 import tableProducts from './table-products/index';
@@ -17,25 +17,7 @@ function resultFormat(input) {
   return {text: tools.format(input, 'currency'), alignment: 'right', bold: true};
 }
 
-export default function createPdf(props) {
-
-  const logoLoader = new Promise((resolve, reject) => {
-    var img = new Image();
-    img.setAttribute('crossOrigin', 'Anonymous');
-    img.src = 'https://locamex-app.s3-sa-east-1.amazonaws.com/app-required/logo-locamex-slogan-400x251.png';
-    img.onload = function () {
-      var canvas = document.createElement("canvas");
-      canvas.width = this.width;
-      canvas.height = this.height;
-
-      var ctx = canvas.getContext("2d");
-      ctx.drawImage(this, 0, 0);
-      var dataURL = canvas.toDataURL("image/png");
-      resolve({dataURL, canvas});
-    };
-    setTimeout(() => reject(), 10000);
-  })
-
+export default function proposalPdf(props) {
   const proposal = props.master;
 
   const fileName = `Locamex - Proposta de Locação #${proposal._id}_${Number(proposal.version)+1}.pdf`;
@@ -84,7 +66,7 @@ export default function createPdf(props) {
     styles
   }
 
-  var docDefinition = {
+  return {
     fileName,
     pageSize: 'A4',
     pageMargins: [ 40, 110, 40, 45 ], //[left, top, right, bottom]
@@ -93,8 +75,9 @@ export default function createPdf(props) {
       author: `Locamex`,
       subject: `Proposta de Locação de Containers`
     },
+    header: props.header(),
     content: [
-      header(data),
+      title(data),
       tableInformation(data),
       observations(data),
       tableProducts(data),
@@ -108,22 +91,5 @@ export default function createPdf(props) {
     ],
     footerStatic: `Proposta de Locação de Bens Móveis e Prestação de Serviços nº ${proposal._id}.${Number(proposal.version)+1}\n`,
     styles
-};
-  return new Promise((resolve, reject) => {
-    logoLoader.then((result) => {
-      docDefinition.header = {columns: [
-        {image: result.dataURL, width: 110},
-        {text: [
-          'LOCAMEX - Escritório\n',
-          'Rua Monsenhor Antônio Pepe, 52 - Parque Jabaquara\n',
-          'CEP: 04357-080 - São Paulo - SP\n',
-          'Tel. (11) 5532-0790 / 5533-5614 / 5031-4762 / 3132-7175\n',
-          {text: 'locamex@locamex.com.br', link: 'mailto:locamex@locamex.com.br'}
-        ], style: 'p', alignment: 'right'}
-      ], margin: [30, 30, 30, 30]}
-      resolve(docDefinition);
-    }).catch(() => {
-      reject("error-in-logo");
-    })
-  })
+  }
 }

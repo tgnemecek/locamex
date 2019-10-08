@@ -19,34 +19,18 @@ class TestPage extends React.Component {
     this.state = {
       value: ''
     }
-    var body = [
-      [
-        '1',
-        '2',
-        '3'
-      ],
-      [
-        {text: 'a', colSpan: 'fill'},
-        'b'
-      ],
-      [
-        {text: 'x', colSpan: 2},
-        {text: 'y'}
-      ],
-      [
-        {text: 'I', colSpan: 2},
-        {text: 'II', colSpan: 2}
-      ]
-    ]
-    var widths = ['auto', 'auto', 'auto', 'auto'];
-
-    this.data = {
-      body,
-      widths
-    }
   }
   onClick = (e) => {
-    generateTable(this.data);
+    Meteor.call('pdf.generate', (err, res) => {
+      if (err) {
+        if (err.error) {
+          alert(err.error)
+        } else alert(err);
+      }
+      if (res) {
+        alert('done! value: ' + res);
+      }
+    })
   }
   render() {
     return (

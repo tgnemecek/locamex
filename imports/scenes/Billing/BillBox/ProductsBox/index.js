@@ -5,7 +5,6 @@ import Input from '/imports/components/Input/index';
 import tools from '/imports/startup/tools/index';
 import Icon from '/imports/components/Icon/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
-import Pdf from '/imports/helpers/Pdf/index';
 import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 
 export default class ProductsBox extends React.Component {
@@ -75,22 +74,46 @@ export default class ProductsBox extends React.Component {
   }
   printBilling = () => {
     this.setState({ databaseStatus: "loading" }, () => {
-      var pdf = new Pdf(
-        {...this.props.contract, type: "billing"},
-        this.props.databases,
-        {
+      var master = {
+        ...this.props.contract,
+        type: "billing",
+        charge: {
           ...this.props.charge,
           ...this.state
-        });
+        }
+      }
 
-      pdf.generate().then(() => {
-        this.setState({ databaseStatus: "completed" });
-      }).catch((err) => {
-        console.log(err);
-        this.setState({ databaseStatus: "failed" });
+      Meteor.call('pdf.generate', master, (err, res) => {
+        if (res) {
+          saveAs(res.data, res.fileName);
+          this.setState({ databaseStatus: "completed" });
+        }
+        if (err) {
+          this.setState({ databaseStatus: "failed" });
+          console.log(err);
+        }
       })
-    });
+    })
   }
+  // printBilling = () => {
+  //   this.setState({ databaseStatus: "loading" }, () => {
+  //
+  //     var pdf = new Pdf(
+  //       {...this.props.contract, type: "billing"},
+  //       this.props.databases,
+  //       {
+  //         ...this.props.charge,
+  //         ...this.state
+  //       });
+  //
+  //     pdf.generate().then(() => {
+  //       this.setState({ databaseStatus: "completed" });
+  //     }).catch((err) => {
+  //       console.log(err);
+  //       this.setState({ databaseStatus: "failed" });
+  //     })
+  //   });
+  // }
   renderInputs = () => {
     switch (this.props.charge.status) {
       case "finished":

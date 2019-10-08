@@ -66,8 +66,8 @@ class RegisterSeries extends React.Component {
       } else {
         Meteor.call('series.insert', this.state, (err, res) => {
           if (err) {
-            if (err === 'id-in-use') {
-              alert("Série já existente!")
+            if (err.error === 'id-in-use') {
+              alert(`Série #${this.state._id} já existente! Favor escolher outra série.`)
             } else alert('Erro de servidor. Tente mais tarde.')
           } else if (res) this.props.toggleWindow();
         });

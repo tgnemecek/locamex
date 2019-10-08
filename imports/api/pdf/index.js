@@ -1,9 +1,19 @@
 import { Meteor } from 'meteor/meteor';
-import { Containers } from '/imports/api/containers/index';
+
 const PdfPrinter = require('pdfmake');
 const vfs_fonts = require('pdfmake/build/vfs_fonts');
-const hummus = require('hummus');
-const memoryStreams = require('memory-streams');
+
+import { Accounts } from '/imports/api/accounts/index';
+import { Clients } from '/imports/api/clients/index';
+import { Containers } from '/imports/api/containers/index';
+
+import contractPdf from './contract/index';
+import proposalPdf from './proposal/index';
+import billingPdf from './billing/index';
+
+import generateTable from './generate-table/index';
+import header from './header/index';
+import styles from './styles/index';
 
 var printer = new PdfPrinter({
   Roboto: {
@@ -15,56 +25,141 @@ var printer = new PdfPrinter({
 
 if (Meteor.isServer) {
   Meteor.methods({
-    'pdf.contract.create'(docDefinition) {
-      docDefinition.footer = generateFooter(docDefinition);
-      docDefinition.pageBreakBefore = setPageBreaks();
-      return new Promise((resolve, reject) => {
-        generateBuffer(docDefinition).then((res) => {
-          resolve('data:application/pdf;base64,' + res.toString('base64'));
-        });
-      })
-    },
-    'pdf.proposal.create'(docDefinition, containers) {
-      return new Promise((resolve, reject) => {
-        try {
-          docDefinition.footer = generateFooter(docDefinition);
-          docDefinition.pageBreakBefore = setPageBreaks();
+    async 'pdf.generate'(master) {
+      try {
+        var docDefinition = generateDocDefinition(master);
+        docDefinition.pageBreakBefore = setPageBreaks();
+        docDefinition.footer = generateFooter(docDefinition);
 
-          getFlyers(containers).then((buffers) => {
-            generateBuffer(docDefinition).then((res) => {
-              var outStream = new memoryStreams.WritableStream();
-              var firstPDFStream = new hummus.PDFRStreamForBuffer(res);
-              var pdfWriter = hummus.createWriterToModify(firstPDFStream, new hummus.PDFStreamForResponse(outStream));
+        var buffer = generateBuffer(docDefinition).await();
+        var prefix = 'data:application/pdf;base64,';
+        var data = prefix + buffer.toString('base64');
 
-              buffers.forEach((buffer) => {
-                var stream = new hummus.PDFRStreamForBuffer(buffer);
-                pdfWriter.appendPDFPagesFromPDF(stream);
-              })
-              pdfWriter.end();
-              var newBuffer = outStream.toBuffer();
-              outStream.end();
-
-              resolve('data:application/pdf;base64,' + newBuffer.toString('base64'));
-            })
-          })
-        }
-        catch (err) {
-          reject(err);
-        }
-      })
-    },
-    'pdf.bill.create'(docDefinition) {
-      docDefinition.footer = generateFooter(docDefinition);
-      docDefinition.pageBreakBefore = setPageBreaks();
-      return new Promise((resolve, reject) => {
-        generateBuffer(docDefinition).then((res) => {
-          resolve('data:application/pdf;base64,' + res.toString('base64'));
-        });
-      })
+        return {
+          data,
+          fileName: docDefinition.fileName
+        };
+      }
+      catch(err) {
+        throw new Meteor.Error(err.error);
+      }
     }
   })
 }
 
+// Main function
+function generateDocDefinition(master) {
+  // Initial possible errors
+  if (!master) throw new Meteor.Error('no-master');
+  if (!master.type) throw new Meteor.Error('no-master-type');
+  if (!Meteor.isServer) throw new Meteor.Error('import-server-only');
+  // Decide which function to use
+  var generator;
+  switch (master.type) {
+    case 'proposal':
+      generator = generateProposal;
+      break;
+    case 'contract':
+      generator = generateContract;
+      break;
+    case 'billing':
+      generator = generateBilling;
+      break;
+  }
+  // Generate Pdf
+  try {
+    return generator(master);
+  }
+  catch(err) {
+    console.log(err);
+  }
+}
+
+// Sub-functions
+function generateProposal(master) {
+  master.createdByFullName = getCreatedBy(master.createdBy);
+
+  var props = {
+    master,
+    generateTable,
+    header,
+    styles
+  }
+  return proposalPdf(props);
+}
+
+function generateContract(master) {
+  master.createdByFullName = getCreatedBy(master.createdBy);
+  master.client = getClient(master.clientId);
+  master = getSignatures(master);
+  master.accountServices = getAccount(master, 'billingServices');
+
+  var props = {
+    master,
+    generateTable,
+    styles
+  }
+  return contractPdf(props);
+}
+
+function generateBilling(master) {
+  master.createdByFullName = getCreatedBy(master.createdBy);
+  master.client = getClient(master.clientId);
+  master.accountProducts = getAccount(master, 'billingProducts');
+
+  var props = {
+    master,
+    header,
+    charge: master.charge,
+    generateTable,
+    styles
+  }
+
+  return billingPdf(props);
+}
+
+function getCreatedBy(userId) {
+  var usersDatabase = Meteor.users.find().fetch();
+  if (!usersDatabase) throw new Meteor.Error("userDB-not-found!");
+
+  var user = usersDatabase.find((user) => {
+    return user._id === userId;
+  })
+  if (!user) throw new Meteor.Error("user-not-found!");
+
+  return user.firstName + " " + user.lastName;
+}
+
+function getClient(clientId) {
+  var client = Clients.findOne({ _id: clientId });
+  if (!client) throw new Meteor.Error('client-not-found!');
+  return client;
+}
+
+function getSignatures(master) {
+  master.representatives = [];
+  master.client.contacts.forEach((contact) => {
+    if (contact._id === master.negociatorId) {
+      master.negociator = contact;
+    }
+    if (master.representativesId.includes(contact._id)) {
+      master.representatives.push(contact);
+    }
+  });
+  return master;
+}
+
+function getAccount(master, billingName) {
+  var charge = master[billingName][0];
+  if (!charge) return {};
+  var accountId = charge.accountId;
+  var account = Accounts.findOne({ _id: accountId });
+  if (!account) throw new Meteor.Error('account-not-found!');
+
+  return account;
+}
+
+// Other functions
 function setPageBreaks() {
   return function (currentNode, followingNodesOnPage, nodesOnNextPage, previousNodesOnPage) {
     if (currentNode.headlineLevel) {
@@ -77,7 +172,7 @@ function setPageBreaks() {
 function generateFooter(docDefinition) {
   return (currentPage, pageCount) => {
     return {text: [
-        {text: docDefinition.footerStatic},
+        {text: docDefinition.footerStatic || ''},
         {text: (currentPage + "/" + pageCount)}
       ], style: 'footer'};
   }
@@ -100,32 +195,5 @@ function generateBuffer(docDefinition) {
       resolve(result);
     });
     pdfDoc.end();
-  })
-}
-
-function getFlyers (containers) {
-  return new Promise((resolve, reject) => {
-    var promises = [];
-    var buffers = [];
-    containers.forEach((product, i, arr) => {
-      var item = Containers.findOne({ _id: product.productId }) || {};
-      if (item.flyer) {
-        var request = require('request').defaults({ encoding: null });
-        promises.push(new Promise((resolve, reject) => {
-          request.get(item.flyer, (err, res, buffer) => {
-            if (err) reject(err);
-            if (buffer) {
-              buffers.push(buffer);
-              resolve();
-            }
-          })
-        }))
-      }
-    })
-    Promise.all(promises).then(() => {
-      resolve(buffers);
-    }).catch((err) => {
-      throw new Meteor.Error('error-in-flyers', err);
-    })
   })
 }

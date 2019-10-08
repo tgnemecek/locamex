@@ -11,7 +11,7 @@ if (Meteor.isServer) {
   Meteor.methods({
     'series.insert' (state) {
 
-      var isIdInUse = !!Series.find({_id: state._id}).fetch().length;
+      var isIdInUse = !!Series.findOne({_id: state._id});
       if (isIdInUse) throw new Meteor.Error('id-in-use');
 
       var data = {

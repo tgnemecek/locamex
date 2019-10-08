@@ -1,5 +1,5 @@
 export default function generateTable(data) {
-debugger;
+
   var header = data.header || [];
   var body = data.body || [];
   var footer = data.footer || [];
@@ -49,20 +49,40 @@ function styleHeader(header) {
 
 function explodeInnerArrays(arrayOfRows) {
   if (!arrayOfRows) return arrayOfRows;
-  return arrayOfRows.map((row) => {
+  var newArrayOfRows = [];
+  arrayOfRows.forEach((row) => {
     if (!row) return row;
 
-    var newRow = [];
-    row.forEach((cell) => {
-      if (Array.isArray(cell)) {
-        newRow = newRow.concat(cell);
+    for (var i = 0; i < row.length; i++) {
+      if (Array.isArray(row[i])) {
+        newArrayOfRows.push(row[i]);
+        // newRow = newRow.concat(cell);
       } else {
-        newRow.push(cell);
+        newArrayOfRows.push(row);
+        break;
+        // newRow.push(cell);
       }
-    })
-    return newRow;
+    }
   })
+  return newArrayOfRows;
 }
+
+// function explodeInnerArrays(arrayOfRows) {
+//   if (!arrayOfRows) return arrayOfRows;
+//   return arrayOfRows.map((row) => {
+//     if (!row) return row;
+//
+//     var newRow = [];
+//     row.forEach((cell) => {
+//       if (Array.isArray(cell)) {
+//         newRow = newRow.concat(cell);
+//       } else {
+//         newRow.push(cell);
+//       }
+//     })
+//     return newRow;
+//   })
+// }
 
 function removeNull(arrayOfRows) {
   if (!arrayOfRows) return arrayOfRows;
@@ -128,6 +148,7 @@ function fillRows(arrayOfRows, widths) {
     for (var i = 0; i < difference; i++) {
       firstPart.push('');
     }
+    console.log(firstPart.concat(lastPart));
     return firstPart.concat(lastPart);
   })
 }
