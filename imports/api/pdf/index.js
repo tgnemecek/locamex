@@ -10,6 +10,7 @@ import { Containers } from '/imports/api/containers/index';
 import contractPdf from './contract/index';
 import proposalPdf from './proposal/index';
 import billingPdf from './billing/index';
+import flyerPdf from './flyer/index';
 
 import generateTable from './generate-table/index';
 import header from './header/index';
@@ -65,6 +66,9 @@ function generateDocDefinition(master) {
     case 'billing':
       generator = generateBilling;
       break;
+    case 'flyer':
+      generator = generateFlyer;
+      break;
   }
   // Generate Pdf
   try {
@@ -116,6 +120,15 @@ function generateBilling(master) {
   }
 
   return billingPdf(props);
+}
+
+function generateFlyer(master) {
+  var props = {
+    master,
+    header,
+    styles
+  }
+  return flyerPdf(props);
 }
 
 function getCreatedBy(userId) {

@@ -1,4 +1,5 @@
 import React from 'react';
+import { saveAs } from 'file-saver';
 
 import tools from '/imports/startup/tools/index';
 import Icon from '/imports/components/Icon/index';
@@ -15,7 +16,8 @@ export default class FlyerCreator extends React.Component {
       paragraphs: this.props.item.flyer ? this.props.item.flyer.paragraphs : [
         '', '', ''
       ],
-      images: this.props.item.flyer ? this.props.item.flyer.images : []
+      images: this.props.item.flyer ? this.props.item.flyer.images : [],
+      databaseStatus: false
     }
   }
 
@@ -47,6 +49,30 @@ export default class FlyerCreator extends React.Component {
     var images = [...this.state.images];
     images.splice(i, 1);
     this.setState({ images });
+  }
+
+  saveEdits = () => {
+    // this.setState({ databaseStatus: "loading" }, () => {
+
+    //   Meteor.call()
+    // })
+    var state = {
+      hasFlyer: this.state.hasFlyer,
+      paragraphs: this.state.paragraphs,
+      images: this.state.images,
+      item: this.props.item,
+      type: "flyer"
+    }
+    Meteor.call('pdf.generate', state, (err, res) => {
+      if (res) {
+        saveAs(res.data, res.fileName);
+        // this.setState({ databaseStatus: "completed" });
+      }
+      if (err) {
+        // this.setState({ databaseStatus: "failed" });
+        console.log(err);
+      }
+    })
   }
 
   render() {
@@ -101,9 +127,10 @@ export default class FlyerCreator extends React.Component {
               onChange={this.setImages}/>
           </div>
         </div>
+        <DatabaseStatus status={this.state.databaseStatus}/>
         <FooterButtons buttons={[
           {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
-          {text: "Enviar", onClick: this.saveEdits}
+          {text: "Salvar", onClick: this.saveEdits}
         ]}/>
       </Box>
 

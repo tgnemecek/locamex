@@ -184,6 +184,10 @@ export default class tools {
 
   // Strings
 
+  static makeValidFileName = (string) => {
+    return string.replace(/[<>:"/\\|?*]/g, "").trim();
+  }
+
   static convertToLetter = (n) => {
     var code = (n+1) + 64;
     if (code > 90) throw new Meteor.Error("array-too-long");

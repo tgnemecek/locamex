@@ -76,6 +76,14 @@ if (Meteor.isServer) {
       };
       Containers.update({ _id: state._id }, { $set: data });
       Meteor.call('history.insert', { ...data, _id: state._id }, 'containers.modular.update');
+    },
+
+    // OTHER
+    'containers.update.flyer' (state) {
+      var paragraphs = state.hasFlyer ? state.paragraphs : [];
+      var images = state.hasFlyer ? state.images : [];
+      var container = Containers.findOne({ _id: state._id });
+      
     }
   })
 }
