@@ -11,8 +11,6 @@ import Input from '/imports/components/Input/index';
 import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 import Animation from '/imports/components/Animation/index';
 
-import generateTable from '/imports/helpers/Pdf/generate-table/index';
-
 class TestPage extends React.Component {
   constructor(props) {
     super(props);

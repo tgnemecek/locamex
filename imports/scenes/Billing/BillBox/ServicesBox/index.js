@@ -5,7 +5,6 @@ import Input from '/imports/components/Input/index';
 import tools from '/imports/startup/tools/index';
 import Icon from '/imports/components/Icon/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
-import Pdf from '/imports/helpers/Pdf/index';
 import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 
 export default class ServicesBox extends React.Component {

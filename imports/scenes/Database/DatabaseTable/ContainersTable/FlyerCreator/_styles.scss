@@ -1,0 +1,10 @@
+.flyer-creator {
+  height: 60vh;
+  width: 50vw;
+  display: flex;
+  flex-direction: column;
+}
+
+.flyer-creator__body {
+  flex-grow: 1;
+}

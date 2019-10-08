@@ -10,7 +10,7 @@ import SearchBar from '/imports/components/SearchBar/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 
-import FlyerUploader from './FlyerUploader/index';
+import FlyerCreator from './FlyerCreator/index';
 
 class ContainersTable extends React.Component {
   constructor(props) {
@@ -125,7 +125,7 @@ class ContainersTable extends React.Component {
             </table>
           </div>
           {this.state.flyerWindow ?
-            <FlyerUploader
+            <FlyerCreator
               item={this.state.flyerWindow}
               toggleWindow={this.toggleFlyerWindow} />
           : null}
