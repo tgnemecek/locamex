@@ -10,7 +10,7 @@ export const Contracts = new Mongo.Collection('contracts');
 
 if (Meteor.isServer) {
   Meteor.publish('contractsPub', () => {
-    return Contracts.find({}, {sort: { _id: -1 }});
+    return Contracts.find({visible: true}, {sort: { _id: -1 }});
   })
   function setProducts(array) {
     return array.map((item) => {
@@ -23,10 +23,13 @@ if (Meteor.isServer) {
   Meteor.methods({
     'contracts.insert'(data) {
       const prefix = new Date().getFullYear();
-      const suffix = Contracts.find({ _id: { $regex: new RegExp(prefix)} }).count().toString().padStart(3, '0');
+      var offset = 22;
+      var suffix = Contracts.find({ _id: { $regex: new RegExp(prefix)} }).count() + offset;
+      suffix = suffix.toString().padStart(3, '0');;
       const _id = prefix + "-" + suffix;
 
       data._id = _id;
+      data.visible = true;
 
       Contracts.insert(data);
       Meteor.call('history.insert', data, 'contracts.insert');

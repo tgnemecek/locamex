@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.2.8
+
+-  Added offset to Contracts;
+
 ## Version 2.2.7
 
 -  Fixed error in Pdf;
