@@ -3,13 +3,28 @@ import AWS from 'aws-sdk';
 if (Meteor.isServer) {
 
   var Bucket = 'locamex-app';
+  var s3 = new AWS.S3();
 
   Meteor.methods({
+    'aws.read'(Key, callback) {
+      var params = {
+        Bucket,
+        Key
+      }
+
+      return new Promise((resolve, reject) => {
+        s3.getObject(params, (err, data) => {
+          if (err) {
+            console.log(err);
+            reject(err);
+          } else {
+            resolve(data);
+          }
+        })
+      })
+    },
     'aws.write'(dataUrl, filePath) {
       var buff = new Buffer(dataUrl.split(',')[1], 'base64');
-      var s3 = new AWS.S3({
-        apiVersion: '2006-03-01'
-      });
       if (Meteor.isDevelopment) {
         filePath = "tests/" + filePath;
       }
@@ -52,7 +67,6 @@ if (Meteor.isServer) {
     },
     'aws.copy.object' (oldKey, newKey, deleteOrigin) {
       return new Promise((resolve, reject) => {
-        var s3 = new AWS.S3();
         // if (Meteor.isDevelopment) {
         //   oldKey = "tests/" + oldKey;
         //   newKey = "tests/" + newKey;
@@ -87,8 +101,6 @@ if (Meteor.isServer) {
     },
     'aws.delete.directory' (folder) {
       return new Promise((resolve, reject) => {
-        var s3 = new AWS.S3();
-
         if (Meteor.isDevelopment) {
           folder = "tests/" + folder;
         }

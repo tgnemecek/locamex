@@ -13,22 +13,29 @@ import observations from './observations/index';
 
 export default function flyerPdf(props) {
   try {
+    const item = props.master.item;
     const styles = props.styles;
 
-    var fileName = `Locamex - Folder_${tools.makeValidFileName(props.item.description)}.pdf`;
+    var fileName = `Locamex - Folder_${tools.makeValidFileName(item.description)}.pdf`;
 
     return {
       fileName,
       pageSize: 'A4',
       pageMargins: [ 40, 110, 40, 45 ], //[left, top, right, bottom]
       info: {
-        title: `Folder: ${props.item.description}`,
+        title: `Folder: ${item.description}`,
         author: `Locamex`,
         subject: `Folder de Produto`
       },
       header: props.header(),
       content: [
-        // title(data),
+        {text: item.description.toUpperCase(), style: 'h1'},
+        {text: item.flyer.paragraphs[0]},
+        {text: item.flyer.paragraphs[1]},
+        {text: item.flyer.paragraphs[2]},
+        {image: props.master.images[0]},
+        {image: props.master.images[1]}
+        //
         // tableInformation(data),
         // tableClient(data),
         // conditions(data),
@@ -38,7 +45,6 @@ export default function flyerPdf(props) {
         // notService(),
         // observations(data)
       ],
-      footerStatic: `Acesse www.LOCAMEX.com.br e veja outros modelos de Container\n`,
       styles
     };
   }

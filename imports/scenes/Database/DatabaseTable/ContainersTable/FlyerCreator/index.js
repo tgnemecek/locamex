@@ -13,16 +13,17 @@ export default class FlyerCreator extends React.Component {
     super(props);
     this.state = {
       hasFlyer: !!this.props.item.flyer,
+      newImages: false,
       paragraphs: this.props.item.flyer ? this.props.item.flyer.paragraphs : [
         '', '', ''
       ],
-      images: this.props.item.flyer ? this.props.item.flyer.images : [],
+      images: [],
       databaseStatus: false
     }
   }
 
-  toggleFlyer = () => {
-    this.setState({ hasFlyer: !this.state.hasFlyer })
+  onChange = (e) => {
+    this.setState({ [e.target.name]: [e.target.value] })
   }
 
   onChangeParagraph = (e) => {
@@ -51,19 +52,35 @@ export default class FlyerCreator extends React.Component {
     this.setState({ images });
   }
 
-  saveEdits = () => {
-    // this.setState({ databaseStatus: "loading" }, () => {
+  print = () => {
+    var data = {
+      item: this.props.item,
+      type: "flyer"
+    }
 
-    //   Meteor.call()
-    // })
-    var state = {
+    Meteor.call('pdf.generate', data, (err, res) => {
+      if (res) {
+        saveAs(res.data, res.fileName);
+        // this.setState({ databaseStatus: "completed" });
+      }
+      if (err) {
+        // this.setState({ databaseStatus: "failed" });
+        console.log(err);
+      }
+    })
+  }
+
+  saveEdits = () => {
+    var data = {
       hasFlyer: this.state.hasFlyer,
+      newImages: this.state.newImages,
       paragraphs: this.state.paragraphs,
       images: this.state.images,
       item: this.props.item,
       type: "flyer"
     }
-    Meteor.call('pdf.generate', state, (err, res) => {
+
+    Meteor.call('pdf.generate', data, (err, res) => {
       if (res) {
         saveAs(res.data, res.fileName);
         // this.setState({ databaseStatus: "completed" });
@@ -86,8 +103,9 @@ export default class FlyerCreator extends React.Component {
             title="Possui Folder"
             type="checkbox"
             id="hasFlyer"
+            name="hasFlyer"
             value={this.state.hasFlyer}
-            onChange={this.toggleFlyer}
+            onChange={this.onChange}
           />
         </div>
         <div className="flyer-creator__body">
@@ -117,6 +135,14 @@ export default class FlyerCreator extends React.Component {
           />
           <div>
             <Input
+              title="Enviar Novas Imagens"
+              type="checkbox"
+              id="newImages"
+              name="newImages"
+              value={this.state.newImages}
+              onChange={this.onChange}
+            />
+            <Input
               title="Imagens"
               type="file"
               accept="image/*"
@@ -129,6 +155,7 @@ export default class FlyerCreator extends React.Component {
         </div>
         <DatabaseStatus status={this.state.databaseStatus}/>
         <FooterButtons buttons={[
+          {text: "Visualizar Folder Atual", className: "button--pill", onClick: this.print},
           {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
           {text: "Salvar", onClick: this.saveEdits}
         ]}/>

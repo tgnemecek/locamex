@@ -22,6 +22,13 @@ export default {
     alignment: 'justify',
     margin: [0, 0, 0, styleGlobals.marginBottom]
   },
+  subtitle: {
+    italics: true,
+    fontFamily: styleGlobals.fontFamily,
+    fontSize: styleGlobals.pSize,
+    alignment: 'justify',
+    margin: [0, 0, 0, 0]
+  },
   p: {
     fontFamily: styleGlobals.fontFamily,
     fontSize: styleGlobals.pSize,

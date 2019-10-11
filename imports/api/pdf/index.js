@@ -28,6 +28,9 @@ if (Meteor.isServer) {
   Meteor.methods({
     async 'pdf.generate'(master) {
       try {
+        if (master.type === "flyer") {
+          master.images = getFlyers(master).await();
+        }
         var docDefinition = generateDocDefinition(master);
         docDefinition.pageBreakBefore = setPageBreaks();
         docDefinition.footer = generateFooter(docDefinition);
@@ -191,22 +194,51 @@ function generateFooter(docDefinition) {
   }
 }
 
+function getFlyers(master) {
+  var promises = [];
+  master.item.flyer.images.forEach((image) => {
+    promises.push(new Promise((resolve, reject) => {
+      Meteor.call('aws.read', image, (err, res) => {
+        if (res) {
+          var buffer = Buffer.from(res.Body);
+          var prefix = 'data:image/jpeg;base64,';
+          var data = prefix + buffer.toString('base64');
+          resolve(data);
+        }
+        if (err) {
+          console.log(err);
+          reject(err);
+        }
+      })
+    }))
+  })
+  return Promise.all(promises).catch((err) => {
+    console.log(err);
+  })
+}
+
 function generateBuffer(docDefinition) {
   return new Promise((resolve, reject) => {
-    var chunks = [];
-    var result;
-    var options = {
-      footer: docDefinition.footer
-    }
-    var pdfDoc = printer.createPdfKitDocument(docDefinition, options);
+    try {
+      var chunks = [];
+      var result;
+      var options = {
+        footer: docDefinition.footer
+      }
+      var pdfDoc = printer.createPdfKitDocument(docDefinition, options);
 
-    pdfDoc.on('data', function (chunk) {
-      chunks.push(chunk);
-    });
-    pdfDoc.on('end', function () {
-      result = Buffer.concat(chunks);
-      resolve(result);
-    });
-    pdfDoc.end();
+      pdfDoc.on('data', function (chunk) {
+        chunks.push(chunk);
+      });
+      pdfDoc.on('end', function () {
+        result = Buffer.concat(chunks);
+        resolve(result);
+      });
+      pdfDoc.end();
+    }
+    catch(err) {
+      console.log(err);
+      throw new Meteor.Error(err.name, err.message);
+    }
   })
 }
