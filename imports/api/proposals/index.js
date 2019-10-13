@@ -51,7 +51,7 @@ if (Meteor.isServer) {
       var index = snapshot.version;
       var data = Proposals.findOne({ _id });
       var hasChanged = !tools.compare(data.snapshots[index], snapshot, "activeVersion");
-      if (!hasChanged) return { hasChanged: false, snapshot };
+      if (!hasChanged) return { hasChanged: false, proposal: data };
 
       const newSnapshot = {
         ...snapshot,
@@ -69,7 +69,7 @@ if (Meteor.isServer) {
 
       Proposals.update({ _id }, { $set: data } );
       Meteor.call('history.insert', data, 'proposals.update');
-      return { hasChanged: true, data };
+      return { hasChanged: true, proposal: data };
     },
     'proposals.activate'(master) {
       var _id = master._id;

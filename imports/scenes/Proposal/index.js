@@ -28,19 +28,8 @@ import Information from './Information/index';
 class Proposal extends React.Component {
   constructor(props) {
     super(props);
-    const getDocument = () => {
-      if (this.props.proposal) {
-        return {
-          ...this.props.proposal.snapshots[this.props.proposal.activeVersion],
-          _id: this.props.proposal._id,
-          status: this.props.proposal.status,
-          activeVersion: this.props.proposal.activeVersion,
-          version: this.props.proposal.activeVersion
-        }
-      } else return null;
-    }
     this.state = {
-      proposal: getDocument() || {
+      proposal: explodeProposal(this.props.proposal) || {
         _id: undefined,
         createdBy: Meteor.user()._id,
         status: "inactive",
@@ -91,19 +80,6 @@ class Proposal extends React.Component {
     if (prevProps.databases !== this.props.databases
       || prevState.proposal.version !== this.state.proposal.version) {
       this.setUpdatedItemInformation();
-    }
-    // Auto change to newest version
-    if (this.props.proposal) {
-      if (!prevProps.proposal) {
-        this.changeVersion({target: {
-          value: this.props.proposal.snapshots.length-1
-        }})
-      } else if (this.props.proposal.snapshots.length !==
-        prevProps.proposal.snapshots.length) {
-          this.changeVersion({target: {
-            value: this.props.proposal.snapshots.length-1
-          }})
-      }
     }
   }
 
@@ -257,7 +233,7 @@ class Proposal extends React.Component {
       } else {
         Meteor.call('proposals.update', this.state.proposal, (err, res) => {
           if (res) {
-            var proposal = {...this.state.proposal};
+            var proposal = explodeProposal(res.proposal);
             var databaseStatus = res.hasChanged ? "completed" : {
               status: "completed",
               message: "Nenhuma alteração realizada."
@@ -367,6 +343,18 @@ class Proposal extends React.Component {
       </div>
     )
   }
+}
+
+function explodeProposal(proposal) {
+  if (proposal) {
+    return {
+      ...proposal.snapshots[proposal.activeVersion],
+      _id: proposal._id,
+      status: proposal.status,
+      activeVersion: proposal.activeVersion,
+      version: proposal.activeVersion
+    }
+  } else return false;
 }
 
 function ProposalLoader (props) {
