@@ -3,6 +3,12 @@ import tools from '/imports/startup/tools/index';
 
 export const Clients = new Mongo.Collection('clients');
 
+Clients.deny({
+  insert() { return true; },
+  update() { return true; },
+  remove() { return true; },
+});
+
 if (Meteor.isServer) {
   Meteor.publish('clientsPub', (_id) => {
     return Clients.find({ visible: true }, {sort: { description: 1 }});

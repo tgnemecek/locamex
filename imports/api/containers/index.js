@@ -4,6 +4,12 @@ import tools from '/imports/startup/tools/index';
 
 export const Containers = new Mongo.Collection('containers');
 
+Containers.deny({
+  insert() { return true; },
+  update() { return true; },
+  remove() { return true; },
+});
+
 if (Meteor.isServer) {
   Meteor.publish('containersPub', () => {
     return Containers.find({ visible: true }, {sort: { description: 1 }});
@@ -83,7 +89,7 @@ if (Meteor.isServer) {
       var paragraphs = state.hasFlyer ? state.paragraphs : [];
       var images = state.hasFlyer ? state.images : [];
       var container = Containers.findOne({ _id: state._id });
-      
+
     }
   })
 }

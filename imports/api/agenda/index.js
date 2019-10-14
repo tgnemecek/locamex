@@ -6,6 +6,12 @@ import { userTypes } from '/imports/startup/user-types/index';
 
 export const Agenda = new Mongo.Collection('agenda');
 
+Agenda.deny({
+  insert() { return true; },
+  update() { return true; },
+  remove() { return true; },
+});
+
 if (Meteor.isServer) {
   Meteor.publish('agendaPub', () => {
     var user = Meteor.user();

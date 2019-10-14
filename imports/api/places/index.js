@@ -3,6 +3,12 @@ import tools from '/imports/startup/tools/index';
 
 export const Places = new Mongo.Collection('places');
 
+Places.deny({
+  insert() { return true; },
+  update() { return true; },
+  remove() { return true; },
+});
+
 if (Meteor.isServer) {
   Meteor.publish('placesPub', () => {
     return Places.find({ visible: true });

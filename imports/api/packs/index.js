@@ -4,6 +4,12 @@ import tools from '/imports/startup/tools/index';
 
 export const Packs = new Mongo.Collection('packs');
 
+Packs.deny({
+  insert() { return true; },
+  update() { return true; },
+  remove() { return true; },
+});
+
 if (Meteor.isServer) {
   Meteor.publish('packsPub', () => {
     return Packs.find({ visible: true }, {sort: { description: 1 }});

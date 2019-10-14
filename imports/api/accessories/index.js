@@ -3,6 +3,12 @@ import tools from '/imports/startup/tools/index';
 
 export const Accessories = new Mongo.Collection('accessories');
 
+Accessories.deny({
+  insert() { return true; },
+  update() { return true; },
+  remove() { return true; },
+});
+
 if (Meteor.isServer) {
   Meteor.publish('accessoriesPub', () => {
     return Accessories.find({ visible: true }, {sort: { description: 1 }});

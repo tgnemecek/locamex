@@ -4,6 +4,12 @@ import tools from '/imports/startup/tools/index';
 
 export const Series = new Mongo.Collection('series');
 
+Series.deny({
+  insert() { return true; },
+  update() { return true; },
+  remove() { return true; },
+});
+
 if (Meteor.isServer) {
   Meteor.publish('seriesPub', () => {
     return Series.find({ visible: true }, {sort: { description: 1 }});

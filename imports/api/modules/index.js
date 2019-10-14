@@ -3,6 +3,12 @@ import tools from '/imports/startup/tools/index';
 
 export const Modules = new Mongo.Collection('modules');
 
+Modules.deny({
+  insert() { return true; },
+  update() { return true; },
+  remove() { return true; },
+});
+
 if (Meteor.isServer) {
   Meteor.publish('modulesPub', () => {
     return Modules.find({ visible: true }, {sort: { description: 1 }});

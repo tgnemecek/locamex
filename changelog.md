@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.3.1
+
+-  Added 'deny' to all mongo collections;
+
 ## Version 2.3.0
 
 -  Fixed problem where contract pdf was showing the wrong expiryDate;
