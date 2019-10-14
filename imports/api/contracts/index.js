@@ -8,6 +8,12 @@ import { Accessories } from '/imports/api/accessories/index';
 
 export const Contracts = new Mongo.Collection('contracts');
 
+Contracts.deny({
+  insert() { return true; },
+  update() { return true; },
+  remove() { return true; },
+});
+
 if (Meteor.isServer) {
   Meteor.publish('contractsPub', () => {
     return Contracts.find({}, {sort: { _id: -1 }});
@@ -23,10 +29,13 @@ if (Meteor.isServer) {
   Meteor.methods({
     'contracts.insert'(data) {
       const prefix = new Date().getFullYear();
-      const suffix = Contracts.find({ _id: { $regex: new RegExp(prefix)} }).count().toString().padStart(3, '0');
+      var offset = 22;
+      var suffix = Contracts.find({ _id: { $regex: new RegExp(prefix)} }).count() + offset;
+      suffix = suffix.toString().padStart(3, '0');;
       const _id = prefix + "-" + suffix;
 
       data._id = _id;
+      data.visible = true;
 
       Contracts.insert(data);
       Meteor.call('history.insert', data, 'contracts.insert');
@@ -37,7 +46,7 @@ if (Meteor.isServer) {
       var index = snapshot.version;
       var data = Contracts.findOne({ _id });
       var hasChanged = !tools.compare(data.snapshots[index], snapshot, "activeVersion");
-      if (!hasChanged) return { hasChanged: false, snapshot };
+      if (!hasChanged) return { hasChanged: false, contract: data };
 
       const newSnapshot = {
         ...snapshot,
@@ -56,7 +65,7 @@ if (Meteor.isServer) {
 
       Contracts.update({ _id }, { $set: data });
       Meteor.call('history.insert', data, 'contracts.update');
-      return { hasChanged: true, data };
+      return { hasChanged: true, contract: data };
     },
     'contracts.activate'(contract) {
       var _id = contract._id;

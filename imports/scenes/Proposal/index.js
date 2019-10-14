@@ -229,18 +229,6 @@ class Proposal extends React.Component {
       } else {
         Meteor.call('proposals.update', this.state.proposal, (err, res) => {
           if (res) {
-<<<<<<< HEAD
-            var proposal = {...this.state.proposal};
-            if (typeof callback === "function") {
-              callback(proposal);
-            } else {
-              var databaseStatus = res.hasChanged ? "completed" : {
-                status: "completed",
-                message: "Nenhuma alteração realizada."
-              }
-              this.setState({ proposal, databaseStatus });
-            }
-=======
             var proposal;
             var databaseStatus;
             if (res.hasChanged) {
@@ -256,7 +244,6 @@ class Proposal extends React.Component {
             if (typeof callback === "function") {
               callback(proposal);
             } else this.setState({ proposal, databaseStatus });
->>>>>>> @{-1}
           } else if (err) {
             this.setState({ databaseStatus: "failed" });
             console.log(err);

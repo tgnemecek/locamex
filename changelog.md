@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.3.0
+
+-  Fixed problem where contract pdf was showing the wrong expiryDate;
+
 ## Version 2.2.9
 
 -  Fixed problem when saving Proposals/Contracts that printed previous version;
