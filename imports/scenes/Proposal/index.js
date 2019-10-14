@@ -28,19 +28,8 @@ import Information from './Information/index';
 class Proposal extends React.Component {
   constructor(props) {
     super(props);
-    const getDocument = () => {
-      if (this.props.proposal) {
-        return {
-          ...this.props.proposal.snapshots[this.props.proposal.activeVersion],
-          _id: this.props.proposal._id,
-          status: this.props.proposal.status,
-          activeVersion: this.props.proposal.activeVersion,
-          version: this.props.proposal.activeVersion
-        }
-      } else return null;
-    }
     this.state = {
-      proposal: getDocument() || {
+      proposal: explodeProposal(this.props.proposal) || {
         _id: undefined,
         createdBy: Meteor.user()._id,
         status: "inactive",
@@ -91,19 +80,6 @@ class Proposal extends React.Component {
     if (prevProps.databases !== this.props.databases
       || prevState.proposal.version !== this.state.proposal.version) {
       this.setUpdatedItemInformation();
-    }
-    // Auto change to newest version
-    if (this.props.proposal) {
-      if (!prevProps.proposal) {
-        this.changeVersion({target: {
-          value: this.props.proposal.snapshots.length-1
-        }})
-      } else if (this.props.proposal.snapshots.length !==
-        prevProps.proposal.snapshots.length) {
-          this.changeVersion({target: {
-            value: this.props.proposal.snapshots.length-1
-          }})
-      }
     }
   }
 
@@ -217,12 +193,11 @@ class Proposal extends React.Component {
       const activate = (proposal) => {
         Meteor.call('proposals.activate', proposal, (err, res) => {
           if (res) {
+            proposal = explodeProposal(res.proposal);
             var databaseStatus = {
               status: "completed",
               message: "Proposta Fechada! Gerado Contrato #" + res.contractId
             }
-            proposal.status = "active";
-            proposal.activeVersion = proposal.version;
             this.setState({ proposal, databaseStatus });
           } else if (err) {
             this.setState({ databaseStatus: "failed" });
@@ -240,11 +215,8 @@ class Proposal extends React.Component {
       if (this.props.match.params.proposalId == 'new') {
         Meteor.call('proposals.insert', this.state.proposal, (err, res) => {
           if (res) {
-            var proposal = {
-              ...this.state.proposal,
-              _id: res
-            }
-            this.props.history.push("/proposal/" + res);
+            var proposal = explodeProposal(res);
+            this.props.history.push("/proposal/" + proposal._id);
             if (typeof callback === "function") {
               callback(proposal);
             } else this.setState({ proposal, databaseStatus: "completed" });
@@ -257,6 +229,7 @@ class Proposal extends React.Component {
       } else {
         Meteor.call('proposals.update', this.state.proposal, (err, res) => {
           if (res) {
+<<<<<<< HEAD
             var proposal = {...this.state.proposal};
             if (typeof callback === "function") {
               callback(proposal);
@@ -267,6 +240,23 @@ class Proposal extends React.Component {
               }
               this.setState({ proposal, databaseStatus });
             }
+=======
+            var proposal;
+            var databaseStatus;
+            if (res.hasChanged) {
+              proposal = explodeProposal(res.proposal);
+              databaseStatus = "completed";
+            } else {
+              proposal = this.state.proposal;
+              databaseStatus = {
+                status: "completed",
+                message: "Nenhuma alteração realizada."
+              }
+            }
+            if (typeof callback === "function") {
+              callback(proposal);
+            } else this.setState({ proposal, databaseStatus });
+>>>>>>> @{-1}
           } else if (err) {
             this.setState({ databaseStatus: "failed" });
             console.log(err);
@@ -374,6 +364,18 @@ class Proposal extends React.Component {
       </div>
     )
   }
+}
+
+function explodeProposal(proposal) {
+  if (proposal) {
+    return {
+      ...proposal.snapshots[proposal.activeVersion],
+      _id: proposal._id,
+      status: proposal.status,
+      activeVersion: proposal.activeVersion,
+      version: proposal.activeVersion
+    }
+  } else return false;
 }
 
 function ProposalLoader (props) {

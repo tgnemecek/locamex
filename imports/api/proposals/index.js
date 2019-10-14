@@ -7,6 +7,12 @@ import { Accessories } from '/imports/api/accessories/index';
 
 export const Proposals = new Mongo.Collection('proposals');
 
+Proposals.deny({
+  insert() { return true; },
+  update() { return true; },
+  remove() { return true; },
+});
+
 if (Meteor.isServer) {
   Meteor.publish('proposalsPub', () => {
     return Proposals.find({}, {sort: { _id: -1 }});
@@ -20,13 +26,13 @@ if (Meteor.isServer) {
   }
 
   Meteor.methods({
-    'proposals.insert'(snapshot, status) {
+    'proposals.insert'(snapshot) {
       const prefix = new Date().getFullYear();
       const suffix = Proposals.find({ _id: { $regex: new RegExp(prefix)} }).count().toString().padStart(4, '0');
       const _id = prefix + "-" + suffix;
       const data = {
         _id,
-        status: status || "inactive",
+        status: "inactive",
         activeVersion: 0,
         snapshots: [
           {
@@ -44,14 +50,14 @@ if (Meteor.isServer) {
       };
       Proposals.insert(data);
       Meteor.call('history.insert', data, 'proposals.insert');
-      return _id;
+      return data;
     },
     'proposals.update'(snapshot) {
       var _id = snapshot._id;
       var index = snapshot.version;
       var data = Proposals.findOne({ _id });
       var hasChanged = !tools.compare(data.snapshots[index], snapshot, "activeVersion");
-      if (!hasChanged) return { hasChanged: false, snapshot };
+      if (!hasChanged) return { hasChanged: false, proposal: data };
 
       const newSnapshot = {
         ...snapshot,
@@ -69,7 +75,7 @@ if (Meteor.isServer) {
 
       Proposals.update({ _id }, { $set: data } );
       Meteor.call('history.insert', data, 'proposals.update');
-      return { hasChanged: true, data };
+      return { hasChanged: true, proposal: data };
     },
     'proposals.activate'(master) {
       var _id = master._id;
@@ -100,7 +106,7 @@ if (Meteor.isServer) {
         activeVersion: Number(master.version)
       } })
       Meteor.call('history.insert', { _id }, 'proposals.activate');
-      return { _id, contractId };
+      return { proposal: Proposals.findOne({ _id }), contractId };
     },
     'proposals.cancel'(_id) {
       Proposals.update({ _id }, { $set: { status: "cancelled" } } );

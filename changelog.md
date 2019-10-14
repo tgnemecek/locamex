@@ -1,7 +1,12 @@
 # Changelog:
 
+## Version 2.2.9
+
+-  Fixed problem when saving Proposals/Contracts that printed previous version;
+
 ## Version 2.2.8
 
+-  Added offset to Contracts;
 -  Trying to add an existing series will show an error explaining;
 
 ## Version 2.2.7

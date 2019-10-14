@@ -31,26 +31,8 @@ import Information from './Information/index';
 class Contract extends React.Component {
   constructor(props) {
     super(props);
-    const getDocument = () => {
-      if (this.props.contract) {
-        var version;
-        if (this.props.contract.status === "active") {
-          version = this.props.contract.activeVersion;
-        } else version = this.props.contract.snapshots.length-1;
-
-        return {
-          ...this.props.contract.snapshots[version],
-          _id: this.props.contract._id,
-          status: this.props.contract.status,
-          activeVersion: this.props.contract.activeVersion,
-          version,
-          proposal: this.props.contract.proposal,
-          proposalVersion: this.props.contract.proposalVersion
-        }
-      } else return null;
-    }
     this.state = {
-      contract: getDocument() || {
+      contract: explodeContract(this.props.contract) || {
         _id: undefined,
         createdBy: Meteor.user()._id,
         status: "inactive",
@@ -102,19 +84,6 @@ class Contract extends React.Component {
     if (prevProps.databases !== this.props.databases
       || prevState.contract.version !== this.state.contract.version) {
       this.setUpdatedItemInformation();
-    }
-    // Auto change to newest version
-    if (this.props.contract) {
-      if (!prevProps.contract) {
-        this.changeVersion({target: {
-          value: this.props.contract.snapshots.length-1
-        }})
-      } else if (this.props.contract.snapshots.length !==
-        prevProps.contract.snapshots.length) {
-          this.changeVersion({target: {
-            value: this.props.contract.snapshots.length-1
-          }})
-      }
     }
   }
 
@@ -253,41 +222,29 @@ class Contract extends React.Component {
 
   saveEdits = (callback) => {
     this.setState({ databaseStatus: "loading" }, () => {
-      if (this.props.match.params.contractId == 'new') {
-        Meteor.call('contracts.insert', this.state.contract, (err, res) => {
-          if (res) {
-            var contract = {
-              ...this.state.contract,
-              _id: res
+      // Only update. Contracts are inserted by activating Proposals
+      Meteor.call('contracts.update', this.state.contract, (err, res) => {
+        if (res) {
+          var contract;
+          var databaseStatus;
+          if (res.hasChanged) {
+            contract = explodeContract(res.contract);
+            databaseStatus = "completed";
+          } else {
+            contract = this.state.contract;
+            databaseStatus = {
+              status: "completed",
+              message: "Nenhuma alteração realizada."
             }
-            this.props.history.push("/contract/" + res);
-            if (typeof callback === "function") {
-              callback(contract);
-            } else this.setState({ contract, databaseStatus: "completed" });
           }
-          else if (err) {
-            this.setState({ databaseStatus: "failed" });
-            console.log(err);
-          }
-        });
-      } else {
-        Meteor.call('contracts.update', this.state.contract, (err, res) => {
-          if (res) {
-            var contract = {...this.state.contract};
-            var databaseStatus = {status: "completed"};
-            if (res.hasChanged) {
-              contract.version = res.data.snapshots.length-1;
-            } else databaseStatus.message = "Nenhuma alteração realizada."
-
-            if (typeof callback === "function") {
-              callback(contract);
-            } else this.setState({ contract, databaseStatus });
-          } else if (err) {
-            this.setState({ databaseStatus: "failed" });
-            console.log(err);
-          }
-        });
-      }
+          if (typeof callback === "function") {
+            callback(contract);
+          } else this.setState({ contract, databaseStatus });
+        } else if (err) {
+          this.setState({ databaseStatus: "failed" });
+          console.log(err);
+        }
+      });
     })
   }
 
@@ -391,6 +348,25 @@ class Contract extends React.Component {
       </div>
     )
   }
+}
+
+function explodeContract(contract) {
+  if (contract) {
+    var version;
+    if (contract.status === "active") {
+      version = contract.activeVersion;
+    } else version = contract.snapshots.length-1;
+
+    return {
+      ...contract.snapshots[version],
+      _id: contract._id,
+      status: contract.status,
+      activeVersion: contract.activeVersion,
+      version,
+      proposal: contract.proposal,
+      proposalVersion: contract.proposalVersion
+    }
+  } else return false;
 }
 
 function ContractLoader (props) {

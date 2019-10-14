@@ -1,6 +1,6 @@
 # Sistema Locamex
 
-Version: 2.2.7
+Version: 2.2.9
 
 ## Information:
 

@@ -69,7 +69,7 @@ export default function DatabaseStatusWrapper(props) {
 
   if (typeof props.status === 'object') {
     status = props.status.status;
-    message = props.status.message || "";
+    message = props.status.message || dictionary[props.status.status];
   } else {
     status = props.status;
     message = dictionary[status] || "";
