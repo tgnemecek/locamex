@@ -193,12 +193,11 @@ class Proposal extends React.Component {
       const activate = (proposal) => {
         Meteor.call('proposals.activate', proposal, (err, res) => {
           if (res) {
+            proposal = explodeProposal(res.proposal);
             var databaseStatus = {
               status: "completed",
               message: "Proposta Fechada! Gerado Contrato #" + res.contractId
             }
-            proposal.status = "active";
-            proposal.activeVersion = proposal.version;
             this.setState({ proposal, databaseStatus });
           } else if (err) {
             this.setState({ databaseStatus: "failed" });
@@ -216,11 +215,8 @@ class Proposal extends React.Component {
       if (this.props.match.params.proposalId == 'new') {
         Meteor.call('proposals.insert', this.state.proposal, (err, res) => {
           if (res) {
-            var proposal = {
-              ...this.state.proposal,
-              _id: res
-            }
-            this.props.history.push("/proposal/" + res);
+            var proposal = explodeProposal(res);
+            this.props.history.push("/proposal/" + proposal._id);
             if (typeof callback === "function") {
               callback(proposal);
             } else this.setState({ proposal, databaseStatus: "completed" });
@@ -233,13 +229,21 @@ class Proposal extends React.Component {
       } else {
         Meteor.call('proposals.update', this.state.proposal, (err, res) => {
           if (res) {
-            var proposal = explodeProposal(res.proposal);
-            var databaseStatus = res.hasChanged ? "completed" : {
-              status: "completed",
-              message: "Nenhuma alteração realizada."
+            var proposal;
+            var databaseStatus;
+            if (res.hasChanged) {
+              proposal = explodeProposal(res.proposal);
+              databaseStatus = "completed";
+            } else {
+              proposal = this.state.proposal;
+              databaseStatus = {
+                status: "completed",
+                message: "Nenhuma alteração realizada."
+              }
             }
-            this.setState({ proposal, databaseStatus });
-            if (typeof callback === "function") callback(proposal);
+            if (typeof callback === "function") {
+              callback(proposal);
+            } else this.setState({ proposal, databaseStatus });
           } else if (err) {
             this.setState({ databaseStatus: "failed" });
             console.log(err);

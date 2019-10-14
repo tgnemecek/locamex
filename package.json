@@ -1,6 +1,6 @@
 {
   "name": "locamex",
-  "version": "2.2.8",
+  "version": "2.2.9",
   "private": true,
   "scripts": {
     "local-aws": "meteor --settings settings.json"

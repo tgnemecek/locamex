@@ -8,6 +8,12 @@ import { Accessories } from '/imports/api/accessories/index';
 
 export const Contracts = new Mongo.Collection('contracts');
 
+Contracts.deny({
+  insert() { return true; },
+  update() { return true; },
+  remove() { return true; },
+});
+
 if (Meteor.isServer) {
   Meteor.publish('contractsPub', () => {
     return Contracts.find({}, {sort: { _id: -1 }});
@@ -40,7 +46,7 @@ if (Meteor.isServer) {
       var index = snapshot.version;
       var data = Contracts.findOne({ _id });
       var hasChanged = !tools.compare(data.snapshots[index], snapshot, "activeVersion");
-      if (!hasChanged) return { hasChanged: false, snapshot };
+      if (!hasChanged) return { hasChanged: false, contract: data };
 
       const newSnapshot = {
         ...snapshot,
@@ -59,7 +65,7 @@ if (Meteor.isServer) {
 
       Contracts.update({ _id }, { $set: data });
       Meteor.call('history.insert', data, 'contracts.update');
-      return { hasChanged: true, data };
+      return { hasChanged: true, contract: data };
     },
     'contracts.activate'(contract) {
       var _id = contract._id;
