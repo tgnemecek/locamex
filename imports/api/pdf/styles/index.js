@@ -2,6 +2,8 @@ const styleGlobals = {
   fontFamily: "Arial",
   h1Size: 11,
   h2Size: 10,
+  flyerH1Size: 22,
+  subtitleSize: 11,
   pSize: 9,
   marginBottom: 10,
   cellheight: 1
@@ -22,12 +24,19 @@ export default {
     alignment: 'justify',
     margin: [0, 0, 0, styleGlobals.marginBottom]
   },
+  flyerH1: {
+    fontFamily: styleGlobals.fontFamily,
+    fontSize: styleGlobals.flyerH1Size,
+    bold: true,
+    alignment: 'center',
+    margin: [0, 0, 0, 0]
+  },
   subtitle: {
     italics: true,
     fontFamily: styleGlobals.fontFamily,
-    fontSize: styleGlobals.pSize,
-    alignment: 'justify',
-    margin: [0, 0, 0, 0]
+    fontSize: styleGlobals.subtitleSize,
+    alignment: 'center',
+    margin: [0, 0, 0, 60]
   },
   p: {
     fontFamily: styleGlobals.fontFamily,

@@ -86,10 +86,23 @@ if (Meteor.isServer) {
 
     // OTHER
     'containers.update.flyer' (state) {
-      var paragraphs = state.hasFlyer ? state.paragraphs : [];
-      var images = state.hasFlyer ? state.images : [];
-      var container = Containers.findOne({ _id: state._id });
+      var flyer = {};
+      flyer.paragraphs = state.hasFlyer ? state.paragraphs : [];
+      if (!state.hasFlyer) {
+        flyer.paragraphs = [];
+        flyer.images = [];
+      } else {
+        flyer.paragraphs = state.paragraphs;
+        if (state.newImages) {
+          flyer.images = state.images;
+        } else {
+          flyer.images = Containers.findOne({ _id: state._id }).flyer.images;
+        }
+      }
 
+      Containers.update({ _id: state._id }, {$set: { flyer }})
+      Meteor.call('history.insert', flyer, 'containers.update.flyer');
+      return state._id;
     }
   })
 }

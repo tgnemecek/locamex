@@ -29,7 +29,7 @@ if (Meteor.isServer) {
     async 'pdf.generate'(master) {
       try {
         if (master.type === "flyer") {
-          master.images = getFlyers(master).await();
+          master.images = getImages(master._id).await();
         }
         var docDefinition = generateDocDefinition(master);
         docDefinition.pageBreakBefore = setPageBreaks();
@@ -73,9 +73,12 @@ function generateDocDefinition(master) {
       generator = generateFlyer;
       break;
   }
-  // Generate Pdf
+  // Generate docDefinition
   try {
-    return generator(master);
+    return {
+      ...generator(master),
+      styles
+    }
   }
   catch(err) {
     console.log(err);
@@ -125,13 +128,9 @@ function generateBilling(master) {
   return billingPdf(props);
 }
 
-function generateFlyer(master) {
-  var props = {
-    master,
-    header,
-    styles
-  }
-  return flyerPdf(props);
+function generateFlyer({ _id, images }) {
+  var item = Containers.findOne({ _id });
+  return flyerPdf({...item, images}, header);
 }
 
 function getCreatedBy(userId) {
@@ -194,9 +193,11 @@ function generateFooter(docDefinition) {
   }
 }
 
-function getFlyers(master) {
+function getImages(_id) {
   var promises = [];
-  master.item.flyer.images.forEach((image) => {
+  var item = Containers.findOne({ _id });
+
+  item.flyer.images.forEach((image) => {
     promises.push(new Promise((resolve, reject) => {
       Meteor.call('aws.read', image, (err, res) => {
         if (res) {

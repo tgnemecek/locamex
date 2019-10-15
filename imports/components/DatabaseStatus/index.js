@@ -61,6 +61,7 @@ class DatabaseStatus extends React.Component {
 export default function DatabaseStatusWrapper(props) {
   var status;
   var message;
+  var callback;
   var dictionary = {
     loading: 'Carregando',
     completed: 'Feito!',
@@ -70,6 +71,7 @@ export default function DatabaseStatusWrapper(props) {
   if (typeof props.status === 'object') {
     status = props.status.status;
     message = props.status.message || dictionary[props.status.status];
+    callback = props.status.callback || null;
   } else {
     status = props.status;
     message = dictionary[status] || "";
@@ -79,6 +81,7 @@ export default function DatabaseStatusWrapper(props) {
     <DatabaseStatus
       status={status}
       message={message}
+      callback={callback}
       timeout={props.timeout}/>
   )
 }

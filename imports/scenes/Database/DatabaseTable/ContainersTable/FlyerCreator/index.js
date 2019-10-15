@@ -22,12 +22,26 @@ export default class FlyerCreator extends React.Component {
     }
   }
 
-  onChange = (e) => {
-    this.setState({ [e.target.name]: [e.target.value] })
+  hasFlyerCheckbox = (e) => {
+    var hasFlyer = e.target.value;
+    this.setState({
+      hasFlyer,
+      newImages: false,
+      images: []
+    })
+  }
+
+  newImagesCheckbox = (e) => {
+    var newImages = e.target.value;
+    this.setState({
+      newImages,
+      images: newImages ? this.state.images : []
+    })
   }
 
   onChangeParagraph = (e) => {
-    function addBulletPoints(input) {
+    function addBulletPoints(input, name) {
+      if (name === 0) return input;
       // Remove all bullet points
       input = input.replace(/•\s*/g, "");
       // Add one for each new line
@@ -36,7 +50,7 @@ export default class FlyerCreator extends React.Component {
       input = input.replace(/(^.)/g, "• $1");
       return input;
     }
-    var value = addBulletPoints(e.target.value);
+    var value = addBulletPoints(e.target.value, e.target.name);
     var paragraphs = [...this.state.paragraphs];
     paragraphs[e.target.name] = value;
     this.setState({ paragraphs });
@@ -53,42 +67,74 @@ export default class FlyerCreator extends React.Component {
   }
 
   print = () => {
-    var data = {
-      item: this.props.item,
-      type: "flyer"
-    }
-
-    Meteor.call('pdf.generate', data, (err, res) => {
-      if (res) {
-        saveAs(res.data, res.fileName);
-        // this.setState({ databaseStatus: "completed" });
+    this.setState({ databaseStatus: "loading" }, () => {
+      var data = {
+        _id : this.props.item._id,
+        type: "flyer"
       }
-      if (err) {
-        // this.setState({ databaseStatus: "failed" });
-        console.log(err);
-      }
+      Meteor.call('pdf.generate', data, (err, res) => {
+        if (res) {
+          saveAs(res.data, res.fileName);
+          this.setState({ databaseStatus: "completed" });
+        }
+        if (err) {
+          this.setState({ databaseStatus: "failed" });
+          console.log(err);
+        }
+      })
     })
   }
 
   saveEdits = () => {
-    var data = {
-      hasFlyer: this.state.hasFlyer,
-      newImages: this.state.newImages,
-      paragraphs: this.state.paragraphs,
-      images: this.state.images,
-      item: this.props.item,
-      type: "flyer"
-    }
+    this.setState({ databaseStatus: "loading" }, () => {
+      var data = {
+        hasFlyer: this.state.hasFlyer,
+        newImages: this.state.newImages,
+        paragraphs: this.state.paragraphs,
+        _id: this.props.item._id,
+        type: "flyer"
+      }
 
-    Meteor.call('pdf.generate', data, (err, res) => {
-      if (res) {
-        saveAs(res.data, res.fileName);
-        // this.setState({ databaseStatus: "completed" });
+      const updateContainer = () => {
+        Meteor.call('containers.update.flyer', data, (err, res) => {
+          if (res) {
+            var databaseStatus = {
+              status: "completed",
+              callback: () => this.props.toggleWindow()
+            }
+            this.setState({ databaseStatus });
+          }
+          if (err) {
+            this.setState({ databaseStatus: "failed" });
+            console.log(err);
+          }
+        })
       }
-      if (err) {
-        // this.setState({ databaseStatus: "failed" });
-        console.log(err);
-      }
+
+      if (this.state.hasFlyer && this.state.newImages) {
+        var promises = [];
+        this.state.images.forEach((image, i) => {
+          promises.push(new Promise((resolve, reject) => {
+            var reader = new FileReader();
+            var _id = this.props.item._id;
+            var filename = this.props.item.description + "_" + i;
+            var filePath = `user-uploads/images/flyers/${_id}/${filename}.jpg`;
+            reader.onloadend = () => {
+              Meteor.call('aws.write', reader.result, filePath, (err, res) => {
+                if (err) reject(err);
+                if (res) resolve(res.Key);
+              })
+            }
+            reader.readAsDataURL(image);
+          }))
+        })
+        Promise.all(promises).then((images) => {
+          data.images = images;
+          updateContainer();
+        }).catch((err) => {
+          console.log(err);
+        })
+      } else updateContainer();
     })
   }
 
@@ -105,7 +151,7 @@ export default class FlyerCreator extends React.Component {
             id="hasFlyer"
             name="hasFlyer"
             value={this.state.hasFlyer}
-            onChange={this.onChange}
+            onChange={this.hasFlyerCheckbox}
           />
         </div>
         <div className="flyer-creator__body">
@@ -139,18 +185,21 @@ export default class FlyerCreator extends React.Component {
               type="checkbox"
               id="newImages"
               name="newImages"
+              disabled={!this.state.hasFlyer}
               value={this.state.newImages}
-              onChange={this.onChange}
+              onChange={this.newImagesCheckbox}
             />
-            <Input
-              title="Imagens"
-              type="file"
-              accept="image/*"
-              preview={true}
-              removeFile={this.removeImage}
-              value={this.state.images}
-              max={2}
-              onChange={this.setImages}/>
+            {this.state.newImages ?
+              <Input
+                title="Imagens"
+                type="file"
+                accept="image/*"
+                preview={true}
+                removeFile={this.removeImage}
+                value={this.state.images}
+                max={2}
+                onChange={this.setImages}/>
+            : null}
           </div>
         </div>
         <DatabaseStatus status={this.state.databaseStatus}/>
