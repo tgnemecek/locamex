@@ -79,7 +79,7 @@ class Proposal extends React.Component {
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.databases !== this.props.databases
       || prevState.proposal.version !== this.state.proposal.version) {
-      this.setUpdatedItemInformation();
+        this.setUpdatedItemInformation();
     }
   }
 

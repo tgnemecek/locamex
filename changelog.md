@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.3.3
+
+-  Pdf now gets descriptions from database, to avoid undefined product descriptions;
+
 ## Version 2.3.2
 
 -  Added new flyer functionality, creating the pdf instead of uploading;

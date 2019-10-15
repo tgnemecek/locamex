@@ -6,6 +6,8 @@ const vfs_fonts = require('pdfmake/build/vfs_fonts');
 import { Accounts } from '/imports/api/accounts/index';
 import { Clients } from '/imports/api/clients/index';
 import { Containers } from '/imports/api/containers/index';
+import { Accessories } from '/imports/api/accessories/index';
+import { Services } from '/imports/api/services/index';
 
 import contractPdf from './contract/index';
 import proposalPdf from './proposal/index';
@@ -28,9 +30,6 @@ if (Meteor.isServer) {
   Meteor.methods({
     async 'pdf.generate'(master) {
       try {
-        // if (master.type === "flyer") {
-        //   master.images = getFlyerImages(master._id).await();
-        // }
         var docDefinition = generateDocDefinition(master).await();
         docDefinition.pageBreakBefore = setPageBreaks();
         docDefinition.footer = generateFooter(docDefinition);
@@ -89,16 +88,16 @@ function generateDocDefinition(master) {
 // Sub-functions
 function generateProposal(master) {
   return new Promise((resolve, reject) => {
+    master.createdByFullName = getCreatedBy(master.createdBy);
+
     var props = {
-      master,
+      master: getDescriptions(master),
       generateTable,
       header,
       styles
     }
 
     try {
-      master.createdByFullName = getCreatedBy(master.createdBy);
-
       if (master.includeFlyer) {
         var promises = master.containers.map((container) => {
           return new Promise((resolve, reject) => {
@@ -130,14 +129,16 @@ function generateContract(master) {
     try {
       master.createdByFullName = getCreatedBy(master.createdBy);
       master.client = getClient(master.clientId);
-      master = getSignatures(master);
       master.accountServices = getAccount(master, 'billingServices');
+      master = getSignatures(master);
+      master = getDescriptions(master);
 
       var props = {
         master,
         generateTable,
         styles
       }
+
       resolve(contractPdf(props));
     } catch(err) {
       reject(err);
@@ -149,6 +150,7 @@ function generateBilling(master) {
   return new Promise((resolve, reject) => {
     master.createdByFullName = getCreatedBy(master.createdBy);
     master.client = getClient(master.clientId);
+    master = getDescriptions(master);
     master.accountProducts = getAccount(master, 'billingProducts');
 
     var props = {
@@ -172,6 +174,7 @@ function generateFlyer(master) {
   })
 }
 
+// Other functions
 function getCreatedBy(userId) {
   var usersDatabase = Meteor.users.find().fetch();
   if (!usersDatabase) throw new Meteor.Error("userDB-not-found!");
@@ -213,7 +216,26 @@ function getAccount(master, billingName) {
   return account;
 }
 
-// Other functions
+function getDescriptions(master) {
+  function getArrayDescriptions(array, Database) {
+    return array.map((item) => {
+      var product = Database.findOne({ _id: item.productId });
+      return {
+        ...item,
+        description: product.description
+      }
+    })
+  }
+
+
+  return {
+    ...master,
+    containers: getArrayDescriptions(master.containers, Containers),
+    accessories: getArrayDescriptions(master.accessories, Accessories),
+    services: getArrayDescriptions(master.services, Services)
+  }
+}
+
 function setPageBreaks() {
   return function (currentNode, followingNodesOnPage, nodesOnNextPage, previousNodesOnPage) {
     if (currentNode.headlineLevel) {
