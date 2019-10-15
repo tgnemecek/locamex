@@ -28,10 +28,10 @@ if (Meteor.isServer) {
   Meteor.methods({
     async 'pdf.generate'(master) {
       try {
-        if (master.type === "flyer") {
-          master.images = getImages(master._id).await();
-        }
-        var docDefinition = generateDocDefinition(master);
+        // if (master.type === "flyer") {
+        //   master.images = getFlyerImages(master._id).await();
+        // }
+        var docDefinition = generateDocDefinition(master).await();
         docDefinition.pageBreakBefore = setPageBreaks();
         docDefinition.footer = generateFooter(docDefinition);
 
@@ -74,63 +74,102 @@ function generateDocDefinition(master) {
       break;
   }
   // Generate docDefinition
-  try {
-    return {
-      ...generator(master),
-      styles
-    }
-  }
-  catch(err) {
+  return new Promise((resolve, reject) => {
+    generator(master).then((result) => {
+      resolve({
+        ...result,
+        styles
+      })
+    })
+  }).catch((err) => {
     console.log(err);
-  }
+  })
 }
 
 // Sub-functions
 function generateProposal(master) {
-  master.createdByFullName = getCreatedBy(master.createdBy);
+  return new Promise((resolve, reject) => {
+    var props = {
+      master,
+      generateTable,
+      header,
+      styles
+    }
 
-  var props = {
-    master,
-    generateTable,
-    header,
-    styles
-  }
-  return proposalPdf(props);
+    try {
+      master.createdByFullName = getCreatedBy(master.createdBy);
+
+      if (master.includeFlyer) {
+        var promises = master.containers.map((container) => {
+          return new Promise((resolve, reject) => {
+            getFlyerImages(container.productId).then((images) => {
+              var item = Containers.findOne({
+                _id: container.productId
+              });
+              var flyerDoc = flyerPdf({...item, images}, header).content
+              flyerDoc.unshift({text: '', pageBreak: 'after'});
+              resolve(flyerDoc);
+            })
+          })
+        })
+        Promise.all(promises).then((flyersDocs) => {
+          var proposalDoc = proposalPdf(props);
+          proposalDoc.content = proposalDoc.content.concat(flyersDocs);
+          resolve(proposalDoc);
+        })
+      } else resolve(proposalPdf(props));
+    }
+    catch(err) {
+      reject(err);
+    }
+  })
 }
 
 function generateContract(master) {
-  master.createdByFullName = getCreatedBy(master.createdBy);
-  master.client = getClient(master.clientId);
-  master = getSignatures(master);
-  master.accountServices = getAccount(master, 'billingServices');
+  return new Promise((resolve, reject) => {
+    try {
+      master.createdByFullName = getCreatedBy(master.createdBy);
+      master.client = getClient(master.clientId);
+      master = getSignatures(master);
+      master.accountServices = getAccount(master, 'billingServices');
 
-  var props = {
-    master,
-    generateTable,
-    styles
-  }
-  return contractPdf(props);
+      var props = {
+        master,
+        generateTable,
+        styles
+      }
+      resolve(contractPdf(props));
+    } catch(err) {
+      reject(err);
+    }
+  })
 }
 
 function generateBilling(master) {
-  master.createdByFullName = getCreatedBy(master.createdBy);
-  master.client = getClient(master.clientId);
-  master.accountProducts = getAccount(master, 'billingProducts');
+  return new Promise((resolve, reject) => {
+    master.createdByFullName = getCreatedBy(master.createdBy);
+    master.client = getClient(master.clientId);
+    master.accountProducts = getAccount(master, 'billingProducts');
 
-  var props = {
-    master,
-    header,
-    charge: master.charge,
-    generateTable,
-    styles
-  }
+    var props = {
+      master,
+      header,
+      charge: master.charge,
+      generateTable,
+      styles
+    }
 
-  return billingPdf(props);
+    resolve(billingPdf(props));
+  })
 }
 
-function generateFlyer({ _id, images }) {
-  var item = Containers.findOne({ _id });
-  return flyerPdf({...item, images}, header);
+function generateFlyer(master) {
+  return new Promise((resolve, reject) => {
+    getFlyerImages(master._id).then((images) => {
+      var item = Containers.findOne({ _id: master._id });
+      resolve(flyerPdf({...item, images}, header));
+    });
+  })
 }
 
 function getCreatedBy(userId) {
@@ -193,9 +232,11 @@ function generateFooter(docDefinition) {
   }
 }
 
-function getImages(_id) {
+function getFlyerImages(_id) {
   var promises = [];
   var item = Containers.findOne({ _id });
+
+  if (!item.flyer) return Promise.resolve([]);
 
   item.flyer.images.forEach((image) => {
     promises.push(new Promise((resolve, reject) => {

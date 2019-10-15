@@ -111,7 +111,20 @@ export default class FlyerCreator extends React.Component {
         })
       }
 
-      if (this.state.hasFlyer && this.state.newImages) {
+      const deleteOldImages = () => {
+        return new Promise((resolve, reject) => {
+          var _id = this.props.item._id;
+          var folder = `user-uploads/images/flyers/${_id}`;
+          Meteor.call('aws.delete.directory', folder, (err, res) => {
+            if (err) console.log(err);
+            if (res) {
+              resolve();
+            }
+          })
+        })
+      }
+
+      const uploadImages = () => {
         var promises = [];
         this.state.images.forEach((image, i) => {
           promises.push(new Promise((resolve, reject) => {
@@ -128,11 +141,18 @@ export default class FlyerCreator extends React.Component {
             reader.readAsDataURL(image);
           }))
         })
-        Promise.all(promises).then((images) => {
-          data.images = images;
-          updateContainer();
-        }).catch((err) => {
-          console.log(err);
+        return Promise.all(promises);
+      }
+
+      if (this.state.hasFlyer && this.state.newImages) {
+
+        deleteOldImages().then(() => {
+          uploadImages().then((images) => {
+            data.images = images;
+            updateContainer();
+          }).catch((err) => {
+            console.log(err);
+          })
         })
       } else updateContainer();
     })
@@ -193,7 +213,7 @@ export default class FlyerCreator extends React.Component {
               <Input
                 title="Imagens"
                 type="file"
-                accept="image/*"
+                accept="image/jpeg"
                 preview={true}
                 removeFile={this.removeImage}
                 value={this.state.images}

@@ -8,32 +8,31 @@ import moment from 'moment';
 import tools from '/imports/startup/tools/index';
 import Icon from '/imports/components/Icon/index';
 import Input from '/imports/components/Input/index';
-import DatabaseStatus from '/imports/components/DatabaseStatus/index';
-import Animation from '/imports/components/Animation/index';
 
 class TestPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: ''
+      value: 0
     }
   }
   onClick = (e) => {
-    Meteor.call('pdf.generate', (err, res) => {
-      if (err) {
-        if (err.error) {
-          alert(err.error)
-        } else alert(err);
-      }
-      if (res) {
-        alert('done! value: ' + res);
-      }
-    })
+    Meteor.call('a', this.state.value, (err, res) => {
+      console.log('RESPONDED!');
+      this.setState({ value: res });
+    });
   }
   render() {
     return (
       <div>
-        <button onClick={this.onClick}>GERAR!</button>
+        <button onClick={this.onClick}>+2</button>
+        <div>
+          {this.state.value}
+        </div>
+        <div>
+          Is it a Promise??
+          {typeof this.state.value.then === "function" ? 'Yes!' : 'No!'}
+        </div>
       </div>
     )
   }

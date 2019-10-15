@@ -35,7 +35,6 @@ if (Meteor.isServer) {
         Key: filePath
       }
       return new Promise((resolve, reject) => {
-        console.log(s3.credentials);
         s3.upload(params, (err, data) => {
           if (err) {
             reject(err);
@@ -99,6 +98,33 @@ if (Meteor.isServer) {
         })
       })
     },
+    // 'aws.delete.objects'(Keys) { // NOT YET USED, CHECK IF ITS WORKING
+    //   return new Promise((resolve, reject) => {
+    //     return resolve(Keys);
+    //     if (!Array.isArray(Keys)) reject('not-array');
+    //     if (!Keys.length) return resolve(Keys);
+    //
+    //     var Objects = Keys.map((Key) => {
+    //       return {
+    //         Key
+    //       }
+    //     })
+    //
+    //
+    //     var params = {
+    //       Bucket,
+    //       Delete: {
+    //         Objects
+    //       }
+    //     }
+    //     s3.deleteObjects(params, (err, data) => {
+    //       if (err) reject(err);
+    //       if (data) {
+    //         resolve(data);
+    //       }
+    //     })
+    //   })
+    // },
     'aws.delete.directory' (folder) {
       return new Promise((resolve, reject) => {
         if (Meteor.isDevelopment) {

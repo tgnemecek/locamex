@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.3.2
+
+-  Added new flyer functionality, creating the pdf instead of uploading;
+
 ## Version 2.3.1
 
 -  Added 'deny' to all mongo collections;

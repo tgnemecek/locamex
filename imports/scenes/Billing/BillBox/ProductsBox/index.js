@@ -66,13 +66,13 @@ export default class ProductsBox extends React.Component {
         if (err) this.setState({ databaseStatus: "failed" });
         if (res) {
           if (this.props.charge.status === "ready") {
-            this.printBilling();
+            this.printBilling(this.props.toggleWindow);
           } else this.setState({ databaseStatus: "completed" });
         }
       })
     });
   }
-  printBilling = () => {
+  printBilling = (callback) => {
     this.setState({ databaseStatus: "loading" }, () => {
       var master = {
         ...this.props.contract,
@@ -86,7 +86,11 @@ export default class ProductsBox extends React.Component {
       Meteor.call('pdf.generate', master, (err, res) => {
         if (res) {
           saveAs(res.data, res.fileName);
-          this.setState({ databaseStatus: "completed" });
+          var databaseStatus = {
+            status: "completed",
+            callback: typeof callback === "function" ? callback : null
+          }
+          this.setState({ databaseStatus });
         }
         if (err) {
           this.setState({ databaseStatus: "failed" });
@@ -219,7 +223,7 @@ export default class ProductsBox extends React.Component {
             value={this.state.observations}
             name="observations"
             className="grid-span-2"
-            disabled={this.props.charge.status === "finished"}
+            disabled={this.props.charge.status !== "ready"}
             onChange={this.handleChange}
           />
           <Input

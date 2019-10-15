@@ -96,13 +96,45 @@ if (Meteor.isServer) {
         if (state.newImages) {
           flyer.images = state.images;
         } else {
-          flyer.images = Containers.findOne({ _id: state._id }).flyer.images;
+          var item = Containers.findOne({ _id: state._id });
+          flyer.images = item.flyer.images;
         }
       }
 
       Containers.update({ _id: state._id }, {$set: { flyer }})
       Meteor.call('history.insert', flyer, 'containers.update.flyer');
       return state._id;
+    },
+    'containers.delete.flyer.images' (_id) {
+      return new Promise((resolve, reject) => {
+        var item = Containers.findOne({ _id });
+        if (!item.flyer) resolve(_id);
+
+        Meteor.call('aws.delete.objects', item.flyer.images,
+        (err, res) => {
+          if (err) console.log(err);
+          if (res) {
+            Meteor.call('history.insert', item.flyer, 'containers.delete.flyer.images');
+            resolve(_id);
+          }
+        })
+      })
+    },
+    'a'(value) {
+      return new Promise((resolve, reject) => {
+        Meteor.call('b', value, (err, res) => {
+          if (res) {
+            resolve(res);
+          }
+        })
+      });
+    },
+    'b'(value) {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          resolve(value+2)
+        }, 3000)
+      })
     }
   })
 }
