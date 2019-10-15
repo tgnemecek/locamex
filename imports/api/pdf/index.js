@@ -105,8 +105,12 @@ function generateProposal(master) {
               var item = Containers.findOne({
                 _id: container.productId
               });
-              var flyerDoc = flyerPdf({...item, images}, header).content
-              flyerDoc.unshift({text: '', pageBreak: 'after'});
+              var flyer = flyerPdf({...item, images}, header)
+              var flyerDoc = [];
+              if (flyer) {
+                flyerDoc = flyer.content;
+                flyerDoc.unshift({text: '', pageBreak: 'after'});
+              }
               resolve(flyerDoc);
             })
           })

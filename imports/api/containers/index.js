@@ -27,6 +27,7 @@ if (Meteor.isServer) {
 
         price: state.price,
         restitution: state.restitution,
+        flyer: false,
 
         visible: true
       }
@@ -66,6 +67,7 @@ if (Meteor.isServer) {
 
         price: state.price,
         restitution: state.restitution,
+        flyer: false,
 
         visible: true
       };

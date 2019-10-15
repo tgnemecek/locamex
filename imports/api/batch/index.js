@@ -14,6 +14,29 @@ import { Services } from '/imports/api/services/index';
 import { Series } from '/imports/api/series/index';
 
 if (Meteor.isServer && Meteor.isDevelopment) {
+
+//   Containers.update({}, {
+//     $set: {
+//       flyer: false
+//     }
+//   },
+//   {multi: true}
+// )
+
+  // var collection = Containers.find().fetch();
+  // //
+  // // Containers.remove({});
+  //
+  // collection.forEach((item) => {
+  //   var newItem = {
+  //     ...item,
+  //     flyer: false
+  //   }
+  //   Containers.insert(item);
+  // })
+
+
+
   // var collection = Contracts.find().fetch();
   //
   // function convertToDate(value) {
