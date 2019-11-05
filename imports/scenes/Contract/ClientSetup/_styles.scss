@@ -1,0 +1,21 @@
+.client-setup {
+
+}
+
+.client-setup__proposal-title {
+  margin-bottom: $space;
+}
+
+.client-setup__proposal-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  text-align: left;
+  grid-gap: ($space /2);
+}
+
+.client-setup__label {
+  display: inline-block;
+  font-weight: bold;
+  min-width: 120px;
+  margin-right: ($space /2);
+}

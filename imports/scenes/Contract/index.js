@@ -4,6 +4,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 
 import { Accounts } from '/imports/api/accounts/index';
 import { Contracts } from '/imports/api/contracts/index';
+import { Proposals } from '/imports/api/proposals/index';
 import { Clients } from '/imports/api/clients/index';
 import { Places } from '/imports/api/places/index';
 import { Containers } from '/imports/api/containers/index';
@@ -25,6 +26,7 @@ import SceneItems from '/imports/components/SceneItems/index';
 import SceneFooter from '/imports/components/SceneFooter/index';
 import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 
+import ClientSetup from './ClientSetup/index';
 import BillingSchedule from './BillingSchedule/index';
 import Information from './Information/index';
 
@@ -343,6 +345,12 @@ class Contract extends React.Component {
               finalizeMaster={this.finalizeContract}
             />
             <DatabaseStatus status={this.state.databaseStatus}/>
+            {this.props.contract.snapshots.length === 1 ?
+              <ClientSetup
+                updateContract={this.updateContract}
+                proposal={this.props.proposal}
+                clientsDatabase={this.props.clientsDatabase}/>
+            : null}
           </div>
         </div>
       </div>
@@ -377,6 +385,7 @@ function ContractLoader (props) {
 
 export default ContractWrapper = withTracker((props) => {
   Meteor.subscribe('contractsPub');
+  Meteor.subscribe('proposalsPub');
   Meteor.subscribe('clientsPub');
   Meteor.subscribe('accountsPub');
 
@@ -406,6 +415,13 @@ export default ContractWrapper = withTracker((props) => {
   if (props.match.params.contractId !== 'new') {
     contract = Contracts.findOne({ _id: props.match.params.contractId });
   }
-  return { databases, contract }
+
+  var proposal = contract ? Proposals.findOne({ _id: contract.proposal }) : null;
+  proposal = proposal ? {
+    ...proposal,
+    ...proposal.snapshots[proposal.activeVersion]
+  } : null;
+
+  return { databases, contract, proposal }
 
 })(ContractLoader);
