@@ -18,7 +18,7 @@ export default class ManageItems extends React.Component {
     super(props);
     this.state = {
       filteredDatabase: [],
-      addedItems: this.props.master[this.props.type] || [],
+      addedItems: [...this.props.master[this.props.type]] || [],
 
       isOpen: false
     }
