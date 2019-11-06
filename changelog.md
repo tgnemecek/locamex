@@ -1,5 +1,10 @@
 # Changelog:
 
+## Version 2.3.4
+
+-  Redone currency formatting to work on the server as well;
+-  Fixed SceneItems/ManageItem changing items on-the-fly (before saving);
+
 ## Version 2.3.3
 
 -  Pdf now gets descriptions from database, to avoid undefined product descriptions;
