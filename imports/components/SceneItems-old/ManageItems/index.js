@@ -9,6 +9,7 @@ import Input from '/imports/components/Input/index';
 import SearchBar from '/imports/components/SearchBar/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
+import Table from './Table/index';
 import Database from './Database/index';
 import AddedItems from './AddedItems/index';
 
@@ -17,35 +18,22 @@ export default class ManageItems extends React.Component {
     super(props);
     this.state = {
       filteredDatabase: [],
-      addedItems: this.props.master[this.props.type] || []
-    }
-  }
+      addedItems: this.props.master[this.props.type] || [],
 
-  componentDidMount() {
-    this.setState({
-      filteredDatabase: this.hideFromArray(this.props.fullDatabase)
-    })
+      isOpen: false
+    }
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps !== this.props) {
-      this.setState({
-        filteredDatabase: this.hideFromArray(this.props.fullDatabase)
-      })
+      var filteredDatabase = this.hideFromArray(this.props.fullDatabase);
+      this.setState({ filteredDatabase })
     }
   }
 
-  title = () => {
-    switch (this.props.type) {
-      case 'containers':
-        return 'Containers';
-      case 'accessories':
-        return 'Accessórios';
-      case 'services':
-        return 'Serviços';
-      default:
-        return '';
-    }
+  toggleWindow = () => {
+    var isOpen = !this.state.isOpen;
+    this.setState({ isOpen })
   }
 
   changePrice = (e) => {
@@ -82,7 +70,6 @@ export default class ManageItems extends React.Component {
   }
 
   hideFromArray = (toFilter, addedItems) => {
-    debugger;
     addedItems = addedItems || this.state.addedItems;
 
     return toFilter.filter((item) => {
@@ -143,42 +130,52 @@ export default class ManageItems extends React.Component {
       billingProducts: [],
       billingServices: []
     });
-    this.props.toggleWindow();
+    this.toggleWindow();
   }
 
   render() {
     return (
-      <Box
-        title={"Seleção de " + this.title()}
-        closeBox={this.props.toggleWindow}
-        width="1200px">
-          <Block columns={2}>
-            <SearchBar
-              database={this.props.fullDatabase}
-              searchHere={['description']}
-              filterSearch={this.filterSearch}/>
-            <div style={{marginTop: "30px"}}>
-              <label>{`${this.title()} Adicionados:`}</label>
-            </div>
-            <Database
-              database={this.state.filteredDatabase}
-              addItem={this.addItem}/>
-            <AddedItems
-              type={this.props.type}
-              addedItems={this.state.addedItems}
+      <div>
+        <Table
+          fullDatabase={this.props.fullDatabase}
+          addedItems={this.props.master[this.props.type]}
+          toggleWindow={this.toggleWindow}
+          updateMaster={this.props.updateMaster}
+        />
+        {this.state.isOpen ?
+          <Box
+            title={`Seleção de  ${this.props.title}`}
+            closeBox={this.toggleWindow}
+            width="1200px">
+              <Block columns={2}>
+                <SearchBar
+                  database={this.props.fullDatabase}
+                  searchHere={['description']}
+                  filterSearch={this.filterSearch}/>
+                <div style={{marginTop: "30px"}}>
+                  <label>{`${this.props.title} Adicionados:`}</label>
+                </div>
+                <Database
+                  database={this.state.filteredDatabase}
+                  addItem={this.addItem}/>
+                <AddedItems
+                  type={this.props.type}
+                  addedItems={this.state.addedItems}
 
-              changePrice={this.changePrice}
-              changeQuantity={this.changeQuantity}
-              removeItem={this.removeItem}
+                  changePrice={this.changePrice}
+                  changeQuantity={this.changeQuantity}
+                  removeItem={this.removeItem}
 
-              togglePackScreen={this.togglePackScreen}
-              toggleModularScreen={this.toggleModularScreen}/>
-          </Block>
-          <FooterButtons buttons={[
-            {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
-            {text: "Salvar", onClick: this.saveEdits}
-          ]}/>
-      </Box>
+                  togglePackScreen={this.togglePackScreen}
+                  toggleModularScreen={this.toggleModularScreen}/>
+              </Block>
+              <FooterButtons buttons={[
+                {text: "Voltar", className: "button--secondary", onClick: this.props.closeWindow},
+                {text: "Salvar", onClick: this.saveEdits}
+              ]}/>
+          </Box>
+        : null}
+      </div>
     )
   }
 }
