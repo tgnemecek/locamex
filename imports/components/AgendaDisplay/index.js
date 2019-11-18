@@ -50,13 +50,13 @@ class AgendaDisplay extends React.Component {
   renderTitle = () => {
     return (
       <div className="agenda__month-title">
-        <button onClick={() => this.changeMonth(-1)}>
+        <button className="agenda__jump-arrow" onClick={() => this.changeMonth(-1)}>
           <Icon icon="arrowLeft"/>
         </button>
         <h3>
           {moment().month(this.state.selectedMonth).format('MMMM') + ", " + this.state.selectedYear}
         </h3>
-        <button onClick={() => this.changeMonth(1)}>
+        <button className="agenda__jump-arrow" onClick={() => this.changeMonth(1)}>
           <Icon icon="arrowRight"/>
         </button>
         <button className="button--pill agenda__jump-to-today" onClick={this.jumpToToday}>
