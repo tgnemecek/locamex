@@ -11,10 +11,8 @@ export default class DocContractPerson extends React.Component {
       return (
         <Box
           title="Emitir Documento:"
-          width="400px"
+          className="documents"
           closeBox={this.props.toggleWindow}>
-            <div className="documents">
-            </div>
             <FooterButtons buttons={[
               {text: "Salvar e Gerar Documento", className: "button--primary", onClick: this.props.generateDocument},
             ]}/>

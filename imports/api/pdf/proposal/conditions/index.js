@@ -8,23 +8,11 @@ export default function conditions (props) {
     } else return props.dates.timeUnit === "months" ? 'mês' : 'dia';
   }
 
-  // const conditionalLine1 = () => {
-  //   if (props.dates.timeUnit === "months") {
-  //     return 'Valores referentes à locação deverão ser pagos mensalmente, com primeiro pagamento em 15 dias da entrega.'
-  //   } else {
-  //     return 'O Valor Total do Orçamento deverá ser pago com sinal de 50% no fechamento da proposta e 50% de saldo em até 3 dias antes da entrega.'
-  //   }
-  // }
-  //
-  // const conditionalLine2 = () => {
-  //   if (props.dates.timeUnit === "months") {
-  //     return 'Valores referentes ao Pacote de Serviços deverão ser pagos com sinal no ato e 50% de saldo em 30 dias.'
-  //   } else return null;
-  // }
-
   function conditionsToArray(conditions) {
-    conditions = conditions.trim().replace(/^• /g, '');
-    return conditions.split('\n• ');
+    if (conditions) {
+      conditions = conditions.trim().replace(/^• /g, '');
+      return conditions.split('\n• ');
+    } else return '';
   }
 
   return [

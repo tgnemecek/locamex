@@ -49,7 +49,7 @@ class Proposal extends React.Component {
         observations: {
           internal: '',
           external: '',
-          conditions: ''
+          conditions: undefined // Needs to be undefined to allow empty strings by user
         },
 
         deliveryAddress: {

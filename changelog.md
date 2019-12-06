@@ -1,5 +1,10 @@
 # Changelog:
 
+## Version 2.3.5
+
+-  Observations is now called Texts and is part of SceneHeader/Documents;
+-  Proposals now have a customizable field inside observations called conditions;
+
 ## Version 2.3.4
 
 -  Redone currency formatting to work on the server as well;

@@ -111,7 +111,7 @@ export default class SceneFooter extends React.Component {
           <h3>Valor Total: {tools.format(this.props.totalValue, 'currency')}</h3>
         </div>
         {this.renderButtons()}
-        <div className="scene-footer__text">Contrato criado dia {moment(this.props.master.dates.creationDate).format("DD/MM/YYYY")}</div>
+        <div className="scene-footer__text">Documento criado dia {moment(this.props.master.dates.creationDate).format("DD/MM/YYYY")}</div>
         <ConfirmationWindow
           isOpen={this.state.confirmationWindow === 'finalize'}
           closeBox={this.toggleWindowsOff}

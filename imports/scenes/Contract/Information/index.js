@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import { Link } from 'react-router-dom';
 import tools from '/imports/startup/tools/index';
 
 import Block from '/imports/components/Block/index';
@@ -88,15 +89,19 @@ export default class Information extends React.Component {
               value={this.props.contract.clientId}
               onClick={this.handleChange}>
             </SuggestionBar>
-            <Input
-              title="Proposta:"
-              name="proposal"
-              type="text"
-              className="span2"
-              disabled={true}
-              value={this.props.contract.proposal + "." + (this.props.contract.proposalVersion+1)}
-              onChange={this.handleChange}
-            />
+            <Link
+              to={`/proposal/${this.props.contract.proposal}`}
+              style={{textDecoration: 'none', cursor: 'pointer'}}>
+              <Input
+                title="Proposta:"
+                name="proposal"
+                type="text"
+                className="span2"
+                disabled={true}
+                value={this.props.contract.proposal + "." + (this.props.contract.proposalVersion+1)}
+                onChange={this.handleChange}
+              />
+            </Link>
             <CalendarBar
               title="Data da Entrega:"
               name="deliveryDate"

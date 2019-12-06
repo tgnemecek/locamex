@@ -96,40 +96,38 @@ export default class DocContractCompany extends React.Component {
       return (
         <Box
           title="Emitir Documento:"
-          width="400px"
+          className="documents"
           help="Para o contato de Negociador aparecer na lista, é obrigatório o preenchimento do Nome, Email e Telefone #1. Para o contato de Representante Legal, é obrigatório o preenchimento do Nome, CPF e RG. Tais preenchimentos são feitos exclusivamente na página de Clientes, ao editar o respectivo registro de Cliente."
           closeBox={this.props.toggleWindow}>
-            <div className="documents">
-              <Input
-                title="Contato da Negociação:"
-                type="select"
-                name="negociatorId"
-                error={this.state.errorKeys.includes("negociatorId")}
-                value={this.state.negociatorId}
-                onChange={this.onChangeMain}>
-                <option> </option>
-                {this.displayContacts('negociator')}
-              </Input>
-              <Input
-                title="Representante Legal:"
-                type="select"
-                name="0"
-                error={this.state.errorKeys.includes("rep1")}
-                value={this.state.representativesId[0]}
-                onChange={this.onChangeRepresentatives}>
-                <option> </option>
-                {this.displayContacts('rep')}
-              </Input>
-              <Input
-                title="Segundo Representante: (opcional)"
-                type="select"
-                name="1"
-                value={this.state.representativesId[1]}
-                onChange={this.onChangeRepresentatives}>
-                <option> </option>
-                {this.displayContacts('rep')}
-              </Input>
-            </div>
+            <Input
+              title="Contato da Negociação:"
+              type="select"
+              name="negociatorId"
+              error={this.state.errorKeys.includes("negociatorId")}
+              value={this.state.negociatorId}
+              onChange={this.onChangeMain}>
+              <option> </option>
+              {this.displayContacts('negociator')}
+            </Input>
+            <Input
+              title="Representante Legal:"
+              type="select"
+              name="0"
+              error={this.state.errorKeys.includes("rep1")}
+              value={this.state.representativesId[0]}
+              onChange={this.onChangeRepresentatives}>
+              <option> </option>
+              {this.displayContacts('rep')}
+            </Input>
+            <Input
+              title="Segundo Representante: (opcional)"
+              type="select"
+              name="1"
+              value={this.state.representativesId[1]}
+              onChange={this.onChangeRepresentatives}>
+              <option> </option>
+              {this.displayContacts('rep')}
+            </Input>
             <FooterButtons buttons={[
               {text: "Salvar e Gerar Documento", className: "button--primary", onClick: this.generate},
             ]}/>

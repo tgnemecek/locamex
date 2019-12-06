@@ -45,11 +45,16 @@ export default class Information extends React.Component {
     var timeUnit = e.target.value;
     var dates = {...this.props.proposal.dates};
     var discount = 0;
+    var observations = {
+      ...this.props.proposal.observations,
+      conditions: undefined
+    }
     dates.duration = 1;
     dates.timeUnit = timeUnit;
     this.props.updateProposal({
       dates,
-      discount
+      discount,
+      observations
     })
   }
 

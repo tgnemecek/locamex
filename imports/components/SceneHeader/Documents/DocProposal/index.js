@@ -10,7 +10,7 @@ export default class DocProposal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      includeFlyer: true
+      includeFlyer: true,
     }
   }
   onChange = (e) => {
@@ -23,17 +23,16 @@ export default class DocProposal extends React.Component {
       return (
         <Box
           title="Imprimir Proposta:"
-          width="400px"
+          className="documents"
           closeBox={this.props.toggleWindow}>
-            <div className="documents">
-              <Input
-                title="Incluir Folders:"
-                type="checkbox"
-                id="include-flyer"
-                value={this.state.includeFlyer}
-                onChange={this.onChange}
-              />
-            </div>
+            <Input
+              title="Incluir Folders:"
+              type="checkbox"
+              id="include-flyer"
+              value={this.state.includeFlyer}
+              onChange={this.onChange}
+            />
+            {this.props.children}
             <FooterButtons buttons={[
               {text: "Salvar e Imprimir Proposta", className: "button--primary", onClick: this.generateDocument},
             ]}/>

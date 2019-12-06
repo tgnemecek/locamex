@@ -7,7 +7,6 @@ import Status from '/imports/components/Status/index';
 import Input from '/imports/components/Input/index';
 
 import Documents from './Documents/index';
-import Observations from './Observations/index';
 
 export default class SceneHeader extends React.Component {
   constructor(props) {
@@ -183,13 +182,13 @@ export default class SceneHeader extends React.Component {
         <div className="master__header">
           {this.renderCreatedBy()}
           <div className="master__top-buttons">
-            <Icon value='observations' onClick={this.toggleWindow} className={this.checkIfHasContent()} icon="warning"/>
+            {/* <Icon value='observations' onClick={this.toggleWindow} className={this.checkIfHasContent()} icon="warning"/>
             {this.state.windowOpen == 'observations' ? <Observations
                                               master={this.props.master}
                                               toggleWindow={this.toggleWindow}
                                               updateMaster={this.props.updateMaster}
                                               disabled={this.props.disabled}
-                                                  /> : null}
+                                                  /> : null} */}
             {this.props.master.type === "contract" ?
             <button onClick={() => this.toggleWindow({target: {value: "billing"} })}>
               <Icon

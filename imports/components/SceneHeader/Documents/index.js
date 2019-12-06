@@ -9,26 +9,39 @@ import tools from '/imports/startup/tools/index';
 import DocContractCompany from './DocContractCompany/index';
 import DocContractPerson from './DocContractPerson/index';
 import DocProposal from './DocProposal/index';
+import Texts from './Texts/index';
 
 export default class DocumentsSelector extends React.Component {
-  getClient = () => {
+  constructor(props) {
+    super(props);
+    this.newProps = {
+      ...this.props,
+      master: {
+        ...this.props.master,
+        client: this.props.master.type === "contract" ?
+          this.props.databases.clientsDatabase.find((client) => client._id === this.props.master.clientId) : this.props.master.client
+      }
+    }
     if (this.props.master.type === "contract") {
-      return this.props.databases.clientsDatabase.find((client) => client._id === this.props.master.clientId);
-    } else return this.props.master.client;
+      if (this.newProps.master.client.type === "company") {
+        this.Component = DocContractCompany;
+      }
+      if (this.newProps.master.client.type === "person") {
+        this.Component = DocContractPerson;
+      }
+    } else this.Component = DocProposal;
   }
 
   render() {
-    var newProps = {
-      ...this.props,
-      master: {...this.props.master, client: this.getClient()}
-    }
-    if (this.props.master.type === "contract") {
-      if (newProps.master.client.type === "company") {
-        return <DocContractCompany {...newProps}/>
-      }
-      if (newProps.master.client.type === "person") {
-        return <DocContractPerson {...newProps}/>
-      }
-    } else return <DocProposal {...this.props}/>
+    return (
+      <this.Component {...this.newProps}>
+        <Texts
+          master={this.props.master}
+          toggleWindow={this.toggleWindow}
+          updateMaster={this.props.updateMaster}
+          disabled={this.props.disabled}
+        />
+      </this.Component>
+    )
   }
 }
