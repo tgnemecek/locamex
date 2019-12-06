@@ -48,7 +48,8 @@ class Proposal extends React.Component {
 
         observations: {
           internal: '',
-          external: ''
+          external: '',
+          conditions: ''
         },
 
         deliveryAddress: {
