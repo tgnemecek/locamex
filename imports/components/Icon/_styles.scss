@@ -26,6 +26,7 @@
   border: 1px solid $button-pill-color;
   color: $button-pill-color;
   min-width: 28px;
+  padding: ($space /2);
 }
 
 .button--disabled {

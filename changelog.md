@@ -1,5 +1,7 @@
 # Changelog:
 
+-  Swapped " " for "." on currency format (tools);
+
 ## Version 2.3.3
 
 -  Pdf now gets descriptions from database, to avoid undefined product descriptions;

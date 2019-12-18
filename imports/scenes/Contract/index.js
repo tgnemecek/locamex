@@ -78,8 +78,15 @@ class Contract extends React.Component {
       },
       errorMsg: '',
       errorKeys: [],
+      clientSetupWindow: true,
       databaseStatus: ''
     }
+  }
+
+  componentDidMount() {
+    if (this.props.contract.snapshots.length === 1) {
+      this.setState({ clientSetupWindow: true });
+    } else this.setState({ clientSetupWindow: false });
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -345,11 +352,12 @@ class Contract extends React.Component {
               finalizeMaster={this.finalizeContract}
             />
             <DatabaseStatus status={this.state.databaseStatus}/>
-            {this.props.contract.snapshots.length === 1 ?
+            {this.state.clientSetupWindow ?
               <ClientSetup
                 updateContract={this.updateContract}
                 proposal={this.props.proposal}
-                clientsDatabase={this.props.clientsDatabase}/>
+                closeWindow={() => this.setState({ clientSetupWindow: false })}
+                clientsDatabase={this.props.databases.clientsDatabase}/>
             : null}
           </div>
         </div>

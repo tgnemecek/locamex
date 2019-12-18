@@ -12,7 +12,8 @@ export default class SuggestionBar extends React.Component {
     this.state = {
       buttonMode: false,
       query: '',
-      results: []
+      results: [],
+      value: ''
     }
   }
 
@@ -23,7 +24,9 @@ export default class SuggestionBar extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.database !== this.props.database) {
+    if (prevProps.database !== this.props.database
+        || this.props.value !== this.state.value
+    ) {
       this.setup();
     }
   }
@@ -34,7 +37,11 @@ export default class SuggestionBar extends React.Component {
         this.props.onClick({
           target: {value: item._id, name: this.props.name}
         });
-        this.setState({ query: item.description, buttonMode: true });
+        this.setState({
+          query: item.description,
+          buttonMode: true,
+          value: this.props.value
+        });
         return true;
       }
     })
@@ -72,13 +79,18 @@ export default class SuggestionBar extends React.Component {
 
   renderResults = () => {
     const onClick = (e) => {
+      var value = e.target.value;
       var exportObject = this.state.results[e.target.name] || {};
       this.props.onClick({target: {
-        value: e.target.value,
+        value,
         name: this.props.name
       }}, exportObject);
 
-      this.setState({ query: exportObject.description, buttonMode: true }, () => {
+      this.setState({
+        query: exportObject.description,
+        buttonMode: true,
+        value
+      }, () => {
         this.hideDropbox();
       })
     }

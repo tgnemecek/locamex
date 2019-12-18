@@ -1,5 +1,4 @@
 .client-setup {
-
 }
 
 .client-setup__proposal-title {
@@ -11,6 +10,18 @@
   grid-template-columns: 1fr 1fr;
   text-align: left;
   grid-gap: ($space /2);
+  margin-bottom: $space;
+}
+
+.client-setup__client-body {
+  display: grid;
+  grid-template-columns: 90% 10%;
+  align-items: end;
+}
+
+.client-setup__add-new-button {
+  height: 35px;
+  // padding: ($space /2);
 }
 
 .client-setup__label {
