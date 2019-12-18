@@ -23,9 +23,21 @@ export default class ClientSetup extends React.Component {
   handleChange = (e) => {
     this.setState({ clientId: e.target.value })
   }
-  toggleClientWindow = () => {
-    var clientWindow = this.state.clientWindow ? false : {};
-    this.setState({ clientWindow })
+  toggleClientWindow = (_id) => {
+    var clientWindow = this.state.clientWindow ? false : {
+      description: this.props.proposal.client.description,
+      contacts: [
+        {
+          name: this.props.proposal.client.name,
+          email: this.props.proposal.client.email,
+          phone1: this.props.proposal.client.phone
+        }
+      ]
+    };
+    this.setState({
+      clientWindow,
+      clientId: _id || ''
+    })
   }
   verification = () => {
     if (!this.state.clientId) {
@@ -80,7 +92,7 @@ export default class ClientSetup extends React.Component {
               </button>
             </div>
             <FooterButtons buttons={[
-              {text: "Adicionar Cliente", onClick: this.verification}
+              {text: "Adicionar ao Contrato", onClick: this.verification}
             ]}/>
             {this.state.clientWindow ?
               <RegisterData

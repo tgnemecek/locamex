@@ -1,6 +1,13 @@
 # Changelog:
 
+## Version 2.3.4
+
 -  Swapped " " for "." on currency format (tools);
+-  RegisterClients changes:
+    -  toggleWindow now returns id;
+    -  Clients now have DatabaseStatus component;
+    -  RegisterData checks if its typeof object to toggle edit window;
+-  Contracts now have ClientSetup component;
 
 ## Version 2.3.3
 
