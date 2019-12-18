@@ -77,6 +77,8 @@ export default class tools {
       if (typeof input1 !== typeof input2) return false;
       if (typeof input1 === "string" || typeof input1 === "number") {
         return input1 === input2;
+      } else if (input1 instanceof Date) {
+        return input1.getTime() === input2.getTime();
       } else if (typeof input1 === "object") {
         if (input1 === input2) return true;
         if (Array.isArray(input1)) {
@@ -359,7 +361,7 @@ export default class tools {
             value = Number(value);
         }
         value = Math.round(value*100)/100;
-        // Old method. Removed because doesn't work on server
+        // Old method. Removed because doesn't work on server:
         // return value.toLocaleString('pt-br', realOptions);
         value = value.toString().replace(/\./g, ",");
 
@@ -372,7 +374,7 @@ export default class tools {
           } else {
             thirds++;
             if (thirds === 3 && i !== 0) {
-              newString = " " + newString;
+              newString = "." + newString;
               thirds = 0;
             }
           }

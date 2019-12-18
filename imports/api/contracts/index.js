@@ -61,7 +61,7 @@ if (Meteor.isServer) {
       };
 
       data.snapshots.push(newSnapshot);
-      data.activeVersion = snapshot.version;
+      data.activeVersion = Number(snapshot.version)+1;
 
       Contracts.update({ _id }, { $set: data });
       Meteor.call('history.insert', data, 'contracts.update');

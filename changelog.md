@@ -1,5 +1,14 @@
 # Changelog:
 
+## Version 2.3.6
+
+-  Swapped " " for "." on currency format (tools);
+-  RegisterClients changes:
+    -  toggleWindow now returns id;
+    -  Clients now have DatabaseStatus component;
+    -  RegisterData checks if its typeof object to toggle edit window;
+-  Contracts now have ClientSetup component;
+
 ## Version 2.3.5
 
 -  Observations is now called Texts and is part of SceneHeader/Documents;

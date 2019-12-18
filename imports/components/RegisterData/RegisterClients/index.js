@@ -8,6 +8,7 @@ import Box from '/imports/components/Box/index';
 import Input from '/imports/components/Input/index';
 import Tab from '/imports/components/Tab/index';
 import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
+import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
 import MainTab from './MainTab/index';
@@ -54,7 +55,8 @@ export default class RegisterClients extends React.Component {
       confirmationWindow: false,
       tab: 'main',
       errorMsg: '',
-      errorKeys: []
+      errorKeys: [],
+      databaseStatus: ''
     }
   }
   onChange = (e) => {
@@ -98,10 +100,48 @@ export default class RegisterClients extends React.Component {
         contacts
       }
 
-      if (this.props.item._id) {
-        Meteor.call('clients.update', state);
-      } else Meteor.call('clients.insert', state);
-      this.props.toggleWindow();
+      this.setState({ databaseStatus: "loading" }, () => {
+        if (this.props.item._id) {
+          Meteor.call('clients.update', state, (err, res) => {
+            if (res) {
+              this.setState({
+                databaseStatus: {
+                  status: "completed",
+                  callback: () => this.props.toggleWindow()
+                }
+              });
+            }
+            if (err) {
+              console.log(err);
+              this.setState({
+                databaseStatus: "failed"
+              });
+            }
+          });
+        } else Meteor.call('clients.insert', state, (err, res) => {
+          if (res) {
+            this.setState({
+              databaseStatus: {
+                status: "completed",
+                callback: () => this.props.toggleWindow(res)
+              }
+            });
+          }
+          if (err) {
+            if (err.error === 'duplicate-registry') {
+              this.setState({
+                errorMsg: 'CPF/CNPJ duplicado! O Cliente que você está tentando cadastrar possivelmente já existe no banco de dados.',
+                databaseStatus: "failed"
+              })
+            } else {
+              console.log(err);
+              this.setState({
+                databaseStatus: "failed"
+              });
+            }
+          }
+        });
+      })
     }
   }
   changeTab = (tab) => {
@@ -177,10 +217,13 @@ export default class RegisterClients extends React.Component {
             message="Deseja mesmo excluir este item do banco de dados?"
             leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
             rightButton={{text: "Sim", className: "button--danger", onClick: this.removeItem}}/>
-            <FooterButtons buttons={[
-              {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
-              {text: "Salvar", onClick: this.saveEdits}
-            ]}/>
+          <FooterButtons buttons={[
+            {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+            {text: "Salvar", onClick: this.saveEdits}
+          ]}/>
+          <DatabaseStatus
+            status={this.state.databaseStatus}
+          />
         </Box>
       </ErrorBoundary>
     )

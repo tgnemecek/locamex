@@ -15,6 +15,10 @@ if (Meteor.isServer) {
   })
   Meteor.methods({
     'clients.insert'(state) {
+      const exists = Clients.findOne({ registry: state.registry });
+      if (exists) {
+        throw new Meteor.Error('duplicate-registry');
+      }
       const _id = tools.generateId();
       var data = {};
       if (state.type == 'company') {
@@ -49,6 +53,7 @@ if (Meteor.isServer) {
       }
       Clients.insert(data);
       Meteor.call('history.insert', data, 'clients');
+      return _id;
     },
 
     'clients.hideContact'(_id, contactId) {
@@ -65,6 +70,7 @@ if (Meteor.isServer) {
       }
       Clients.update({ _id }, { $set: data });
       Meteor.call('history.insert', data, 'clients');
+      return _id;
     },
 
     'clients.update'(state) {
@@ -99,6 +105,7 @@ if (Meteor.isServer) {
       }
       Clients.update({ _id: state._id }, { $set: data });
       Meteor.call('history.insert', data, 'clients');
+      return state._id;
     }
   })
 }

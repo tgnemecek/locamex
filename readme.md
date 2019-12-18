@@ -1,6 +1,6 @@
-# Sistema Locamex
+# Locamex System
 
-Version: 2.3.5
+Version: 2.3.6
 
 ## About:
 
@@ -11,11 +11,11 @@ It features pdf printing for contract and proposals, calendar displays of billin
 
 This web-app was developed in Meteor using React and SASS. Other technologies were used such as pdfmake for pdf generation, Amazon Web Services SDK for file uploads (S3) and moment.js for time calculations and formatting.
 
-## Information:
+## Main Information:
 
 - To push to locamex-test use "git push test _BRANCH_:master";
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
-- To test use "meteor", to test with file upload functionality use "meteor npm run local-aws".
+- To test use "meteor", to test with file upload functionality (AWS) use "meteor npm run local-aws".
 
 ## Author:
 
@@ -25,4 +25,13 @@ Made by Thiago Nemecek.
 
 Copyright 2019 Thiago Nemecek. All rights reserved.
 
+## Changes:
+
 [Change Log](changelog.md)
+
+For every new version, version numbers must be changed at:
+- readme.md
+- changelog.md
+- package.json
+
+Commits do not have changes information, they are instead stored in the change log.

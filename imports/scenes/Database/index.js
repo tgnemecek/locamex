@@ -21,7 +21,7 @@ export default class Database extends React.Component {
   }
 
   toggleEditWindow = (item) => {
-    if (item) {
+    if (typeof item === "object") {
       this.setState({
         editWindow: !this.state.editWindow,
         item
