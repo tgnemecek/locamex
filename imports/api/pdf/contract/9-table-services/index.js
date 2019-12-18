@@ -14,7 +14,7 @@ export default function tableServices(props) {
     header: [[
       '#',
       'Descrição',
-      {text: 'Valor Unitário', alignment: 'left'},
+      {text: 'Valor Unit.', alignment: 'left'},
       {text: 'Qtd.', alignment: 'center'},
       {text: 'Valor Total', alignment: 'right'}
     ]],

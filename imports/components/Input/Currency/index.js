@@ -70,7 +70,8 @@ export default class Currency extends React.Component {
   }
 
   unformat = () => {
-    var displayValue = this.state.displayValue.replace("R$", "").trim();
+    var displayValue = this.state.displayValue.replace("R$", "");
+    displayValue = displayValue.replace(/\s/g, "");
     this.setState({ displayValue });
   }
 
