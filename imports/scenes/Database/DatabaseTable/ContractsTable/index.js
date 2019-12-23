@@ -164,16 +164,9 @@ export default ContractsTableWrapper = withTracker((props) => {
 
   fullDatabase = tools.sortObjects(fullDatabase, '_id', {reverseOrder: true});
   fullDatabase = fullDatabase.map((item) => {
-    newItem = {
-      ...item.snapshots[Number(item.activeVersion)],
-      _id: item._id,
-      status: item.status,
-      proposal: item.proposal,
-      proposalVersion: item.proposalVersion
-    };
-
+    var newItem = tools.explodeContract(item);
     var currentClient = clientsDatabase.find((client) => {
-      return client._id === item.clientId
+      return client._id === newItem.clientId
     });
 
     if (currentClient) {

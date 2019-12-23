@@ -139,13 +139,8 @@ export default ProposalsTableWrapper = withTracker((props) => {
   var fullDatabase = Proposals.find().fetch();
   fullDatabase = tools.sortObjects(fullDatabase, '_id', {reverseOrder: true});
   fullDatabase = fullDatabase.map((item) => {
-    var newItem = {
-      ...item.snapshots[item.activeVersion],
-      _id: item._id,
-      status: item.status,
-      clientName: item.snapshots[item.activeVersion].client.description
-    };
-
+    var newItem = tools.explodeProposal(item);
+    newItem.clientName = newItem.client.description;
     return newItem;
   })
   var ready = !!fullDatabase.length;

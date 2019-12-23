@@ -190,7 +190,7 @@ export default class Information extends React.Component {
             <Input
               title="Número:"
               name="number"
-              type="number"
+              type="text"
               extra="deliveryAddress"
               error={this.props.errorKeys.includes("number")}
               value={this.props.contract.deliveryAddress.number}

@@ -7,6 +7,56 @@ export default class tools {
 
   // Objects, Arrays
 
+  static explodeProposal = (proposal, forceVersion) => {
+    if (proposal) {
+      var versionToShow;
+      if (forceVersion !== undefined) {
+        versionToShow = forceVersion;
+      } else {
+        if (proposal.status === 'inactive') {
+          versionToShow = proposal.snapshots.length-1;
+        } else if (proposal.status === 'active') {
+          versionToShow = proposal.activeVersion;
+        } else if (proposal.status === 'cancelled') {
+          if (proposal.activeVersion !== undefined) {
+            versionToShow = proposal.activeVersion;
+          } else versionToShow = proposal.snapshots.length-1;
+        }
+      }
+
+      return {
+        ...proposal,
+        ...proposal.snapshots[versionToShow],
+        version: versionToShow
+      }
+    } else return false;
+  }
+
+  static explodeContract = (contract, forceVersion) => {
+    if (contract) {
+      var versionToShow;
+      if (forceVersion !== undefined) {
+        versionToShow = forceVersion;
+      } else {
+        if (contract.status === 'inactive') {
+          versionToShow = contract.snapshots.length-1;
+        } else if (contract.status === 'active'
+                || contract.status === 'finalized') {
+          versionToShow = contract.activeVersion;
+        } else if (contract.status === 'cancelled') {
+          if (contract.activeVersion !== undefined) {
+            versionToShow = contract.activeVersion;
+          } else versionToShow = contract.snapshots.length-1;
+        }
+      }
+      return {
+        ...contract,
+        ...contract.snapshots[versionToShow],
+        version: versionToShow
+      }
+    } else return false;
+  }
+
   static deepCopy = (input) => {
     if (Array.isArray(input) || typeof(input) == 'object') {
       return JSON.parse(JSON.stringify(input));
