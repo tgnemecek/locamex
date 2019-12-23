@@ -5,8 +5,8 @@ import tools from '/imports/startup/tools/index';
 
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
-import CalendarBar from '/imports/components/CalendarBar/index';
 import SuggestionBar from '/imports/components/SuggestionBar/index';
+import CalendarBar from '/imports/components/CalendarBar/index';
 
 export default class Information extends React.Component {
   changeDuration = (e) => {
@@ -78,7 +78,7 @@ export default class Information extends React.Component {
   render() {
       return (
         <div className="contract__information">
-          <div>
+          <div className="contract__information__left">
             <SuggestionBar
               title="Cliente:"
               name="clientId"
@@ -90,20 +90,20 @@ export default class Information extends React.Component {
               onClick={this.handleChange}>
             </SuggestionBar>
             <Link
+              className="span2"
               to={`/proposal/${this.props.contract.proposal}`}
               style={{textDecoration: 'none', cursor: 'pointer'}}>
               <Input
                 title="Proposta:"
                 name="proposal"
                 type="text"
-                className="span2"
                 disabled={true}
                 value={this.props.contract.proposal + "." + (this.props.contract.proposalVersion+1)}
                 onChange={this.handleChange}
               />
             </Link>
             <CalendarBar
-              title="Data da Entrega:"
+              title="Início:"
               name="deliveryDate"
               extra="dates"
               className="span2"
@@ -142,7 +142,7 @@ export default class Information extends React.Component {
                 <option value="days">Dias</option>
             </Input>
           </div>
-          <div>
+          <div className="contract__information__right">
             <Input
               title="Endereço de Entrega:"
               name="street"
