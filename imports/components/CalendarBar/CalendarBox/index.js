@@ -8,8 +8,8 @@ export default class CalendarBox extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      monthIndex: new Date(this.props.value).getMonth() || new Date().getMonth(),
-      yearIndex: new Date(this.props.value).getFullYear() || new Date().getFullYear(),
+      monthIndex: new Date(this.props.value).getMonth(),
+      yearIndex: new Date(this.props.value).getFullYear(),
       dayIndex: 1,
       selectedDate: this.props.value || new Date()
     }

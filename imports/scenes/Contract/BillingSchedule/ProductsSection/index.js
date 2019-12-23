@@ -29,9 +29,6 @@ export default class ProductsSection extends React.Component {
     })
   }
 
-  changeStartDate = (e) => {
-    this.props.changeStartDate(e.target.value);
-  }
 
   // Rendering: ----------------------------------------------------------------
 
@@ -93,10 +90,10 @@ export default class ProductsSection extends React.Component {
               type="number"
               disabled={true}
               value={this.props.billingProducts.length}/>
-            <CalendarBar
-              title="Início da Cobrança:"
-              onChange={this.changeStartDate}
-              value={this.props.billingProducts[0].startDate}/>
+            <Input
+              title="Início:"
+              disabled={true}
+              value={moment(this.props.billingProducts[0].startDate).format("DD/MM/YYYY")}/>
             <ExpiryDate
               billingProducts={this.props.billingProducts}
               updateBilling={this.props.updateBilling}

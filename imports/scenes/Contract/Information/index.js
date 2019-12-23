@@ -42,8 +42,20 @@ export default class Information extends React.Component {
     this.props.updateContract({
       dates,
       discount,
-      billingProducts: {},
-      billingServices: {}
+      billingProducts: [],
+      billingServices: []
+    })
+  }
+
+  changeDeliveryDate = (e) => {
+    var deliveryDate = e.target.value;
+    this.props.updateContract({
+      dates: {
+        ...this.props.contract.dates,
+        deliveryDate
+      },
+      billingProducts: [],
+      billingServices: []
     })
   }
 
@@ -107,7 +119,7 @@ export default class Information extends React.Component {
               name="deliveryDate"
               extra="dates"
               className="span2"
-              onChange={this.handleChange}
+              onChange={this.changeDeliveryDate}
               value={this.props.contract.dates.deliveryDate}
             />
             <Input
