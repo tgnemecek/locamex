@@ -42,7 +42,7 @@ export default class ShippingHistory extends React.Component {
         <tr>
           <th className="table__small-column">#</th>
           <th>Data do Registro</th>
-          <th>Tipo de Envio</th>
+          <th>Tipo de Remessa</th>
           {renderButtons('send')}
           {renderButtons('receive')}
         </tr>
@@ -54,8 +54,8 @@ export default class ShippingHistory extends React.Component {
     if (!this.props.shipping.history) return null;
 
     function translateType(type) {
-      if (type === 'sendAll') return "Entrega Completa";
-      if (type === 'receiveAll') return "Devolução Completa";
+      if (type === 'send') return "Entrega";
+      if (type === 'receive') return "Devolução";
       return "";
     }
     return this.props.shipping.history.map((item, i) => {
@@ -85,7 +85,9 @@ export default class ShippingHistory extends React.Component {
     return (
       <tfoot>
         <tr>
-          <td colSpan="3">Não foram encontrados registros neste contrato</td>
+          <td colSpan="3">
+            Não foram encontrados registros neste contrato
+          </td>
         </tr>
       </tfoot>
     )

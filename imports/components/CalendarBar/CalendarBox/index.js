@@ -15,8 +15,8 @@ export default class CalendarBox extends React.Component {
     }
   }
 
-  changeMonth = (e) => {
-    var monthIndex = this.state.monthIndex + Number(e.target.value);
+  changeMonth = (change) => {
+    var monthIndex = this.state.monthIndex + Number(change);
     var yearIndex = this.state.yearIndex;
 
     if (monthIndex > 11) {
@@ -88,9 +88,13 @@ export default class CalendarBox extends React.Component {
       return (
         <Box closeBox={this.props.closeCalendar}>
           <div className="calendar-bar__box__header">
-            <Icon value={-1} icon="arrowLeft" onClick={this.changeMonth}/>
+            <button onClick={() => this.changeMonth(-1)}>
+              <Icon icon="arrowLeft" />
+            </button>
             <h3>{moment().month(this.state.monthIndex).format('MMMM') + "/" + this.state.yearIndex}</h3>
-            <Icon value={+1} icon="arrowRight" onClick={this.changeMonth}/>
+            <button onClick={() => this.changeMonth(1)}>
+              <Icon icon="arrowRight" />
+            </button>
           </div>
           <table className="calendar-bar__box__table">
             <tbody>

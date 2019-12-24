@@ -16,7 +16,9 @@ export default class Help extends React.Component {
   render() {
     return (
       <div className={this.props.className}>
-        <Icon onClick={this.toggleHelpBox} icon="help" />
+        <button onClick={this.toggleHelpBox}>
+          <Icon icon="help" />
+        </button>
         {this.state.helpBox ?
           <Box
             title="Ajuda:"

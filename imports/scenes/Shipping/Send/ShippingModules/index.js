@@ -42,9 +42,11 @@ export default class ShippingModules extends React.Component {
     )
   }
 
-  toggleMultipleWindow = (e) => {
-    if (!e) return this.setState({ selectMultiple: { isOpen: false } });
-    var index = e.target.value;
+  toggleMultipleWindow = (index) => {
+    if (index === undefined) {
+      this.setState({ selectMultiple: { isOpen: false } });
+      return;
+    }
     var _id = this.props.modules[index]._id;
     var productId = this.props.modules[index].productId;
     if (!productId) return;
@@ -114,10 +116,14 @@ export default class ShippingModules extends React.Component {
           </td>
           <td className="table__small-column">{calculateQuantity(item.selected)}</td>
           <td className="table__small-column">
-            <Icon value={i} onClick={this.toggleMultipleWindow} icon="transaction"/>
+            <button onClick={() => this.toggleMultipleWindow(i)}>
+              <Icon icon="transaction"/>
+            </button>
           </td>
           <td className="table__small-column">
-            <Icon onClick={removeItem} icon="not"/>
+            <button onClick={removeItem}>
+              <Icon icon="not"/>
+            </button>
           </td>
           <td className="table__small-column">{checkmark(item, calculateQuantity(item.selected))}</td>
         </tr>

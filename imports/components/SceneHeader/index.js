@@ -148,7 +148,9 @@ export default class SceneHeader extends React.Component {
         && this.props.master.type !== "billing") {
       return (
         <>
-          <Icon value="documents" onClick={requirements} icon="print"/>
+          <button onClick={requirements}>
+            <Icon value="documents" icon="print"/>
+          </button>
           {renderDocuments()}
         </>
       )
@@ -165,7 +167,11 @@ export default class SceneHeader extends React.Component {
 
   showCancelButton = () => {
     if (this.props.master.status === "inactive" && this.props.master._id) {
-      return <Icon onClick={this.toggleCancelWindow} icon="not" />
+      return (
+        <button onClick={this.toggleCancelWindow}>
+          <Icon icon="not" />
+        </button>
+      )
     } else return null;
   }
 
