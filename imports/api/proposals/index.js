@@ -84,7 +84,7 @@ if (Meteor.isServer) {
         proposal: _id,
         proposalVersion: Number(master.version),
         activeVersion: undefined,
-        shipping: {},
+        shipping: [],
         snapshots: [
           {
             createdBy: master.createdBy,

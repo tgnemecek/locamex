@@ -81,20 +81,6 @@ export default class ShippingFixed extends React.Component {
               {this.renderBody()}
             </tbody>
           </table>
-          {/* {this.state.imageVisualizer ?
-            <ImageVisualizer
-              item={{...this.state.imageVisualizer, itemType: 'fixed'}}
-              readOnly={true}
-              toggleWindow={this.toggleImageWindow}
-            />
-          : null}
-          {this.state.observationsVisualizer ?
-            <this.props.Observations
-              title={this.state.observationsVisualizer.serial}
-              content={this.state.observationsVisualizer.observations}
-              toggleWindow={this.toggleObservationsWindow}
-            />
-          : null} */}
         </Block>
       )
     } else return null;

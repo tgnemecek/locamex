@@ -39,7 +39,8 @@ export default class Send extends React.Component {
               _id: tools.generateId(),
               productId: item.productId,
               seriesId: '',
-              description: productFromDatabase.description
+              description: productFromDatabase.description,
+              place: item.place
             })
           }
         }

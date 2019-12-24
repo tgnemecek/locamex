@@ -196,7 +196,16 @@ export default SeriesTableWrapper = withTracker((props) => {
   Meteor.subscribe('containersPub');
 
   var fullDatabase = Series.find().fetch();
-  fullDatabase = tools.sortObjects(fullDatabase, '_id');
+  // fullDatabase = tools.sortObjects(fullDatabase, '_id');
+  fullDatabase.sort(function (a, b) {
+    if (Number(a._id) < Number(b._id)) {
+      return -1;
+    }
+    if (Number(a._id) > Number(b._id)) {
+      return 1;
+    }
+    return 0;
+  })
 
   var containersDatabase = Containers.find().fetch();
   var placesDatabase = Places.find().fetch();

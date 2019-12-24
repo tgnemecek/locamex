@@ -13,6 +13,7 @@ import contractPdf from './contract/index';
 import proposalPdf from './proposal/index';
 import billingPdf from './billing/index';
 import flyerPdf from './flyer/index';
+import shippingPdf from './shipping/index';
 
 import generateTable from './generate-table/index';
 import header from './header/index';
@@ -32,7 +33,7 @@ if (Meteor.isServer) {
       try {
         var docDefinition = generateDocDefinition(master).await();
         docDefinition.pageBreakBefore = setPageBreaks();
-        docDefinition.footer = generateFooter(docDefinition);
+        docDefinition.footer = docDefinition.footer || generateFooter(docDefinition);
 
         var buffer = generateBuffer(docDefinition).await();
         var prefix = 'data:application/pdf;base64,';
@@ -70,6 +71,10 @@ function generateDocDefinition(master) {
       break;
     case 'flyer':
       generator = generateFlyer;
+      break;
+    case 'send':
+    case 'receive':
+      generator = generateShipping;
       break;
   }
   // Generate docDefinition
@@ -166,6 +171,19 @@ function generateBilling(master) {
     }
 
     resolve(billingPdf(props));
+  })
+}
+
+function generateShipping(master) {
+  return new Promise((resolve, reject) => {
+    var props = {
+      master,
+      header,
+      generateTable,
+      styles
+    }
+
+    resolve(shippingPdf(props));
   })
 }
 
