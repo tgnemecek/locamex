@@ -8,8 +8,8 @@ import {
   faEdit,
   faImages,
   faSearch,
-  faLevelUpAlt,
-  faLevelDownAlt,
+  faSignOutAlt,
+  faSignInAlt,
   faTimes,
   faExclamationCircle,
   faPrint,
@@ -33,8 +33,8 @@ const ICON_SET = {
   edit: faEdit,
   image: faImages,
   search: faSearch,
-  send: faLevelUpAlt,
-  receive: faLevelDownAlt,
+  send: faSignOutAlt,
+  receive: faSignInAlt,
   not: faTimes,
   warning: faExclamationCircle,
   print: faPrint,
@@ -64,7 +64,9 @@ export default class Icon extends React.Component {
   renderIcon = () => {
     return (
       <FontAwesomeIcon
-        icon={ICON_SET[this.props.icon]} size={this.props.size || "1x"}/>
+        {...this.props}
+        icon={ICON_SET[this.props.icon]}
+        size={this.props.size || "1x"}/>
     )
   }
 
@@ -86,7 +88,7 @@ export default class Icon extends React.Component {
     if (this.props.icon) {
       return (
         <Component
-          {...this.props}
+          // {...this.props}
           onClick={this.onClick}
           className={"icon " + (this.props.className || "")}
           style={this.style()}>
@@ -99,7 +101,8 @@ export default class Icon extends React.Component {
   render() {
     return (
       <>
-        {this.conditionalRendering()}
+        {/* {this.conditionalRendering()} */}
+        {this.renderIcon()}
       </>
     )
   }

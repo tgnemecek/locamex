@@ -54,6 +54,7 @@ if (Meteor.isServer) {
         version: undefined,
         status: undefined,
         activeVersion: undefined,
+        shipping: undefined,
 
         containers: setProducts(snapshot.containers),
         accessories: setProducts(snapshot.accessories),
@@ -168,16 +169,19 @@ if (Meteor.isServer) {
       executeRent(false);
 
       var history = {
+        _id: tools.generateId(),
         date: new Date(),
-        type: 'sendAll',
-        _id: tools.generateId()
+        type: 'send',
+        fixed: shipping.fixed,
+        modules: shipping.modules,
+        accessories: shipping.accessories
       };
 
       shipping.history ? shipping.history.push(history) : shipping.history = [history];
 
       Contracts.update({ _id }, { $set: { shipping } });
       Meteor.call('history.insert', {...history, contractId: _id}, 'contracts.shipping.send');
-      return true;
+      return shipping;
     },
     'contracts.shipping.receive'(master) {
       var _id = master._id;
@@ -265,9 +269,12 @@ if (Meteor.isServer) {
       executeReceive();
 
       var history = {
+        _id: tools.generateId(),
+        type: 'receive',
         date: new Date(),
-        type: 'receiveAll',
-        _id: tools.generateId()
+        fixed: master.fixed,
+        modules: master.modules,
+        accessories: master.accessories
       };
 
       shipping.history ? shipping.history.push(history) : shipping.history = [history];

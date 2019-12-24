@@ -3,6 +3,7 @@ import React from 'react';
 import tools from '/imports/startup/tools/index';
 import Box from '/imports/components/Box/index';
 import DatabaseStatus from '/imports/components/DatabaseStatus/index';
+import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 
 import ReceiveModules from './ReceiveModules/index';
 import ReceiveFixed from './ReceiveFixed/index';
@@ -38,8 +39,13 @@ export default class Receive extends React.Component {
       fixed: this.props.contract.shipping.fixed || [],
       modules: this.props.contract.shipping.modules || [],
       accessories: setAccessories(),
-      databaseStatus: ''
+      databaseStatus: '',
+      confirmationWindow: false
     }
+  }
+
+  toggleConfirmationWindow = () => {
+    this.setState({ confirmationWindow: !this.state.confirmationWindow })
   }
 
   onChange = (changes) => {
@@ -58,7 +64,10 @@ export default class Receive extends React.Component {
     this.setState({ databaseStatus: "loading" }, () => {
       Meteor.call('contracts.shipping.receive', state, (err, res) => {
         if (res) {
-          this.setState({ databaseStatus: "completed" });
+          this.setState({ databaseStatus: {
+            status: "completed",
+            callback: this.props.toggleReceive
+          } });
         } if (err) {
           this.setState({ databaseStatus: "failed" });
         }
@@ -91,12 +100,15 @@ export default class Receive extends React.Component {
           fixed={this.state.fixed}
           modules={this.state.modules}
           accessories={this.state.accessories}
-          receiveProducts={this.receiveProducts}
+          toggleConfirmationWindow={this.toggleConfirmationWindow}
           />
-          <DatabaseStatus
-            status={this.state.databaseStatus}
-            callback={this.props.toggleReceive}
-          />
+        <ConfirmationWindow
+          isOpen={this.state.confirmationWindow}
+          closeBox={this.toggleConfirmationWindow}
+          message="Deseja devolver os produtos?"
+          leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
+          rightButton={{text: "Sim", className: "button--danger", onClick: this.receiveProducts}}/>
+        <DatabaseStatus status={this.state.databaseStatus}/>
       </Box>
     )
   }

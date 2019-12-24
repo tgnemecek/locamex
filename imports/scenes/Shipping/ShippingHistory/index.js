@@ -20,7 +20,7 @@ export default class ShippingHistory extends React.Component {
             <button
               disabled={sendDisabled}
               onClick={this.props.toggleSend}>
-              ENTREGA
+              <Icon icon="send" flip="horizontal" size="1x"/>
             </button>
           </th>
         )
@@ -30,7 +30,7 @@ export default class ShippingHistory extends React.Component {
             <button
               disabled={receiveDisabled}
               onClick={this.props.toggleReceive}>
-              DEVOLUÇÃO
+              <Icon icon="receive"/>
             </button>
           </th>
         )
@@ -41,7 +41,7 @@ export default class ShippingHistory extends React.Component {
       <thead>
         <tr>
           <th className="table__small-column">#</th>
-          <th className="table__small-column">Data do Registro</th>
+          <th>Data do Registro</th>
           <th>Tipo de Envio</th>
           {renderButtons('send')}
           {renderButtons('receive')}
@@ -59,11 +59,20 @@ export default class ShippingHistory extends React.Component {
       return "";
     }
     return this.props.shipping.history.map((item, i) => {
+      const print = () => {
+        // SOPPED HERE, NOW I NEED TO CREATE THE FUNCION INSIDE PARENT
+        this.props.printDocument(item);
+      }
       return (
         <tr key={i}>
           <td>{i+1}</td>
           <td>{moment(item.date).format("DD-MMMM-YYYY")}</td>
           <td>{translateType(item.type)}</td>
+          <td>
+            <button onClick={print}>
+              <Icon icon="print"/>
+            </button>
+          </td>
         </tr>
       )
     })

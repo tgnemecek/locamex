@@ -74,9 +74,15 @@ class SeriesTable extends React.Component {
         <th className="table__small-column">Pátio</th>
         <th className="hide-at-700px">Observações</th>
         <th className="table__small-column">
-          <Icon icon="report" onClick={generateReport} />
+          <button onClick={generateReport}>
+            <Icon icon="report" />
+          </button>
         </th>
-        <th className="table__small-column"><Icon icon="new" onClick={toggleEditWindow} /></th>
+        <th className="table__small-column">
+          <button onClick={toggleEditWindow}>
+            <Icon icon="new" />
+          </button>
+        </th>
       </tr>
     )
   }
@@ -98,7 +104,13 @@ class SeriesTable extends React.Component {
       }
       const renderEditButton = () => {
         if (tools.isUserAllowed("series.edit")) {
-          return <td className="table__small-column"><Icon icon="edit" onClick={toggleEditWindow} /></td>
+          return (
+            <td className="table__small-column">
+              <button onClick={toggleEditWindow}>
+                <Icon icon="edit" />
+              </button>
+            </td>
+          )
         } else return null;
       }
       return (
@@ -110,7 +122,11 @@ class SeriesTable extends React.Component {
           <td className="table__small-column">{translatePlaces(item.place, this.props.placesDatabase)}</td>
           <td className="table__small-column--wrap hide-at-700px">{item.observations}</td>
           {renderEditButton()}
-          <td className="table__small-column"><Icon icon="image" onClick={toggleImageWindow} /></td>
+          <td className="table__small-column">
+            <button onClick={toggleImageWindow}>
+              <Icon icon="image" />
+            </button>
+          </td>
         </tr>
       )
     })

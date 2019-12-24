@@ -1,5 +1,6 @@
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
+import { saveAs } from 'file-saver';
 
 import tools from '/imports/startup/tools/index';
 import RedirectUser from '/imports/components/RedirectUser/index';
@@ -11,6 +12,7 @@ import { Modules } from '/imports/api/modules/index';
 import { Accessories } from '/imports/api/accessories/index';
 
 import SceneHeader from '/imports/components/SceneHeader/index';
+import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 
 import ShippingHistory from './ShippingHistory/index';
 import Send from './Send/index';
@@ -22,7 +24,8 @@ class Shipping extends React.Component {
     this.state = {
       toggleSend: false,
       toggleReceive: false,
-      itemsRented: []
+      itemsRented: [],
+      databaseStatus: ''
     }
   }
 
@@ -32,6 +35,21 @@ class Shipping extends React.Component {
 
   toggleReceive = () => {
     this.setState({ toggleReceive: !this.state.toggleReceive });
+  }
+
+  printDocument = (item) => {
+    this.setState({ databaseStatus: "loading" }, () => {
+      Meteor.call('pdf.generate', item, (err, res) => {
+        if (res) {
+          saveAs(res.data, res.fileName);
+          this.setState({ databaseStatus: "completed" });
+        }
+        if (err) {
+          this.setState({ databaseStatus: "failed" });
+          console.log(err);
+        }
+      })
+    })
   }
 
   render() {
@@ -56,6 +74,7 @@ class Shipping extends React.Component {
             shipping={this.props.contract.shipping}
             toggleSend={this.toggleSend}
             toggleReceive={this.toggleReceive}
+            printDocument={this.printDocument}
           />
           {this.state.toggleSend ?
             <Send
@@ -94,10 +113,7 @@ export default ShippingWrapper = withTracker((props) => {
 
   var contract = Contracts.findOne({ _id: props.match.params.contractId });
   if (contract) {
-    contract = {
-      ...contract,
-      ...contract.snapshots[contract.activeVersion]
-    }
+    contract = tools.explodeContract(contract);
   }
 
   var databases = {
