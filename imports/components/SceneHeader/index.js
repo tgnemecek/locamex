@@ -148,8 +148,8 @@ export default class SceneHeader extends React.Component {
         && this.props.master.type !== "billing") {
       return (
         <>
-          <button onClick={requirements}>
-            <Icon value="documents" icon="print"/>
+          <button onClick={() => requirements({target: {value: 'documents'}})}>
+            <Icon icon="print"/>
           </button>
           {renderDocuments()}
         </>

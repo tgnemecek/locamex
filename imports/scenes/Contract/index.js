@@ -83,6 +83,7 @@ class Contract extends React.Component {
   }
 
   componentDidMount() {
+    debugger;
     if (this.props.contract.snapshots.length === 1) {
       this.setState({ clientSetupWindow: true });
     } else this.setState({ clientSetupWindow: false });

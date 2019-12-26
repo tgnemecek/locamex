@@ -16,31 +16,38 @@ export default class Input extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: this.props.value
+      value: this.props.value,
+      firstChange: true
     };
   }
   componentDidUpdate(prevProps) {
     if (prevProps.value !== this.props.value) {
-      this.setState({ value: this.props.value });
+      this.setState({
+        value: this.props.value,
+        // firstChange: true
+      });
     }
   }
   onChange = (exportValue) => {
     if (!this.props.onChange) {
-      this.setState({ value: exportValue });
+      this.setState({ value: exportValue, firstChange: false });
       return;
     }
-    if (exportValue === undefined) throw new Meteor.Error('exportValue is undefined in ' + this.props.name);
+    if (exportValue === undefined) {
+      throw new Meteor.Error('exportValue is undefined in ' + this.props.name);
+    }
 
     var e = {
       target: {
         value: exportValue,
         name: this.props.name,
         id: this.props.id,
-        extra: this.props.extra
+        extra: this.props.extra,
+        firstChange: this.state.firstChange
       }
     }
     this.props.onChange(e);
-    this.setState({ value: exportValue });
+    this.setState({ value: exportValue, firstChange: false });
   }
   className = () => {
     var result = "input";

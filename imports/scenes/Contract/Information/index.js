@@ -11,6 +11,7 @@ import CalendarBar from '/imports/components/CalendarBar/index';
 export default class Information extends React.Component {
   changeDuration = (e) => {
     var duration = e.target.value;
+    var firstChange = e.target.firstChange;
     var discount = 0;
     if (this.props.contract.dates.timeUnit === "months") {
       if (duration >= 3 && duration <= 5) {
@@ -28,8 +29,8 @@ export default class Information extends React.Component {
     this.props.updateContract({
       dates,
       discount,
-      billingProducts: [],
-      billingServices: []
+      billingProducts: firstChange ? this.props.contract.billingProducts : [],
+      billingServices: firstChange ? this.props.contract.billingServices : []
     });
   }
 
@@ -37,25 +38,27 @@ export default class Information extends React.Component {
     var timeUnit = e.target.value;
     var dates = {...this.props.contract.dates};
     var discount = 0;
+    var firstChange = e.target.firstChange;
     dates.duration = 1;
     dates.timeUnit = timeUnit;
     this.props.updateContract({
       dates,
       discount,
-      billingProducts: [],
-      billingServices: []
+      billingProducts: firstChange ? this.props.contract.billingProducts : [],
+      billingServices: firstChange ? this.props.contract.billingServices : []
     })
   }
 
   changeDeliveryDate = (e) => {
     var deliveryDate = e.target.value;
+    var firstChange = e.target.firstChange;
     this.props.updateContract({
       dates: {
         ...this.props.contract.dates,
         deliveryDate
       },
-      billingProducts: [],
-      billingServices: []
+      billingProducts: firstChange ? this.props.contract.billingProducts : [],
+      billingServices: firstChange ? this.props.contract.billingServices : []
     })
   }
 
