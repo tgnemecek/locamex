@@ -29,7 +29,7 @@ if (Meteor.isServer) {
   Meteor.methods({
     'contracts.insert'(data) {
       const prefix = new Date().getFullYear();
-      var offset = 22;
+      var offset = 32;
       var suffix = Contracts.find({ _id: { $regex: new RegExp(prefix)} }).count() + offset;
       suffix = suffix.toString().padStart(3, '0');;
       const _id = prefix + "-" + suffix;

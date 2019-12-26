@@ -217,14 +217,17 @@ function getClient(clientId) {
 
 function getSignatures(master) {
   master.representatives = [];
-  master.client.contacts.forEach((contact) => {
-    if (contact._id === master.negociatorId) {
-      master.negociator = contact;
-    }
-    if (master.representativesId.includes(contact._id)) {
-      master.representatives.push(contact);
-    }
-  });
+
+  if (master.client.type === "company") {
+    master.client.contacts.forEach((contact) => {
+      if (contact._id === master.negociatorId) {
+        master.negociator = contact;
+      }
+      if (master.representativesId.includes(contact._id)) {
+        master.representatives.push(contact);
+      }
+    });
+  }
   return master;
 }
 

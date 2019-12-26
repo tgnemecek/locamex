@@ -1,5 +1,10 @@
 # Changelog:
 
+## Version 2.3.7
+
+-  Fixed pdf for 'person' client;
+-  Changed contract offset to 32 (to delete tests);
+
 ## Version 2.3.6
 
 -  Swapped " " for "." on currency format (tools);
