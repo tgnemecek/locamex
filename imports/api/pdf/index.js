@@ -91,7 +91,7 @@ function generateProposal(master) {
     master.createdByFullName = getCreatedBy(master.createdBy);
 
     var props = {
-      master: getDescriptions(master),
+      master: getProductsInformation(master),
       generateTable,
       header,
       styles
@@ -135,7 +135,7 @@ function generateContract(master) {
       master.client = getClient(master.clientId);
       master.accountServices = getAccount(master, 'billingServices');
       master = getSignatures(master);
-      master = getDescriptions(master);
+      master = getProductsInformation(master);
 
       var props = {
         master,
@@ -154,7 +154,7 @@ function generateBilling(master) {
   return new Promise((resolve, reject) => {
     master.createdByFullName = getCreatedBy(master.createdBy);
     master.client = getClient(master.clientId);
-    master = getDescriptions(master);
+    master = getProductsInformation(master);
     master.accountProducts = getAccount(master, 'billingProducts');
 
     var props = {
@@ -223,13 +223,14 @@ function getAccount(master, billingName) {
   return account;
 }
 
-function getDescriptions(master) {
-  function getArrayDescriptions(array, Database) {
+function getProductsInformation(master) {
+  function getInformationForArray(array, Database) {
     return array.map((item) => {
       var product = Database.findOne({ _id: item.productId });
       return {
         ...item,
-        description: product.description
+        description: product.description,
+        restitution: product.restitution
       }
     })
   }
@@ -237,9 +238,9 @@ function getDescriptions(master) {
 
   return {
     ...master,
-    containers: getArrayDescriptions(master.containers, Containers),
-    accessories: getArrayDescriptions(master.accessories, Accessories),
-    services: getArrayDescriptions(master.services, Services)
+    containers: getInformationForArray(master.containers, Containers),
+    accessories: getInformationForArray(master.accessories, Accessories),
+    services: getInformationForArray(master.services, Services)
   }
 }
 

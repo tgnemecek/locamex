@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.3.8
+
+-  Contracts now don't reset billings if its first Setup (changed Input component to report if its firstChange);
+
 ## Version 2.3.7
 
 -  Fixed pdf for 'person' client;
