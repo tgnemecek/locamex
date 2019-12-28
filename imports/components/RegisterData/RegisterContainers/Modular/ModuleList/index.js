@@ -13,7 +13,8 @@ class ModuleList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      modulesDatabaseFiltered: []
+      modulesDatabaseFiltered: [],
+      allSelected: false
     }
   }
   componentDidUpdate(prevProps) {
@@ -27,28 +28,40 @@ class ModuleList extends React.Component {
   onChange = (e) => {
     var value = e.target.value;
     var key = e.target.name;
-    var allowedModules = [...this.props.item.allowedModules];
-    (() => {
-      if (value === true) {
-        if (allowedModules.includes(key)) return
-        else {
+    var allowedModules;
+
+    if (key === "allSelected") {
+      if (value) {
+        allowedModules = this.state.modulesDatabaseFiltered.map((item) => {
+          return item._id;
+        })
+      } else {
+        allowedModules = [];
+      }
+      var exportValue = {target: {value: allowedModules, name: "allowedModules"}};
+      this.setState({ allSelected: value }, () => {
+        this.props.onChange(exportValue);
+      });
+      return;
+    } else {
+      allowedModules = [...this.props.item.allowedModules];
+      if (value) {
+        if (!allowedModules.includes(key)) {
           allowedModules.push(key);
-          return;
         }
-      } else if (value === false) {
-        if (!allowedModules.includes(key)) return;
-        else {
-          for (var i = 0; i < allowedModules.length; i++) {
-            if (allowedModules[i] == key) {
-              allowedModules.splice(i, 1);
-              break;
-            }
+      } else {
+        for (var i = 0; i < allowedModules.length; i++) {
+          if (allowedModules[i] == key) {
+            allowedModules.splice(i, 1);
+            break;
           }
         }
       }
-    })();
-    var exportValue = {target: {value: allowedModules, name: "allowedModules"}};
-    this.props.onChange(exportValue);
+      var exportValue = {target: {value: allowedModules, name: "allowedModules"}};
+      this.setState({ allSelected: false }, () => {
+        this.props.onChange(exportValue);
+      });
+    }
   }
 
   renderBody = () => {
@@ -75,23 +88,33 @@ class ModuleList extends React.Component {
     return (
       <Block
         title="Componentes Permitidos:"
-        columns={1}
-        className="register-containers__module-block">
+        columns={1}>
         <SearchBar
           database={this.props.modulesDatabase}
           searchHere={['description']}
           filterSearch={this.filterSearch}
         />
-        <table className="table database__table">
-          <thead>
-            <tr>
-              <th>Descrição</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.renderBody()}
-          </tbody>
-        </table>
+        <div className="register-containers__module-list">
+          <table className="table database__table">
+            <thead>
+              <tr>
+                <th>Descrição</th>
+                <th className="table__small-column">
+                  <Input
+                    type="checkbox"
+                    id="module--all"
+                    name="allSelected"
+                    className="register-containers__module-block__checkbox"
+                    value={this.state.allSelected}
+                    onChange={this.onChange}/>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.renderBody()}
+            </tbody>
+          </table>
+        </div>
       </Block>
     )
   }

@@ -130,14 +130,18 @@ export default class tools {
 
     var options = {
       reverseOrder: false,
+      convertToNumber: false,
       ...options
     }
 
     arr.sort(function (a, b) {
-      if (a[key] < b[key]) {
+      var valueA = options.convertToNumber ? Number(a[key]) : a[key];
+      var valueB = options.convertToNumber ? Number(b[key]) : b[key];
+
+      if (valueA < valueB) {
         return options.reverseOrder ? 1 : -1;
       }
-      if (a[key] > b[key]) {
+      if (valueA > valueB) {
         return options.reverseOrder ? -1 : 1;
       }
       return 0;

@@ -1,5 +1,12 @@
 # Changelog:
 
+## Version 2.3.9
+
+-  Added an option to tools.sortObjects allowing convertToNumber;
+-  RegisterContainers/ModuleList:
+    -  Added selectAll checkbox;
+    -  Put SearchBar outside scroll;
+
 ## Version 2.3.8
 
 -  Contracts now don't reset billings if its first Setup (changed Input component to report if its firstChange);
@@ -495,21 +502,14 @@ The workaround is to check if the edited user is the one logged in and forcing t
 
 ## To Dos: (in order of priority)
 
-## Urgent Priority:
-
-- CONTRACT-PDF IS NOT READY FOR PERSON TYPE:
-    - Fix when using client of person type with NO additional contacts (it is currently checking it wrong);
-
 ## High Priority:
-
-- Add 'events' version of contract;
-- Contract is not verifying CEP on activation;
-- When something gets deleted, the system must check all databases to see if the item is rented, or the place has things in it;
-
-## Medium Priority:
 
 - Add server-side security for meteor methods (simple-schema, required fields);
 - Create better security for unauthorized users (like checking for userId in meteor methods);
+
+## Medium Priority:
+
+- When something gets deleted, the system must check all databases to see if the item is rented, or the place has things in it;
 
 ## Low Priority: (future implementations)
 
@@ -517,9 +517,3 @@ The workaround is to check if the edited user is the one logged in and forcing t
 - Add colors to tables for the different statuses (contracts and products);
 - Make the app responsive and mobile friendly;
 - Make the app compatible to other browsers;
-- RegisterContainers:
-    - Add 'select all' toggle in modular header;
-    - Put SearchBar out of scroll div;
-
-
-
