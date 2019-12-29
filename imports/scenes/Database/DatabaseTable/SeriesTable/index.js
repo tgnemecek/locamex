@@ -70,9 +70,9 @@ class SeriesTable extends React.Component {
     return (
       <tr>
         <th className="table__small-column">Série</th>
-        <th className="table__small-column">Modelo</th>
+        <th>Modelo</th>
         <th className="table__small-column">Pátio</th>
-        <th className="hide-at-700px">Observações</th>
+        {/* <th className="hide-at-700px">Observações</th> */}
         <th className="table__small-column">
           <button onClick={generateReport}>
             <Icon icon="report" />
@@ -116,11 +116,11 @@ class SeriesTable extends React.Component {
       return (
         <tr key={i}>
           <td className="table__small-column">{item._id}</td>
-          <td className="table__small-column" style={{textAlign: 'left'}}>
+          <td style={{textAlign: 'left'}}>
             {translateModels(item.containerId, this.props.containersDatabase)}
           </td>
           <td className="table__small-column">{translatePlaces(item.place, this.props.placesDatabase)}</td>
-          <td className="table__small-column--wrap hide-at-700px">{item.observations}</td>
+          {/* <td className="table__small-column--wrap hide-at-700px">{item.observations}</td> */}
           {renderEditButton()}
           <td className="table__small-column">
             <button onClick={toggleImageWindow}>
@@ -196,16 +196,7 @@ export default SeriesTableWrapper = withTracker((props) => {
   Meteor.subscribe('containersPub');
 
   var fullDatabase = Series.find().fetch();
-  // fullDatabase = tools.sortObjects(fullDatabase, '_id');
-  fullDatabase.sort(function (a, b) {
-    if (Number(a._id) < Number(b._id)) {
-      return -1;
-    }
-    if (Number(a._id) > Number(b._id)) {
-      return 1;
-    }
-    return 0;
-  })
+  fullDatabase = tools.sortObjects(fullDatabase, '_id', {convertToNumber: true});
 
   var containersDatabase = Containers.find().fetch();
   var placesDatabase = Places.find().fetch();
