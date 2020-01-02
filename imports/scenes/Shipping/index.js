@@ -12,6 +12,7 @@ import { Accessories } from '/imports/api/accessories/index';
 
 import SceneHeader from '/imports/components/SceneHeader/index';
 
+import CurrentlyRented from './CurrentlyRented/index';
 import ShippingHistory from './ShippingHistory/index';
 import Send from './Send/index';
 import Receive from './Receive/index';
@@ -50,6 +51,12 @@ class Shipping extends React.Component {
 
             errorKeys={[]}
             disabled={true}
+          />
+          <h3 style={{textAlign: "center", margin: "20px"}}>
+            Itens no Cliente
+          </h3>
+          <CurrentlyRented
+            contract={this.props.contract}
           />
           <h3 style={{textAlign: "center", margin: "20px"}}>Histórico de Remessas</h3>
           <ShippingHistory
