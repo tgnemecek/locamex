@@ -45,7 +45,7 @@ export default class ReceiveAccessories extends React.Component {
           <td className="table__small-column">{i+1}</td>
           <td>{item.description}</td>
           <td>{renderVariations(item.variationIndex, array)}</td>
-          <td>{item.selected}</td>
+          {/* <td>{item.selected}</td> */}
           {/* <td>
             <Input
               type="select"
