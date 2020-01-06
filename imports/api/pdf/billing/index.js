@@ -49,7 +49,7 @@ export default function billingPdf(props) {
       info: {
         title: `Fatura ${charge.index+1} de ${charge.length} - Locamex #${contract._id}.${Number(contract.version)}`,
         author: `Locamex`,
-        subject: `Contrato de Locação de Bens Móveis e Prestação de Serviços`
+        subject: `Fatura de Locação de Bens Móveis`
       },
       header: props.header(),
       content: [

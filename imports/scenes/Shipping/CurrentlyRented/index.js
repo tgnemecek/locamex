@@ -7,56 +7,31 @@ import Icon from '/imports/components/Icon/index';
 import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 
 export default class CurrentlyRented extends React.Component {
-
   renderBody = () => {
-    var currentlyRented = [];
-
-    const isItemIncluded = (itemId) => {
-      var found = currentlyRented.find((item) => {
-        return item._id === itemId;
+    var all = [].concat(
+      this.props.currentlyRented.fixed.map((item) => {
+        return {...item, type: "fixed"}
+      }),
+      this.props.currentlyRented.accessories.map((item) => {
+        return {...item, type: "accessory"}
+      }),
+      this.props.currentlyRented.modules.map((item) => {
+        return {...item, type: "module"}
       })
-      return found;
-    }
-
-    const processArray = (registry, type) => {
-      if (type === "fixed") {
-        if (registry.type === "send") {
-          if (!isItemIncluded(item._id)) {
-            currentlyRented.push(item);
-          }
-        } else if (registry.type === "receive") {
-          for (var i = 0; i < currentlyRented.length; i++) {
-            if (currentlyRented[i]._id === item._id) {
-              currentlyRented.splice(i, 1);
-              break;
-            }
-          }
-        }
-      } else {
-        // var found = isItemIncluded(item._id);
-        // if (!found) {
-        //   currentlyRented.push(item);
-        // } else {
-        //   var renting = registry.type === "send" ? item.renting : -item.renting;
-        //   found.renting += renting;
-        // }
-      }
-    }
-
-    this.props.contract.shipping.forEach((registry) => {
-      processArray(registry, "fixed");
-      processArray(registry, "accessories");
-      processArray(registry, "modules");
-    })
-
-
-
-    return currentlyRented.map((item, i) => {
+    )
+    return all.map((item, i) => {
       return (
         <tr key={i}>
           <td>{i+1}</td>
-          <td>{item.renting}</td>
-          <td>{item.description}</td>
+          <td>{item.renting || 1}</td>
+          <td>{item.type === "fixed" ? item.description + " (Série: " + item.seriesId + ")" : item.description}</td>
+          <td className="table__small-column">
+            {item.type === "fixed" ?
+              <button>
+                <Icon icon="transaction"/>
+              </button>
+            : null}
+          </td>
         </tr>
       )
     });
@@ -68,8 +43,8 @@ export default class CurrentlyRented extends React.Component {
         <thead>
           <tr>
             <th className="table__small-column">#</th>
-            <th className="table__small-column">Quantidade</th>
-            <th>Item</th>
+            <th className="table__small-column">Qtd.</th>
+            <th>Itens</th>
           </tr>
         </thead>
         <tbody>

@@ -46,7 +46,7 @@ export default class ReceiveAccessories extends React.Component {
           <td>{item.description}</td>
           <td>{renderVariations(item.variationIndex, array)}</td>
           <td>{item.selected}</td>
-          <td>
+          {/* <td>
             <Input
               type="select"
               name={i}
@@ -58,7 +58,7 @@ export default class ReceiveAccessories extends React.Component {
           </td>
           <td className="table__small-column">
             {item.place ? <span style={{color: 'green'}}>✔</span> : <span style={{color: 'red'}}>⦸</span>}
-          </td>
+          </td> */}
         </tr>
       )
     })

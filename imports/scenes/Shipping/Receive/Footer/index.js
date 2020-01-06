@@ -14,19 +14,23 @@ export default class Footer extends React.Component {
 
   checkForProblems = () => {
     const isFormValid = () => {
-      function hasPlace(array) {
-        return array.every((item) => !!item.place);
+      function hasAtLeastOneFilled(array) {
+        for (var i = 0; i < array.length; i++) {
+          if (array[i].place) return true;
+        }
+        return false;
       }
-      if (!hasPlace(this.props.fixed)) return false;
-      if (!hasPlace(this.props.modules)) return false;
-      if (!hasPlace(this.props.accessories)) return false;
-      return true;
+      return (
+        hasAtLeastOneFilled(this.props.fixed) ||
+        hasAtLeastOneFilled(this.props.modules) ||
+        hasAtLeastOneFilled(this.props.accessories)
+      )
     }
     if (isFormValid()) {
       this.setState({ errorMsg: "" }, () => {
         this.props.toggleConfirmationWindow();
       })
-    } else this.setState({ errorMsg: "O formulário contém campos inválidos!" });
+    } else this.setState({ errorMsg: "Escolha ao menos um item." });
   }
 
   render() {

@@ -46,6 +46,7 @@ export default class Footer extends React.Component {
   }
 
   render() {
+    if (this.props.hidden) return null;
     return (
       <div>
         <div className="error-message">{this.state.errorMsg}</div>

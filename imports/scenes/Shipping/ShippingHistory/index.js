@@ -15,36 +15,6 @@ export default class ShippingHistory extends React.Component {
   }
 
   renderHeader = () => {
-    const renderButtons = (type) => {
-      var shipping = this.props.shipping || [];
-      var noRecords = shipping.length === 0;
-      var hasReceivedAll = shipping.length === 2;
-      var sendDisabled = shipping.length !== 0;
-      var receiveDisabled = (shipping.length === 0 || shipping.length === 2);
-
-      if (type === 'send') {
-        return (
-          <th className="table__small-column">
-            <button
-              disabled={sendDisabled}
-              onClick={this.props.toggleSend}>
-              <Icon icon="send" flip="horizontal" size="1x"/>
-            </button>
-          </th>
-        )
-      } else if (type === 'receive') {
-        return (
-          <th className="table__small-column">
-            <button
-              disabled={receiveDisabled}
-              onClick={this.props.toggleReceive}>
-              <Icon icon="receive"/>
-            </button>
-          </th>
-        )
-      }
-    }
-
     return (
       <thead>
         <tr>
@@ -52,16 +22,14 @@ export default class ShippingHistory extends React.Component {
           <th>Data do Registro</th>
           <th>Tipo de Remessa</th>
           <th>Itens</th>
-          {renderButtons('send')}
-          {renderButtons('receive')}
         </tr>
       </thead>
     )
   }
 
   printDocument = (index) => {
-    var item = this.props.shipping[index];
-    item.list = prepareList(item);
+    var item = this.props.contract.shipping[index];
+    item.list = prepareList(item, this.props.placesDatabase);
     item.contractId = this.props.contract._id;
     item.index = index;
 
@@ -80,14 +48,14 @@ export default class ShippingHistory extends React.Component {
   }
 
   renderBody = () => {
-    if (!this.props.shipping) return null;
+    if (!this.props.contract.shipping) return null;
     function translateType(type) {
       if (type === 'send') return "Entrega";
       if (type === 'receive') return "Devolução";
       return "";
     }
-    function renderList(item) {
-      var list = prepareList(item);
+    function renderList(item, placesDatabase) {
+      var list = prepareList(item, placesDatabase);
       return list.map((item, i) => {
         return (
           <li key={i}>
@@ -96,18 +64,17 @@ export default class ShippingHistory extends React.Component {
         )
       })
     }
-    return this.props.shipping.map((item, i) => {
+    return this.props.contract.shipping.reverse().map((item, i) => {
       return (
         <tr key={i}>
-          <td>{i+1}</td>
           <td>{moment(item.date).format("DD-MMMM-YYYY")}</td>
           <td>{translateType(item.type)}</td>
           <td>
             <ul>
-              {renderList(item)}
+              {renderList(item, this.props.placesDatabase)}
             </ul>
         </td>
-          <td>
+          <td className="table__small-column">
             <button onClick={() => this.printDocument(i)}>
               <Icon icon="print"/>
             </button>
@@ -118,8 +85,8 @@ export default class ShippingHistory extends React.Component {
   }
 
   renderFooter = () => {
-    if (this.props.shipping) {
-      if (this.props.shipping.length) return null;
+    if (this.props.contract.shipping) {
+      if (this.props.contract.shipping.length) return null;
     }
     return (
       <tfoot>
@@ -149,26 +116,57 @@ export default class ShippingHistory extends React.Component {
   }
 }
 
-function prepareList(item) {
+function prepareList(item, placesDatabase) {
+  if (!item || !placesDatabase) return [];
   var fixed = item.fixed ? item.fixed.map((item) => {
     return {
       quantity: 1,
       description: `${item.description} (Série: ${item.seriesId})`
     }
   }) : null;
-  var accessories = item.accessories ? item.accessories.map((item) => {
-    return {
-      quantity: item.renting,
-      description: item.description
+  var accessories = [];
+  item.accessories ? item.accessories.forEach((item) => {
+    if (Array.isArray(item.selected)) {
+      var quantity;
+      var description;
+      item.selected.forEach((selected) => {
+        var place = placesDatabase.find((place) => {
+          return place._id === selected.place;
+        });
+        place = place ? place.description : "";
+        quantity = selected.selected;
+        description = item.description + " (Pátio: " + place + ")";
+      })
+    } else {
+      quantity = item.selected;
+      description = item.description;
     }
+    accessories.push({
+      quantity,
+      description
+    })
   }) : null;
-  var modules = item.modules ? item.modules.map((item) => {
-    return {
-      quantity: item.selected.reduce((acc, cur) => {
-        return acc + cur.selected;
-      }, 0),
-      description: item.description
+  var modules = [];
+  item.modules ? item.modules.forEach((item) => {
+    if (Array.isArray(item.selected)) {
+      var quantity;
+      var description;
+      item.selected.forEach((selected) => {
+        var place = placesDatabase.find((place) => {
+          return place._id === selected.place;
+        });
+        place = place ? place.description : "";
+        quantity = selected.selected,
+        description = item.description + " (Pátio: " + place + ")"
+      })
+    } else {
+     quantity = item.selected;
+     description = item.description;
     }
+    modules.push({
+      quantity,
+      description
+    })
   }) : null;
   return fixed.concat(accessories, modules);
 }

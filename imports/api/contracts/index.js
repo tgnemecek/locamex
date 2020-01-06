@@ -104,13 +104,6 @@ if (Meteor.isServer) {
       });
 
       var currentShipping = shipping[shipping.length-1];
-      //
-      // shipping = {
-      //   ...oldShipping,
-      //   fixed: master.fixed,
-      //   modules: master.modules,
-      //   accessories: master.accessories
-      // };
 
       function updateModule(product, module) {
         var place = [...product.place];
@@ -191,12 +184,18 @@ if (Meteor.isServer) {
       var _id = master._id;
       var oldShipping = Contracts.findOne({ _id }).shipping;
 
-      shipping = {
-        ...oldShipping,
-        fixed: [],
-        modules: [],
-        accessories: []
-      };
+      var shipping = [...oldShipping];
+
+      shipping.push({
+        _id: tools.generateId(),
+        date: new Date(),
+        type: 'receive',
+        fixed: master.fixed,
+        modules: master.modules,
+        accessories: master.accessories
+      });
+
+      var currentShipping = shipping[shipping.length-1];
 
       function updateModule(product, module) {
         var place = [...product.place];
@@ -251,40 +250,31 @@ if (Meteor.isServer) {
         }
       }
 
-      const executeReceive = () => {
-        master.fixed.forEach((fixed) => {
-          Meteor.call('series.update', {place: fixed.place}, fixed.seriesId);
+      const executeReceive = (isSimulation) => {
+        currentShipping.fixed.forEach((fixed) => {
+          if (!isSimulation) Meteor.call('series.update', {place: fixed.place}, fixed.seriesId);
         })
-        master.modules.forEach((module) => {
+        currentShipping.modules.forEach((module) => {
           var productFromDatabase = Modules.findOne({ _id: module.productId });
           if (!productFromDatabase) throw new Meteor.Error('product-not-found');
           productFromDatabase = updateModule(productFromDatabase, module);
-          Meteor.call('modules.shipping.receive', productFromDatabase);
+          if (!isSimulation) Meteor.call('modules.shipping.receive', productFromDatabase);
         })
-        master.accessories.forEach((accessory) => {
+        currentShipping.accessories.forEach((accessory) => {
           var productFromDatabase = Accessories.findOne({ _id: accessory.productId });
           if (!productFromDatabase) throw new Meteor.Error('product-not-found');
           productFromDatabase = updateAccessory(productFromDatabase, accessory);
-          Meteor.call('accessories.shipping.receive', productFromDatabase);
+          if (!isSimulation) Meteor.call('accessories.shipping.receive', productFromDatabase);
         })
         return true;
       }
 
-      executeReceive();
-
-      var history = {
-        _id: tools.generateId(),
-        type: 'receive',
-        date: new Date(),
-        fixed: master.fixed,
-        modules: master.modules,
-        accessories: master.accessories
-      };
-
-      shipping.history ? shipping.history.push(history) : shipping.history = [history];
+      executeReceive(true);
+      // executeReceive(false);
 
       Contracts.update({ _id }, { $set: { shipping } });
-      Meteor.call('history.insert', {...history, contractId: _id}, 'contracts.shipping.receive');
+      Meteor.call('history.insert',
+      {...currentShipping, contractId: _id}, 'contracts.shipping.receive');
       return true;
     },
     'contracts.billing.update' (_id, billing, type) {

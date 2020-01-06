@@ -13,32 +13,49 @@ import Footer from './Footer/index';
 export default class Receive extends React.Component {
   constructor(props) {
     super(props);
-
-    const setAccessories = () => {
-      var spreadAccessories = [];
-      this.props.contract.shipping.accessories.forEach((accessory) => {
-        var tempArray = [];
-        accessory.selected.forEach((selected) => {
-          var existing = tempArray.find((item) => item.variationIndex === selected.variationIndex);
-          if (existing) {
-            existing.selected = existing.selected + selected.selected;
-          } else tempArray.push({
-            ...selected,
-            description: accessory.description,
-            place: "",
-            productId: accessory.productId
-          });
-        })
-        spreadAccessories = spreadAccessories.concat(tempArray);
-      })
-      return spreadAccessories;
-    }
-
+    // const setAccessories = () => {
+    //   var spreadAccessories = [];
+    //   if (!this.props.currentlyRented.accessories) return [];
+    //   this.props.currentlyRented.accessories.forEach((accessory) => {
+    //     var tempArray = [];
+    //     var existing = tempArray.find((item) => item.variationIndex === selected.variationIndex);
+    //     if (existing) {
+    //       existing.selected = existing.selected + selected.selected;
+    //     } else tempArray.push({
+    //       ...selected,
+    //       description: accessory.description,
+    //       place: "",
+    //       productId: accessory.productId
+    //     });
+    //     accessory.selected.forEach((selected) => {
+    //
+    //     })
+    //     if (Array.isArray(accessory.selected)) {
+    //
+    //     }
+    //     // if (Array.isArray(accessory.selected)) {
+    //     //   accessory.selected.forEach((selected) => {
+    //     //     var existing = tempArray.find((item) => item.variationIndex === selected.variationIndex);
+    //     //     if (existing) {
+    //     //       existing.selected = existing.selected + selected.selected;
+    //     //     } else tempArray.push({
+    //     //       ...selected,
+    //     //       description: accessory.description,
+    //     //       place: "",
+    //     //       productId: accessory.productId
+    //     //     });
+    //     //   })
+    //     // }
+    //     // CREATE CONDITION TO RUN CODE ABOVE IF ACC.SELECTED IS NUMBER. THEN DO THE SAME FOR MODULES.
+    //     spreadAccessories = spreadAccessories.concat(tempArray);
+    //   })
+    //   return spreadAccessories;
+    // }
 
     this.state = {
-      fixed: this.props.contract.shipping.fixed || [],
-      modules: this.props.contract.shipping.modules || [],
-      accessories: setAccessories(),
+      fixed: this.props.currentlyRented.fixed || [],
+      modules: this.props.currentlyRented.modules || [],
+      accessories: this.props.currentlyRented.accessories || [],
       databaseStatus: '',
       confirmationWindow: false
     }
@@ -50,7 +67,6 @@ export default class Receive extends React.Component {
 
   onChange = (changes) => {
     this.setState({
-      ...this.state,
       ...changes
     })
   }

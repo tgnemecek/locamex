@@ -11,6 +11,7 @@ import { Modules } from '/imports/api/modules/index';
 import { Accessories } from '/imports/api/accessories/index';
 
 import SceneHeader from '/imports/components/SceneHeader/index';
+import FooterButtons from '/imports/components/FooterButtons/index';
 
 import CurrentlyRented from './CurrentlyRented/index';
 import ShippingHistory from './ShippingHistory/index';
@@ -35,6 +36,59 @@ class Shipping extends React.Component {
     this.setState({ toggleReceive: !this.state.toggleReceive });
   }
 
+  currentlyRented = () => {
+    var currentlyRented = {
+      fixed: [],
+      accessories: [],
+      modules: []
+    };
+    const isItemIncluded = (itemId) => {
+      var all = currentlyRented.fixed.concat(
+        currentlyRented.accessories, currentlyRented.modules
+      );
+      var found = all.find((item) => {
+        return item._id === itemId;
+      })
+      return found;
+    }
+
+    this.props.contract.shipping.forEach((registry) => {
+      registry.fixed.forEach((item) => {
+        if (registry.type === "send") {
+          if (!isItemIncluded(item._id)) {
+            currentlyRented.fixed.push({...item});
+          }
+        } else if (registry.type === "receive") {
+          for (var i = 0; i < currentlyRented.fixed.length; i++) {
+            if (currentlyRented.fixed[i]._id === item._id) {
+              currentlyRented.fixed.splice(i, 1);
+              break;
+            }
+          }
+        }
+      })
+      registry.accessories.forEach((item) => {
+        var found = isItemIncluded(item._id);
+        if (!found) {
+          currentlyRented.accessories.push({...item});
+        } else {
+          var renting = registry.type === "send" ? item.renting : -item.renting;
+          found.renting += renting;
+        }
+      })
+      registry.modules.forEach((item) => {
+        var found = isItemIncluded(item._id);
+        if (!found) {
+          currentlyRented.modules.push({...item});
+        } else {
+          var renting = registry.type === "send" ? item.renting : -item.renting;
+          found.renting += renting;
+        }
+      })
+    })
+    return currentlyRented;
+  }
+
   render() {
     return (
       <div className="page-content">
@@ -57,29 +111,33 @@ class Shipping extends React.Component {
           </h3>
           <CurrentlyRented
             contract={this.props.contract}
+            currentlyRented={this.currentlyRented()}
           />
           <h3 style={{textAlign: "center", margin: "20px"}}>Histórico de Remessas</h3>
           <ShippingHistory
             contract={this.props.contract}
-            shipping={this.props.contract.shipping}
-            toggleSend={this.toggleSend}
-            toggleReceive={this.toggleReceive}
-            printDocument={this.printDocument}
+            placesDatabase={this.props.databases.placesDatabase}
           />
           {this.state.toggleSend ?
             <Send
               toggleSend={this.toggleSend}
               databases={this.props.databases}
               contract={this.props.contract}
+              currentlyRented={this.currentlyRented()}
             />
           : null}
           {this.state.toggleReceive ?
             <Receive
               toggleReceive={this.toggleReceive}
               databases={this.props.databases}
-              contract={this.props.contract}
+              contract={{...this.props.contract}}
+              currentlyRented={this.currentlyRented()}
             />
           : null}
+          <FooterButtons buttons={[
+            {text: "Entregar Itens", className: "button--secondary", onClick: this.toggleSend},
+            {text: "Receber Itens", className: "button--secondary", onClick: this.toggleReceive},
+          ]}/>
         </div>
       </div>
     )

@@ -29,19 +29,32 @@ export default class Send extends React.Component {
   }
 
   setup = () => {
+    const isCurrentlyRented = (productId) => {
+      var all = this.props.currentlyRented.fixed.concat(
+        this.props.currentlyRented.accessories,
+        this.props.currentlyRented.modules
+      );
+      var found = all.find((item) => {
+        return item.productId === productId;
+      })
+      return found;
+    }
+
     const setFixed = () => {
       var newArray = [];
       this.props.contract.containers.forEach((item) => {
         if (item.type === 'fixed') {
           for (var i = 0; i < item.renting; i++) {
-            var productFromDatabase = tools.findUsingId(this.props.databases.containersDatabase, item.productId);
-            newArray.push({
-              _id: tools.generateId(),
-              productId: item.productId,
-              seriesId: '',
-              description: productFromDatabase.description,
-              place: item.place
-            })
+            if (!isCurrentlyRented(item.productId)) {
+              var productFromDatabase = tools.findUsingId(this.props.databases.containersDatabase, item.productId);
+              newArray.push({
+                _id: tools.generateId(),
+                productId: item.productId,
+                seriesId: '',
+                description: productFromDatabase.description,
+                place: item.place
+              })
+            }
           }
         }
       })
@@ -69,14 +82,17 @@ export default class Send extends React.Component {
     const setAccessories = () => {
       var newArray = [];
       this.props.contract.accessories.forEach((item) => {
-        var productFromDatabase = tools.findUsingId(this.props.databases.accessoriesDatabase, item.productId);
-        newArray.push({
-          _id: tools.generateId(),
-          productId: item.productId,
-          renting: item.renting,
-          selected: [],
-          description: productFromDatabase.description
-        })
+        var found = isCurrentlyRented(item.productId);
+        if (!found || found.renting < item.renting) {
+          var productFromDatabase = tools.findUsingId(this.props.databases.accessoriesDatabase, item.productId);
+          newArray.push({
+            _id: tools.generateId(),
+            productId: item.productId,
+            renting: item.renting,
+            selected: [],
+            description: productFromDatabase.description
+          })
+        }
       })
       return newArray;
     }
@@ -147,6 +163,11 @@ export default class Send extends React.Component {
           containersDatabase={this.props.databases.containersDatabase}
           placesDatabase={this.props.databases.placesDatabase}
           seriesDatabase={this.sortSeriesDatabase()}/>
+        {!this.state.fixed.length &&
+          !this.state.accessories.length &&
+          !this.state.modules.length ?
+          "Não há itens disponíveis para envio!"
+        : null}
         {!!this.state.allowedModules.length ?
           <ShippingModules
             onChange={this.onChange}
@@ -162,6 +183,10 @@ export default class Send extends React.Component {
           accessoriesDatabase={this.props.databases.accessoriesDatabase}
           placesDatabase={this.props.databases.placesDatabase}/>
         <Footer
+          hidden={
+            !this.state.fixed.length &&
+            !this.state.accessories.length &&
+            !this.state.modules.length}
           fixed={this.state.fixed}
           modules={this.state.modules}
           accessories={this.state.accessories}
