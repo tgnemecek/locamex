@@ -29,8 +29,7 @@ export default class ShippingHistory extends React.Component {
 
   printDocument = (index) => {
     var item = this.props.contract.shipping[index];
-    item.list = prepareList(item, this.props.placesDatabase,
-      this.props.accessoriesDatabase);
+    item.list = this.props.prepareList(item, true);
     item.contractId = this.props.contract._id;
     item.index = index;
 
@@ -48,6 +47,78 @@ export default class ShippingHistory extends React.Component {
     })
   }
 
+  prepareList = (item, showPlace) => {
+    if (!item || !this.props.placesDatabase) return [];
+    var fixed = item.fixed ? item.fixed.map((item) => {
+      var place = "";
+      if (showPlace) {
+        var place = this.props.placesDatabase.find((p) => {
+          return item.place === p._id;
+        });
+        place = place ? `(Pátio: ${place.description} ` : "";
+      }
+      return {
+        quantity: 1,
+        description: `${item.description} ${place}- Série: ${item.seriesId})`
+      }
+    }) : null;
+    var accessories = [];
+    item.accessories ? item.accessories.forEach((item) => {
+      var quantity;
+      var description;
+      item.selected.forEach((selected) => {
+        var placeDescription = "";
+        if (showPlace) {
+          this.props.placesDatabase.forEach((place) => {
+            if (place._id === selected.place) {
+              placeDescription = "Pátio: " + place.description
+            }
+          });
+        }
+
+        var variationDescription = "";
+        this.props.accessoriesDatabase.forEach((product) => {
+          if (product._id === item.productId) {
+            if (product.variations.length > 1) {
+              variationDescription =
+                " - Padrão: " +
+                tools.convertToLetter(selected.variationIndex);
+            }
+          }
+        })
+        quantity = selected.selected;
+        description = item.description + " (" +
+          placeDescription +
+          variationDescription + ")";
+        accessories.push({
+          quantity,
+          description
+        })
+      })
+    }) : null;
+    var modules = [];
+    item.modules ? item.modules.forEach((item) => {
+      var quantity;
+      var description;
+      item.selected.forEach((selected) => {
+        var place = "";
+        if (showPlace) {
+          place = this.props.placesDatabase.find((place) => {
+            return place._id === selected.place;
+          });
+          place = place ? ` (Pátio: ${place.description})` : "";
+        }
+        quantity = selected.selected,
+        description = item.description + place;
+        modules.push({
+          quantity,
+          description
+        })
+      })
+    }) : null;
+    return fixed.concat(accessories, modules);
+  }
+
   renderBody = () => {
     if (!this.props.contract.shipping) return null;
     function translateType(type) {
@@ -55,8 +126,8 @@ export default class ShippingHistory extends React.Component {
       if (type === 'receive') return "Recebimento";
       return "";
     }
-    function renderList(item, placesDatabase, accessoriesDatabase) {
-      var list = prepareList(item, placesDatabase, accessoriesDatabase);
+    const renderList = (item) => {
+      var list = this.prepareList(item, true);
       return list.map((item, i) => {
         return (
           <li key={i}>
@@ -75,7 +146,7 @@ export default class ShippingHistory extends React.Component {
           <td>{translateType(item.type)}</td>
           <td>
             <ul>
-              {renderList(item, this.props.placesDatabase, this.props.accessoriesDatabase)}
+              {renderList(item)}
             </ul>
         </td>
           <td className="table__small-column">
@@ -118,67 +189,4 @@ export default class ShippingHistory extends React.Component {
 
     )
   }
-}
-
-function prepareList(item, placesDatabase, accessoriesDatabase) {
-  if (!item || !placesDatabase) return [];
-  var fixed = item.fixed ? item.fixed.map((item) => {
-    var place = placesDatabase.find((p) => {
-      return item.place === p._id;
-    });
-    place = place ? place.description : "";
-    return {
-      quantity: 1,
-      description: `${item.description} (Pátio: ${place} - Série: ${item.seriesId})`
-    }
-  }) : null;
-  var accessories = [];
-  item.accessories ? item.accessories.forEach((item) => {
-    var quantity;
-    var description;
-    item.selected.forEach((selected) => {
-      var placeDescription = "";
-      placesDatabase.forEach((place) => {
-        if (place._id === selected.place) {
-          placeDescription = "Pátio: " + place.description
-        }
-      });
-      var variationDescription = "";
-      accessoriesDatabase.forEach((product) => {
-        if (product._id === item.productId) {
-          if (product.variations.length > 1) {
-            variationDescription =
-              " - Padrão: " +
-              tools.convertToLetter(selected.variationIndex);
-          }
-        }
-      })
-      quantity = selected.selected;
-      description = item.description + " (" +
-        placeDescription +
-        variationDescription + ")";
-      accessories.push({
-        quantity,
-        description
-      })
-    })
-  }) : null;
-  var modules = [];
-  item.modules ? item.modules.forEach((item) => {
-    var quantity;
-    var description;
-    item.selected.forEach((selected) => {
-      var place = placesDatabase.find((place) => {
-        return place._id === selected.place;
-      });
-      place = place ? place.description : "";
-      quantity = selected.selected,
-      description = item.description + " (Pátio: " + place + ")"
-      modules.push({
-        quantity,
-        description
-      })
-    })
-  }) : null;
-  return fixed.concat(accessories, modules);
 }

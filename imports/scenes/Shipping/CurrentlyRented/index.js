@@ -19,12 +19,29 @@ export default class CurrentlyRented extends React.Component {
         return {...item, type: "module"}
       })
     )
+    function description(item, accessoriesDatabase) {
+      if (item.type === "fixed") {
+        return item.description + " (Série: " + item.seriesId + ")"
+      } else if (item.type === "accessory") {
+        var variations = "";
+        var found = accessoriesDatabase.find((obj) => {
+          return obj._id === item.productId;
+        });
+        if (found) {
+          if (found.variations.length > 1) {
+            variations = " (Padrão: " + tools.convertToLetter(item.variationIndex) + ")"
+          } else {
+            variations = " (Padrão Único)"
+          }
+        }
+        return item.description + variations;
+      } else return item.description;
+    }
     return all.map((item, i) => {
       return (
         <tr key={i}>
-          <td>{i+1}</td>
           <td>{item.selected || 1}</td>
-          <td>{item.type === "fixed" ? item.description + " (Série: " + item.seriesId + ")" : item.description}</td>
+          <td>{description(item, this.props.accessoriesDatabase)}</td>
           <td className="table__small-column">
             {item.type === "fixed" ?
               <button>
@@ -51,7 +68,6 @@ export default class CurrentlyRented extends React.Component {
       <table className="table">
         <thead>
           <tr>
-            <th className="table__small-column">#</th>
             <th className="table__small-column">Qtd.</th>
             <th>Itens</th>
           </tr>

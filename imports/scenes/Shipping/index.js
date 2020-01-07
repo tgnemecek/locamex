@@ -42,12 +42,16 @@ class Shipping extends React.Component {
       accessories: [],
       modules: []
     };
-    const findItem = (productId) => {
+    const findItem = (productId, variationIndex) => {
       var all = currentlyRented.fixed.concat(
         currentlyRented.accessories, currentlyRented.modules
       );
       return all.find((item) => {
-        return item.productId === productId;
+        if (item.productId === productId) {
+          if (variationIndex !== undefined) {
+            return item.variationIndex === variationIndex;
+          } else return true;
+        };
       })
     }
 
@@ -68,24 +72,22 @@ class Shipping extends React.Component {
         }
       })
       registry.accessories.forEach((item) => {
-        var found = findItem(item.productId);
-        if (!found) {
-          currentlyRented.accessories.push({
-            ...item,
-            selected: item.selected.reduce((acc, cur) => {
-              return acc + cur.selected;
-            }, 0)
-          });
-        } else {
-          var selected = item.selected.reduce((acc, cur) => {
-            return acc + cur.selected;
-          }, 0)
-
-          if (registry.type === "receive") {
-            selected = -selected;
+        item.selected.forEach((selection) => {
+          var found = findItem(item.productId, selection.variationIndex);
+          if (!found) {
+            currentlyRented.accessories.push({
+              ...item,
+              variationIndex: selection.variationIndex,
+              selected: selection.selected
+            });
+          } else {
+            var selected = selection.selected;
+            if (registry.type === "receive") {
+              selected = -selected;
+            }
+            found.selected += selected;
           }
-          found.selected += selected;
-        }
+        })
       })
       registry.modules.forEach((item) => {
         var found = findItem(item.productId);
@@ -132,7 +134,7 @@ class Shipping extends React.Component {
             Itens no Cliente
           </h3>
           <CurrentlyRented
-            contract={this.props.contract}
+            accessoriesDatabase={this.props.databases.accessoriesDatabase}
             currentlyRented={this.currentlyRented()}
           />
           <h3 style={{textAlign: "center", margin: "20px"}}>Histórico de Remessas</h3>
@@ -140,6 +142,7 @@ class Shipping extends React.Component {
             contract={this.props.contract}
             accessoriesDatabase={this.props.databases.accessoriesDatabase}
             placesDatabase={this.props.databases.placesDatabase}
+            prepareList={this.prepareList}
           />
           {this.state.toggleSend ?
             <Send
