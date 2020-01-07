@@ -23,7 +23,7 @@ export default class CurrentlyRented extends React.Component {
       return (
         <tr key={i}>
           <td>{i+1}</td>
-          <td>{item.renting || 1}</td>
+          <td>{item.selected || 1}</td>
           <td>{item.type === "fixed" ? item.description + " (Série: " + item.seriesId + ")" : item.description}</td>
           <td className="table__small-column">
             {item.type === "fixed" ?
@@ -38,6 +38,15 @@ export default class CurrentlyRented extends React.Component {
   }
 
   render() {
+    if (!this.props.currentlyRented.fixed.length &&
+        !this.props.currentlyRented.accessories.length &&
+        !this.props.currentlyRented.modules.length) {
+      return (
+        <p style={{fontStyle: "italic", textAlign: "center"}}>
+          Não há itens atualmente no cliente.
+        </p>
+      )
+    }
     return (
       <table className="table">
         <thead>

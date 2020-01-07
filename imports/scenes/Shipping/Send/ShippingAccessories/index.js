@@ -53,7 +53,7 @@ export default class ShippingAccessories extends React.Component {
       }, 0);
     }
     function checkmark(item) {
-      if (countSelection(item) === item.renting) {
+      if (countSelection(item) > 0) {
         return <span style={{color: 'green'}}>✔</span>;
       } else return <span style={{color: 'red'}}>⦸</span>;
     }

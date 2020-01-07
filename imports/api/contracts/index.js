@@ -98,9 +98,16 @@ if (Meteor.isServer) {
         _id: tools.generateId(),
         date: new Date(),
         type: 'send',
-        fixed: master.fixed,
-        modules: master.modules,
-        accessories: master.accessories
+        fixed: master.fixed.filter((item) => {
+          return !!item.seriesId;
+        }),
+        modules: master.modules.filter((item) => {
+          return !!item.selected.length;
+        }),
+        accessories: master.accessories.filter((item) => {
+          delete item.renting;
+          return !!item.selected.length;
+        })
       });
 
       var currentShipping = shipping[shipping.length-1];
@@ -172,7 +179,7 @@ if (Meteor.isServer) {
       }
 
       executeRent(true);
-      executeRent(false);
+      // executeRent(false);
 
       Contracts.update({ _id }, { $set: { shipping } });
       Meteor.call('history.insert',

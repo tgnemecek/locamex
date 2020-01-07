@@ -29,32 +29,38 @@ export default class Send extends React.Component {
   }
 
   setup = () => {
-    const isCurrentlyRented = (productId) => {
+    const countHowManyCanRent = (currentItem) => {
+      var productId = currentItem.productId;
+      var renting = currentItem.renting;
+      var count = 0;
       var all = this.props.currentlyRented.fixed.concat(
         this.props.currentlyRented.accessories,
         this.props.currentlyRented.modules
       );
-      var found = all.find((item) => {
-        return item.productId === productId;
+      all.forEach((item) => {
+        if (item.productId === productId) {
+          if (item.selected) {
+            count += item.selected;
+          } else count += item.renting || 1;
+        }
       })
-      return found;
+      return renting - count;
     }
 
     const setFixed = () => {
       var newArray = [];
       this.props.contract.containers.forEach((item) => {
         if (item.type === 'fixed') {
-          for (var i = 0; i < item.renting; i++) {
-            if (!isCurrentlyRented(item.productId)) {
-              var productFromDatabase = tools.findUsingId(this.props.databases.containersDatabase, item.productId);
-              newArray.push({
-                _id: tools.generateId(),
-                productId: item.productId,
-                seriesId: '',
-                description: productFromDatabase.description,
-                place: item.place
-              })
-            }
+          var canRent = countHowManyCanRent(item);
+          for (var i = 0; i < canRent; i++) {
+            var productFromDatabase = tools.findUsingId(this.props.databases.containersDatabase, item.productId);
+            newArray.push({
+              _id: tools.generateId(),
+              productId: item.productId,
+              seriesId: '',
+              description: productFromDatabase.description,
+              place: item.place
+            })
           }
         }
       })
@@ -82,13 +88,13 @@ export default class Send extends React.Component {
     const setAccessories = () => {
       var newArray = [];
       this.props.contract.accessories.forEach((item) => {
-        var found = isCurrentlyRented(item.productId);
-        if (!found || found.renting < item.renting) {
+        var canRent = countHowManyCanRent(item);
+        if (canRent > 0) {
           var productFromDatabase = tools.findUsingId(this.props.databases.accessoriesDatabase, item.productId);
           newArray.push({
             _id: tools.generateId(),
             productId: item.productId,
-            renting: item.renting,
+            renting: canRent,
             selected: [],
             description: productFromDatabase.description
           })
@@ -108,7 +114,6 @@ export default class Send extends React.Component {
 
   onChange = (changes) => {
     this.setState({
-      ...this.state,
       ...changes
     })
   }
@@ -155,7 +160,10 @@ export default class Send extends React.Component {
 
   render() {
     return (
-      <Box closeBox={this.props.toggleSend} title="Realizar Nova Entrega" width="900px">
+      <Box
+        className="shipping__select"
+        closeBox={this.props.toggleSend}
+        title="Realizar Nova Entrega">
         <ShippingFixed
           onChange={this.onChange}
           fixed={this.state.fixed}
@@ -195,7 +203,7 @@ export default class Send extends React.Component {
         <ConfirmationWindow
           isOpen={this.state.confirmationWindow}
           closeBox={this.toggleConfirmationWindow}
-          message="Deseja enviar os produtos?"
+          message="Deseja enviar os produtos selecionados?"
           leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
           rightButton={{text: "Sim", className: "button--danger", onClick: this.sendProducts}}
         />

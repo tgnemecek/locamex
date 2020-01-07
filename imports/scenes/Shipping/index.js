@@ -42,21 +42,21 @@ class Shipping extends React.Component {
       accessories: [],
       modules: []
     };
-    const isItemIncluded = (itemId) => {
+    const findItem = (productId) => {
       var all = currentlyRented.fixed.concat(
         currentlyRented.accessories, currentlyRented.modules
       );
-      var found = all.find((item) => {
-        return item._id === itemId;
+      return all.find((item) => {
+        return item.productId === productId;
       })
-      return found;
     }
 
     this.props.contract.shipping.forEach((registry) => {
       registry.fixed.forEach((item) => {
         if (registry.type === "send") {
-          if (!isItemIncluded(item._id)) {
-            currentlyRented.fixed.push({...item});
+          var found = findItem(item.productId);
+          if (!found) {
+            currentlyRented.fixed.push(item);
           }
         } else if (registry.type === "receive") {
           for (var i = 0; i < currentlyRented.fixed.length; i++) {
@@ -68,21 +68,43 @@ class Shipping extends React.Component {
         }
       })
       registry.accessories.forEach((item) => {
-        var found = isItemIncluded(item._id);
+        var found = findItem(item.productId);
         if (!found) {
-          currentlyRented.accessories.push({...item});
+          currentlyRented.accessories.push({
+            ...item,
+            selected: item.selected.reduce((acc, cur) => {
+              return acc + cur.selected;
+            }, 0)
+          });
         } else {
-          var renting = registry.type === "send" ? item.renting : -item.renting;
-          found.renting += renting;
+          var selected = item.selected.reduce((acc, cur) => {
+            return acc + cur.selected;
+          }, 0)
+
+          if (registry.type === "receive") {
+            selected = -selected;
+          }
+          found.selected += selected;
         }
       })
       registry.modules.forEach((item) => {
-        var found = isItemIncluded(item._id);
+        var found = findItem(item.productId);
         if (!found) {
-          currentlyRented.modules.push({...item});
+          currentlyRented.modules.push({
+            ...item,
+            selected: item.selected.reduce((acc, cur) => {
+              return acc + cur.selected;
+            }, 0)
+          });
         } else {
-          var renting = registry.type === "send" ? item.renting : -item.renting;
-          found.renting += renting;
+          var selected = item.selected.reduce((acc, cur) => {
+            return acc + cur.selected;
+          }, 0)
+
+          if (registry.type === "receive") {
+            selected = -selected;
+          }
+          found.selected += selected;
         }
       })
     })
@@ -116,6 +138,7 @@ class Shipping extends React.Component {
           <h3 style={{textAlign: "center", margin: "20px"}}>Histórico de Remessas</h3>
           <ShippingHistory
             contract={this.props.contract}
+            accessoriesDatabase={this.props.databases.accessoriesDatabase}
             placesDatabase={this.props.databases.placesDatabase}
           />
           {this.state.toggleSend ?
@@ -135,7 +158,7 @@ class Shipping extends React.Component {
             />
           : null}
           <FooterButtons buttons={[
-            {text: "Entregar Itens", className: "button--secondary", onClick: this.toggleSend},
+            {text: "Enviar Itens", className: "button--secondary", onClick: this.toggleSend},
             {text: "Receber Itens", className: "button--secondary", onClick: this.toggleReceive},
           ]}/>
         </div>

@@ -93,7 +93,10 @@ export default class Receive extends React.Component {
 
   render() {
     return (
-      <Box closeBox={this.props.toggleReceive} title="Realizar Nova Devolução" width="900px">
+      <Box
+        className="shipping__select"
+        closeBox={this.props.toggleReceive}
+        title="Realizar Nova Devolução">
         <ReceiveFixed
           onChange={this.onChange}
           fixed={this.state.fixed}

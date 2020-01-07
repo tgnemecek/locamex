@@ -43,6 +43,16 @@ export default class ShippingFixed extends React.Component {
       var fixed = [...this.props.fixed];
       var index = e.target.name;
       fixed[index].seriesId = seriesId;
+      if (seriesId === "") {
+        fixed[index].place = "";
+      } else {
+        this.props.seriesDatabase.find((item) => {
+          if (item._id === seriesId) {
+            fixed[index].place = item.place;
+            return true;
+          }
+        });
+      }
       this.props.onChange({ fixed });
     }
 

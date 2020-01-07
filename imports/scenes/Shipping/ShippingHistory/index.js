@@ -29,7 +29,8 @@ export default class ShippingHistory extends React.Component {
 
   printDocument = (index) => {
     var item = this.props.contract.shipping[index];
-    item.list = prepareList(item, this.props.placesDatabase);
+    item.list = prepareList(item, this.props.placesDatabase,
+      this.props.accessoriesDatabase);
     item.contractId = this.props.contract._id;
     item.index = index;
 
@@ -50,12 +51,12 @@ export default class ShippingHistory extends React.Component {
   renderBody = () => {
     if (!this.props.contract.shipping) return null;
     function translateType(type) {
-      if (type === 'send') return "Entrega";
-      if (type === 'receive') return "Devolução";
+      if (type === 'send') return "Envio";
+      if (type === 'receive') return "Recebimento";
       return "";
     }
-    function renderList(item, placesDatabase) {
-      var list = prepareList(item, placesDatabase);
+    function renderList(item, placesDatabase, accessoriesDatabase) {
+      var list = prepareList(item, placesDatabase, accessoriesDatabase);
       return list.map((item, i) => {
         return (
           <li key={i}>
@@ -64,18 +65,21 @@ export default class ShippingHistory extends React.Component {
         )
       })
     }
-    return this.props.contract.shipping.reverse().map((item, i) => {
+    var shipping = tools.deepCopy(this.props.contract.shipping);
+    shipping.reverse();
+    return shipping.map((item, i, arr) => {
       return (
         <tr key={i}>
-          <td>{moment(item.date).format("DD-MMMM-YYYY")}</td>
+          <td>{arr.length - i}</td>
+          <td>{moment(item.date).format("DD-MMMM-YYYY HH:MM")}</td>
           <td>{translateType(item.type)}</td>
           <td>
             <ul>
-              {renderList(item, this.props.placesDatabase)}
+              {renderList(item, this.props.placesDatabase, this.props.accessoriesDatabase)}
             </ul>
         </td>
           <td className="table__small-column">
-            <button onClick={() => this.printDocument(i)}>
+            <button onClick={() => this.printDocument(arr.length - i - 1)}>
               <Icon icon="print"/>
             </button>
           </td>
@@ -116,56 +120,64 @@ export default class ShippingHistory extends React.Component {
   }
 }
 
-function prepareList(item, placesDatabase) {
+function prepareList(item, placesDatabase, accessoriesDatabase) {
   if (!item || !placesDatabase) return [];
   var fixed = item.fixed ? item.fixed.map((item) => {
+    var place = placesDatabase.find((p) => {
+      return item.place === p._id;
+    });
+    place = place ? place.description : "";
     return {
       quantity: 1,
-      description: `${item.description} (Série: ${item.seriesId})`
+      description: `${item.description} (Pátio: ${place} - Série: ${item.seriesId})`
     }
   }) : null;
   var accessories = [];
   item.accessories ? item.accessories.forEach((item) => {
-    if (Array.isArray(item.selected)) {
-      var quantity;
-      var description;
-      item.selected.forEach((selected) => {
-        var place = placesDatabase.find((place) => {
-          return place._id === selected.place;
-        });
-        place = place ? place.description : "";
-        quantity = selected.selected;
-        description = item.description + " (Pátio: " + place + ")";
+    var quantity;
+    var description;
+    item.selected.forEach((selected) => {
+      var placeDescription = "";
+      placesDatabase.forEach((place) => {
+        if (place._id === selected.place) {
+          placeDescription = "Pátio: " + place.description
+        }
+      });
+      var variationDescription = "";
+      accessoriesDatabase.forEach((product) => {
+        if (product._id === item.productId) {
+          if (product.variations.length > 1) {
+            variationDescription =
+              " - Padrão: " +
+              tools.convertToLetter(selected.variationIndex);
+          }
+        }
       })
-    } else {
-      quantity = item.selected;
-      description = item.description;
-    }
-    accessories.push({
-      quantity,
-      description
+      quantity = selected.selected;
+      description = item.description + " (" +
+        placeDescription +
+        variationDescription + ")";
+      accessories.push({
+        quantity,
+        description
+      })
     })
   }) : null;
   var modules = [];
   item.modules ? item.modules.forEach((item) => {
-    if (Array.isArray(item.selected)) {
-      var quantity;
-      var description;
-      item.selected.forEach((selected) => {
-        var place = placesDatabase.find((place) => {
-          return place._id === selected.place;
-        });
-        place = place ? place.description : "";
-        quantity = selected.selected,
-        description = item.description + " (Pátio: " + place + ")"
+    var quantity;
+    var description;
+    item.selected.forEach((selected) => {
+      var place = placesDatabase.find((place) => {
+        return place._id === selected.place;
+      });
+      place = place ? place.description : "";
+      quantity = selected.selected,
+      description = item.description + " (Pátio: " + place + ")"
+      modules.push({
+        quantity,
+        description
       })
-    } else {
-     quantity = item.selected;
-     description = item.description;
-    }
-    modules.push({
-      quantity,
-      description
     })
   }) : null;
   return fixed.concat(accessories, modules);

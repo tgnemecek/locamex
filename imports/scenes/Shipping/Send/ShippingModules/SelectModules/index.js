@@ -70,7 +70,7 @@ export default class SelectModules extends React.Component {
     return (
       <Box
         title="Selecionar Quantidades"
-        width="800px"
+        className="shipping__select__select-modules"
         closeBox={this.props.toggleWindow}
         >
           <Block columns={1}>

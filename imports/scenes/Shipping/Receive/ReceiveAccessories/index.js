@@ -11,7 +11,7 @@ export default class ReceiveAccessories extends React.Component {
       <tr>
         <th>#</th>
         <th>Produto</th>
-        <th>Variação</th>
+        <th>Padrão</th>
         <th>Quantidade</th>
         <th>Destino</th>
       </tr>
@@ -45,8 +45,8 @@ export default class ReceiveAccessories extends React.Component {
           <td className="table__small-column">{i+1}</td>
           <td>{item.description}</td>
           <td>{renderVariations(item.variationIndex, array)}</td>
-          {/* <td>{item.selected}</td> */}
-          {/* <td>
+          <td>{item.selected}</td>
+          <td>
             <Input
               type="select"
               name={i}
@@ -57,8 +57,11 @@ export default class ReceiveAccessories extends React.Component {
             </Input>
           </td>
           <td className="table__small-column">
-            {item.place ? <span style={{color: 'green'}}>✔</span> : <span style={{color: 'red'}}>⦸</span>}
-          </td> */}
+            {item.place ?
+              <span style={{color: 'green'}}>✔</span> :
+              <span style={{color: 'red'}}>⦸</span>
+            }
+          </td>
         </tr>
       )
     })

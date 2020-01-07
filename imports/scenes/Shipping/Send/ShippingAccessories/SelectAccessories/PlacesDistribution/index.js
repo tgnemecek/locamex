@@ -33,7 +33,7 @@ export default class PlacesDistribution extends React.Component {
 
 
   renderBody = () => {
-    var places = [...this.props.productFromDatabase.variations[this.props.currentVariationIndex].place];
+    var places = tools.deepCopy(this.props.productFromDatabase.variations[this.props.currentVariationIndex].place);
 
     // Deducts quantities that are already on the list
     this.props.selectedList.forEach((item) => {
@@ -62,7 +62,7 @@ export default class PlacesDistribution extends React.Component {
         }
         return (
           <div key={i}
-            className="shipping__select-multiple__place"
+            className="shipping__select__place-strip"
             style={this.style()}
             onMouseOver={this.hoveringState}
             onMouseOut={this.normalState}
@@ -80,9 +80,13 @@ export default class PlacesDistribution extends React.Component {
 
   render() {
     return (
-      <Block columns={2} title="Estoque do produto:">
-        {this.renderBody()}
-      </Block>
+      <>
+        <h4>Estoque do produto:</h4>
+        <div
+          className="shipping__select__places-distribution">
+          {this.renderBody()}
+        </div>
+      </>
     )
   }
 }

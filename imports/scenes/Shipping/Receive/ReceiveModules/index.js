@@ -32,18 +32,12 @@ export default class ReceiveModules extends React.Component {
       this.props.onChange({ modules });
     }
 
-    const getQuantity = (item) => {
-      return item.selected.reduce((acc, cur) => {
-        return acc + cur.selected;
-      }, 0)
-    }
-
     return this.props.modules.map((item, i) => {
       return (
         <tr key={i}>
           <td className="table__small-column">{i+1}</td>
           <td>{item.description}</td>
-          <td>{getQuantity(item)}</td>
+          <td>{item.selected}</td>
           <td>
             <Input
               type="select"

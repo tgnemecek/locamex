@@ -16,27 +16,27 @@ export default class Footer extends React.Component {
     const isFormValid = () => {
       var fixed = this.props.fixed;
       for (var i = 0; i < fixed.length; i++) {
-        if (!fixed[i].seriesId) {
-          return false;
+        if (fixed[i].seriesId) {
+          return true;
         }
       }
       var modules = this.props.modules;
       for (var i = 0; i < modules.length; i++) {
-        if (!modules[i].selected.reduce((acc, cur) => {
+        if (modules[i].selected.reduce((acc, cur) => {
           return acc + cur.selected;
         }, 0)) {
-          return false;
+          return true;
         }
       }
       var accessories = this.props.accessories;
       for (var i = 0; i < accessories.length; i++) {
         if (accessories[i].selected.reduce((acc, cur) => {
           return acc + cur.selected;
-        }, 0) !== accessories[i].renting) {
-          return false;
+        }, 0)) {
+          return true;
         }
       }
-      return true;
+      return false;
     }
     if (isFormValid()) {
       this.setState({ errorMsg: "" }, () => {
