@@ -42,14 +42,14 @@ class Shipping extends React.Component {
       accessories: [],
       modules: []
     };
-    const findItem = (productId, variationIndex) => {
+    const findItem = (productId, otherValue, otherKey) => {
       var all = currentlyRented.fixed.concat(
         currentlyRented.accessories, currentlyRented.modules
       );
       return all.find((item) => {
         if (item.productId === productId) {
-          if (variationIndex !== undefined) {
-            return item.variationIndex === variationIndex;
+          if (otherValue !== undefined) {
+            return item[otherKey] === otherValue;
           } else return true;
         };
       })
@@ -58,7 +58,7 @@ class Shipping extends React.Component {
     this.props.contract.shipping.forEach((registry) => {
       registry.fixed.forEach((item) => {
         if (registry.type === "send") {
-          var found = findItem(item.productId);
+          var found = findItem(item.productId, item.seriesId, "seriesId");
           if (!found) {
             currentlyRented.fixed.push(item);
           }
@@ -73,7 +73,7 @@ class Shipping extends React.Component {
       })
       registry.accessories.forEach((item) => {
         item.selected.forEach((selection) => {
-          var found = findItem(item.productId, selection.variationIndex);
+          var found = findItem(item.productId, selection.variationIndex, "variationIndex");
           if (!found) {
             currentlyRented.accessories.push({
               ...item,

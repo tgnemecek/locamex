@@ -197,7 +197,9 @@ if (Meteor.isServer) {
         _id: tools.generateId(),
         date: new Date(),
         type: 'receive',
-        fixed: master.fixed,
+        fixed: master.fixed.filter((item) => {
+          return !!item.place;
+        }),
         modules: master.modules,
         accessories: master.accessories
       });

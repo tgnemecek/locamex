@@ -53,7 +53,9 @@ export default class Receive extends React.Component {
     // }
 
     this.state = {
-      fixed: this.props.currentlyRented.fixed || [],
+      fixed: this.props.currentlyRented.fixed.map((item) => {
+        return {...item, place: ""}
+      }),
       modules: this.props.currentlyRented.modules || [],
       accessories: this.props.currentlyRented.accessories || [],
       databaseStatus: '',
