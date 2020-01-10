@@ -5,7 +5,7 @@ import Box from '/imports/components/Box/index';
 import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 
-import ReceiveModules from './ReceiveModules/index';
+import ReceivePacks from './ReceivePacks/index';
 import ReceiveFixed from './ReceiveFixed/index';
 import ReceiveAccessories from './ReceiveAccessories/index';
 import Footer from './Footer/index';
@@ -56,7 +56,14 @@ export default class Receive extends React.Component {
       fixed: this.props.currentlyRented.fixed.map((item) => {
         return {...item, place: ""}
       }),
-      modules: this.props.currentlyRented.modules || [],
+      packs: this.props.currentlyRented.packs.map((item) => {
+        return {
+          ...item,
+          modules: item.modules.map((module) => {
+            return {...module, place: ""};
+          })
+        }
+      }),
       accessories: this.props.currentlyRented.accessories || [],
       databaseStatus: '',
       confirmationWindow: false
@@ -105,7 +112,7 @@ export default class Receive extends React.Component {
 
           containersDatabase={this.props.databases.containersDatabase}
           placesDatabase={this.props.databases.placesDatabase}/>
-        <ReceiveModules
+        {/* <ReceivePacks
           onChange={this.onChange}
           modules={this.state.modules}
 
@@ -116,7 +123,7 @@ export default class Receive extends React.Component {
           accessories={this.state.accessories}
 
           accessoriesDatabase={this.props.databases.accessoriesDatabase}
-          placesDatabase={this.props.databases.placesDatabase}/>
+          placesDatabase={this.props.databases.placesDatabase}/> */}
         <Footer
           fixed={this.state.fixed}
           modules={this.state.modules}

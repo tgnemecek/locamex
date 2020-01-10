@@ -1,20 +1,16 @@
 import tools from '/imports/startup/tools/index';
 
 export default function tableItems(props) {
-  function extra(item) {
-    if (item.series) return "Série " + item.series;
-    if (item.label) return "Etiqueta " + item.label;
-    if (item.variation) return variation;
-    return "";
-  }
   const body = () => {
     return props.list.map((item, i) => {
       if (!item.subList) {
         return [
           item.quantity,
           item.description,
-          extra(item),
-          item.place || "",
+          {text: item.series || "", alignment: "center"},
+          "",
+          {text: item.variation || "", alignment: "center"},
+          {text: item.place || "", alignment: "center"},
           ''
         ];
       } else {
@@ -22,15 +18,19 @@ export default function tableItems(props) {
           return [
             subItem.quantity,
             {ul: [subItem.description]},
-            extra(subItem),
-            subItem.place || "",
+            '',
+            '',
+            '',
+            {text: subItem.place || "", alignment: "center"},
             ''
           ]
         });
         result.unshift([
           item.quantity,
           item.description,
-          extra(item),
+          '',
+          {text: item.label || "", alignment: "center"},
+          '',
           '',
           ''
         ])
@@ -45,13 +45,15 @@ export default function tableItems(props) {
         [
         'Qtd',
         'Item',
-        'Série/Etiqueta/Padrão',
-        'Pátio',
+        {text: 'Série', alignment: "center"},
+        {text: 'Etiqueta', alignment: "center"},
+        {text: 'Padrão', alignment: "center"},
+        {text: 'Pátio', alignment: "center"},
         ' '
       ]
     ],
       body: body(),
-      widths: ['auto', '*', 'auto', 'auto', 32]
+      widths: ['auto', '*', 'auto', 'auto', 'auto', 'auto', 32]
     })
   ]
 }

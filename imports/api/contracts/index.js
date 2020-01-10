@@ -207,7 +207,7 @@ if (Meteor.isServer) {
         fixed: master.fixed.filter((item) => {
           return !!item.place;
         }),
-        modules: master.modules,
+        packs: master.packs,
         accessories: master.accessories
       });
 
@@ -216,19 +216,17 @@ if (Meteor.isServer) {
       function updateModule(product, module) {
         var place = [...product.place];
         var rented = product.rented;
-        module.selected.forEach((moduleSelected) => {
-          var exists = place.findIndex((item) => item._id === module.place);
-          if (exists > -1) {
-            place[exists].available = place[exists].available + moduleSelected.selected;
-          } else {
-            place.push({
-              _id: module.place,
-              available: moduleSelected.selected,
-              inactive: 0
-            })
-          }
-          rented = rented - moduleSelected.selected;
-        })
+        var exists = place.findIndex((item) => item._id === module.place);
+        if (exists > -1) {
+          place[exists].available += module.selected;
+        } else {
+          place.push({
+            _id: module.place,
+            available: module.selected,
+            inactive: 0
+          })
+        }
+        rented = rented - module.selected;
         return {
           ...product,
           rented,
@@ -270,11 +268,15 @@ if (Meteor.isServer) {
         currentShipping.fixed.forEach((fixed) => {
           if (!isSimulation) Meteor.call('series.update', {place: fixed.place}, fixed.seriesId);
         })
-        currentShipping.modules.forEach((module) => {
-          var productFromDatabase = Modules.findOne({ _id: module.productId });
-          if (!productFromDatabase) throw new Meteor.Error('product-not-found');
-          productFromDatabase = updateModule(productFromDatabase, module);
-          if (!isSimulation) Meteor.call('modules.shipping.receive', productFromDatabase);
+        currentShipping.packs.forEach((pack) => {
+          pack.modules.forEach((module) => {
+            if (module.place) {
+              var productFromDatabase = Modules.findOne({ _id: module.productId });
+              if (!productFromDatabase) throw new Meteor.Error('product-not-found');
+              productFromDatabase = updateModule(productFromDatabase, module);
+              if (!isSimulation) Meteor.call('modules.shipping.receive', productFromDatabase);
+            }
+          })
         })
         currentShipping.accessories.forEach((accessory) => {
           var productFromDatabase = Accessories.findOne({ _id: accessory.productId });

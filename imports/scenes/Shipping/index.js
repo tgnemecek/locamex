@@ -88,8 +88,7 @@ class Shipping extends React.Component {
           }
         })
       })
-      registry.packs.forEach((item) => {
-        // EDIT THIS
+      registry.packs.forEach((item, j) => {
         var found = findItem(item.productId, item.label, "label");
         if (!found) {
           if (registry.type === "send") {
@@ -111,9 +110,12 @@ class Shipping extends React.Component {
               return obj.productId === newModule.productId;
             })
             if (foundModule) {
-              var increment = newModule.selected.reduce((acc, cur) => {
-                return acc + cur.selected;
-              }, 0)
+              var increment;
+              if (Array.isArray(newModule.selected)) {
+                increment = newModule.selected.reduce((acc, cur) => {
+                  return acc + cur.selected;
+                }, 0)
+              } else increment = newModule.selected;
               if (registry.type === "receive") {
                 increment = -increment;
               }
@@ -122,6 +124,12 @@ class Shipping extends React.Component {
           })
         }
       })
+      })
+      currentlyRented.packs = currentlyRented.packs.filter((item) => {
+        item.modules = item.modules.filter((module) => {
+          return module.selected > 0;
+        })
+        return item.modules.length;
     })
     return currentlyRented;
   }
