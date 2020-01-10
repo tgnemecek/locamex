@@ -1,7 +1,7 @@
 import React from 'react';
 
 import tools from '/imports/startup/tools/index';
- 
+
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 

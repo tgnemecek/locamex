@@ -23,8 +23,7 @@ class Shipping extends React.Component {
     super(props);
     this.state = {
       toggleSend: false,
-      toggleReceive: false,
-      itemsRented: []
+      toggleReceive: false
     }
   }
 
@@ -40,11 +39,11 @@ class Shipping extends React.Component {
     var currentlyRented = {
       fixed: [],
       accessories: [],
-      modules: []
+      packs: []
     };
     const findItem = (productId, otherValue, otherKey) => {
       var all = currentlyRented.fixed.concat(
-        currentlyRented.accessories, currentlyRented.modules
+        currentlyRented.accessories, currentlyRented.packs
       );
       return all.find((item) => {
         if (item.productId === productId) {
@@ -89,28 +88,140 @@ class Shipping extends React.Component {
           }
         })
       })
-      registry.modules.forEach((item) => {
-        var found = findItem(item.productId);
+      registry.packs.forEach((item) => {
+        // EDIT THIS
+        var found = findItem(item.productId, item.label, "label");
         if (!found) {
-          currentlyRented.modules.push({
-            ...item,
-            selected: item.selected.reduce((acc, cur) => {
-              return acc + cur.selected;
-            }, 0)
-          });
-        } else {
-          var selected = item.selected.reduce((acc, cur) => {
-            return acc + cur.selected;
-          }, 0)
-
-          if (registry.type === "receive") {
-            selected = -selected;
+          if (registry.type === "send") {
+            currentlyRented.packs.push({
+              ...item,
+              modules: item.modules.map((module) => {
+                return {
+                  ...module,
+                  selected: module.selected.reduce((acc, cur) => {
+                    return acc + cur.selected;
+                  }, 0)
+                }
+              })
+            });
           }
-          found.selected += selected;
+        } else {
+          var modules = item.modules.map((newModule) => {
+            var foundModule = found.modules.find((obj) => {
+              return obj.productId === newModule.productId;
+            })
+            if (foundModule) {
+              var increment = newModule.selected.reduce((acc, cur) => {
+                return acc + cur.selected;
+              }, 0)
+              if (registry.type === "receive") {
+                increment = -increment;
+              }
+              foundModule.selected += increment;
+            }
+          })
         }
       })
     })
     return currentlyRented;
+  }
+
+  prepareList = (item, showPlace) => {
+    if (!item || !this.props.databases.placesDatabase) return [];
+    var fixed = item.fixed ? item.fixed.map((item) => {
+      var place = "";
+      if (showPlace) {
+        var place = this.props.databases.placesDatabase.find((p) => {
+          return item.place === p._id;
+        });
+        place = place ? place.description : "";
+      }
+      return {
+        quantity: 1,
+        description: item.description,
+        place,
+        series: item.seriesId
+      }
+    }) : [];
+    var accessories = [];
+    item.accessories ? item.accessories.forEach((item) => {
+      var quantity;
+      var description;
+      if (Array.isArray(item.selected)) {
+        item.selected.forEach((selected) => {
+          var placeDescription = "";
+          if (showPlace) {
+            this.props.databases.placesDatabase.forEach((place) => {
+              if (place._id === selected.place) {
+                placeDescription = place.description
+              }
+            });
+          }
+
+          var variationDescription = "";
+          this.props.databases.accessoriesDatabase.forEach((product) => {
+            if (product._id === item.productId) {
+              if (product.variations.length > 1) {
+                variationDescription =
+                  "Padrão " +
+                  tools.convertToLetter(selected.variationIndex);
+              } else {
+                variationDescription = "Padrão Único";
+              }
+            }
+          })
+          quantity = selected.selected;
+        })
+      } else {
+        quantity = item.selected;
+      }
+      accessories.push({
+        quantity,
+        description: item.description,
+        place: placeDescription,
+        variation: variationDescription
+      })
+    }) : [];
+    var packs = [];
+    item.packs ? item.packs.forEach((pack) => {
+      var subList = [];
+      pack.modules.forEach((item) => {
+        var quantity;
+        var description;
+        var place;
+        if (Array.isArray(item.selected)) {
+          item.selected.forEach((selected) => {
+            var place = "";
+            if (showPlace) {
+              place = this.props.databases.placesDatabase.find((place) => {
+                return place._id === selected.place;
+              });
+              place = place ? place.description : "";
+            }
+            quantity = selected.selected,
+            description = item.description;
+            subList.push({
+              quantity,
+              description,
+              place
+            })
+          })
+        } else {
+          subList.push({
+            quantity: item.selected,
+            description: item.description,
+            place: ""
+          })
+        }
+      })
+      packs.push({
+        quantity: 1,
+        description: pack.description,
+        label: pack.label,
+        subList
+      })
+    }) : [];
+    return fixed.concat(accessories, packs);
   }
 
   render() {
@@ -136,6 +247,7 @@ class Shipping extends React.Component {
           <CurrentlyRented
             accessoriesDatabase={this.props.databases.accessoriesDatabase}
             currentlyRented={this.currentlyRented()}
+            prepareList={this.prepareList}
           />
           <h3 style={{textAlign: "center", margin: "20px"}}>Histórico de Remessas</h3>
           <ShippingHistory

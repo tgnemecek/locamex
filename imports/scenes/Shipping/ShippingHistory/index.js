@@ -47,78 +47,6 @@ export default class ShippingHistory extends React.Component {
     })
   }
 
-  prepareList = (item, showPlace) => {
-    if (!item || !this.props.placesDatabase) return [];
-    var fixed = item.fixed ? item.fixed.map((item) => {
-      var place = "";
-      if (showPlace) {
-        var place = this.props.placesDatabase.find((p) => {
-          return item.place === p._id;
-        });
-        place = place ? `(Pátio: ${place.description} ` : "";
-      }
-      return {
-        quantity: 1,
-        description: `${item.description} ${place}- Série: ${item.seriesId})`
-      }
-    }) : null;
-    var accessories = [];
-    item.accessories ? item.accessories.forEach((item) => {
-      var quantity;
-      var description;
-      item.selected.forEach((selected) => {
-        var placeDescription = "";
-        if (showPlace) {
-          this.props.placesDatabase.forEach((place) => {
-            if (place._id === selected.place) {
-              placeDescription = "Pátio: " + place.description
-            }
-          });
-        }
-
-        var variationDescription = "";
-        this.props.accessoriesDatabase.forEach((product) => {
-          if (product._id === item.productId) {
-            if (product.variations.length > 1) {
-              variationDescription =
-                " - Padrão: " +
-                tools.convertToLetter(selected.variationIndex);
-            }
-          }
-        })
-        quantity = selected.selected;
-        description = item.description + " (" +
-          placeDescription +
-          variationDescription + ")";
-        accessories.push({
-          quantity,
-          description
-        })
-      })
-    }) : null;
-    var modules = [];
-    item.modules ? item.modules.forEach((item) => {
-      var quantity;
-      var description;
-      item.selected.forEach((selected) => {
-        var place = "";
-        if (showPlace) {
-          place = this.props.placesDatabase.find((place) => {
-            return place._id === selected.place;
-          });
-          place = place ? ` (Pátio: ${place.description})` : "";
-        }
-        quantity = selected.selected,
-        description = item.description + place;
-        modules.push({
-          quantity,
-          description
-        })
-      })
-    }) : null;
-    return fixed.concat(accessories, modules);
-  }
-
   renderBody = () => {
     if (!this.props.contract.shipping) return null;
     function translateType(type) {
@@ -126,12 +54,34 @@ export default class ShippingHistory extends React.Component {
       if (type === 'receive') return "Recebimento";
       return "";
     }
+    function extras(item) {
+      var series = item.series ? "Série: " + item.series : "";
+      var place = item.place ? "Pátio: " + item.place : "";
+      var variation = item.variation || "";
+      var label = item.label ? "Etiqueta " + item.label : "";
+      var array = [series, place, variation, label];
+      array = array.filter((str) => str);
+      if (array.length) {
+        return "(" + array.join(" - ") + ")";
+      } else return "";
+    }
     const renderList = (item) => {
-      var list = this.prepareList(item, true);
+      var list = this.props.prepareList(item, true);
       return list.map((item, i) => {
         return (
           <li key={i}>
-            {`${item.quantity}x ${item.description}`}
+            {`${item.quantity}x ${item.description} ${extras(item)}`}
+            {item.subList ?
+              <ul>
+                {item.subList.map((subItem, i) => {
+                  return (
+                    <li key={i}>
+                      {`${subItem.quantity}x ${subItem.description} ${extras(subItem)}`}
+                    </li>
+                  )
+                })}
+              </ul>
+            : null}
           </li>
         )
       })

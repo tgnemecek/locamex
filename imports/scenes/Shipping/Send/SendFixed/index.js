@@ -6,7 +6,7 @@ import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 import ImageVisualizer from '/imports/components/ImageVisualizer/index';
 
-export default class ShippingFixed extends React.Component {
+export default class SendFixed extends React.Component {
   renderHeader = () => {
     return (
       <tr>

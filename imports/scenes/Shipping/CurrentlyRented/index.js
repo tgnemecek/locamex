@@ -15,49 +15,60 @@ export default class CurrentlyRented extends React.Component {
       this.props.currentlyRented.accessories.map((item) => {
         return {...item, type: "accessory"}
       }),
-      this.props.currentlyRented.modules.map((item) => {
-        return {...item, type: "module"}
+      this.props.currentlyRented.packs.map((item) => {
+        return {...item, type: "pack"}
       })
     )
-    function description(item, accessoriesDatabase) {
-      if (item.type === "fixed") {
-        return item.description + " (Série: " + item.seriesId + ")"
-      } else if (item.type === "accessory") {
-        var variations = "";
-        var found = accessoriesDatabase.find((obj) => {
-          return obj._id === item.productId;
-        });
-        if (found) {
-          if (found.variations.length > 1) {
-            variations = " (Padrão: " + tools.convertToLetter(item.variationIndex) + ")"
-          } else {
-            variations = " (Padrão Único)"
-          }
-        }
-        return item.description + variations;
-      } else return item.description;
+    function extras(item) {
+      var series = item.series ? "Série: " + item.series : "";
+      var place = item.place ? "Pátio: " + item.place : "";
+      var variation = item.variation || "";
+      var label = item.label ? "Etiqueta " + item.label : "";
+      var array = [series, place, variation, label];
+      array = array.filter((str) => str);
+      if (array.length) {
+        return "(" + array.join(" - ") + ")";
+      } else return "";
     }
-    return all.map((item, i) => {
-      return (
-        <tr key={i}>
-          <td>{item.selected || 1}</td>
-          <td>{description(item, this.props.accessoriesDatabase)}</td>
-          <td className="table__small-column">
-            {item.type === "fixed" ?
-              <button>
-                <Icon icon="transaction"/>
-              </button>
-            : null}
-          </td>
-        </tr>
-      )
-    });
+    return (
+      <tr>
+        <td>
+          <ul>
+            {this.props.prepareList(this.props.currentlyRented).map((obj, i) => {
+              return (
+                <li key={i}>
+                  {`${obj.quantity}x ${obj.description} ${extras(obj)}`}
+                  {obj.subList ?
+                    <ul>
+                      {obj.subList.map((subItem, i) => {
+                        return (
+                          <li key={i}>
+                            {`${subItem.quantity}x ${subItem.description} ${extras(subItem)}`}
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  : null}
+                </li>
+              )
+            })}
+          </ul>
+        </td>
+      </tr>
+    )
+    // return all.map((item, i) => {
+    //   return (
+    //     <tr key={i}>
+    //       <td>{this.props.prepareList(item)}</td>
+    //     </tr>
+    //   )
+    // });
   }
 
   render() {
     if (!this.props.currentlyRented.fixed.length &&
         !this.props.currentlyRented.accessories.length &&
-        !this.props.currentlyRented.modules.length) {
+        !this.props.currentlyRented.packs.length) {
       return (
         <p style={{fontStyle: "italic", textAlign: "center"}}>
           Não há itens atualmente no cliente.
@@ -68,7 +79,6 @@ export default class CurrentlyRented extends React.Component {
       <table className="table">
         <thead>
           <tr>
-            <th className="table__small-column">Qtd.</th>
             <th>Itens</th>
           </tr>
         </thead>

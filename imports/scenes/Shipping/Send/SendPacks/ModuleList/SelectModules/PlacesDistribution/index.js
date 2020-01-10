@@ -33,7 +33,7 @@ export default class PlacesDistribution extends React.Component {
 
 
   renderBody = () => {
-    var places = tools.deepCopy(this.props.item.place);
+    var places = tools.deepCopy(this.props.productFromDatabase.place);
 
     // Deducts quantities that are already on the list
     this.props.selectedList.forEach((item) => {

@@ -20,10 +20,10 @@ export default class Footer extends React.Component {
           return true;
         }
       }
-      var modules = this.props.modules;
-      for (var i = 0; i < modules.length; i++) {
-        if (modules[i].selected.reduce((acc, cur) => {
-          return acc + cur.selected;
+      var packs = this.props.packs;
+      for (var i = 0; i < packs.length; i++) {
+        if (packs[i].modules.reduce((acc, cur) => {
+          return acc + cur.selected.length;
         }, 0)) {
           return true;
         }
@@ -42,7 +42,11 @@ export default class Footer extends React.Component {
       this.setState({ errorMsg: "" }, () => {
         this.props.toggleConfirmationWindow();
       })
-    } else this.setState({ errorMsg: "O formulário contém campos inválidos!" });
+    } else {
+      this.setState({
+        errorMsg: "O formulário contém campos inválidos!"
+      });
+    }
   }
 
   render() {
@@ -50,7 +54,10 @@ export default class Footer extends React.Component {
     return (
       <div>
         <div className="error-message">{this.state.errorMsg}</div>
-        <FooterButtons buttons={[{text: "Enviar Produtos", onClick: this.checkForProblems}]}/>
+        <FooterButtons
+          buttons={[
+            {text: "Enviar Produtos", onClick: this.checkForProblems}
+          ]}/>
       </div>
     )
   }

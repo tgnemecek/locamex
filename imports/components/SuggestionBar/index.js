@@ -24,7 +24,7 @@ export default class SuggestionBar extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.database !== this.props.database
+    if (prevProps.database.length !== this.props.database.length
         || this.props.value !== this.state.value
     ) {
       this.setup();
