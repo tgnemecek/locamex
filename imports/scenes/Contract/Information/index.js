@@ -9,10 +9,6 @@ import SuggestionBar from '/imports/components/SuggestionBar/index';
 import CalendarBar from '/imports/components/CalendarBar/index';
 
 export default class Information extends React.Component {
-  constructor(props) {
-    super(props);
-    this.firstSetup = [];
-  }
   changeDuration = (e) => {
     var duration = e.target.value;
     var firstChange = e.target.firstChange;
@@ -32,7 +28,7 @@ export default class Information extends React.Component {
     dates.duration = duration;
     this.props.updateContract({
       dates,
-      discount,
+      discount: firstChange ? this.props.contract.discount : discount,
       billingProducts: firstChange ? this.props.contract.billingProducts : [],
       billingServices: firstChange ? this.props.contract.billingServices : []
     });
@@ -47,7 +43,7 @@ export default class Information extends React.Component {
     dates.timeUnit = timeUnit;
     this.props.updateContract({
       dates,
-      discount,
+      discount: firstChange ? this.props.contract.discount : discount,
       billingProducts: firstChange ? this.props.contract.billingProducts : [],
       billingServices: firstChange ? this.props.contract.billingServices : []
     })

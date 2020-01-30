@@ -21,6 +21,7 @@ export default class Information extends React.Component {
 
   changeDuration = (e) => {
     var duration = e.target.value;
+    var firstChange = e.target.firstChange;
     var discount = 0;
     if (this.props.proposal.dates.timeUnit === "months") {
       if (duration >= 3 && duration <= 5) {
@@ -37,13 +38,14 @@ export default class Information extends React.Component {
     dates.duration = duration;
     this.props.updateProposal({
       dates,
-      discount
+      discount: firstChange ? this.props.proposal.discount : discount
     });
   }
 
   changeTimeUnit = (e) => {
     var timeUnit = e.target.value;
     var dates = {...this.props.proposal.dates};
+    var firstChange = e.target.firstChange;
     var discount = 0;
     var observations = {
       ...this.props.proposal.observations,
@@ -53,7 +55,7 @@ export default class Information extends React.Component {
     dates.timeUnit = timeUnit;
     this.props.updateProposal({
       dates,
-      discount,
+      discount: firstChange ? this.props.proposal.discount : discount,
       observations
     })
   }
