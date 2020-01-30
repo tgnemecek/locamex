@@ -7,6 +7,8 @@ import tools from '/imports/startup/tools/index';
 import Box from '/imports/components/Box/index';
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
+import DatabaseStatus from '/imports/components/DatabaseStatus/index';
+import FooterButtons from '/imports/components/FooterButtons/index';
 
 class RegisterSeries extends React.Component {
   constructor(props) {
@@ -17,7 +19,8 @@ class RegisterSeries extends React.Component {
       place: this.props.item.place || '',
       observations: this.props.item.observations || '',
 
-      errorKeys: []
+      errorKeys: [],
+      databaseStatus: false
     }
   }
 
@@ -75,9 +78,27 @@ class RegisterSeries extends React.Component {
     }
   }
 
-  removeItem = () => {
-    Meteor.call('series.hide', this.props.item._id);
-    this.props.toggleWindow();
+  deleteSeries = () => {
+    this.setState({ databaseStatus: "loading" }, () => {
+      Meteor.call('series.delete', this.props.item._id, (err, res) => {
+        if (err) {
+          if (err.error === "id-in-use") {
+            this.setState({ databaseStatus: {
+              status: "failed",
+              message: "Série já em uso! " + err.reason
+            } });
+          } else {
+            this.setState({ databaseStatus: "failed" });
+          }
+        }
+        if (res) {
+          this.setState({ databaseStatus: {
+            status: "completed",
+            callback: this.props.toggleWindow
+          }})
+        }
+      });
+    })
   }
 
   render() {
@@ -128,7 +149,19 @@ class RegisterSeries extends React.Component {
               onChange={this.onChange}
             />
           </Block>
-          <this.props.Footer {...this.props} saveEdits={this.saveEdits} removeItem={this.removeItem} />
+          <FooterButtons
+            buttons={this.props.item._id ?
+              [
+                {text: "Excluir Registro", className: "button--danger", onClick: this.deleteSeries},
+                {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+                {text: "Salvar", onClick: this.saveEdits}
+              ]
+            :
+            [
+              {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+              {text: "Salvar", onClick: this.saveEdits}
+            ]}/>
+          <DatabaseStatus status={this.state.databaseStatus} />
       </Box>
     )
   }

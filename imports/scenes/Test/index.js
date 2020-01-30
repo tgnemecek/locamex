@@ -16,23 +16,13 @@ class TestPage extends React.Component {
       value: 0
     }
   }
-  onClick = (e) => {
-    Meteor.call('a', this.state.value, (err, res) => {
-      console.log('RESPONDED!');
-      this.setState({ value: res });
-    });
+  onChange = (e) => {
+    debugger;
   }
   render() {
     return (
       <div>
-        <button onClick={this.onClick}>+2</button>
-        <div>
-          {this.state.value}
-        </div>
-        <div>
-          Is it a Promise??
-          {typeof this.state.value.then === "function" ? 'Yes!' : 'No!'}
-        </div>
+        <input onChange={this.onChange}></input>
       </div>
     )
   }

@@ -42,8 +42,8 @@ export default class Information extends React.Component {
     this.props.updateContract({
       dates,
       discount,
-      billingProducts: {},
-      billingServices: {}
+      billingProducts: [],
+      billingServices: []
     })
   }
 

@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.4.0
+
+-  Added function to delete series (temporarily without any verification);
+
 ## Version 2.3.9
 
 -  Added an option to tools.sortObjects allowing convertToNumber;
