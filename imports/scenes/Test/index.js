@@ -13,16 +13,26 @@ class TestPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 0
+      value: 0,
+      otherValue: 0
     }
   }
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({ value: 100 });
+    }, 2000);
+  }
   onChange = (e) => {
-    debugger;
+    this.setState({ value: e.target.value, otherValue: 999 });
   }
   render() {
     return (
       <div>
-        <input onChange={this.onChange}></input>
+        <input
+          onChange={this.onChange}
+          value={this.state.value}
+        />
+        <input value={this.state.otherValue}/>
       </div>
     )
   }

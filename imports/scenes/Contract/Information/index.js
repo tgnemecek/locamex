@@ -9,6 +9,10 @@ import CalendarBar from '/imports/components/CalendarBar/index';
 import SuggestionBar from '/imports/components/SuggestionBar/index';
 
 export default class Information extends React.Component {
+  constructor(props) {
+    super(props);
+    this.firstSetup = [];
+  }
   changeDuration = (e) => {
     var duration = e.target.value;
     var discount = 0;
