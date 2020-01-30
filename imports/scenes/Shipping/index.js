@@ -233,6 +233,7 @@ class Shipping extends React.Component {
   }
 
   render() {
+    return null;
     return (
       <div className="page-content">
         <RedirectUser currentPage="shipping"/>
