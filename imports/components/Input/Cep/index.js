@@ -12,6 +12,8 @@ export default class Cep extends React.Component {
     }
   }
   checkCep = () => {
+    if (this.props.disabled) return;
+
     var value = tools.unformat(this.props.value, this.props.type);
     if (value === undefined) return;
     if (value.length == 8) {
@@ -54,7 +56,10 @@ export default class Cep extends React.Component {
           disabled={this.props.disabled}
 
           style={this.styleChanger()}/>
-          <button className="custom-input--cep__button" onClick={this.checkCep}>↺</button>
+          <button
+            className={!this.props.disabled ? "custom-input--cep__button" : "custom-input--cep__button disable-click"} onClick={this.checkCep}>
+            ↺
+          </button>
       </>
     )
   }

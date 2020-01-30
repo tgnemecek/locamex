@@ -146,6 +146,7 @@ export default class SuggestionBar extends React.Component {
           style={this.props.style}
           onChange={this.onChange}
           buttonClick={this.buttonClick}
+          disabled={this.props.disabled}
           error={this.props.error}
           value={this.state.query}/>
         {this.state.results.length > 0 ?

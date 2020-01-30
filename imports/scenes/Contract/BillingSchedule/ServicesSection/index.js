@@ -88,10 +88,15 @@ export default class ServicesSection extends React.Component {
           <td>
             <CalendarBar
               onChange={changeExpiryDate}
+              disabled={this.props.disabled}
               value={charge.expiryDate}/>
           </td>
           <td>
-            <Input name={i} value={charge.description} onChange={onChangeDescription} type="textarea"/>
+            <Input
+              name={i}
+              value={charge.description} onChange={onChangeDescription}
+              disabled={this.props.disabled}
+              type="textarea"/>
           </td>
           <td>{calculateTaxes()}</td>
           <td>
@@ -100,6 +105,7 @@ export default class ServicesSection extends React.Component {
               name="value"
               allowNegative={true}
               onChange={onChangePrice}
+              disabled={this.props.disabled}
               value={charge.value}/>
           </td>
         </tr>
@@ -114,26 +120,31 @@ export default class ServicesSection extends React.Component {
           <h4>Pacote de Serviços:</h4>
           <div className="billing-schedule__services-header">
             <ChargesNumber
+              disabled={this.props.disabled}
               billingServices={this.props.billingServices}
               setCharges={this.props.setCharges}/>
             <Input
               title="INSS: (%)"
               type="number"
               name="inss"
+              disabled={this.props.disabled}
               value={this.props.billingServices[0].inss}
               onChange={this.onChangeTaxes}/>
             <Input
               title="ISS: (%)"
               type="number"
               name="iss"
+              disabled={this.props.disabled}
               value={this.props.billingServices[0].iss}
               onChange={this.onChangeTaxes}/>
             <this.props.AccountsSelector
+              disabled={this.props.disabled}
               accountsDatabase={this.props.accountsDatabase}
               charges={this.props.billingServices}
               updateBilling={this.updateBilling}
             />
             <this.props.EqualCharges
+              disabled={this.props.disabled}
               masterValue={this.props.servicesValue}
               charges={this.props.billingServices}
               updateBilling={this.updateBilling}/>

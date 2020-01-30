@@ -11,9 +11,11 @@ export default class SceneItems extends React.Component {
     }
   }
   toggleWindow = (windowOpen) => {
-    this.setState({
-      windowOpen: this.state.windowOpen ? false : windowOpen
-    });
+    if (!this.props.disabled) {
+      this.setState({
+        windowOpen: this.state.windowOpen ? false : windowOpen
+      });
+    }
   }
   render() {
     return (
@@ -21,6 +23,7 @@ export default class SceneItems extends React.Component {
         <div className="master__list">
           <h3>Containers:</h3>
           <Table
+            disabled={this.props.disabled}
             addedItems={this.props.master.containers}
             toggleWindow={() => this.toggleWindow('containers')}
           />
@@ -28,6 +31,7 @@ export default class SceneItems extends React.Component {
         <div className="master__list">
           <h3>Acessórios:</h3>
           <Table
+            disabled={this.props.disabled}
             addedItems={this.props.master.accessories}
             toggleWindow={() => this.toggleWindow('accessories')}
           />
@@ -35,6 +39,7 @@ export default class SceneItems extends React.Component {
         <div className="master__list">
           <h3>Serviços:</h3>
           <Table
+            disabled={this.props.disabled}
             addedItems={this.props.master.services}
             toggleWindow={() => this.toggleWindow('services')}
           />

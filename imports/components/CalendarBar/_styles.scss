@@ -7,9 +7,13 @@
   input {
     padding-left: 32px !important;
     cursor: pointer;
-    color: black !important;
-    background: white !important;
+    color: black;
+    background: white;
   }
+}
+
+.calendar-bar__input--disabled {
+
 }
 
 .calendar-bar__icon {

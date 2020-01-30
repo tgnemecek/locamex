@@ -17,7 +17,7 @@ export default class Table extends React.Component {
 
   render() {
     return (
-      <div className="master__item-list" onClick={this.props.toggleWindow}>
+      <div className={!this.props.disabled ? "master__item-list" : "master__item-list disable-click"} onClick={this.props.toggleWindow}>
         {this.props.addedItems.length > 0 ?
           <div>
             <div className="master__item-list__overlay">

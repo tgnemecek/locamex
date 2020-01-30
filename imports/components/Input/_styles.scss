@@ -14,12 +14,19 @@
   }
 }
 
-.input input:read-only {
+.input input:disabled {
   color: $dark-grey;
   background: $grey;
+  cursor: inherit;
 }
 
+// .input input:read-only {
+//   color: $dark-grey;
+//   background: $grey;
+// }
+
 .input select:disabled {
+  color: $dark-grey;
   background: $grey;
 }
 

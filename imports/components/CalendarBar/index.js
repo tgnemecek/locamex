@@ -13,8 +13,10 @@ export default class CalendarBar extends React.Component {
     }
   }
   toggleCalendar = () => {
-    var toggleCalendar = !this.state.toggleCalendar;
-    this.setState({ toggleCalendar });
+    if (!this.props.disabled) {
+      var toggleCalendar = !this.state.toggleCalendar;
+      this.setState({ toggleCalendar });
+    }
   }
   changeDate = (exportValue) => {
     var e = {
@@ -35,10 +37,10 @@ export default class CalendarBar extends React.Component {
           </div>
           <Input
             title={this.props.title}
-            className="calendar-bar__input"
+            className={!this.props.disabled ? "calendar-bar__input" : "calendar-bar__input calendar-bar__input--disabled"}
             value={moment(this.props.value).format("DD/MM/YYYY")}
             buttonClick={this.toggleCalendar}
-
+            disabled={this.props.disabled}
             readOnly={true}
             />
         </div>

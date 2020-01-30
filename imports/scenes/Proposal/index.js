@@ -63,7 +63,7 @@ class Proposal extends React.Component {
 
         dates: {
           creationDate: new Date(),
-          deliveryDate: new Date(),
+          startDate: new Date(),
           duration: 1,
           timeUnit: "months"
         },
@@ -301,7 +301,6 @@ class Proposal extends React.Component {
   }
 
   render () {
-    var disabled = this.state.proposal.status !== "inactive";
     return (
       <div className="page-content">
         <RedirectUser currentPage="proposal"/>
@@ -318,36 +317,36 @@ class Proposal extends React.Component {
             generateDocument={this.generateDocument}
 
             errorKeys={this.state.errorKeys}
-            disabled={disabled}
+            disabled={this.state.proposal.status !== "inactive"}
           />
-          <div className={disabled ? "disable-click" : ""}>
-            <Information
-              clientsDatabase={this.props.databases.clientsDatabase}
-              proposal={this.state.proposal}
-              updateProposal={this.updateProposal}
-              errorKeys={this.state.errorKeys}
-            />
-            <SceneItems
-              master={this.state.proposal}
-              databases={this.props.databases}
-              updateMaster={this.updateProposal}
-            />
-            <SceneFooter
-              totalValue={this.totalValue()}
-              productsValue={this.totalValue('products')}
-              servicesValue={this.totalValue('services')}
+          <Information
+            disabled={this.state.proposal.status !== "inactive"}
+            clientsDatabase={this.props.databases.clientsDatabase}
+            proposal={this.state.proposal}
+            updateProposal={this.updateProposal}
+            errorKeys={this.state.errorKeys}
+          />
+          <SceneItems
+            disabled={this.state.proposal.status !== "inactive"}
+            master={this.state.proposal}
+            databases={this.props.databases}
+            updateMaster={this.updateProposal}
+          />
+          <SceneFooter
+            totalValue={this.totalValue()}
+            productsValue={this.totalValue('products')}
+            servicesValue={this.totalValue('services')}
 
-              setError={this.setError}
-              errorMsg={this.state.errorMsg}
+            setError={this.setError}
+            errorMsg={this.state.errorMsg}
 
-              master={{...this.state.proposal, type: "proposal"}}
+            master={{...this.state.proposal, type: "proposal"}}
 
-              saveEdits={this.saveEdits}
-              activateMaster={this.activateProposal}
-              finalizeMaster={this.finalizeProposal}
-            />
-            <DatabaseStatus status={this.state.databaseStatus}/>
-          </div>
+            saveEdits={this.saveEdits}
+            activateMaster={this.activateProposal}
+            finalizeMaster={this.finalizeProposal}
+          />
+          <DatabaseStatus status={this.state.databaseStatus}/>
         </div>
       </div>
     )

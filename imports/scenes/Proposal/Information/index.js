@@ -107,6 +107,7 @@ export default class Information extends React.Component {
               error={this.props.errorKeys.includes("description")}
               value={this.props.proposal.client.description}
               onChange={this.handleChange}
+              disabled={this.props.disabled}
             />
             <Input
               title="Nome do Contato:"
@@ -116,6 +117,7 @@ export default class Information extends React.Component {
               error={this.props.errorKeys.includes("name")}
               value={this.props.proposal.client.name}
               onChange={this.handleChange}
+              disabled={this.props.disabled}
             />
             <Input
               title="Email:"
@@ -125,6 +127,7 @@ export default class Information extends React.Component {
               error={this.props.errorKeys.includes("email")}
               value={this.props.proposal.client.email}
               onChange={this.handleChange}
+              disabled={this.props.disabled}
             />
             <Input
               title="Telefone:"
@@ -134,6 +137,7 @@ export default class Information extends React.Component {
               error={this.props.errorKeys.includes("phone")}
               value={this.props.proposal.client.phone}
               onChange={this.handleChange}
+              disabled={this.props.disabled}
             />
             <Input
               title="Rua / Bairro de Entrega:"
@@ -143,22 +147,27 @@ export default class Information extends React.Component {
               error={this.props.errorKeys.includes("street")}
               value={this.props.proposal.deliveryAddress.street}
               onChange={this.handleChange}
+              disabled={this.props.disabled}
             />
             <CalendarBar
               title="Data de Início:"
-              name="deliveryDate"
+              name="startDate"
               extra="dates"
               onChange={this.handleChange}
-              value={this.props.proposal.dates.deliveryDate}
+              value={this.props.proposal.dates.startDate}
+              disabled={this.props.disabled}
             />
             <Input
               title="Desconto:"
               name="discount"
               type="number"
+              percent={true}
               max={100}
+              min={0}
               error={this.props.errorKeys.includes("discount")}
-              value={(this.props.proposal.discount) * 100}
-              onChange={(e) => this.handleChange({target: {value: tools.round((Number(e.target.value) / 100), 2), name: e.target.name}})}
+              value={this.props.proposal.discount}
+              onChange={this.handleChange}
+              disabled={this.props.disabled}
             />
             <Input
               title="Duração:"
@@ -170,6 +179,7 @@ export default class Information extends React.Component {
               type="number"
               min={1}
               max={this.props.proposal.dates.timeUnit === "months" ? 999 : 30}
+              disabled={this.props.disabled}
             />
             <Input
               title="Unidade:"
@@ -177,6 +187,7 @@ export default class Information extends React.Component {
               name="timeUnit"
               extra="dates"
               onChange={this.changeTimeUnit}
+              disabled={this.props.disabled}
               value={this.props.proposal.dates.timeUnit}>
                 <option value="months">Meses</option>
                 <option value="days">Dias</option>
@@ -189,6 +200,7 @@ export default class Information extends React.Component {
               error={this.props.errorKeys.includes("city")}
               value={this.props.proposal.deliveryAddress.city}
               onChange={this.handleChange}
+              disabled={this.props.disabled}
             />
             <Input
               title="Estado:"
@@ -197,6 +209,7 @@ export default class Information extends React.Component {
               extra="deliveryAddress"
               error={this.props.errorKeys.includes("state")}
               onChange={this.handleChange}
+              disabled={this.props.disabled}
               value={this.props.proposal.deliveryAddress.state}>
               {tools.states.map((item, i) => {
                 return <option key={i} value={item}>{item}</option>
@@ -210,6 +223,7 @@ export default class Information extends React.Component {
               error={this.props.errorKeys.includes("number")}
               value={this.props.proposal.deliveryAddress.number}
               onChange={this.handleChange}
+              disabled={this.props.disabled}
             />
             <Input
               title="Complemento:"
@@ -218,6 +232,7 @@ export default class Information extends React.Component {
               extra="deliveryAddress"
               value={this.props.proposal.deliveryAddress.additional}
               onChange={this.handleChange}
+              disabled={this.props.disabled}
             />
           </Block>
       )

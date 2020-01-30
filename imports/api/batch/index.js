@@ -14,6 +14,27 @@ import { Services } from '/imports/api/services/index';
 import { Series } from '/imports/api/series/index';
 
 if (Meteor.isServer && Meteor.isDevelopment) {
+  // var proposals = Proposals.find().fetch();
+  //
+  // proposals.forEach((pro) => {
+  //   var _id = pro._id;
+  //   var snapshots = pro.snapshots.map((snap) => {
+  //     return {
+  //       ...snap,
+  //       dates: {
+  //         ...snap.dates,
+  //         startDate: snap.dates.deliveryDate,
+  //         deliveryDate: undefined
+  //       }
+  //     }
+  //   })
+  //
+  //   Proposals.update({ _id }, { $set: {
+  //     ...pro,
+  //     snapshots
+  //   } } );
+  //
+  // })
 
 //   Containers.update({}, {
 //     $set: {

@@ -3,7 +3,9 @@ import moment from 'moment';
 
 export default function tableDuration(props) {
   const calcEndDate = () => {
-    return {text: moment(props.dates.deliveryDate).add(props.dates.duration, 'M').format("DD-MMMM-YYYY"), alignment: 'center'};
+    var length = props.billingProducts.length;
+    var endDate = props.billingProducts[length-1].endDate;
+    return {text: moment(endDate).format("DD-MMMM-YYYY"), alignment: 'center'};
   }
   const monthPlural = () => {
     if (props.dates.duration > 1) {
@@ -14,7 +16,7 @@ export default function tableDuration(props) {
   return props.generateTable({
     body: [[
       'Início em',
-      {text: moment(props.dates.deliveryDate).format("DD-MMMM-YYYY"), alignment: 'center'},
+      {text: moment(props.billingProducts[0].startDate).format("DD-MMMM-YYYY"), alignment: 'center'},
       'Término em',
       calcEndDate(),
       'Prazo mínimo de Locação',

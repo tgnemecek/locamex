@@ -319,14 +319,16 @@ class Contract extends React.Component {
             errorKeys={this.state.errorKeys}
             disabled={disabled}
           />
-          <div className={this.state.contract.status !== "inactive" ? "contract__body disable-click" : "contract__body"}>
+          <div className="contract__body">
             <Information
+              disabled={this.state.contract.status !== "inactive"}
               clientsDatabase={this.props.databases.clientsDatabase}
               contract={this.state.contract}
               updateContract={this.updateContract}
               errorKeys={this.state.errorKeys}
             />
             <SceneItems
+              disabled={this.state.contract.status !== "inactive"}
               master={this.state.contract}
               databases={this.props.databases}
               updateMaster={this.updateContract}

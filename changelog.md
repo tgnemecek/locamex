@@ -1,5 +1,11 @@
 # Changelog:
 
+## Version 2.4.2
+
+-  Renamed deliveryDate to startDate in Proposals and Contracts;
+-  BillingProducts now correctly uses startDate;
+-  Pdf dates inconsistency fixed;
+
 ## Version 2.4.1
 
 -  Fixed bug where Contracts and Proposals discount would reset;

@@ -19,6 +19,9 @@ export default class Digits extends React.Component {
     if (prevProps.value !== value
         && this.state.displayValue !== "-"
         && this.state.displayValue !== "") {
+          if (this.props.percent) {
+            value = Math.round((Number(value) * 100));
+          }
       value = value.toString().replace('.', ',');
       this.calculateValues(value);
     }
@@ -30,7 +33,7 @@ export default class Digits extends React.Component {
   calculateValues = (displayValue) => {
     var options = {
       allowNegative: this.props.allowNegative === false ? false : true,
-      allowFloat: this.props.allowFloat === false ? false : true,
+      allowFloat: this.props.allowFloat === false ? false : true
     }
     if (displayValue === "") {
       this.setValues({ displayValue });
@@ -47,7 +50,9 @@ export default class Digits extends React.Component {
       return displayValue.replace(/(-?)([^-]*)(-*)/g, '$1$2');
     }
     function commaProcess(displayValue, options) {
-      if (!options.allowFloat) return {displayValue, exportValue: displayValue};
+      if (!options.allowFloat) {
+        return {displayValue, exportValue: displayValue};
+      }
 
       var commaAtEndOfString = RegExp(',$', 'g');
       var commasAnywhere = RegExp(',', 'g');
@@ -87,6 +92,9 @@ export default class Digits extends React.Component {
         displayValue = min.toString();
       }
       blurValue = displayValue;
+    }
+    if (this.props.percent) {
+      exportValue = tools.round((Number(exportValue) / 100), 2);
     }
     this.setState({ displayValue, blurValue }, () => {
       if (!skipExport) this.props.onChange(exportValue);
