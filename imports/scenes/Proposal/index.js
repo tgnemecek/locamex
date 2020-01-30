@@ -29,7 +29,7 @@ class Proposal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      proposal: explodeProposal(this.props.proposal) || {
+      proposal: tools.explodeProposal(this.props.proposal) || {
         _id: undefined,
         createdBy: Meteor.user()._id,
         status: "inactive",
@@ -194,7 +194,7 @@ class Proposal extends React.Component {
       const activate = (proposal) => {
         Meteor.call('proposals.activate', proposal, (err, res) => {
           if (res) {
-            proposal = explodeProposal(res.proposal);
+            proposal = tools.explodeProposal(res.proposal);
             var databaseStatus = {
               status: "completed",
               message: "Proposta Fechada! Gerado Contrato #" + res.contractId
@@ -216,7 +216,7 @@ class Proposal extends React.Component {
       if (this.props.match.params.proposalId == 'new') {
         Meteor.call('proposals.insert', this.state.proposal, (err, res) => {
           if (res) {
-            var proposal = explodeProposal(res);
+            var proposal = tools.explodeProposal(res);
             this.props.history.push("/proposal/" + proposal._id);
             if (typeof callback === "function") {
               callback(proposal);
@@ -233,7 +233,7 @@ class Proposal extends React.Component {
             var proposal;
             var databaseStatus;
             if (res.hasChanged) {
-              proposal = explodeProposal(res.proposal);
+              proposal = tools.explodeProposal(res.proposal);
               databaseStatus = "completed";
             } else {
               proposal = this.state.proposal;
@@ -352,18 +352,6 @@ class Proposal extends React.Component {
       </div>
     )
   }
-}
-
-function explodeProposal(proposal) {
-  if (proposal) {
-    return {
-      ...proposal.snapshots[proposal.activeVersion],
-      _id: proposal._id,
-      status: proposal.status,
-      activeVersion: proposal.activeVersion,
-      version: proposal.activeVersion
-    }
-  } else return false;
 }
 
 function ProposalLoader (props) {

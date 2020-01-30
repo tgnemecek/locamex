@@ -64,9 +64,15 @@ class ModulesTable extends React.Component {
         <th className="table__small-column">Inativos</th>
         <th className="table__small-column">Total</th>
         <th className="table__small-column">
-          <Icon icon="report" onClick={generateReport} />
+          <button onClick={generateReport}>
+            <Icon icon="report" />
+          </button>
         </th>
-        <th className="table__small-column"><Icon icon="new" onClick={toggleEditWindow} /></th>
+        <th className="table__small-column">
+          <button onClick={toggleEditWindow}>
+            <Icon icon="new" />
+          </button>
+        </th>
       </tr>
     )
   }
@@ -90,8 +96,16 @@ class ModulesTable extends React.Component {
           <td className="table__small-column">{item.rented}</td>
           <td className="table__small-column">{inactive}</td>
           <td className="table__small-column">{available + item.rented + inactive}</td>
-          <td className="table__small-column"><Icon icon="edit" onClick={toggleEditWindow} /></td>
-          <td className="table__small-column"><Icon icon="transaction" onClick={toggleStockVisualizer} /></td>
+          <td className="table__small-column">
+            <button onClick={toggleEditWindow}>
+              <Icon icon="edit" />
+            </button>
+          </td>
+          <td className="table__small-column">
+            <button onClick={toggleStockVisualizer}>
+              <Icon icon="transaction"  />
+            </button>
+          </td>
         </tr>
       )
     })

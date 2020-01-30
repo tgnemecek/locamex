@@ -34,7 +34,7 @@ class Contract extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      contract: explodeContract(this.props.contract) || {
+      contract: tools.explodeContract(this.props.contract) || {
         _id: undefined,
         createdBy: Meteor.user()._id,
         status: "inactive",
@@ -68,7 +68,6 @@ class Contract extends React.Component {
         },
         dates: {
           creationDate: new Date(),
-          deliveryDate: new Date(),
           duration: 1,
           timeUnit: "months"
         },
@@ -149,17 +148,12 @@ class Contract extends React.Component {
   }
 
   changeVersion = (e) => {
-    var newVersion = e.target.value;
-    var contract = {
-      ...this.props.contract.snapshots[newVersion],
-      _id: this.state.contract._id,
-      status: this.props.contract.status,
-      version: newVersion,
-      activeVersion: this.props.contract.activeVersion,
-      proposal: this.props.contract.proposal,
-      proposalVersion: this.props.contract.proposalVersion
-    }
-    this.setState({ contract });
+    this.setState({
+      contract: tools.explodeContract({
+        ...this.props.contract,
+        _id: this.state.contract._id
+      }, e.target.value)
+    });
   }
 
   cancelContract = (callback) => {
@@ -237,7 +231,7 @@ class Contract extends React.Component {
           var contract;
           var databaseStatus;
           if (res.hasChanged) {
-            contract = explodeContract(res.contract);
+            contract = tools.explodeContract(res.contract);
             databaseStatus = "completed";
           } else {
             contract = this.state.contract;
@@ -337,20 +331,6 @@ class Contract extends React.Component {
               databases={this.props.databases}
               updateMaster={this.updateContract}
             />
-            <SceneFooter
-              totalValue={this.totalValue()}
-              productsValue={this.totalValue('products')}
-              servicesValue={this.totalValue('services')}
-
-              setError={this.setError}
-              errorMsg={this.state.errorMsg}
-
-              master={{...this.state.contract, type: "contract"}}
-
-              saveEdits={this.saveEdits}
-              activateMaster={this.activateContract}
-              finalizeMaster={this.finalizeContract}
-            />
             <DatabaseStatus status={this.state.databaseStatus}/>
             {this.state.clientSetupWindow ?
               <ClientSetup
@@ -360,29 +340,24 @@ class Contract extends React.Component {
                 clientsDatabase={this.props.databases.clientsDatabase}/>
             : null}
           </div>
+          <SceneFooter
+            totalValue={this.totalValue()}
+            productsValue={this.totalValue('products')}
+            servicesValue={this.totalValue('services')}
+
+            setError={this.setError}
+            errorMsg={this.state.errorMsg}
+
+            master={{...this.state.contract, type: "contract"}}
+
+            saveEdits={this.saveEdits}
+            activateMaster={this.activateContract}
+            finalizeMaster={this.finalizeContract}
+          />
         </div>
       </div>
     )
   }
-}
-
-function explodeContract(contract) {
-  if (contract) {
-    var version;
-    if (contract.status === "active") {
-      version = contract.activeVersion;
-    } else version = contract.snapshots.length-1;
-
-    return {
-      ...contract.snapshots[version],
-      _id: contract._id,
-      status: contract.status,
-      activeVersion: contract.activeVersion,
-      version,
-      proposal: contract.proposal,
-      proposalVersion: contract.proposalVersion
-    }
-  } else return false;
 }
 
 function ContractLoader (props) {

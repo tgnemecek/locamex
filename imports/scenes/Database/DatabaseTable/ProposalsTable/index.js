@@ -1,5 +1,6 @@
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
+import { Link } from 'react-router-dom';
 import RedirectUser from '/imports/components/RedirectUser/index';
 import { Proposals } from '/imports/api/proposals/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
@@ -36,7 +37,9 @@ class ProposalsTable extends React.Component {
         <th className="table__small-column">Status</th>
         <th className="table__small-column hide-at-700px">Valor Total da Proposta</th>
         <th className="table__small-column">
-          <Icon to="/proposal/new" icon="new" />
+          <Link to="/proposal/new">
+            <Icon icon="new" />
+          </Link>
         </th>
       </tr>
     )
@@ -72,7 +75,9 @@ class ProposalsTable extends React.Component {
         if (tools.isUserAllowed("proposal")) {
           return (
             <td className="table__small-column">
-              <Icon key={i} icon="edit" to={"/proposal/" + item._id} />
+              <Link key={i} to={"/proposal/" + item._id}>
+                <Icon icon="edit"/>
+              </Link>
             </td>
           )
         } else return null;
@@ -81,7 +86,9 @@ class ProposalsTable extends React.Component {
         if (tools.isUserAllowed("shipping") && item.status === "active") {
           return (
             <td className="table__small-column">
-              <Icon key={i} icon="transaction" to={"/shipping/" + item._id} />
+              <Link key={i} to={"/shipping/" + item._id}>
+                <Icon icon="transaction"/>
+              </Link>
             </td>
           )
         } else return null;
@@ -139,13 +146,8 @@ export default ProposalsTableWrapper = withTracker((props) => {
   var fullDatabase = Proposals.find().fetch();
   fullDatabase = tools.sortObjects(fullDatabase, '_id', {reverseOrder: true});
   fullDatabase = fullDatabase.map((item) => {
-    var newItem = {
-      ...item.snapshots[item.activeVersion],
-      _id: item._id,
-      status: item.status,
-      clientName: item.snapshots[item.activeVersion].client.description
-    };
-
+    var newItem = tools.explodeProposal(item);
+    newItem.clientName = newItem.client.description;
     return newItem;
   })
   var ready = !!fullDatabase.length;

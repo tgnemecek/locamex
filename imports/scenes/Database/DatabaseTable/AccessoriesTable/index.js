@@ -68,10 +68,14 @@ class AccessoriesTable extends React.Component {
         <th className="table__small-column">Total</th>
         <th className="table__small-column">Valor Mensal</th>
         <th className="table__small-column">
-          <Icon icon="report" onClick={generateReport} />
+          <button onClick={generateReport}>
+            <Icon icon="report" />
+          </button>
         </th>
         <th className="table__small-column">
-          <Icon icon="new" onClick={toggleEditWindow} />
+          <button onClick={toggleEditWindow}>
+            <Icon icon="new" />
+          </button>
         </th>
       </tr>
     )
@@ -92,14 +96,23 @@ class AccessoriesTable extends React.Component {
         if (tools.isUserAllowed("accessories.edit")) {
           return (
             <td className="table__small-column">
-              <Icon icon="edit" onClick={toggleEditWindow} />
+              <button onClick={toggleEditWindow}>
+                <Icon icon="edit"/>
+              </button>
             </td>
           )
         } else return null;
       }
       const renderStockButton = () => {
         if (tools.isUserAllowed("accessories.stock")) {
-          return <td className="table__small-column"><Icon icon="transaction" onClick={toggleStockVisualizer} /></td>
+          return (
+            <td className="table__small-column">
+              <button onClick={toggleStockVisualizer}>
+                <Icon icon="transaction"/>
+              </button>
+
+            </td>
+          )
         } else return null;
       }
       var available = count(item, 'available');
@@ -116,7 +129,9 @@ class AccessoriesTable extends React.Component {
           {renderEditButton()}
           {renderStockButton()}
           <td className="table__small-column">
-            <Icon icon="image" onClick={toggleImageWindow} />
+            <button onClick={toggleImageWindow}>
+              <Icon icon="image"/>
+            </button>
         </td>
         </tr>
       )

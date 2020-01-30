@@ -22,7 +22,6 @@ export default class SelectAccessories extends React.Component {
   }
 
   addToSelection = (howManyToMove, variationPlace) => {
-
     var selectedList = [...this.state.selectedList];
     var variationToAdd = this.props.productFromDatabase.variations[this.state.currentVariationIndex];
     var existingVariation = tools.findUsingId(selectedList, variationToAdd._id);
@@ -64,7 +63,7 @@ export default class SelectAccessories extends React.Component {
     return (
       <Box
         title="Selecionar Quantidades"
-        width="800px"
+        className="shipping__select__select-accessories"
         closeBox={this.props.toggleWindow}
         >
           <Block columns={1}>

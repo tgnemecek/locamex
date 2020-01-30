@@ -52,10 +52,6 @@ export default class SelectedList extends React.Component {
     this.props.addToSelection(howManyToMove, this.state.variationPlace);
   }
 
-  removeFromSelection = (e) => {
-    this.props.removeFromSelection(e.target.value);
-  }
-
   renderBody = () => {
     const variationName = (item) => {
       if (this.props.productFromDatabase.variations.length == 1) {
@@ -72,7 +68,10 @@ export default class SelectedList extends React.Component {
           <td>{tools.findUsingId(this.props.placesDatabase, item.place).description}</td>
           <td>{item.selected}</td>
           <td className="buttom-column">
-            <Icon value={i} onClick={this.removeFromSelection} icon="not"/>
+            <button onClick={() => this.props.removeFromSelection(i)}>
+              <Icon icon="not"/>
+            </button>
+
           </td>
         </tr>
       )

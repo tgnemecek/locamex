@@ -95,8 +95,7 @@ export default class ManageItems extends React.Component {
     })
   }
 
-  addItem = (e) => {
-    var _id = e.target.value;
+  addItem = (_id) => {
     var filteredDatabase = this.state.filteredDatabase;
     var addedItems = [...this.state.addedItems];
 
@@ -118,8 +117,7 @@ export default class ManageItems extends React.Component {
     this.setState({ addedItems, filteredDatabase });
   }
 
-  removeItem = (e) => {
-    var _id = e.target.value;
+  removeItem = (_id) => {
     var filteredDatabase;
     var addedItems = [...this.state.addedItems];
 

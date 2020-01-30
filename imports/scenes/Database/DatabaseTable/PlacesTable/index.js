@@ -18,7 +18,11 @@ class PlacesTable extends React.Component {
     return (
       <tr>
         <th>Pátio</th>
-        <th className="table__small-column"><Icon icon="new" onClick={toggleEditWindow} /></th>
+        <th className="table__small-column">
+          <button onClick={toggleEditWindow}>
+            <Icon icon="new" />
+          </button>
+        </th>
       </tr>
     )
   }
@@ -39,7 +43,11 @@ class PlacesTable extends React.Component {
       return (
         <tr key={i}>
           <td>{item.description}</td>
-          <td className="table__small-column"><Icon icon="edit" onClick={toggleEditWindow} /></td>
+          <td className="table__small-column">
+            <button onClick={toggleEditWindow}>
+              <Icon icon="edit" />
+            </button>
+          </td>
         </tr>
       )
     })

@@ -40,7 +40,11 @@ class ClientsTable extends React.Component {
         <th>Nome Fantasia</th>
         <th className="table__small-column">CNPJ/CPF</th>
         <th className="table__small-column">Tipo</th>
-        <th className="table__small-column"><Icon icon="new" onClick={toggleEditWindow} /></th>
+        <th className="table__small-column">
+          <button onClick={toggleEditWindow}>
+            <Icon icon="new" />
+          </button>
+        </th>
       </tr>
     )
   }
@@ -56,7 +60,11 @@ class ClientsTable extends React.Component {
           <td>{item.description}</td>
           <td className="table__small-column">{tools.format(item.registry, formatType)}</td>
           <td className="table__small-column">{item.type === 'company' ? "PJ" : "PF"}</td>
-          <td className="table__small-column"><Icon icon="edit" onClick={toggleEditWindow} /></td>
+          <td className="table__small-column">
+            <button onClick={toggleEditWindow}>
+              <Icon icon="edit" />
+            </button>
+          </td>
         </tr>
       )
     })

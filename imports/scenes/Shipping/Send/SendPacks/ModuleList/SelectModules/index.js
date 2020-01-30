@@ -3,7 +3,6 @@ import React from 'react';
 import tools from '/imports/startup/tools/index';
 
 import Box from '/imports/components/Box/index';
-import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 import ImageVisualizer from '/imports/components/ImageVisualizer/index';
 
@@ -59,10 +58,9 @@ export default class SelectModules extends React.Component {
   }
 
   saveEdits = () => {
-    this.props.onChange({
-      _id: this.props.item._id,
-      selected: this.state.selectedList
-    });
+    this.props.setSelected(
+      this.props.item._id, this.state.selectedList
+    );
     this.props.toggleWindow();
   }
 
@@ -70,18 +68,16 @@ export default class SelectModules extends React.Component {
     return (
       <Box
         title="Selecionar Quantidades"
-        width="800px"
+        className="shipping__select__select-modules"
         closeBox={this.props.toggleWindow}
         >
-          <Block columns={1}>
-            <Block columns={2}>
-              <div>{this.props.title}</div>
-            </Block>
+          <div>
+            <div>{"Produto: " + this.props.item.description}</div>
             <PlacesDistribution
-              item={this.props.item}
+              productFromDatabase={this.props.productFromDatabase}
               selectedList={this.state.selectedList}
               placesDatabase={this.props.placesDatabase}/>
-          </Block>
+          </div>
           <SelectedList
             addToSelection={this.addToSelection}
             removeFromSelection={this.removeFromSelection}

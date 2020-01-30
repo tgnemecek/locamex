@@ -36,7 +36,9 @@ export default class Box extends React.Component {
         className={this.className()}>
           {this.props.closeBox ?
             <div className="box__close-button">
-              <Icon onClick={this.closeBox} icon="not" />
+              <button onClick={this.closeBox}>
+                <Icon icon="not" />
+              </button>
             </div>
           : null}
           {this.props.help ?

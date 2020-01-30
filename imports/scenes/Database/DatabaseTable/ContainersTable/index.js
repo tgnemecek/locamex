@@ -61,9 +61,15 @@ class ContainersTable extends React.Component {
         <th className="table__small-column">Tipo</th>
         <th className="table__small-column">Valor Mensal</th>
         <th className="table__small-column">
-          <Icon icon="report" onClick={generateReport} />
+          <button onClick={generateReport}>
+            <Icon icon="report" />
+          </button>
         </th>
-        <th className="table__small-column"><Icon icon="new" onClick={toggleEditWindow} /></th>
+        <th className="table__small-column">
+          <button onClick={toggleEditWindow}>
+            <Icon icon="new" />
+          </button>
+        </th>
       </tr>
     )
   }
@@ -97,8 +103,16 @@ class ContainersTable extends React.Component {
           <td>{item.description}</td>
           <td className="table__small-column">{translate(item.type)}</td>
           <td className="table__small-column">{tools.format(item.price, 'currency')}</td>
-          <td className="table__small-column"><Icon icon="pdf" onClick={toggleFlyerWindow} /></td>
-          <td className="table__small-column"><Icon icon="edit" onClick={toggleEditWindow} /></td>
+          <td className="table__small-column">
+            <button onClick={toggleFlyerWindow}>
+              <Icon icon="pdf" />
+            </button>
+          </td>
+          <td className="table__small-column">
+            <button onClick={toggleEditWindow}>
+              <Icon icon="edit" />
+            </button>
+          </td>
         </tr>
       )
     })

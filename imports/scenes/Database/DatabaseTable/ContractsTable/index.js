@@ -1,5 +1,6 @@
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
+import { Link } from 'react-router-dom';
 import RedirectUser from '/imports/components/RedirectUser/index';
 import { Clients } from '/imports/api/clients/index';
 import { Contracts } from '/imports/api/contracts/index';
@@ -80,7 +81,9 @@ class ContractsTable extends React.Component {
         if (tools.isUserAllowed("contract")) {
           return (
             <td className="table__small-column">
-              <Icon key={i} icon="edit" to={"/contract/" + item._id} />
+              <Link key={i} to={"/contract/" + item._id}>
+                <Icon icon="edit"/>
+              </Link>
             </td>
           )
         } else return null;
@@ -89,7 +92,9 @@ class ContractsTable extends React.Component {
         if (tools.isUserAllowed("billing") && item.status === "active") {
           return (
             <td className="table__small-column">
-              <Icon key={i} icon="money" to={"/billing/" + item._id} />
+              <Link key={i} to={"/billing/" + item._id}>
+                <Icon icon="money"/>
+              </Link>
             </td>
           )
         } else return null;
@@ -98,7 +103,9 @@ class ContractsTable extends React.Component {
         if (tools.isUserAllowed("shipping") && item.status === "active") {
           return (
             <td className="table__small-column">
-              <Icon key={i} icon="transaction" to={"/shipping/" + item._id} />
+              <Link key={i} to={"/shipping/" + item._id}>
+                <Icon icon="transaction"  />
+              </Link>
             </td>
           )
         } else return null;
@@ -164,16 +171,9 @@ export default ContractsTableWrapper = withTracker((props) => {
 
   fullDatabase = tools.sortObjects(fullDatabase, '_id', {reverseOrder: true});
   fullDatabase = fullDatabase.map((item) => {
-    newItem = {
-      ...item.snapshots[Number(item.activeVersion)],
-      _id: item._id,
-      status: item.status,
-      proposal: item.proposal,
-      proposalVersion: item.proposalVersion
-    };
-
+    var newItem = tools.explodeContract(item);
     var currentClient = clientsDatabase.find((client) => {
-      return client._id === item.clientId
+      return client._id === newItem.clientId
     });
 
     if (currentClient) {

@@ -33,7 +33,7 @@ if (Meteor.isServer) {
       const data = {
         _id,
         status: "inactive",
-        activeVersion: 0,
+        activeVersion: undefined,
         snapshots: [
           {
             ...snapshot,
@@ -64,6 +64,7 @@ if (Meteor.isServer) {
         _id: undefined,
         version: undefined,
         status: undefined,
+        activeVersion: undefined,
 
         containers: setProducts(snapshot.containers),
         accessories: setProducts(snapshot.accessories),
@@ -71,7 +72,6 @@ if (Meteor.isServer) {
       };
 
       data.snapshots.push(newSnapshot);
-      data.activeVersion = Number(snapshot.version)+1;
 
       Proposals.update({ _id }, { $set: data } );
       Meteor.call('history.insert', data, 'proposals.update');
@@ -83,8 +83,8 @@ if (Meteor.isServer) {
         status: 'inactive',
         proposal: _id,
         proposalVersion: Number(master.version),
-        activeVersion: 0,
-        shipping: {},
+        activeVersion: undefined,
+        shipping: [],
         snapshots: [
           {
             createdBy: master.createdBy,

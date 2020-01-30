@@ -90,7 +90,9 @@ export default class SelectedList extends React.Component {
           <td>{tools.findUsingId(this.props.placesDatabase, item.place).description}</td>
           <td>{item.selected}</td>
           <td className="buttom-column">
-            <Icon onClick={removeFromSelection} icon="not" />
+            <button onClick={removeFromSelection}>
+              <Icon icon="not" />
+            </button>
           </td>
         </tr>
       )

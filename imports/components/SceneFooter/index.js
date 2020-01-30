@@ -88,8 +88,7 @@ export default class SceneFooter extends React.Component {
     } else if (this.props.master.status === 'active' && this.props.master.type === "contract") {
       return (
         <FooterButtons buttons={[
-          {text: "Salvar Edições", className: "button--secondary", onClick: this.props.saveEdits},
-          {text: "Finalizar Contrato", onClick: this.toggleFinalizeWindow},
+          {text: "Finalizar Contrato", onClick: this.toggleFinalizeWindow}
         ]}/>
       )
     } else return null;
@@ -115,7 +114,7 @@ export default class SceneFooter extends React.Component {
         <ConfirmationWindow
           isOpen={this.state.confirmationWindow === 'finalize'}
           closeBox={this.toggleWindowsOff}
-          message="Deseja finalizar este contrato? Ele não poderá ser reativado."
+          message="Deseja finalizar este contrato? Ele não poderá ser reativado e todas as cobranças serão finalizadas."
           leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleWindowsOff}}
           rightButton={{text: "Sim", className: "button--danger", onClick: this.props.finalizeMaster}}/>
         <ConfirmationWindow

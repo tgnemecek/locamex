@@ -11,7 +11,7 @@ export default class ReceiveAccessories extends React.Component {
       <tr>
         <th>#</th>
         <th>Produto</th>
-        <th>Variação</th>
+        <th>Padrão</th>
         <th>Quantidade</th>
         <th>Destino</th>
       </tr>
@@ -57,7 +57,10 @@ export default class ReceiveAccessories extends React.Component {
             </Input>
           </td>
           <td className="table__small-column">
-            {item.place ? <span style={{color: 'green'}}>✔</span> : <span style={{color: 'red'}}>⦸</span>}
+            {item.place ?
+              <span style={{color: 'green'}}>✔</span> :
+              <span style={{color: 'red'}}>⦸</span>
+            }
           </td>
         </tr>
       )

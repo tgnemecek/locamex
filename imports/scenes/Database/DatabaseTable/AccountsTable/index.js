@@ -21,7 +21,9 @@ class AccountsTable extends React.Component {
         <th className="table__small-column">Agência</th>
         <th className="table__small-column">Número da Conta</th>
         <th className="table__small-column">
-          <Icon icon="new" onClick={toggleEditWindow} />
+          <button onClick={toggleEditWindow}>
+            <Icon icon="new" />
+          </button>
         </th>
       </tr>
     )
@@ -46,7 +48,9 @@ class AccountsTable extends React.Component {
             {item.number}
           </td>
           <td className="table__small-column">
-            <Icon icon="edit" onClick={toggleEditWindow} />
+            <button onClick={toggleEditWindow}>
+              <Icon icon="edit"/>
+            </button>
           </td>
         </tr>
       )

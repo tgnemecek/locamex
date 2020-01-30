@@ -24,7 +24,7 @@ export default class SuggestionBar extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (prevProps.database !== this.props.database
+    if (prevProps.database.length !== this.props.database.length
         || this.props.value !== this.state.value
     ) {
       this.setup();
@@ -146,6 +146,7 @@ export default class SuggestionBar extends React.Component {
           style={this.props.style}
           onChange={this.onChange}
           buttonClick={this.buttonClick}
+          error={this.props.error}
           value={this.state.query}/>
         {this.state.results.length > 0 ?
           <ul className="suggestion-bar__dropbox">

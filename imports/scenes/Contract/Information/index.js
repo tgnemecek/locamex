@@ -5,8 +5,8 @@ import tools from '/imports/startup/tools/index';
 
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
-import CalendarBar from '/imports/components/CalendarBar/index';
 import SuggestionBar from '/imports/components/SuggestionBar/index';
+import CalendarBar from '/imports/components/CalendarBar/index';
 
 export default class Information extends React.Component {
   constructor(props) {
@@ -15,6 +15,7 @@ export default class Information extends React.Component {
   }
   changeDuration = (e) => {
     var duration = e.target.value;
+    var firstChange = e.target.firstChange;
     var discount = 0;
     if (this.props.contract.dates.timeUnit === "months") {
       if (duration >= 3 && duration <= 5) {
@@ -32,8 +33,8 @@ export default class Information extends React.Component {
     this.props.updateContract({
       dates,
       discount,
-      billingProducts: [],
-      billingServices: []
+      billingProducts: firstChange ? this.props.contract.billingProducts : [],
+      billingServices: firstChange ? this.props.contract.billingServices : []
     });
   }
 
@@ -41,13 +42,27 @@ export default class Information extends React.Component {
     var timeUnit = e.target.value;
     var dates = {...this.props.contract.dates};
     var discount = 0;
+    var firstChange = e.target.firstChange;
     dates.duration = 1;
     dates.timeUnit = timeUnit;
     this.props.updateContract({
       dates,
       discount,
-      billingProducts: [],
-      billingServices: []
+      billingProducts: firstChange ? this.props.contract.billingProducts : [],
+      billingServices: firstChange ? this.props.contract.billingServices : []
+    })
+  }
+
+  changeDeliveryDate = (e) => {
+    var deliveryDate = e.target.value;
+    var firstChange = e.target.firstChange;
+    this.props.updateContract({
+      dates: {
+        ...this.props.contract.dates,
+        deliveryDate
+      },
+      billingProducts: firstChange ? this.props.contract.billingProducts : [],
+      billingServices: firstChange ? this.props.contract.billingServices : []
     })
   }
 
@@ -82,7 +97,7 @@ export default class Information extends React.Component {
   render() {
       return (
         <div className="contract__information">
-          <div>
+          <div className="contract__information__left">
             <SuggestionBar
               title="Cliente:"
               name="clientId"
@@ -94,24 +109,24 @@ export default class Information extends React.Component {
               onClick={this.handleChange}>
             </SuggestionBar>
             <Link
+              className="span2"
               to={`/proposal/${this.props.contract.proposal}`}
               style={{textDecoration: 'none', cursor: 'pointer'}}>
               <Input
                 title="Proposta:"
                 name="proposal"
                 type="text"
-                className="span2"
                 disabled={true}
                 value={this.props.contract.proposal + "." + (this.props.contract.proposalVersion+1)}
                 onChange={this.handleChange}
               />
             </Link>
             <CalendarBar
-              title="Data da Entrega:"
+              title="Início:"
               name="deliveryDate"
               extra="dates"
               className="span2"
-              onChange={this.handleChange}
+              onChange={this.changeDeliveryDate}
               value={this.props.contract.dates.deliveryDate}
             />
             <Input
@@ -146,7 +161,7 @@ export default class Information extends React.Component {
                 <option value="days">Dias</option>
             </Input>
           </div>
-          <div>
+          <div className="contract__information__right">
             <Input
               title="Endereço de Entrega:"
               name="street"
@@ -194,7 +209,7 @@ export default class Information extends React.Component {
             <Input
               title="Número:"
               name="number"
-              type="number"
+              type="text"
               extra="deliveryAddress"
               error={this.props.errorKeys.includes("number")}
               value={this.props.contract.deliveryAddress.number}

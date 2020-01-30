@@ -6,7 +6,7 @@ import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 import ImageVisualizer from '/imports/components/ImageVisualizer/index';
 
-export default class ShippingFixed extends React.Component {
+export default class SendFixed extends React.Component {
   renderHeader = () => {
     return (
       <tr>
@@ -43,6 +43,16 @@ export default class ShippingFixed extends React.Component {
       var fixed = [...this.props.fixed];
       var index = e.target.name;
       fixed[index].seriesId = seriesId;
+      if (seriesId === "") {
+        fixed[index].place = "";
+      } else {
+        this.props.seriesDatabase.find((item) => {
+          if (item._id === seriesId) {
+            fixed[index].place = item.place;
+            return true;
+          }
+        });
+      }
       this.props.onChange({ fixed });
     }
 
@@ -81,20 +91,6 @@ export default class ShippingFixed extends React.Component {
               {this.renderBody()}
             </tbody>
           </table>
-          {/* {this.state.imageVisualizer ?
-            <ImageVisualizer
-              item={{...this.state.imageVisualizer, itemType: 'fixed'}}
-              readOnly={true}
-              toggleWindow={this.toggleImageWindow}
-            />
-          : null}
-          {this.state.observationsVisualizer ?
-            <this.props.Observations
-              title={this.state.observationsVisualizer.serial}
-              content={this.state.observationsVisualizer.observations}
-              toggleWindow={this.toggleObservationsWindow}
-            />
-          : null} */}
         </Block>
       )
     } else return null;

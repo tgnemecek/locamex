@@ -143,7 +143,7 @@ export default class Information extends React.Component {
               onChange={this.handleChange}
             />
             <CalendarBar
-              title="Data da Entrega:"
+              title="Data de Início:"
               name="deliveryDate"
               extra="dates"
               onChange={this.handleChange}

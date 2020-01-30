@@ -5,7 +5,7 @@ import tools from '/imports/startup/tools/index';
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 
-export default class ReceiveModules extends React.Component {
+export default class ReceivePacks extends React.Component {
   renderHeader = () => {
     return (
       <tr>
@@ -32,18 +32,12 @@ export default class ReceiveModules extends React.Component {
       this.props.onChange({ modules });
     }
 
-    const getQuantity = (item) => {
-      return item.selected.reduce((acc, cur) => {
-        return acc + cur.selected;
-      }, 0)
-    }
-
     return this.props.modules.map((item, i) => {
       return (
         <tr key={i}>
           <td className="table__small-column">{i+1}</td>
           <td>{item.description}</td>
-          <td>{getQuantity(item)}</td>
+          <td>{item.selected}</td>
           <td>
             <Input
               type="select"

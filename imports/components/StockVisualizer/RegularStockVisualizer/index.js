@@ -5,7 +5,6 @@ import { Places } from '/imports/api/places/index';
 
 import tools from '/imports/startup/tools/index';
 import Block from '/imports/components/Block/index';
-import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 import Input from '/imports/components/Input/index';
 
@@ -50,10 +49,7 @@ class RegularStockVisualizer extends React.Component {
 
   render() {
     return (
-      <Box
-        title="Visualizador de Estoque"
-        closeBox={this.props.toggleWindow}
-        width="800px">
+      <>
         <div className="error-message">{this.state.errorMsg}</div>
         <this.props.PlacesBlock
           itemId={this.props.item._id}
@@ -71,7 +67,7 @@ class RegularStockVisualizer extends React.Component {
         {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
         {text: "Salvar", onClick: this.saveEdits}
         ]}/>
-      </Box>
+      </>
     )
   }
 }
