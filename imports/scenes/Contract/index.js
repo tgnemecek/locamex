@@ -69,7 +69,8 @@ class Contract extends React.Component {
         dates: {
           creationDate: new Date(),
           duration: 1,
-          timeUnit: "months"
+          timeUnit: "months",
+          startDate: new Date()
         },
         containers: [],
         accessories: [],
