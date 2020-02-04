@@ -93,7 +93,6 @@ export default class Input extends React.PureComponent {
       default:
         ChosenComponent = Text;
     }
-    console.log(this.props.name);
     return (
       <div className={this.className()}>
         {this.props.title ?
