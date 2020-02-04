@@ -13,15 +13,31 @@ import Percent from './Percent/index';
 import Select from './Select/index';
 import TextArea from './TextArea/index';
 
-export default class Input extends React.PureComponent {
+export default class Input extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      value: this.props.value,
       firstChange: true
     };
   }
-
+  componentDidUpdate(prevProps) {
+    if (prevProps.value !== this.props.value) {
+      this.setState({
+        value: this.props.value,
+        // firstChange: true
+      });
+    }
+  }
   onChange = (exportValue) => {
+    if (!this.props.onChange) {
+      this.setState({ value: exportValue, firstChange: false });
+      return;
+    }
+    if (exportValue === undefined) {
+      throw new Meteor.Error('exportValue is undefined in ' + this.props.name);
+    }
+
     var e = {
       target: {
         value: exportValue,
@@ -31,10 +47,8 @@ export default class Input extends React.PureComponent {
         firstChange: this.state.firstChange
       }
     }
-    if (this.props.onChange) {
-      this.props.onChange(e);
-      this.setState({ firstChange: false });
-    }
+    this.props.onChange(e);
+    this.setState({ value: exportValue, firstChange: false });
   }
   className = () => {
     var result = "input";
@@ -102,7 +116,7 @@ export default class Input extends React.PureComponent {
         <ChosenComponent
           {...this.props}
           style={this.style()}
-          value={this.props.value}
+          value={this.state.value}
           onChange={this.onChange}
           // style={this.props.style}
           // type={this.props.type}

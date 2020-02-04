@@ -1,5 +1,11 @@
 # Changelog:
 
+## Version 2.4.3
+
+-  Proposals now have lazy-loading (ShowMore Component);
+-  Fixed discount issue;
+-  Input is now a PureComponent, created sub-type Percent;
+
 ## Version 2.4.2
 
 -  Renamed deliveryDate to startDate in Proposals and Contracts;

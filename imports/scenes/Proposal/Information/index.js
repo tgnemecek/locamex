@@ -160,10 +160,7 @@ export default class Information extends React.Component {
             <Input
               title="Desconto:"
               name="discount"
-              type="number"
-              percent={true}
-              max={100}
-              min={0}
+              type="percent"
               error={this.props.errorKeys.includes("discount")}
               value={this.props.proposal.discount}
               onChange={this.handleChange}

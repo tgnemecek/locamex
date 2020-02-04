@@ -1,0 +1,53 @@
+@import './Cep/styles';
+@import './Checkbox/styles';
+
+.input {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  input, select {
+    width: 100%;
+  }
+  label {
+    text-align: left;
+    padding-left: 2px;
+  }
+}
+
+.input input:disabled {
+  color: $dark-grey;
+  background: $grey;
+  cursor: inherit;
+}
+
+// .input input:read-only {
+//   color: $dark-grey;
+//   background: $grey;
+// }
+
+.input select:disabled {
+  color: $dark-grey;
+  background: $grey;
+}
+
+input[type="file"] {
+    display: none;
+}
+
+.input__file {
+  text-align: center !important;
+  background: $light-grey;
+  border: 1px solid $grey;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.input__file__icon {
+  margin-right: 10px;
+}
+
+.input__file__max {
+  font-style: italic;
+  color: $dark-grey;
+}

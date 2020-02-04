@@ -14,8 +14,12 @@ Proposals.deny({
 });
 
 if (Meteor.isServer) {
-  Meteor.publish('proposalsPub', () => {
-    return Proposals.find({}, {sort: { _id: -1 }});
+  Meteor.publish('proposalsPub', (limit) => {
+    return Proposals.find({}, {
+        sort: { _id: -1 },
+        limit: limit || 0
+      }
+    );
   })
   function setProducts(array) {
     return array.map((item) => {

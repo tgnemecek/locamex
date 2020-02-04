@@ -10,6 +10,7 @@ import Icon from '/imports/components/Icon/index';
 import Loading from '/imports/components/Loading/index';
 import NotFound from '/imports/components/NotFound/index';
 import Status from '/imports/components/Status/index';
+import ShowMore from '/imports/components/ShowMore/index';
 
 class ProposalsTable extends React.Component {
   constructor(props) {
@@ -124,6 +125,10 @@ class ProposalsTable extends React.Component {
               </tbody>
             </table>
           </div>
+          <ShowMore
+            showMore={this.props.showMore}
+            numberOfRecords={this.props.recordsToShow}
+          />
         </ErrorBoundary>
       )
     } else if (!this.props.ready) {
@@ -141,7 +146,8 @@ class ProposalsTable extends React.Component {
 }
 
 export default ProposalsTableWrapper = withTracker((props) => {
-  Meteor.subscribe('proposalsPub');
+  var recordsToShow = 50;
+  Meteor.subscribe('proposalsPub', recordsToShow);
   Meteor.subscribe('usersPub');
   var fullDatabase = Proposals.find().fetch();
   fullDatabase = tools.sortObjects(fullDatabase, '_id', {reverseOrder: true});
@@ -151,8 +157,16 @@ export default ProposalsTableWrapper = withTracker((props) => {
     return newItem;
   })
   var ready = !!fullDatabase.length;
+
+  const showMore = () => {
+    recordsToShow = 0; // all records
+    Meteor.subscribe('proposalsPub', recordsToShow);
+  }
+
   return {
     fullDatabase,
-    ready
+    ready,
+    showMore,
+    recordsToShow
   }
 })(ProposalsTable);

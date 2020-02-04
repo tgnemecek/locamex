@@ -13,26 +13,44 @@ class TestPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      value: 0,
+      value: 0.1,
       otherValue: 0
     }
   }
-  componentDidMount() {
-    setTimeout(() => {
-      this.setState({ value: 100 });
-    }, 2000);
-  }
   onChange = (e) => {
-    this.setState({ value: e.target.value, otherValue: 999 });
+    alert('changed1');
+    this.setState({
+      value: e.target.value
+    });
+  }
+  onChange2 = (e) => {
+    alert('changed2!');
+
+    var value = this.state.value;
+    var otherValue = e.target.value;
+
+    if (otherValue > 12) {
+      value = 0.5
+    }
+    this.setState({
+      value,
+      otherValue
+    });
   }
   render() {
     return (
       <div>
-        <input
+        <Input
+          type="number"
+          percent={true}
           onChange={this.onChange}
           value={this.state.value}
         />
-        <input value={this.state.otherValue}/>
+        <Input
+          type="number"
+          onChange={this.onChange2}
+          value={this.state.otherValue}
+        />
       </div>
     )
   }
