@@ -110,7 +110,7 @@ export default class FileUploader extends React.Component {
               Meteor.call('aws.write.multiple', filesWithUrl, (err, urls) => {
                 if (err) throwError(err);
                 if (urls) {
-                  Meteor.call('accessories.update.one', this.props.item._id, "images", urls, (err, res) => {
+                  Meteor.call('accessories.update.images', this.props.item._id, urls, (err, res) => {
                     if (err) throwError(err);
                     if (res) {
                       this.setState({ databaseStatus: "completed" });

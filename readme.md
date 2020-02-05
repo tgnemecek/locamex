@@ -1,6 +1,6 @@
 # Locamex System
 
-Version: 2.4.3
+Version: 2.4.4
 
 ## About:
 

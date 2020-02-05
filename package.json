@@ -1,6 +1,6 @@
 {
   "name": "locamex",
-  "version": "2.4.3",
+  "version": "2.4.4",
   "private": true,
   "scripts": {
     "local-aws": "meteor --settings settings.json"
@@ -27,7 +27,7 @@
     "react-modal": "^3.8.1",
     "react-router-dom": "^4.3.1",
     "request": "^2.88.0",
-    "simpl-schema": "^1.5.5",
+    "simpl-schema": "^1.5.6",
     "xlsx": "^0.14.3"
   },
   "engines": {

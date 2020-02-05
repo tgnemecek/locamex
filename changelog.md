@@ -1,381 +1,385 @@
 # Changelog:
 
+## Version 2.4.4
+
+- Implemented SimpleSchema & Migration for Accessories;
+
 ## Version 2.4.3
 
--  Proposals now have lazy-loading (ShowMore Component);
--  Fixed discount issue;
--  Input is now a PureComponent, created sub-type Percent;
+- Proposals now have lazy-loading (ShowMore Component);
+- Fixed discount issue;
+- Input is now a PureComponent, created sub-type Percent;
 
 ## Version 2.4.2
 
--  Renamed deliveryDate to startDate in Proposals and Contracts;
--  BillingProducts now correctly uses startDate;
--  Pdf dates inconsistency fixed;
+- Renamed deliveryDate to startDate in Proposals and Contracts;
+- BillingProducts now correctly uses startDate;
+- Pdf dates inconsistency fixed;
 
 ## Version 2.4.1
 
--  Fixed bug where Contracts and Proposals discount would reset;
+- Fixed bug where Contracts and Proposals discount would reset;
 
 ## Version 2.4.0
 
--  Added function to delete series (temporarily without any verification);
+- Added function to delete series (temporarily without any verification);
 
 ## Version 2.3.9
 
--  Added an option to tools.sortObjects allowing convertToNumber;
--  RegisterContainers/ModuleList:
-    -  Added selectAll checkbox;
-    -  Put SearchBar outside scroll;
+- Added an option to tools.sortObjects allowing convertToNumber;
+- RegisterContainers/ModuleList:
+    - Added selectAll checkbox;
+    - Put SearchBar outside scroll;
 
 ## Version 2.3.8
 
--  Contracts now don't reset billings if its first Setup (changed Input component to report if its firstChange);
+- Contracts now don't reset billings if its first Setup (changed Input component to report if its firstChange);
 
 ## Version 2.3.7
 
--  Fixed pdf for 'person' client;
--  Changed contract offset to 32 (to delete tests);
+- Fixed pdf for 'person' client;
+- Changed contract offset to 32 (to delete tests);
 
 ## Version 2.3.6
 
--  Swapped " " for "." on currency format (tools);
--  RegisterClients changes:
-    -  toggleWindow now returns id;
-    -  Clients now have DatabaseStatus component;
-    -  RegisterData checks if its typeof object to toggle edit window;
--  Contracts now have ClientSetup component;
+- Swapped " " for "." on currency format (tools);
+- RegisterClients changes:
+    - toggleWindow now returns id;
+    - Clients now have DatabaseStatus component;
+    - RegisterData checks if its typeof object to toggle edit window;
+- Contracts now have ClientSetup component;
 
 ## Version 2.3.5
 
--  Observations is now called Texts and is part of SceneHeader/Documents;
--  Proposals now have a customizable field inside observations called conditions;
+- Observations is now called Texts and is part of SceneHeader/Documents;
+- Proposals now have a customizable field inside observations called conditions;
 
 ## Version 2.3.4
 
--  Redone currency formatting to work on the server as well;
--  Fixed SceneItems/ManageItem changing items on-the-fly (before saving);
+- Redone currency formatting to work on the server as well;
+- Fixed SceneItems/ManageItem changing items on-the-fly (before saving);
 
 ## Version 2.3.3
 
--  Pdf now gets descriptions from database, to avoid undefined product descriptions;
+- Pdf now gets descriptions from database, to avoid undefined product descriptions;
 
 ## Version 2.3.2
 
--  Added new flyer functionality, creating the pdf instead of uploading;
+- Added new flyer functionality, creating the pdf instead of uploading;
 
 ## Version 2.3.1
 
--  Added 'deny' to all mongo collections;
+- Added 'deny' to all mongo collections;
 
 ## Version 2.3.0
 
--  Fixed problem where contract pdf was showing the wrong expiryDate;
+- Fixed problem where contract pdf was showing the wrong expiryDate;
 
 ## Version 2.2.9
 
--  Fixed problem when saving Proposals/Contracts that printed previous version;
+- Fixed problem when saving Proposals/Contracts that printed previous version;
 
 ## Version 2.2.8
 
--  Added offset to Contracts;
--  Trying to add an existing series will show an error explaining;
+- Added offset to Contracts;
+- Trying to add an existing series will show an error explaining;
 
 ## Version 2.2.7
 
--  Fixed error in Pdf;
+- Fixed error in Pdf;
 
 ## Version 2.2.6
 
--  Fixed generateTable in Pdf;
+- Fixed generateTable in Pdf;
 
 ## Version 2.2.5
 
--  Fixed pdf bug;
--  Redone DatabaseStatus, allowing for easy state use on parent;
+- Fixed pdf bug;
+- Redone DatabaseStatus, allowing for easy state use on parent;
 
 ## Version 2.2.4
 
--  Added 'annotations' field on Billings;
--  Added option to exclude flyers from pdf (Proposal);
--  Improved phone format, adding a ' ' for cellphones after first digit;
--  Changed input/number functionality, allowing '' and '-' even with 'min' set;
+- Added 'annotations' field on Billings;
+- Added option to exclude flyers from pdf (Proposal);
+- Improved phone format, adding a ' ' for cellphones after first digit;
+- Changed input/number functionality, allowing '' and '-' even with 'min' set;
 
 ## Version 2.2.3
 
--  Fixed Billing based on feedback;
+- Fixed Billing based on feedback;
 
 ## Version 2.2.2
 
--  Basic responsiveness added;
+- Basic responsiveness added;
 
 ## Version 2.2.1
 
--  Added Billing functionality;
--  Added Agenda functionality;
--  Redone generateTable function in Pdf class;
--  Redone BillingSchedule in Contract;
+- Added Billing functionality;
+- Added Agenda functionality;
+- Redone generateTable function in Pdf class;
+- Redone BillingSchedule in Contract;
 
 ## Version 2.2.0
 
--  FlyerUploader reformulated;
--  Fixed accessories and series image uploader;
--  Batch resaved accessories and series databases with new image urls;
--  Fixed HistoryTable bug;
+- FlyerUploader reformulated;
+- Fixed accessories and series image uploader;
+- Batch resaved accessories and series databases with new image urls;
+- Fixed HistoryTable bug;
 
 ## Version 2.1.9
 
--  ProposalsTable now allows search for client description;
+- ProposalsTable now allows search for client description;
 
 ## Version 2.1.8
 
--  Change in Contract text;
--  Partial implementation of aws for products:
-    -  Series is complete, accessories/modules in progress;
+- Change in Contract text;
+- Partial implementation of aws for products:
+    - Series is complete, accessories/modules in progress;
 
 ## Version 2.1.7
 
--  Fixed error in proposal version display;
+- Fixed error in proposal version display;
 
 ## Version 2.1.6
 
--  FlyerUploader now shows if the product has a flyer;
+- FlyerUploader now shows if the product has a flyer;
 
 ## Version 2.1.5
 
--  Added flyers functionality, including merging pdfs in proposal;
--  AWS integration redone without using Slingshot;
--  Create-pdf folder moved to helpers/Pdf class;
--  Pdf is now generated server-side;
+- Added flyers functionality, including merging pdfs in proposal;
+- AWS integration redone without using Slingshot;
+- Create-pdf folder moved to helpers/Pdf class;
+- Pdf is now generated server-side;
 
 ## Version 2.1.4
 
--  Fixed address in proposal and contract pdf;
+- Fixed address in proposal and contract pdf;
 
 ## Version 2.1.3
 
--  Fixed version number in pdf;
+- Fixed version number in pdf;
 
 ## Version 2.1.2
 
--  Fixed error in Contract generation;
+- Fixed error in Contract generation;
 
 ## Version 2.1.1
 
--  Fixed how contracts are generated from proposals;
+- Fixed how contracts are generated from proposals;
 
 ## Version 2.1.0
 
--  Proposals and Contracts have snapshots functionality;
+- Proposals and Contracts have snapshots functionality;
 
 ## Version 2.0.8
 
--  Fixed pdf bug;
+- Fixed pdf bug;
 
 ## Version 2.0.7
 
--  Proposal and Contract server error now print to console;
+- Proposal and Contract server error now print to console;
 
 ## Version 2.0.6
 
--  Added "clients" page to "sales" user-type;
+- Added "clients" page to "sales" user-type;
 
 ## Version 2.0.5
 
--  Edited Proposal PDF text;
+- Edited Proposal PDF text;
 
 ## Version 2.0.4
 
--  Fixed more pdf bugs;
+- Fixed more pdf bugs;
 
 ## Version 2.0.3
 
--  Version number now written in history and shown in DatabaseHistory;
--  Fixed another generate-table bug in create pdf;
--  Fixed another version bug in proposal and contract;
--  Added Duplicate functionality in Proposal;
+- Version number now written in history and shown in DatabaseHistory;
+- Fixed another generate-table bug in create pdf;
+- Fixed another version bug in proposal and contract;
+- Added Duplicate functionality in Proposal;
 
 ## Version 2.0.2
 
--  Changed SearchBar options for contracts, enabling search for client description and proposal number;
--  Print pdf: fixed canvas onscreen;
--  Fixed proposal texts;
--  Proposal pdf now shows user's name in signature;
+- Changed SearchBar options for contracts, enabling search for client description and proposal number;
+- Print pdf: fixed canvas onscreen;
+- Fixed proposal texts;
+- Proposal pdf now shows user's name in signature;
 
 ## Version 2.0.1
 
--  Fix proposal pdf logo-loader throwing an error on second+ print;
--  Observations now show on proposal pdf;
--  Meteor calls for update in Proposal and Contract now check if any changes were made and if so, add +1 to version;
--  Fix generate-table in pdf erasing empty strings;
--  Create changelog.md;
--  Change texts in proposal pdf;
+- Fix proposal pdf logo-loader throwing an error on second+ print;
+- Observations now show on proposal pdf;
+- Meteor calls for update in Proposal and Contract now check if any changes were made and if so, add +1 to version;
+- Fix generate-table in pdf erasing empty strings;
+- Create changelog.md;
+- Change texts in proposal pdf;
 
 ## Version 2.0.0
 
--  Added new module: Proposals, including pdf generation and transformation into Contract;
--  Created DatabaseStatus to show animation when Meteor methods are called in Contract, Shipping and Proposal;
--  Now its impossible to create a Contract without creating a Proposal first;
+- Added new module: Proposals, including pdf generation and transformation into Contract;
+- Created DatabaseStatus to show animation when Meteor methods are called in Contract, Shipping and Proposal;
+- Now its impossible to create a Contract without creating a Proposal first;
 
 ## Version 1.9.6
 
--  Fixed create-pdf/contract breaking email line, now if there are 2 phones, it breaks them instead;
--  Created Status component, to translate and paint status labels;
+- Fixed create-pdf/contract breaking email line, now if there are 2 phones, it breaks them instead;
+- Created Status component, to translate and paint status labels;
 
 ## Version 1.9.5
 
--  Because the RG field can be so unpredictable, no format is applied to it.
--  Create-pdf for contracts now exports both negociator phones if they exist;
--  Billing charges now have 'expiryDate', so it can be changed independently;
+- Because the RG field can be so unpredictable, no format is applied to it.
+- Create-pdf for contracts now exports both negociator phones if they exist;
+- Billing charges now have 'expiryDate', so it can be changed independently;
 
 ## Version 1.9.4
 
--  Fixed bug in RegisterSeries;
+- Fixed bug in RegisterSeries;
 
 ## Version 1.9.3
 
--  Created Help component;
--  Added Help component to Documents, explaining the contacts functionality;
--  Clients now can be registered with no contacts checking;
--  Now RegisterClients properly checks for just one: registryMU or registryES;
--  ErrorKeys now reset/change everytime the states are updated;
+- Created Help component;
+- Added Help component to Documents, explaining the contacts functionality;
+- Clients now can be registered with no contacts checking;
+- Now RegisterClients properly checks for just one: registryMU or registryES;
+- ErrorKeys now reset/change everytime the states are updated;
 
 ## Version 1.9.2
 
--  Swaped Documents & Billing buttons positions;
--  Removed Contract lock after activating it. Now you can change it anytime;
--  RG field now doesn't cut numbers after 12th digit, to allow international numbers;
+- Swaped Documents & Billing buttons positions;
+- Removed Contract lock after activating it. Now you can change it anytime;
+- RG field now doesn't cut numbers after 12th digit, to allow international numbers;
 
 ## Version 1.9.1
 
--  Fixed Shipping/Receive not returning correctly;
--  RegisterAccessories now blocks place change if item is rented;
--  Fixed reseting INSS/ISS values when they were set to 0;
--  Fixed Calendar dates not changing in Billing;
+- Fixed Shipping/Receive not returning correctly;
+- RegisterAccessories now blocks place change if item is rented;
+- Fixed reseting INSS/ISS values when they were set to 0;
+- Fixed Calendar dates not changing in Billing;
 
 ## Version 1.9.0
 
--  Added create-excel functionality to save reports;
--  Contract/Documents now can only be opened if Billing is filled;
--  Special characters swaped for font-awesome icons, using a <Button/> component;
--  Cancel button in Contract:
-    -  Only renders if contract is inactive AND if contract has id (is saved in db);
-    -  Correctly updates database and client;
+- Added create-excel functionality to save reports;
+- Contract/Documents now can only be opened if Billing is filled;
+- Special characters swaped for font-awesome icons, using a <Button/> component;
+- Cancel button in Contract:
+    - Only renders if contract is inactive AND if contract has id (is saved in db);
+    - Correctly updates database and client;
 
 ## Version 1.8.9
 
--  Fixed Create-pdf products bug;
--  Input/Currency and Digits now have perfect functionality, allowing blank and '-' values;
--  Forms now change border to normal when typing (after form error tinted it red);
--  Billing now correctly resets when adding/changing products;
+- Fixed Create-pdf products bug;
+- Input/Currency and Digits now have perfect functionality, allowing blank and '-' values;
+- Forms now change border to normal when typing (after form error tinted it red);
+- Billing now correctly resets when adding/changing products;
 
 ## Version 1.8.8
 
--  Create-pdf:
-    -  Now prints for person type;
-    -  Now reads that the contract's timeUnit is in days and displays an 'events' version;
-    -  Created page breaks for signatures/witnesses;
--  Contract now has timeUnit variable, inside dates;
+- Create-pdf:
+    - Now prints for person type;
+    - Now reads that the contract's timeUnit is in days and displays an 'events' version;
+    - Created page breaks for signatures/witnesses;
+- Contract now has timeUnit variable, inside dates;
 
 ## Version 1.8.7
 
--  Fixed select box in RegisterSeries, excluding modular containers;
--  Added title prop to ManageItem in Contract;
--  Fixed Observations in Contract and Shipping;
--  Users Database now display user type;
--  Now you can only access Shipping if contract is active;
--  Packs are temporarily disabled;
--  AppHeader now displays correctly for Contract and Shipping;
--  Fixed table layout in ShippingHistory;
--  Minor changes in pdf/contract;
+- Fixed select box in RegisterSeries, excluding modular containers;
+- Added title prop to ManageItem in Contract;
+- Fixed Observations in Contract and Shipping;
+- Users Database now display user type;
+- Now you can only access Shipping if contract is active;
+- Packs are temporarily disabled;
+- AppHeader now displays correctly for Contract and Shipping;
+- Fixed table layout in ShippingHistory;
+- Minor changes in pdf/contract;
 
 ## Version 1.8.6
 
--  Replaced FilterBar with an easier method of filtering, using Input and Array.filter in render;
--  Added another sort in Database/ContractsTable to ensure newly created contracts go on top;
+- Replaced FilterBar with an easier method of filtering, using Input and Array.filter in render;
+- Added another sort in Database/ContractsTable to ensure newly created contracts go on top;
 
 ## Version 1.8.5
 
--  Series now use serial as id, type now 'series' and serial field deleted;
--  Shipping scene complete, except for packs and stock rent/receive;
--  Users permissions now changed to use 'types', partial permissions now available;
--  Partial permissions created for Product and Contracts databases;
+- Series now use serial as id, type now 'series' and serial field deleted;
+- Shipping scene complete, except for packs and stock rent/receive;
+- Users permissions now changed to use 'types', partial permissions now available;
+- Partial permissions created for Product and Contracts databases;
 
 ## Version 1.8.0
 
--  Contract restructured to work with new database logic (series, modules, containers);
--  Contract now has versions for each generated document;
--  ItemsList is now one single reusable component;
--  Contract now checks each billing for the correct final value before activation;
--  RegisterClients redone: removed 'code' input, now contacts with no name are erased;
+- Contract restructured to work with new database logic (series, modules, containers);
+- Contract now has versions for each generated document;
+- ItemsList is now one single reusable component;
+- Contract now checks each billing for the correct final value before activation;
+- RegisterClients redone: removed 'code' input, now contacts with no name are erased;
 
 ## Version 1.7.6
 
--  Accessories now have the option to contain different types, that can be spread in different places (images not implemented yet);
--  StockVisualizer now checks for models and renders different children;
--  AccessoriesTable now updated to count inside models and outside (if doesn't have models);
+- Accessories now have the option to contain different types, that can be spread in different places (images not implemented yet);
+- StockVisualizer now checks for models and renders different children;
+- AccessoriesTable now updated to count inside models and outside (if doesn't have models);
 
 ## Version 1.7.5
 
--  Modules now allows multiple places for each module;
+- Modules now allows multiple places for each module;
 
 ## Version 1.7.4
 
--  Now unauthorized users are automatically redirected out of a page, even if using the url address;
--  RegisterAccessories now allows multiple places for each Accessory;
+- Now unauthorized users are automatically redirected out of a page, even if using the url address;
+- RegisterAccessories now allows multiple places for each Accessory;
 
 ## Version 1.7.3
 
--  Removed maintenance status from accessories;
+- Removed maintenance status from accessories;
 
 ## Version 1.7.2
 
--  New SearchBar and FilterBar;
--  Fixed bug by sending multiple images;
+- New SearchBar and FilterBar;
+- Fixed bug by sending multiple images;
 
 ## Version 1.7.1
 
--  All RegisterX are now inside RegisterData parent;
--  All XTable are now inside DatabaseTable parent;
--  Fixed images not sending (server error);
--  Added Edit button to SeriesTable;
+- All RegisterX are now inside RegisterData parent;
+- All XTable are now inside DatabaseTable parent;
+- Fixed images not sending (server error);
+- Added Edit button to SeriesTable;
 
 ## Version 1.7.0
 
--  Containers now are fully restructured to be 'groups', tables fixed;
--  ImageVisualizer fixed for Containers, Accessories and Modules;
+- Containers now are fully restructured to be 'groups', tables fixed;
+- ImageVisualizer fixed for Containers, Accessories and Modules;
 
 ## Version 1.6.6
 
--  Changed MaintenanceTable to SeriesTable
+- Changed MaintenanceTable to SeriesTable
 
 ## Version 1.6.5
 
--  Fixed StockVisualizer showing blank;
+- Fixed StockVisualizer showing blank;
 
 ## Version 1.6.4
 
--  Fixed Containers now are 'groups' that contain the series inside;
--  ImageVisualizer disabled temporarily;
+- Fixed Containers now are 'groups' that contain the series inside;
+- ImageVisualizer disabled temporarily;
 
 ## Version 1.6.3
 
--  Restructured create-pdf api for flexible pdf assembly;
--  Implemented proposal number, discount and billingServices in Contract scene;
+- Restructured create-pdf api for flexible pdf assembly;
+- Implemented proposal number, discount and billingServices in Contract scene;
 
 ## Version 1.6.2
 
--  Fixed parsing error in Contract;
+- Fixed parsing error in Contract;
 
 ## Version 1.6.1
 
--  MaintenanceTable now shows all containers (not just status: maintenance);
+- MaintenanceTable now shows all containers (not just status: maintenance);
 
 ## Version 1.6.0
 
--  Rollback from multiple places functionality (to be implemented later);
--  Temporary enabling of setting 'rented' from the fixed-container edit window (to be removed later);
--  Observations cell in MaintenanceTable now wraps for better visibility;
--  Fixed Database not rendering table header when no item is returned from publication;
+- Rollback from multiple places functionality (to be implemented later);
+- Temporary enabling of setting 'rented' from the fixed-container edit window (to be removed later);
+- Observations cell in MaintenanceTable now wraps for better visibility;
+- Fixed Database not rendering table header when no item is returned from publication;
 
 ## Version 1.5.2
 
@@ -519,21 +523,3 @@ The workaround is to check if the edited user is the one logged in and forcing t
     - Filename now set correctly and contains contract id;
     - Improved margins;
     - Added footer with contract id and page count;
-
-## To Dos: (in order of priority)
-
-## High Priority:
-
-- Add server-side security for meteor methods (simple-schema, required fields);
-- Create better security for unauthorized users (like checking for userId in meteor methods);
-
-## Medium Priority:
-
-- When something gets deleted, the system must check all databases to see if the item is rented, or the place has things in it;
-
-## Low Priority: (future implementations)
-
-- Add Settings scene for global changes (like the billing charges text);
-- Add colors to tables for the different statuses (contracts and products);
-- Make the app responsive and mobile friendly;
-- Make the app compatible to other browsers;

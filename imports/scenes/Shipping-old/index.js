@@ -248,18 +248,18 @@ class Shipping extends React.Component {
           <h3 style={{textAlign: "center", margin: "20px"}}>
             Itens no Cliente
           </h3>
-          {/* <CurrentlyRented
+          <CurrentlyRented
             accessoriesDatabase={this.props.databases.accessoriesDatabase}
             currentlyRented={this.currentlyRented()}
             prepareList={this.prepareList}
-          /> */}
+          />
           <h3 style={{textAlign: "center", margin: "20px"}}>Histórico de Remessas</h3>
-          {/* <ShippingHistory
+          <ShippingHistory
             contract={this.props.contract}
             accessoriesDatabase={this.props.databases.accessoriesDatabase}
             placesDatabase={this.props.databases.placesDatabase}
             prepareList={this.prepareList}
-          /> */}
+          />
           {this.state.toggleSend ?
             <Send
               toggleSend={this.toggleSend}
