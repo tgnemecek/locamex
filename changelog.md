@@ -1,5 +1,7 @@
 # Changelog:
 
+- Updated discount for 2020;
+
 ## Version 2.4.3
 
 -  Proposals now have lazy-loading (ShowMore Component);
