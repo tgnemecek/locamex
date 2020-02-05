@@ -1,8 +1,16 @@
 import { Mongo } from 'meteor/mongo';
 import { Meteor } from 'meteor/meteor';
 import tools from '/imports/startup/tools/index';
+import {
+  insertSchema,
+  updateSchema,
+  snapshotsSchema,
+  hideSchema
+} from './schemas';
 
 import { Contracts } from '/imports/api/contracts/index';
+import { Places } from '/imports/api/places/index';
+import { Containers } from '/imports/api/containers/index';
 
 export const Series = new Mongo.Collection('series');
 
@@ -18,28 +26,45 @@ if (Meteor.isServer) {
   })
   Meteor.methods({
     'series.insert' (state) {
-
       var isIdInUse = !!Series.findOne({_id: state._id});
       if (isIdInUse) throw new Meteor.Error('id-in-use');
 
-      var data = {
+      var container = Containers.findOne({_id: state.containerId});
+      var containerDescription = container.description || 'Alugado';
+
+      var data = insertSchema.clean({
         _id: state._id,
         containerId: state.containerId,
-        place: state.place,
+        containerDescription,
+        placeId: state.placeId,
+        placeDescription: Places.findOne({_id: state.placeId}).description,
         observations: state.observations,
         type: 'series',
-
         snapshots: [],
         visible: true
-      }
+      })
+      insertSchema.validate(data);
       Series.insert(data);
       Meteor.call('history.insert', data, 'series.insert');
       return true;
     },
     'series.update' (changes, _id) {
+      changes.placeDescription = Places.findOne({
+        _id: changes.placeId
+      }).description,
+      changes = updateSchema.clean(changes);
+      updateSchema.validate(changes);
       Series.update({_id: _id}, {$set: changes} );
       Meteor.call('history.insert', {_id, changes}, 'series.update');
+      return _id;
     },
+    // 'series.update.snapshots' (_id, snapshots) {
+    //   snapshots = snapshotsSchema.clean(snapshots);
+    //   snapshotsSchema.validate(snapshots);
+    //   Series.update({_id: _id}, {$set: snapshots} );
+    //   Meteor.call('history.insert', {_id, snapshots}, 'series.update.snapshots');
+    //   return _id;
+    // },
     'series.delete' (_id) {
       // This function is temporarily disabled
       // After Shipping module is complete, this must be enabled
@@ -61,11 +86,6 @@ if (Meteor.isServer) {
       // }
       Series.remove({ _id });
       return _id;
-    },
-    'series.hide' (_id) {
-      var data = { visible: false };
-      Series.update({_id}, {$set: data} );
-      Meteor.call('history.insert', {...data, _id}, 'series.hide');
     }
   })
 }

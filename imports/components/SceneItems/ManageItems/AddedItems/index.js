@@ -29,7 +29,7 @@ export default class AddedItems extends React.Component {
               onChange={this.props.changeQuantity}/>
           </td>
           <td className="buttom-column">
-            <button onClick={() => this.props.removeItem(item._id)}>
+            <button onClick={() => this.props.removeItem(i)}>
               <Icon icon="not" />
             </button>
           </td>

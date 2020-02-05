@@ -14,7 +14,7 @@ class DatabaseStatus extends React.Component {
     this.state = {
       showContent: true
     }
-    this.timeout = this.props.timeout ? this.props.timeout * 1000 : 1000;
+    this.timeout = this.props.timeout ? this.props.timeout : 1000;
   }
   componentDidUpdate(prevProps) {
     if (this.props.status === "loading"

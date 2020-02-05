@@ -16,23 +16,16 @@ export default class ManageItems extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filteredDatabase: [],
       addedItems: this.props.master[this.props.type] || []
     }
   }
 
-  componentDidMount() {
-    this.setState({
-      filteredDatabase: this.hideFromArray(this.props.fullDatabase)
-    })
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps !== this.props) {
-      this.setState({
-        filteredDatabase: this.hideFromArray(this.props.fullDatabase)
+  filteredDatabase = () => {
+    return this.props.fullDatabase.filter((dbItem) => {
+      return !this.state.addedItems.find((addedItem) => {
+        return dbItem._id === addedItem._id;
       })
-    }
+    })
   }
 
   title = () => {
@@ -72,62 +65,45 @@ export default class ManageItems extends React.Component {
     this.setState({ addedItems });
   }
 
-  filterSearch = (filteredDatabase) => {
-    if (filteredDatabase) {
-      filteredDatabase = this.hideFromArray(filteredDatabase);
-    } else {
-      filteredDatabase = this.hideFromArray(this.props.fullDatabase);
-    }
-    this.setState({ filteredDatabase });
-  }
+  // filterSearch = (filteredDatabase) => {
+  //   if (filteredDatabase) {
+  //     filteredDatabase = this.hideFromArray(filteredDatabase);
+  //   } else {
+  //     filteredDatabase = this.hideFromArray(this.props.fullDatabase);
+  //   }
+  //   this.setState({ filteredDatabase });
+  // }
 
-  hideFromArray = (toFilter, addedItems) => {
-    debugger;
-    addedItems = addedItems || this.state.addedItems;
+  // hideFromArray = (toFilter, addedItems) => {
+  //   addedItems = addedItems || this.state.addedItems;
+  //
+  //   return toFilter.filter((item) => {
+  //     for (var i = 0; i < addedItems.length; i++) {
+  //       if (item._id === addedItems[i].productId) {
+  //         return false;
+  //       }
+  //     }
+  //     return true;
+  //   })
+  // }
 
-    return toFilter.filter((item) => {
-      for (var i = 0; i < addedItems.length; i++) {
-        if (item._id === addedItems[i].productId) {
-          return false;
-        }
-      }
-      return true;
-    })
-  }
-
-  addItem = (_id) => {
-    var filteredDatabase = this.state.filteredDatabase;
+  addItem = (item) => {
     var addedItems = [...this.state.addedItems];
 
-    for (var i = 0; i < filteredDatabase.length; i++) {
-      if (filteredDatabase[i]._id === _id) {
-        addedItems.push({
-          _id: tools.generateId(),
-          description: filteredDatabase[i].description,
-          productId: filteredDatabase[i]._id,
-          type: filteredDatabase[i].type,
-          price: filteredDatabase[i].price,
-          restitution: filteredDatabase[i].restitution,
-          renting: 1
-        });
-        filteredDatabase = this.hideFromArray(filteredDatabase, addedItems);
-        break;
-      }
-    }
-    this.setState({ addedItems, filteredDatabase });
+    addedItems.push({
+      ...item,
+      renting: 1
+    });
+    // filteredDatabase = this.hideFromArray(filteredDatabase, addedItems);
+    this.setState({ addedItems });
   }
 
-  removeItem = (_id) => {
+  removeItem = (i) => {
     var filteredDatabase;
     var addedItems = [...this.state.addedItems];
-
-    for (var i = 0; i < addedItems.length; i++) {
-      if (addedItems[i]._id === _id) {
-        addedItems.splice(i, 1);
-      }
-    }
-    filteredDatabase = this.hideFromArray(this.props.fullDatabase, addedItems);
-    this.setState({ addedItems, filteredDatabase });
+    addedItems.splice(i, 1);
+    // filteredDatabase = this.hideFromArray(this.props.fullDatabase, addedItems);
+    this.setState({ addedItems });
   }
 
   saveEdits = () => {
@@ -151,15 +127,16 @@ export default class ManageItems extends React.Component {
         closeBox={this.props.toggleWindow}
         width="1200px">
           <Block columns={2}>
-            <SearchBar
+            <div></div>
+            {/* <SearchBar
               database={this.props.fullDatabase}
               searchHere={['description']}
-              filterSearch={this.filterSearch}/>
+              filterSearch={this.filterSearch}/> */}
             <div style={{marginTop: "30px"}}>
               <label>{`${this.title()} Adicionados:`}</label>
             </div>
             <Database
-              database={this.state.filteredDatabase}
+              database={this.filteredDatabase()}
               addItem={this.addItem}/>
             <AddedItems
               type={this.props.type}

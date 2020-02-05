@@ -11,7 +11,7 @@ export default class Database extends React.Component {
         <tr key={i} className="item-list__selection__db-item">
           <td>{item.description}</td>
           <td className="buttom-column">
-            <button onClick={() => this.props.addItem(item._id)}>
+            <button onClick={() => this.props.addItem(item)}>
               <Icon icon="arrowRight"/>
             </button>
 

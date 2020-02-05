@@ -60,8 +60,8 @@ class SeriesTable extends React.Component {
       var body = this.props.fullDatabase.map((item) => {
         return [
           item._id,
-          translateModels(item.containerId, this.props.containersDatabase),
-          translatePlaces(item.place, this.props.placesDatabase),
+          item.containerDescription,
+          item.placeDescription,
           item.observations
         ]
       })
@@ -72,7 +72,6 @@ class SeriesTable extends React.Component {
         <th className="table__small-column">Série</th>
         <th>Modelo</th>
         <th className="table__small-column">Pátio</th>
-        {/* <th className="hide-at-700px">Observações</th> */}
         <th className="table__small-column">
           <button onClick={generateReport}>
             <Icon icon="report" />
@@ -92,7 +91,7 @@ class SeriesTable extends React.Component {
     var filterByPlace = this.state.filterByPlace;
     var filteredDatabase = this.props.fullDatabase.filter((item) => {
       if (filterByContainerId && item.containerId !== filterByContainerId) return false;
-      if (filterByPlace && item.place !== filterByPlace) return false;
+      if (filterByPlace && item.placeId !== filterByPlace) return false;
       return true;
     })
     return filteredDatabase.map((item, i) => {
@@ -115,12 +114,15 @@ class SeriesTable extends React.Component {
       }
       return (
         <tr key={i}>
-          <td className="table__small-column">{item._id}</td>
-          <td style={{textAlign: 'left'}}>
-            {translateModels(item.containerId, this.props.containersDatabase)}
+          <td className="table__small-column">
+            {item._id}
           </td>
-          <td className="table__small-column">{translatePlaces(item.place, this.props.placesDatabase)}</td>
-          {/* <td className="table__small-column--wrap hide-at-700px">{item.observations}</td> */}
+          <td style={{textAlign: 'left'}}>
+            {item.containerDescription}
+          </td>
+          <td className="table__small-column">
+            {item.placeDescription}
+          </td>
           {renderEditButton()}
           <td className="table__small-column">
             <button onClick={toggleImageWindow}>
@@ -181,13 +183,9 @@ class SeriesTable extends React.Component {
   }
 }
 
-function translatePlaces(place, database) {
-  if (!place) return "-";
-  return place === "rented" ? "Alugado" : tools.findUsingId(database, place).description;
-}
-function translateModels(model, database) {
-  if (!model) return "-";
-  return tools.findUsingId(database, model).description;
+function translatePlaces(placeId, database) {
+  if (!placeId) return "-";
+  return placeId === "rented" ? "Alugado" : tools.findUsingId(database, placeId).description;
 }
 
 export default SeriesTableWrapper = withTracker((props) => {

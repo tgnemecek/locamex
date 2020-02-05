@@ -52,14 +52,15 @@ export default class Send extends React.Component {
         if (item.type === 'fixed') {
           var canRent = countHowManyCanRent(item);
           for (var i = 0; i < canRent; i++) {
-            var productFromDatabase = tools.findUsingId(this.props.databases.containersDatabase, item.productId);
-            newArray.push({
-              _id: tools.generateId(),
-              productId: item.productId,
-              seriesId: '',
-              description: productFromDatabase.description,
-              place: item.place
-            })
+            // var productFromDatabase = tools.findUsingId(this.props.databases.containersDatabase, item.productId);
+            newArray.push(item);
+            // newArray.push({
+            //   _id: tools.generateId(),
+            //   productId: item.productId,
+            //   seriesId: '',
+            //   description: productFromDatabase.description,
+            //   place: item.place
+            // })
           }
         }
       })
@@ -155,7 +156,7 @@ export default class Send extends React.Component {
   sortSeriesDatabase = () => {
     var seriesDatabase = [...this.props.databases.seriesDatabase];
     return seriesDatabase.sort((a, b) => {
-      var comparison = a.place.localeCompare(b.place);
+      var comparison = a.placeDescription.localeCompare(b.placeDescription);
       if (comparison === 0) {
         return a._id.localeCompare(b._id);
       } else return comparison;
@@ -171,9 +172,6 @@ export default class Send extends React.Component {
         <SendFixed
           onChange={this.onChange}
           fixed={this.state.fixed}
-
-          containersDatabase={this.props.databases.containersDatabase}
-          placesDatabase={this.props.databases.placesDatabase}
           seriesDatabase={this.sortSeriesDatabase()}/>
         {!this.state.fixed.length &&
           !this.state.accessories.length &&

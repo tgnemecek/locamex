@@ -44,11 +44,15 @@ export default class SendFixed extends React.Component {
       var index = e.target.name;
       fixed[index].seriesId = seriesId;
       if (seriesId === "") {
-        fixed[index].place = "";
+        fixed[index].placeId = "";
+        fixed[index].placeDescription = "";
       } else {
         this.props.seriesDatabase.find((item) => {
           if (item._id === seriesId) {
-            fixed[index].place = item.place;
+            fixed[index].placeId = item.placeId;
+            fixed[index].placeDescription = this.props.placesDatabase.find((place) => {
+              return place._id === item.placeId;
+            }).description;
             return true;
           }
         });

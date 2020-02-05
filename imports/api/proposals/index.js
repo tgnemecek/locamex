@@ -21,13 +21,6 @@ if (Meteor.isServer) {
       }
     );
   })
-  function setProducts(array) {
-    return array.map((item) => {
-      delete item.description;
-      delete item.restitution;
-      return item;
-    })
-  }
 
   Meteor.methods({
     'proposals.insert'(snapshot) {
@@ -46,9 +39,9 @@ if (Meteor.isServer) {
             status: undefined,
             activeVersion: undefined,
 
-            containers: setProducts(snapshot.containers),
-            accessories: setProducts(snapshot.accessories),
-            services: setProducts(snapshot.services)
+            containers: snapshot.containers,
+            accessories: snapshot.accessories,
+            services: snapshot.services
           }
         ]
       };
@@ -70,9 +63,9 @@ if (Meteor.isServer) {
         status: undefined,
         activeVersion: undefined,
 
-        containers: setProducts(snapshot.containers),
-        accessories: setProducts(snapshot.accessories),
-        services: setProducts(snapshot.services)
+        containers: snapshot.containers,
+        accessories: snapshot.accessories,
+        services: snapshot.services
       };
 
       data.snapshots.push(newSnapshot);

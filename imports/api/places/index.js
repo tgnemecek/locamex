@@ -1,4 +1,5 @@
 import { Mongo } from 'meteor/mongo';
+import { Series } from '/imports/api/series/index';
 import tools from '/imports/startup/tools/index';
 
 export const Places = new Mongo.Collection('places');
@@ -40,6 +41,11 @@ if (Meteor.isServer) {
         description
       };
       Places.update({ _id }, { $set: {description} });
+      Series.update(
+        {placeId: _id},
+        {$set: {placeDescription: description}},
+        {multi: true}
+      );
       Meteor.call('history.insert', data, 'places');
     }
   });

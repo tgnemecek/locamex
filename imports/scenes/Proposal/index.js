@@ -77,42 +77,8 @@ class Proposal extends React.Component {
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.databases !== this.props.databases
-      || prevState.proposal.version !== this.state.proposal.version) {
-        this.setUpdatedItemInformation();
-    }
-  }
-
-  setUpdatedItemInformation = () => {
-    var proposal = { ...this.state.proposal };
-    var arrayOfArrays = [proposal.containers, proposal.accessories, proposal.services];
-    arrayOfArrays.forEach((itemArray) => {
-      itemArray.forEach((item) => {
-        var database;
-        switch (item.type) {
-          case 'modular':
-          case 'fixed':
-            database = this.props.databases.containersDatabase;
-            break;
-          case 'accessory':
-            database = this.props.databases.accessoriesDatabase;
-            break;
-          case 'service':
-            database = this.props.databases.servicesDatabase;
-            break;
-          default:
-            throw new Meteor.Error('type-not-found');
-        }
-        var productFromDatabase = tools.findUsingId(database, item.productId);
-        item.description = productFromDatabase.description;
-        item.restitution = productFromDatabase.restitution;
-      })
-    })
-    this.setState({ proposal });
-  }
-
   updateProposal = (changes, callback) => {
+    debugger;
     var proposal = {
       ...this.state.proposal,
       ...changes

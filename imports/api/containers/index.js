@@ -1,6 +1,13 @@
 import { Mongo } from 'meteor/mongo';
-import { Meteor } from 'meteor/meteor';
+import { Series } from '/imports/api/series/index';
+import { Contracts } from '/imports/api/contracts/index';
 import tools from '/imports/startup/tools/index';
+import {
+  insertFixedSchema,
+  insertModularSchema,
+  updateFixedSchema,
+  updateModularSchema
+} from './schemas';
 
 export const Containers = new Mongo.Collection('containers');
 
@@ -18,31 +25,45 @@ if (Meteor.isServer) {
     // FIXED
     'containers.fixed.insert' (state) {
       const _id = tools.generateId();
-      var data = {
+      var data = insertFixedSchema.clean({
         _id,
         description: state.description,
         type: "fixed",
-
-        units: [],
 
         price: state.price,
         restitution: state.restitution,
         flyer: false,
 
         visible: true
-      }
+      })
+      insertFixedSchema.validate(data);
       Containers.insert(data);
       Meteor.call('history.insert', data, 'containers.fixed.insert');
     },
 
     'containers.fixed.update' (state) {
-      var data = {
+      var data = updateFixedSchema.clean({
         description: state.description,
         price: state.price,
         restitution: state.restitution
-      };
+      })
+      updateFixedSchema.validate(data);
 
       Containers.update({ _id: state._id }, { $set: data });
+      Series.update(
+        {containerId: state._id},
+        {$set: {containerDescription: state.description}},
+        {multi: true}
+      )
+      // PAREI AQUI!!!!
+      Contracts.update(
+        {$and: [
+          {status: "inactive"},
+          {snapshots: {$elemMatch: {'containers._id': state._id}}}
+        ]},
+        {$set: {'snapshots.containers.containerDescription': state.description}},
+        {multi: true, arrayFilters: [{"element._id": state._id]}
+      )
       Meteor.call('history.insert', { ...data, _id: state._id }, 'containers.fixed.update');
     },
 
@@ -58,7 +79,7 @@ if (Meteor.isServer) {
     // MODULAR
     'containers.modular.insert' (state) {
       const _id = tools.generateId();
-      var data = {
+      var data = insertModularSchema.clean({
         _id,
         description: state.description,
         type: "modular",
@@ -70,18 +91,20 @@ if (Meteor.isServer) {
         flyer: false,
 
         visible: true
-      };
+      })
+      insertModularSchema.validate(data);
       Containers.insert(data);
       Meteor.call('history.insert', data, 'containers.modular.insert');
     },
 
     'containers.modular.update' (state) {
-      var data = {
+      var data = updateModularSchema.clean({
         description: state.description,
         price: state.price,
         restitution: state.restitution,
         allowedModules: state.allowedModules
-      };
+      });
+      updateModularSchema.validate(data);
       Containers.update({ _id: state._id }, { $set: data });
       Meteor.call('history.insert', { ...data, _id: state._id }, 'containers.modular.update');
     },

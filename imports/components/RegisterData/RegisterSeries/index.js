@@ -16,7 +16,7 @@ class RegisterSeries extends React.Component {
     this.state = {
       _id: this.props.item._id || '',
       containerId: this.props.item.containerId || '',
-      place: this.props.item.place || '',
+      placeId: this.props.item.placeId || '',
       observations: this.props.item.observations || '',
 
       errorKeys: [],
@@ -55,25 +55,48 @@ class RegisterSeries extends React.Component {
       return errorKeys;
     }
 
-    var errorKeys = check(['_id', 'containerId', 'place']);
+    var errorKeys = check(['_id', 'containerId', 'placeId']);
     if (errorKeys.length) {
       this.setState({ errorKeys });
     } else {
       if (this.props.item._id) {
         var changes = {
-          place: this.state.place,
+          placeId: this.state.placeId,
           observations: this.state.observations
         }
-        Meteor.call('series.update', changes, this.state._id);
-        this.props.toggleWindow();
+        this.setState({ databaseStatus: "loading" }, () => {
+          Meteor.call('series.update', changes, this.state._id, (err, res) => {
+            if (err) {
+              console.log(err);
+              this.setState({ databaseStatus: "failed" });
+            }
+            if (res) {
+              this.setState({ databaseStatus: {
+                status: "completed",
+                callback: this.props.toggleWindow
+              }})
+            }
+          });
+        })
+
       } else {
-        Meteor.call('series.insert', this.state, (err, res) => {
-          if (err) {
-            if (err.error === 'id-in-use') {
-              alert(`Série #${this.state._id} já existente! Favor escolher outra série.`)
-            } else alert('Erro de servidor. Tente mais tarde.')
-          } else if (res) this.props.toggleWindow();
-        });
+        this.setState({ databaseStatus: "loading" }, () => {
+          Meteor.call('series.insert', this.state, (err, res) => {
+            if (err) {
+              var message = err.error === 'id-in-use' ? `Série #${this.state._id} já existente! Favor escolher outra série.` : "";
+              this.setState({ databaseStatus: {
+                status: "failed",
+                message,
+                timeout: 3000
+              } });
+            } else if (res) {
+              this.setState({ databaseStatus: {
+                status: "completed",
+                callback: this.props.toggleWindow
+              }})
+            }
+          });
+        })
       }
     }
   }
@@ -131,12 +154,12 @@ class RegisterSeries extends React.Component {
             <Input
               title="Pátio:"
               type="select"
-              name="place"
-              disabled={this.props.item.place === 'rented'}
-              error={this.state.errorKeys.includes("place")}
-              value={this.state.place}
+              name="placeId"
+              disabled={this.props.item.placeId === 'rented'}
+              error={this.state.errorKeys.includes("placeId")}
+              value={this.state.placeId}
               onChange={this.onChange}>
-                {this.props.item.place === 'rented' ?
+                {this.props.item.placeId === 'rented' ?
                   <option value='rented'>Alugado</option>
                 : <option value=''></option>}
                 {this.renderPlaces()}

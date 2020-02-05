@@ -1,9 +1,9 @@
 import { Mongo } from 'meteor/mongo';
 import tools from '/imports/startup/tools/index';
-
-export const Test = new Mongo.Collection('test');
-export const Test2 = new Mongo.Collection('test2');
-
+// 
+// export const Test = new Mongo.Collection('test');
+// export const Test2 = new Mongo.Collection('test2');
+//
 
 
 if (Meteor.isServer) {
@@ -16,9 +16,9 @@ if (Meteor.isServer) {
   //   description: "Toldo"
   // })
 
-  Meteor.publish('testPub', () => {
-    return Test.rawCollection().aggregate(
-      {$match: {productId: "123"}}
-    )
-  })
+  // Meteor.publish('testPub', () => {
+  //   return Test.rawCollection().aggregate(
+  //     {$match: {productId: "123"}}
+  //   )
+  // })
 }
