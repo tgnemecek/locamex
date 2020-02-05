@@ -1,15 +1,7 @@
 import SimpleSchema from 'simpl-schema';
 import { check } from 'meteor/check';
 
-var options = {
-  clean: {
-    trimStrings: true,
-    removeEmptyStrings: false
-  },
-  check
-}
-
-var variations = {
+var stockSchema = new SimpleSchema({
   variations: Array,
   'variations.$': Object,
   'variations.$._id': String,
@@ -22,43 +14,50 @@ var variations = {
   'variations.$.place.$.available': SimpleSchema.Integer,
   'variations.$.place.$.inactive': SimpleSchema.Integer,
   'variations.$.visible': Boolean
+},
+{
+  clean: { trimStrings: true, removeEmptyStrings: false },
+  check
 }
-
-var insertSchema = new SimpleSchema({
-  _id: String,
-  type: String,
-
-  description: String,
-  price: Number,
-  restitution: Number,
-  observations: String,
-
-  ...variations,
-
-  images: Array,
-  'images.$': String,
-
-  'visible': Boolean
-}, options)
+)
 
 var updateSchema = new SimpleSchema({
   description: String,
   price: Number,
   restitution: Number,
-  observations: String,
-  ...variations
-}, options);
+  observations: String
+},
+{
+  clean: { trimStrings: true, removeEmptyStrings: false },
+  check
+}
+).extend(stockSchema);
 
 var imagesSchema = new SimpleSchema({
   images: Array,
   'images.$': String
+},
+{
+  clean: { trimStrings: true, removeEmptyStrings: false },
+  check
 })
-
-var stockSchema = new SimpleSchema(variations, options)
 
 var hideSchema = new SimpleSchema({
   'visible': Boolean
+},
+{
+  clean: { trimStrings: true, removeEmptyStrings: false },
+  check
 })
+
+var insertSchema = new SimpleSchema({
+  _id: String,
+  type: String
+},
+{
+  clean: { trimStrings: true, removeEmptyStrings: false },
+  check
+}).extend(updateSchema).extend(imagesSchema).extend(hideSchema);
 
 module.exports = {
   insertSchema,

@@ -130,7 +130,7 @@ export default class RegisterClients extends React.Component {
           if (err) {
             if (err.error === 'duplicate-registry') {
               this.setState({
-                errorMsg: 'CPF/CNPJ duplicado! O Cliente que você está tentando cadastrar possivelmente já existe no banco de dados.',
+                errorMsg: 'CPF/CNPJ duplicado! O Cliente que você está tentando cadastrar já existe no banco de dados.',
                 databaseStatus: "failed"
               })
             } else {
