@@ -54,8 +54,7 @@ export default class Send extends React.Component {
           for (var i = 0; i < canRent; i++) {
             // var productFromDatabase = tools.findUsingId(this.props.databases.containersDatabase, item.productId);
             newArray.push({
-              _id: "",
-              containerId:
+              _id: ""
             });
             // newArray.push({
             //   _id: tools.generateId(),

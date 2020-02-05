@@ -1,5 +1,9 @@
 import { Mongo } from 'meteor/mongo';
 import tools from '/imports/startup/tools/index';
+import {
+  insertSchema,
+  updateSchema
+} from './schemas';
 
 import { Series } from '/imports/api/series/index';
 import { Modules } from '/imports/api/modules/index';
@@ -25,24 +29,18 @@ if (Meteor.isServer) {
   Meteor.methods({
     'proposals.insert'(snapshot) {
       const prefix = new Date().getFullYear();
-      const suffix = Proposals.find({ _id: { $regex: new RegExp(prefix)} }).count().toString().padStart(4, '0');
-      const _id = prefix + "-" + suffix;
-      const data = {
+      const suffix = Proposals.find({
+        _id: { $regex: new RegExp(prefix)} }).count().toString().padStart(4, '0');
+      var _id = prefix + "-" + suffix;
+
+      snapshot = insertSchema.clean(snapshot);
+      insertSchema.validate(snapshot);
+
+      var proposal = {
         _id,
         status: "inactive",
-        activeVersion: undefined,
         snapshots: [
-          {
-            ...snapshot,
-            _id: undefined,
-            version: undefined,
-            status: undefined,
-            activeVersion: undefined,
-
-            containers: snapshot.containers,
-            accessories: snapshot.accessories,
-            services: snapshot.services
-          }
+          snapshot
         ]
       };
       Proposals.insert(data);

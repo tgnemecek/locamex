@@ -23,7 +23,7 @@ export default class Information extends React.Component {
     var duration = e.target.value;
     var firstChange = e.target.firstChange;
     var discount = 0;
-    if (this.props.proposal.dates.timeUnit === "months") {
+    if (this.props.snapshot.dates.timeUnit === "months") {
       if (duration >= 3 && duration <= 5) {
         discount = 0.15;
       } else if (duration >= 6 && duration <= 8) {
@@ -34,28 +34,28 @@ export default class Information extends React.Component {
         discount = 0.3;
       }
     }
-    var dates = {...this.props.proposal.dates};
+    var dates = {...this.props.snapshot.dates};
     dates.duration = duration;
-    this.props.updateProposal({
+    this.props.updateSnapshot({
       dates,
-      discount: firstChange ? this.props.proposal.discount : discount
+      discount: firstChange ? this.props.snapshot.discount : discount
     });
   }
 
   changeTimeUnit = (e) => {
     var timeUnit = e.target.value;
-    var dates = {...this.props.proposal.dates};
+    var dates = {...this.props.snapshot.dates};
     var firstChange = e.target.firstChange;
     var discount = 0;
     var observations = {
-      ...this.props.proposal.observations,
+      ...this.props.snapshot.observations,
       conditions: undefined
     }
     dates.duration = 1;
     dates.timeUnit = timeUnit;
-    this.props.updateProposal({
+    this.props.updateSnapshot({
       dates,
-      discount: firstChange ? this.props.proposal.discount : discount,
+      discount: firstChange ? this.props.snapshot.discount : discount,
       observations
     })
   }
@@ -66,18 +66,18 @@ export default class Information extends React.Component {
     var extra = e.target.extra;
 
     if (!extra) {
-      this.props.updateProposal({[name]: value});
+      this.props.updateSnapshot({[name]: value});
     } else {
-      var obj = {...this.props.proposal[extra]};
+      var obj = {...this.props.snapshot[extra]};
       obj[name] = value;
-      this.props.updateProposal({[extra]: obj});
+      this.props.updateSnapshot({[extra]: obj});
     }
   }
 
   cepButtonClick = (data) => {
     if (!data.cep) return;
     var deliveryAddress = {
-      ...this.props.proposal.deliveryAddress,
+      ...this.props.snapshot.deliveryAddress,
       street: data.logradouro,
       district: data.bairro,
       city: data.localidade,
@@ -85,7 +85,7 @@ export default class Information extends React.Component {
       number: '',
       additional: ''
     };
-    this.props.updateProposal({ deliveryAddress });
+    this.props.updateSnapshot({ deliveryAddress });
   }
 
   render() {
@@ -105,7 +105,7 @@ export default class Information extends React.Component {
               extra="client"
               type="text"
               error={this.props.errorKeys.includes("description")}
-              value={this.props.proposal.client.description}
+              value={this.props.snapshot.client.description}
               onChange={this.handleChange}
               disabled={this.props.disabled}
             />
@@ -115,7 +115,7 @@ export default class Information extends React.Component {
               extra="client"
               type="text"
               error={this.props.errorKeys.includes("name")}
-              value={this.props.proposal.client.name}
+              value={this.props.snapshot.client.name}
               onChange={this.handleChange}
               disabled={this.props.disabled}
             />
@@ -125,7 +125,7 @@ export default class Information extends React.Component {
               extra="client"
               type="text"
               error={this.props.errorKeys.includes("email")}
-              value={this.props.proposal.client.email}
+              value={this.props.snapshot.client.email}
               onChange={this.handleChange}
               disabled={this.props.disabled}
             />
@@ -135,7 +135,7 @@ export default class Information extends React.Component {
               extra="client"
               type="text"
               error={this.props.errorKeys.includes("phone")}
-              value={this.props.proposal.client.phone}
+              value={this.props.snapshot.client.phone}
               onChange={this.handleChange}
               disabled={this.props.disabled}
             />
@@ -145,7 +145,7 @@ export default class Information extends React.Component {
               type="text"
               extra="deliveryAddress"
               error={this.props.errorKeys.includes("street")}
-              value={this.props.proposal.deliveryAddress.street}
+              value={this.props.snapshot.deliveryAddress.street}
               onChange={this.handleChange}
               disabled={this.props.disabled}
             />
@@ -154,7 +154,7 @@ export default class Information extends React.Component {
               name="startDate"
               extra="dates"
               onChange={this.handleChange}
-              value={this.props.proposal.dates.startDate}
+              value={this.props.snapshot.dates.startDate}
               disabled={this.props.disabled}
             />
             <Input
@@ -162,20 +162,20 @@ export default class Information extends React.Component {
               name="discount"
               type="percent"
               error={this.props.errorKeys.includes("discount")}
-              value={this.props.proposal.discount}
+              value={this.props.snapshot.discount}
               onChange={this.handleChange}
               disabled={this.props.disabled}
             />
             <Input
               title="Duração:"
-              value={this.props.proposal.dates.duration}
+              value={this.props.snapshot.dates.duration}
               onChange={this.changeDuration}
               error={this.props.errorKeys.includes("duration")}
               name="duration"
               extra="dates"
               type="number"
               min={1}
-              max={this.props.proposal.dates.timeUnit === "months" ? 999 : 30}
+              max={this.props.snapshot.dates.timeUnit === "months" ? 999 : 30}
               disabled={this.props.disabled}
             />
             <Input
@@ -185,7 +185,7 @@ export default class Information extends React.Component {
               extra="dates"
               onChange={this.changeTimeUnit}
               disabled={this.props.disabled}
-              value={this.props.proposal.dates.timeUnit}>
+              value={this.props.snapshot.dates.timeUnit}>
                 <option value="months">Meses</option>
                 <option value="days">Dias</option>
             </Input>
@@ -195,7 +195,7 @@ export default class Information extends React.Component {
               type="text"
               extra="deliveryAddress"
               error={this.props.errorKeys.includes("city")}
-              value={this.props.proposal.deliveryAddress.city}
+              value={this.props.snapshot.deliveryAddress.city}
               onChange={this.handleChange}
               disabled={this.props.disabled}
             />
@@ -207,7 +207,7 @@ export default class Information extends React.Component {
               error={this.props.errorKeys.includes("state")}
               onChange={this.handleChange}
               disabled={this.props.disabled}
-              value={this.props.proposal.deliveryAddress.state}>
+              value={this.props.snapshot.deliveryAddress.state}>
               {tools.states.map((item, i) => {
                 return <option key={i} value={item}>{item}</option>
               })}
@@ -218,7 +218,7 @@ export default class Information extends React.Component {
               type="number"
               extra="deliveryAddress"
               error={this.props.errorKeys.includes("number")}
-              value={this.props.proposal.deliveryAddress.number}
+              value={this.props.snapshot.deliveryAddress.number}
               onChange={this.handleChange}
               disabled={this.props.disabled}
             />
@@ -227,7 +227,7 @@ export default class Information extends React.Component {
               name="additional"
               type="text"
               extra="deliveryAddress"
-              value={this.props.proposal.deliveryAddress.additional}
+              value={this.props.snapshot.deliveryAddress.additional}
               onChange={this.handleChange}
               disabled={this.props.disabled}
             />

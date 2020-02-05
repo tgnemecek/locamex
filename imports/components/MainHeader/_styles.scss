@@ -1,0 +1,35 @@
+@import './Documents/styles.scss';
+
+.main-header {
+  background: $grey;
+  display: grid;
+  padding: ($space /2);
+  grid-template-columns: 1fr 1fr;
+}
+
+.main-header__created-by {
+    color: $dark-grey;
+    font-size: 1.2rem;
+    top: 0;
+    left: 2px;
+}
+
+.main-header__title {
+  margin-bottom: 0;
+  line-height: 30px;
+}
+
+.main-header__right-side {
+  text-align: right;
+}
+
+.main-header__button {
+  cursor: pointer;
+  font-size: 2.1rem;
+  height: 25px;
+  width: 25px;
+  border: none;
+  background: white;
+  line-height: 1px;
+  margin-left: 5px;
+}

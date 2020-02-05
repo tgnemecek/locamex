@@ -3,7 +3,7 @@ import React from 'react';
 export default function Status(props) {
   var className = "";
   var label = "";
-  var status = props.status;
+  var status = props.status || 'inactive';
 
   if (props.type === "proposal") {
     if (status === "inactive") status = "inProgress";

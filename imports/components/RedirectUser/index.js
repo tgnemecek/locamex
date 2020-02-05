@@ -3,30 +3,49 @@ import { Redirect } from 'react-router-dom';
 
 import { userTypes } from '/imports/startup/user-types/index';
 
-export default function RedirectUser (props) {
-
-  function notAllowed() {
-    return <Redirect to="/dashboard" />;
+export default class RedirectUser extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      ready: false
+    }
   }
 
-  function allowed() {
-    return null;
+  componentDidMount() {
+    if (Meteor.user().type) {
+      this.setState({ ready: true });
+    }
   }
 
-  function noUser() {
-    return <Redirect to="/" />;
+  componentDidUpdate() {
+    if (Meteor.user().type && !this.state.ready) {
+      this.setState({ ready: true });
+    }
   }
 
-  var user = Meteor.user();
-  if (!user) return noUser();
+  conditionalRedirect = () => {
+    function notAllowed() {
+      return <Redirect to="/dashboard" />;
+    }
+    function allowed() {
+      return null;
+    }
+    function noUser() {
+      return <Redirect to="/" />;
+    }
+    var user = Meteor.user();
+    if (!user) return noUser();
+    if (user.type === 'administrator') return allowed();
+    var allowedPages = userTypes[user.type].pages;
+    if (!allowedPages) return notAllowed();
+    if (allowedPages.includes(props.currentPage)) {
+      return allowed();
+    } else return notAllowed();
+  }
 
-  if (user.type === 'administrator') return allowed();
-
-  var allowedPages = userTypes[user.type].pages;
-
-
-  if (!allowedPages) return notAllowed();
-  if (allowedPages.includes(props.currentPage)) {
-    return allowed();
-  } else return notAllowed();
+  render() {
+    if (this.state.ready) {
+      return this.conditionalRedirect();
+    } else return null;
+  }
 }
