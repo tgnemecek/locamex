@@ -65,7 +65,7 @@ class VariationsStockVisualizer extends React.Component {
       var variations = [...this.props.item.variations];
       variations[this.state.variationIndex] = this.state.item;
 
-      Meteor.call('accessories.stock.variations.update', _id, variations);
+      Meteor.call('accessories.update.stock', _id, variations);
       this.props.toggleWindow();
     }
   }

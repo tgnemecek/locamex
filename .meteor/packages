@@ -25,3 +25,4 @@ seba:minifiers-autoprefixer
 react-meteor-data
 edgee:slingshot
 fourseven:scss
+percolate:migrations

@@ -19,6 +19,7 @@ export default class RegisterAccessories extends React.Component {
       observations: this.props.item.observations || '',
       variations: this.props.item.variations || [{
         _id: tools.generateId(),
+        description: "Padrão Único",
         observations: '',
         rented: 0,
         place: [],
@@ -41,19 +42,21 @@ export default class RegisterAccessories extends React.Component {
   onChangeVariations = (e) => {
     var bool = e.target.value;
     var variations;
-    function emptyVariation() {
-      return {
-        _id: tools.generateId(),
-        observations: '',
-        rented: 0,
-        place: [],
-        visible: true
+    function createVariations(i) {
+      var result = [];
+      for (var j = 0; j < i; j++) {
+        result.push({
+          _id: tools.generateId(),
+          description: i > 1 ? "Padrão " + tools.convertToLetter(j) : "Padrão Único",
+          observations: '',
+          rented: 0,
+          place: [],
+          visible: true
+        })
       }
+      return result;
     }
-    if (bool) {
-      variations = [emptyVariation(), emptyVariation()];
-    } else variations = [emptyVariation()];
-
+    variations = bool ? createVariations(2) : createVariations(1);
     this.setState({ variations });
   }
 
@@ -66,6 +69,7 @@ export default class RegisterAccessories extends React.Component {
     this.props.toggleWindow();
   }
   saveEdits = () => {
+    console.log(this.state);
     var errorKeys = [];
     if (!this.state.description.trim()) {
       errorKeys.push("description");
@@ -126,8 +130,11 @@ export default class RegisterAccessories extends React.Component {
               id="variations"
               value={this.state.variations.length > 1}
               onChange={this.onChangeVariations}
+              disabled={this.props.item.variations ? this.props.item.variations.length > 1 : false}
             />
-            <Variations variations={this.state.variations} onChange={this.onChange} />
+            <Variations
+              variations={this.state.variations}
+              onChange={this.onChange}/>
           </Block>
           <this.props.Footer {...this.props} saveEdits={this.saveEdits} removeItem={this.removeItem} />
       </Box>
