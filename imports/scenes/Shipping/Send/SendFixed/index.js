@@ -2,7 +2,6 @@ import React from 'react';
 
 import tools from '/imports/startup/tools/index';
 
-import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 import ImageVisualizer from '/imports/components/ImageVisualizer/index';
 
@@ -20,9 +19,9 @@ export default class SendFixed extends React.Component {
   renderBody = () => {
     const renderOptions = (productId, currentId) => {
       var filtered = this.props.seriesDatabase.filter((itemFromDatabase) => {
-        if (itemFromDatabase.containerId === productId && itemFromDatabase.place !== 'rented') {
+        if (itemFromDatabase.containerId === productId && itemFromDatabase.placeId !== 'rented') {
           return !this.props.fixed.find((itemAdded) => {
-            if (itemAdded.seriesId === itemFromDatabase._id) {
+            if (itemAdded._id === itemFromDatabase._id) {
               return (currentId !== itemAdded._id)
             } else return false;
           })
@@ -32,45 +31,43 @@ export default class SendFixed extends React.Component {
         return (
           <option
             key={i}
-            value={item._id}>{`Série: ${item._id} - Pátio: ${tools.findUsingId(this.props.placesDatabase, item.place).description}`}
+            value={item._id}>{`Série: ${item._id} - Pátio: ${item.placeDescription}`}
           </option>
         )
       })
     }
 
-    const onChange = (e) => {
-      var seriesId = e.target.value;
-      var fixed = [...this.props.fixed];
-      var index = e.target.name;
-      fixed[index].seriesId = seriesId;
-      if (seriesId === "") {
-        fixed[index].placeId = "";
-        fixed[index].placeDescription = "";
-      } else {
-        this.props.seriesDatabase.find((item) => {
-          if (item._id === seriesId) {
-            fixed[index].placeId = item.placeId;
-            fixed[index].placeDescription = this.props.placesDatabase.find((place) => {
-              return place._id === item.placeId;
-            }).description;
-            return true;
-          }
-        });
-      }
-      this.props.onChange({ fixed });
-    }
-
     return this.props.fixed.map((item, i) => {
+      const onChange = () => {
+        var fixed = [...this.props.fixed];
+        fixed[i]._id = _id;
+        if (_id === "") {
+          fixed[index].placeId = "";
+          fixed[index].placeDescription = "";
+        } else {
+          this.props.seriesDatabase.find((item) => {
+            if (item._id === seriesId) {
+              fixed[index].placeId = item.placeId;
+              fixed[index].placeDescription = this.props.placesDatabase.find((place) => {
+                return place._id === item.placeId;
+              }).description;
+              return true;
+            }
+          });
+        }
+        this.props.onChange({ fixed });
+      }
+
       return (
         <tr key={i}>
           <td className="table__small-column">{i+1}</td>
-          <td style={{width: "110px"}}>{item.description}</td>
+          <td style={{width: "110px"}}>{item.containerDescription}</td>
           <td>
             <Input
               type="select"
               name={i}
               onChange={onChange}
-              value={item.seriesId}>
+              value={item._id}>
                 <option value="">Selecione uma série</option>
                 {renderOptions(item.productId, item._id)}
             </Input>
@@ -86,7 +83,8 @@ export default class SendFixed extends React.Component {
   render() {
     if (this.props.fixed.length > 0) {
       return (
-        <Block columns={1} title="Containers Fixos">
+        <div>
+          <h4>Containers Fixos</h4>
           <table className="table">
             <thead>
               {this.renderHeader()}
@@ -95,7 +93,7 @@ export default class SendFixed extends React.Component {
               {this.renderBody()}
             </tbody>
           </table>
-        </Block>
+        </div>
       )
     } else return null;
   }

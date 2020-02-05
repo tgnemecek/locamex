@@ -78,7 +78,6 @@ class Proposal extends React.Component {
   }
 
   updateProposal = (changes, callback) => {
-    debugger;
     var proposal = {
       ...this.state.proposal,
       ...changes

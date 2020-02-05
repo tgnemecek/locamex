@@ -18,13 +18,6 @@ if (Meteor.isServer) {
   Meteor.publish('contractsPub', () => {
     return Contracts.find({}, {sort: { _id: -1 }});
   })
-  function setProducts(array) {
-    return array.map((item) => {
-      delete item.description;
-      delete item.restitution;
-      return item;
-    })
-  }
 
   Meteor.methods({
     'contracts.insert'(data) {
@@ -56,9 +49,9 @@ if (Meteor.isServer) {
         activeVersion: undefined,
         shipping: undefined,
 
-        containers: setProducts(snapshot.containers),
-        accessories: setProducts(snapshot.accessories),
-        services: setProducts(snapshot.services)
+        containers: snapshot.containers,
+        accessories: snapshot.accessories,
+        services: snapshot.services
       };
 
       data.snapshots.push(newSnapshot);

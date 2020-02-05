@@ -1,6 +1,5 @@
 import { Mongo } from 'meteor/mongo';
 import { Series } from '/imports/api/series/index';
-import { Contracts } from '/imports/api/contracts/index';
 import tools from '/imports/startup/tools/index';
 import {
   insertFixedSchema,
@@ -8,6 +7,7 @@ import {
   updateFixedSchema,
   updateModularSchema
 } from './schemas';
+import updateReferences from './update-references';
 
 export const Containers = new Mongo.Collection('containers');
 
@@ -50,20 +50,7 @@ if (Meteor.isServer) {
       updateFixedSchema.validate(data);
 
       Containers.update({ _id: state._id }, { $set: data });
-      Series.update(
-        {containerId: state._id},
-        {$set: {containerDescription: state.description}},
-        {multi: true}
-      )
-      // PAREI AQUI!!!!
-      Contracts.update(
-        {$and: [
-          {status: "inactive"},
-          {snapshots: {$elemMatch: {'containers._id': state._id}}}
-        ]},
-        {$set: {'snapshots.containers.containerDescription': state.description}},
-        {multi: true, arrayFilters: [{"element._id": state._id]}
-      )
+      updateReferences({...data, _id: state._id});
       Meteor.call('history.insert', { ...data, _id: state._id }, 'containers.fixed.update');
     },
 

@@ -83,47 +83,6 @@ class Contract extends React.Component {
     }
   }
 
-  componentDidMount() {
-    if (this.props.contract.snapshots.length === 1) {
-      this.setState({ clientSetupWindow: true });
-    } else this.setState({ clientSetupWindow: false });
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.databases !== this.props.databases
-      || prevState.contract.version !== this.state.contract.version) {
-      this.setUpdatedItemInformation();
-    }
-  }
-
-  setUpdatedItemInformation = () => {
-    var contract = { ...this.state.contract };
-    var arrayOfArrays = [contract.containers, contract.accessories, contract.services];
-    arrayOfArrays.forEach((itemArray) => {
-      itemArray.forEach((item) => {
-        var database;
-        switch (item.type) {
-          case 'modular':
-          case 'fixed':
-            database = this.props.databases.containersDatabase;
-            break;
-          case 'accessory':
-            database = this.props.databases.accessoriesDatabase;
-            break;
-          case 'service':
-            database = this.props.databases.servicesDatabase;
-            break;
-          default:
-            throw new Meteor.Error('type-not-found');
-        }
-        var productFromDatabase = tools.findUsingId(database, item.productId);
-        item.description = productFromDatabase.description;
-        item.restitution = productFromDatabase.restitution;
-      })
-    })
-    this.setState({ contract });
-  }
-
   updateContract = (changes, callback) => {
     var contract = {
       ...this.state.contract,
