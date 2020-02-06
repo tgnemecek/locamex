@@ -114,7 +114,7 @@ class ContractsTable extends React.Component {
         <tr key={i}>
           <td className="table__small-column">{item._id}</td>
           <td className="table__small-column hide-at-700px">
-            {`${item.proposal}.${Number(item.proposalVersion)+1}`}
+            {item.proposalNumber}
           </td>
           <td>{clientName()}</td>
           <td className="table__small-column"><Status status={item.status} type="contract"/></td>

@@ -10,11 +10,13 @@ Accounts.deny({
 
 if (Meteor.isServer) {
   Meteor.publish('accountsPub', () => {
+    if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
     return Accounts.find({});
   })
 
   Meteor.methods({
     'accounts.insert' (state) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       var data = {
         description: state.description,
         bank: state.bank,
@@ -27,6 +29,7 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', data, 'accounts.insert');
     },
     'accounts.update' (_id, state) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       var data = {
         description: state.description,
         bank: state.bank,
@@ -38,6 +41,7 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', data, 'accounts.update');
     },
     'accounts.hide'(_id) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       const data = {
         _id,
         visible: false

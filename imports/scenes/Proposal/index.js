@@ -4,12 +4,10 @@ import { withTracker } from 'meteor/react-meteor-data';
 import { saveAs } from 'file-saver';
 
 import { Proposals } from '/imports/api/proposals/index';
-import { Clients } from '/imports/api/clients/index';
-import { Places } from '/imports/api/places/index';
 import { Containers } from '/imports/api/containers/index';
 import { Accessories } from '/imports/api/accessories/index';
 import { Services } from '/imports/api/services/index';
-import { Users } from '/imports/api/users/index';
+import { Settings } from '/imports/api/settings/index';
 
 import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
@@ -23,6 +21,7 @@ import MainHeader from '/imports/components/MainHeader/index';
 import MainItems from '/imports/components/MainItems/index';
 import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 
+import Documents from './Documents/index';
 import Information from './Information/index';
 import Footer from './Footer/index';
 
@@ -36,7 +35,7 @@ class Proposal extends React.Component {
         snapshotIndex = this.props.proposal.snapshots.length-1;
         snapshot = this.props.proposal.snapshots[snapshotIndex];
       } else {
-        snapshotIndex = this.props.proposal.snapshots.find((item) => {
+        snapshotIndex = this.props.proposal.snapshots.findIndex((item) => {
           return item.active === true;
         });
         snapshot = this.props.proposal.snapshots[snapshotIndex];
@@ -57,7 +56,7 @@ class Proposal extends React.Component {
         observations: {
           internal: '',
           external: '',
-          conditions: undefined
+          conditions: this.props.settings.defaultConditionsMonths
         },
         deliveryAddress: {
           street: '',
@@ -78,6 +77,7 @@ class Proposal extends React.Component {
         services: []
       },
       snapshotIndex,
+      documentsOpen: false,
       errorMsg: '',
       errorKeys: [],
       databaseStatus: ''
@@ -123,11 +123,7 @@ class Proposal extends React.Component {
   changeSnapshot = (e, callback) => {
     var snapshotIndex = e.target.value;
     var snapshot = this.props.proposal.snapshots[snapshotIndex];
-    var proposal = {
-      ...this.state.proposal,
-      snapshot
-    }
-    this.setState({ proposal }, () => {
+    this.setState({ snapshot, snapshotIndex }, () => {
       if (typeof callback === "function") {
         callback();
       }
@@ -136,20 +132,21 @@ class Proposal extends React.Component {
 
   cancelProposal = (callback) => {
     this.setState({ databaseStatus: "loading" }, () => {
-      const cancel = (proposal) => {
-        Meteor.call('proposals.cancel', proposal._id, (err, res) => {
+      const cancel = () => {
+        Meteor.call('proposals.cancel', this.props.proposal._id, (err, res) => {
           if (res) {
             var databaseStatus = {
               status: "completed",
               message: "Proposta Cancelada!"
             }
-            proposal.status = "cancelled";
-            this.setState({ proposal, databaseStatus });
+            this.setState({ databaseStatus });
           } else if (err) {
             this.setState({ databaseStatus: "failed" });
             console.log(err);
           }
-          callback();
+          if (typeof callback === "function") {
+            callback();
+          }
         });
       }
       this.saveEdits(cancel);
@@ -158,15 +155,16 @@ class Proposal extends React.Component {
 
   activateProposal = (callback) => {
     this.setState({ databaseStatus: "loading" }, () => {
-      const activate = (proposal) => {
-        Meteor.call('proposals.activate', proposal, (err, res) => {
+      const activate = () => {
+        var _id = this.props.proposal._id;
+        var snapshotIndex = this.state.snapshotIndex;
+        Meteor.call('proposals.activate', _id, snapshotIndex, (err, res) => {
           if (res) {
-            proposal = tools.explodeProposal(res.proposal);
             var databaseStatus = {
               status: "completed",
-              message: "Proposta Fechada! Gerado Contrato #" + res.contractId
+              message: "Proposta Fechada! Gerado Contrato #" + res
             }
-            this.setState({ proposal, databaseStatus });
+            this.setState({ databaseStatus });
           } else if (err) {
             this.setState({ databaseStatus: "failed" });
             console.log(err);
@@ -179,15 +177,21 @@ class Proposal extends React.Component {
   }
 
   saveEdits = (callback) => {
+    console.log(this.state.snapshot);
     this.setState({ databaseStatus: "loading" }, () => {
+      if (this.props.proposal && this.props.proposal.status !== 'inactive') {
+        return callback(this.state.snapshot);
+      }
       if (this.props.match.params.proposalId == 'new') {
-        Meteor.call('proposals.insert', this.state.proposal, (err, res) => {
+        Meteor.call('proposals.insert', this.state.snapshot, (err, res) => {
           if (res) {
-            var proposal = tools.explodeProposal(res);
+            var proposal = res;
+            var index = proposal.snapshots.length-1;
+            var snapshot = proposal.snapshots[index];
             this.props.history.push("/proposal/" + proposal._id);
             if (typeof callback === "function") {
-              callback(proposal);
-            } else this.setState({ proposal, databaseStatus: "completed" });
+              callback(snapshot);
+            } else this.setState({ snapshot, databaseStatus: "completed" });
           }
           else if (err) {
             this.setState({ databaseStatus: "failed" });
@@ -195,23 +199,35 @@ class Proposal extends React.Component {
           }
         });
       } else {
-        Meteor.call('proposals.update', this.state.proposal, (err, res) => {
+        Meteor.call(
+          'proposals.update',
+          this.state.snapshot,
+          this.props.proposal._id,
+          this.state.snapshotIndex,
+          (err, res) => {
           if (res) {
-            var proposal;
+            var snapshot = this.state.snapshot;
+            var snapshotIndex = this.state.snapshotIndex;
             var databaseStatus;
             if (res.hasChanged) {
-              proposal = tools.explodeProposal(res.proposal);
+              snapshotIndex = res.index;
+              snapshot = res.snapshot;
               databaseStatus = "completed";
             } else {
-              proposal = this.state.proposal;
               databaseStatus = {
                 status: "completed",
                 message: "Nenhuma alteração realizada."
               }
             }
             if (typeof callback === "function") {
-              callback(proposal);
-            } else this.setState({ proposal, databaseStatus });
+              callback(snapshot);
+            } else {
+              this.setState({
+                snapshot,
+                snapshotIndex,
+                databaseStatus
+              });
+            }
           } else if (err) {
             this.setState({ databaseStatus: "failed" });
             console.log(err);
@@ -221,10 +237,16 @@ class Proposal extends React.Component {
     })
   }
 
+  toggleDocuments = () => {
+    this.setState({ documentsOpen: !this.state.documentsOpen })
+  }
+
   generateDocument = (includeFlyer) => {
     const generate = (master) => {
+      master._id = this.props.proposal._id;
       master.type = "proposal";
       master.includeFlyer = includeFlyer;
+      master.version = this.state.snapshotIndex;
 
       Meteor.call('pdf.generate', master, (err, res) => {
         if (res) {
@@ -281,68 +303,51 @@ class Proposal extends React.Component {
               this.props.proposal.status
               : 'inactive'}
             type="proposal"
-            toggleDocuments={() => alert('documents open!')}
-            toggleCancel={() => alert('cancel window!')}
-            // master={{...this.state.proposal, type: "proposal"}}
-            // databases={this.props.databases}
-            // snapshots={this.props.proposal ? this.props.proposal.snapshots : []}
-            // changeVersion={this.changeVersion}
-            //
-            // updateMaster={this.updateProposal}
-            // cancelMaster={this.cancelProposal}
-            // saveMaster={this.saveEdits}
-            // generateDocument={this.generateDocument}
-            //
-            // errorKeys={this.state.errorKeys}
-            // disabled={this.state.proposal.status !== "inactive"}
-          >
-            {this.props.proposal ?
-              <Input
-                onChange={this.changeSnapshot}
-                value={this.snapshotIndex}
-                className="master__version"
-                type="select">
-                {this.props.proposal.snapshots.reverse().map((item, i, arr) => {
-                  var index = arr.length-i-1;
-                  var label = index + 1;
-                  var style = {background: "white"};
-                  if (item.active) {
-                    style = {background: "#77cc77"}
-                  }
-                  return (
-                    <option
-                      key={i}
-                      value={index} style={style}>
-                        {index + 1}
-                    </option>
-                  )
-                })}
-              </Input>
-            : null}
-          </MainHeader>
-          <Information
-            disabled={this.props.proposal ? this.props.proposal.status !== "inactive" : false}
-            clientsDatabase={this.props.databases.clientsDatabase}
-            snapshot={this.state.snapshot}
-            updateSnapshot={this.updateSnapshot}
-            errorKeys={this.state.errorKeys}
+            toggleDocuments={this.toggleDocuments}
+            toggleCancel={this.cancelProposal}
+
+            changeSnapshot={this.changeSnapshot}
+            snapshotIndex={this.state.snapshotIndex}
+            snapshots={this.props.proposal ?
+              this.props.proposal.snapshots : []}
           />
-          <MainItems
-            disabled={this.props.proposal ? this.props.proposal.status !== "inactive" : false}
-            snapshot={this.state.snapshot}
-            databases={this.props.databases}
-            updateSnapshot={this.updateSnapshot}
-          />
-          <Footer
-            totalValue={this.totalValue()}
-            creationDate={this.props.proposal ?
-            this.props.proposal.snapshots[0].dates.creationDate
-            : this.state.snapshot.dates.creationDate}
-            status={this.props.proposal ? this.props.proposal.status : 'inactive'}
-            saveEdits={this.saveEdits}
-            activateProposal={this.activateProposal}
-          />
+          <div className="proposal__body">
+            <Information
+              disabled={this.props.proposal ? this.props.proposal.status !== "inactive" : false}
+              clientsDatabase={this.props.databases.clientsDatabase}
+              snapshot={this.state.snapshot}
+              updateSnapshot={this.updateSnapshot}
+              errorKeys={this.state.errorKeys}
+              settings={this.props.settings}
+            />
+            <MainItems
+              disabled={this.props.proposal ? this.props.proposal.status !== "inactive" : false}
+              snapshot={this.state.snapshot}
+              databases={this.props.databases}
+              updateSnapshot={this.updateSnapshot}
+              docType="proposal"
+            />
+            <Footer
+              totalValue={this.totalValue()}
+              creationDate={this.props.proposal ?
+              this.props.proposal.snapshots[0].dates.creationDate
+              : this.state.snapshot.dates.creationDate}
+              status={this.props.proposal ? this.props.proposal.status : 'inactive'}
+              saveEdits={this.saveEdits}
+              activateProposal={this.activateProposal}
+            />
+          </div>
           <DatabaseStatus status={this.state.databaseStatus}/>
+          {this.state.documentsOpen ?
+            <Documents
+              snapshot={this.state.snapshot}
+              updateSnapshot={this.updateSnapshot}
+              disabled={this.props.proposal ? this.props.proposal.status !== "inactive" : false}
+              toggleWindow={this.toggleDocuments}
+              settings={this.props.settings}
+              generateDocument={this.generateDocument}
+            />
+          : null}
         </div>
       </div>
     )
@@ -351,35 +356,24 @@ class Proposal extends React.Component {
 
 function ProposalLoader (props) {
   if (props.match.params.proposalId === 'new' || props.proposal) {
-    return <Proposal {...props} />
+    if (Object.entries(props.settings).length) {
+      return <Proposal {...props} />
+    }
   }
   return null;
 }
 
 export default ProposalWrapper = withTracker((props) => {
   Meteor.subscribe('proposalsPub');
-  Meteor.subscribe('clientsPub');
-
-  Meteor.subscribe('placesPub');
-
   Meteor.subscribe('containersPub');
   Meteor.subscribe('accessoriesPub');
   Meteor.subscribe('servicesPub');
-
-  Meteor.subscribe('usersPub');
+  Meteor.subscribe('settingsPub');
 
   var databases = {
-    // proposalsDatabase: Proposals.find().fetch(),
-    clientsDatabase: Clients.find().fetch(),
-
-    // placesDatabase: Places.find().fetch(),
-
     containersDatabase: Containers.find().fetch(),
     accessoriesDatabase: Accessories.find().fetch(),
     servicesDatabase: Services.find().fetch()
-
-    // usersDatabase: Meteor.users.find().fetch()
-
   }
   var proposal = undefined;
   if (props.match.params.proposalId !== 'new') {
@@ -388,6 +382,12 @@ export default ProposalWrapper = withTracker((props) => {
     });
   }
   var user = Meteor.user();
-  return { databases, proposal, user }
+  var settings = Settings.findOne({});
+  return {
+    databases,
+    proposal,
+    user,
+    settings: settings ? settings.proposal : {}
+  }
 
 })(ProposalLoader);

@@ -11,10 +11,12 @@ Clients.deny({
 
 if (Meteor.isServer) {
   Meteor.publish('clientsPub', (_id) => {
+    if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
     return Clients.find({ visible: true }, {sort: { description: 1 }});
   })
   Meteor.methods({
     'clients.insert'(state) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       const exists = Clients.findOne({ registry: state.registry });
       if (exists) {
         throw new Meteor.Error('duplicate-registry');
@@ -57,6 +59,7 @@ if (Meteor.isServer) {
     },
 
     'clients.hideContact'(_id, contactId) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       var client = Clients.findOne({ _id })
       var contacts = client.contacts;
       for (var i = 0; i < contacts.length; i++) {
@@ -74,6 +77,7 @@ if (Meteor.isServer) {
     },
 
     'clients.update'(state) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       var data = {};
       if (state.type == 'company') {
         data = {

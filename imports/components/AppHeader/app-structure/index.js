@@ -50,6 +50,12 @@ export const appStructure = [
         title: "Histórico",
         link: "/database/history",
         visible: true
+      },
+      {
+        name: "configuration",
+        title: "Configurações",
+        link: "/configuration",
+        visible: true
       }
     ]
   },

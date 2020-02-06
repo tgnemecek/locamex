@@ -9,25 +9,19 @@ export default class tools {
 
   static explodeProposal = (proposal, forceVersion) => {
     if (proposal) {
-      var versionToShow;
+      var indexToShow;
       if (forceVersion !== undefined) {
-        versionToShow = forceVersion;
-      } else {
-        if (proposal.status === 'inactive') {
-          versionToShow = proposal.snapshots.length-1;
-        } else if (proposal.status === 'active') {
-          versionToShow = proposal.activeVersion;
-        } else if (proposal.status === 'cancelled') {
-          if (proposal.activeVersion !== undefined) {
-            versionToShow = proposal.activeVersion;
-          } else versionToShow = proposal.snapshots.length-1;
-        }
+        indexToShow = forceVersion;
       }
-
+      indexToShow = proposal.snapshots.findIndex((item) => {
+        return item.active === true;
+      })
+      if (indexToShow === -1) {
+        indexToShow = proposal.snapshots.length-1
+      }
       return {
         ...proposal,
-        ...proposal.snapshots[versionToShow],
-        version: versionToShow
+        ...proposal.snapshots[indexToShow]
       }
     } else return false;
   }

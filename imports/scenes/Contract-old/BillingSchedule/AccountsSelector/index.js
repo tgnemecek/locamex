@@ -25,6 +25,7 @@ export default class AccountsSelector extends React.Component {
       <Input
         title="Conta:"
         type="select"
+        disabled={this.props.disabled}
         value={this.props.charges[0].accountId}
         onChange={this.onChange}>
           <option value=""></option>

@@ -31,8 +31,8 @@ export default class MainItems extends React.Component {
   }
   render() {
     return (
-      <div className="snapshot__items">
-        <div className="snapshot__list">
+      <div className="main-items">
+        <div className="main-items__list">
           <h3>Containers:</h3>
           <Table
             disabled={this.props.disabled}
@@ -40,7 +40,7 @@ export default class MainItems extends React.Component {
             toggleWindow={() => this.toggleWindow('containers')}
           />
         </div>
-        <div className="snapshot__list">
+        <div className="main-items__list">
           <h3>Acessórios:</h3>
           <Table
             disabled={this.props.disabled}
@@ -48,7 +48,7 @@ export default class MainItems extends React.Component {
             toggleWindow={() => this.toggleWindow('accessories')}
           />
         </div>
-        <div className="snapshot__list">
+        <div className="main-items__list">
           <h3>Serviços:</h3>
           <Table
             disabled={this.props.disabled}
@@ -64,6 +64,7 @@ export default class MainItems extends React.Component {
             fullDatabase={this.state.database}
             snapshot={this.props.snapshot}
             updateSnapshot={this.props.updateSnapshot}
+            docType={this.props.docType}
           />
         : null}
       </div>

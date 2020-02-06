@@ -47,9 +47,13 @@ export default class Information extends React.Component {
     var dates = {...this.props.snapshot.dates};
     var firstChange = e.target.firstChange;
     var discount = 0;
+    var conditions = timeUnit === "months" ?
+      this.props.settings.defaultConditionsMonths :
+      this.props.settings.defaultConditionsDays
+
     var observations = {
       ...this.props.snapshot.observations,
-      conditions: undefined
+      conditions
     }
     dates.duration = 1;
     dates.timeUnit = timeUnit;
@@ -90,148 +94,149 @@ export default class Information extends React.Component {
 
   render() {
       return (
-          <Block
-            className="proposal__information"
-            columns={6}
-            options={[
-              {block: 4, span: 2},
-              {block: 6, span: 0.5},
-              {block: 7, span: 0.5},
-              {block: 10, span: 0.5},
-              {block: 11, span: 0.5}]}>
-            <Input
-              title="Nome do Cliente:"
-              name="description"
-              extra="client"
-              type="text"
-              error={this.props.errorKeys.includes("description")}
-              value={this.props.snapshot.client.description}
-              onChange={this.handleChange}
-              disabled={this.props.disabled}
-            />
-            <Input
-              title="Nome do Contato:"
-              name="name"
-              extra="client"
-              type="text"
-              error={this.props.errorKeys.includes("name")}
-              value={this.props.snapshot.client.name}
-              onChange={this.handleChange}
-              disabled={this.props.disabled}
-            />
-            <Input
-              title="Email:"
-              name="email"
-              extra="client"
-              type="text"
-              error={this.props.errorKeys.includes("email")}
-              value={this.props.snapshot.client.email}
-              onChange={this.handleChange}
-              disabled={this.props.disabled}
-            />
-            <Input
-              title="Telefone:"
-              name="phone"
-              extra="client"
-              type="text"
-              error={this.props.errorKeys.includes("phone")}
-              value={this.props.snapshot.client.phone}
-              onChange={this.handleChange}
-              disabled={this.props.disabled}
-            />
-            <Input
-              title="Rua / Bairro de Entrega:"
-              name="street"
-              type="text"
-              extra="deliveryAddress"
-              error={this.props.errorKeys.includes("street")}
-              value={this.props.snapshot.deliveryAddress.street}
-              onChange={this.handleChange}
-              disabled={this.props.disabled}
-            />
-            <CalendarBar
-              title="Data de Início:"
-              name="startDate"
-              extra="dates"
-              onChange={this.handleChange}
-              value={this.props.snapshot.dates.startDate}
-              disabled={this.props.disabled}
-            />
-            <Input
-              title="Desconto:"
-              name="discount"
-              type="percent"
-              error={this.props.errorKeys.includes("discount")}
-              value={this.props.snapshot.discount}
-              onChange={this.handleChange}
-              disabled={this.props.disabled}
-            />
-            <Input
-              title="Duração:"
-              value={this.props.snapshot.dates.duration}
-              onChange={this.changeDuration}
-              error={this.props.errorKeys.includes("duration")}
-              name="duration"
-              extra="dates"
-              type="number"
-              min={1}
-              max={this.props.snapshot.dates.timeUnit === "months" ? 999 : 30}
-              disabled={this.props.disabled}
-            />
-            <Input
-              title="Unidade:"
-              type="select"
-              name="timeUnit"
-              extra="dates"
-              onChange={this.changeTimeUnit}
-              disabled={this.props.disabled}
-              value={this.props.snapshot.dates.timeUnit}>
-                <option value="months">Meses</option>
-                <option value="days">Dias</option>
-            </Input>
-            <Input
-              title="Cidade:"
-              name="city"
-              type="text"
-              extra="deliveryAddress"
-              error={this.props.errorKeys.includes("city")}
-              value={this.props.snapshot.deliveryAddress.city}
-              onChange={this.handleChange}
-              disabled={this.props.disabled}
-            />
-            <Input
-              title="Estado:"
-              type="select"
-              name="state"
-              extra="deliveryAddress"
-              error={this.props.errorKeys.includes("state")}
-              onChange={this.handleChange}
-              disabled={this.props.disabled}
-              value={this.props.snapshot.deliveryAddress.state}>
-              {tools.states.map((item, i) => {
-                return <option key={i} value={item}>{item}</option>
-              })}
-            </Input>
-            <Input
-              title="Número:"
-              name="number"
-              type="number"
-              extra="deliveryAddress"
-              error={this.props.errorKeys.includes("number")}
-              value={this.props.snapshot.deliveryAddress.number}
-              onChange={this.handleChange}
-              disabled={this.props.disabled}
-            />
-            <Input
-              title="Complemento:"
-              name="additional"
-              type="text"
-              extra="deliveryAddress"
-              value={this.props.snapshot.deliveryAddress.additional}
-              onChange={this.handleChange}
-              disabled={this.props.disabled}
-            />
-          </Block>
+        <div className="proposal__information">
+          <Input
+            title="Nome do Cliente:"
+            className="grid-span-2"
+            name="description"
+            extra="client"
+            type="text"
+            error={this.props.errorKeys.includes("description")}
+            value={this.props.snapshot.client.description}
+            onChange={this.handleChange}
+            disabled={this.props.disabled}
+          />
+          <Input
+            title="Nome do Contato:"
+            className="grid-span-2"
+            name="name"
+            extra="client"
+            type="text"
+            error={this.props.errorKeys.includes("name")}
+            value={this.props.snapshot.client.name}
+            onChange={this.handleChange}
+            disabled={this.props.disabled}
+          />
+          <Input
+            title="Email:"
+            className="grid-span-2"
+            name="email"
+            extra="client"
+            type="text"
+            error={this.props.errorKeys.includes("email")}
+            value={this.props.snapshot.client.email}
+            onChange={this.handleChange}
+            disabled={this.props.disabled}
+          />
+          <Input
+            title="Telefone:"
+            className="grid-span-2"
+            name="phone"
+            extra="client"
+            type="text"
+            error={this.props.errorKeys.includes("phone")}
+            value={this.props.snapshot.client.phone}
+            onChange={this.handleChange}
+            disabled={this.props.disabled}
+          />
+          <Input
+            title="Rua / Bairro de Entrega:"
+            className="grid-span-4"
+            name="street"
+            type="text"
+            extra="deliveryAddress"
+            error={this.props.errorKeys.includes("street")}
+            value={this.props.snapshot.deliveryAddress.street}
+            onChange={this.handleChange}
+            disabled={this.props.disabled}
+          />
+          <CalendarBar
+            title="Data de Início:"
+            className="grid-span-2"
+            name="startDate"
+            extra="dates"
+            onChange={this.handleChange}
+            value={this.props.snapshot.dates.startDate}
+            disabled={this.props.disabled}
+          />
+          <Input
+            title="Desconto:"
+            name="discount"
+            type="percent"
+            error={this.props.errorKeys.includes("discount")}
+            value={this.props.snapshot.discount}
+            onChange={this.handleChange}
+            disabled={this.props.disabled}
+          />
+          <Input
+            title="Duração:"
+            value={this.props.snapshot.dates.duration}
+            onChange={this.changeDuration}
+            error={this.props.errorKeys.includes("duration")}
+            name="duration"
+            extra="dates"
+            type="number"
+            min={1}
+            max={this.props.snapshot.dates.timeUnit === "months" ? 999 : 30}
+            disabled={this.props.disabled}
+          />
+          <Input
+            title="Unidade:"
+            className="grid-span-2"
+            type="select"
+            name="timeUnit"
+            extra="dates"
+            onChange={this.changeTimeUnit}
+            disabled={this.props.disabled}
+            value={this.props.snapshot.dates.timeUnit}>
+              <option value="months">Meses</option>
+              <option value="days">Dias</option>
+          </Input>
+          <Input
+            title="Cidade:"
+            className="grid-span-2"
+            name="city"
+            type="text"
+            extra="deliveryAddress"
+            error={this.props.errorKeys.includes("city")}
+            value={this.props.snapshot.deliveryAddress.city}
+            onChange={this.handleChange}
+            disabled={this.props.disabled}
+          />
+          <Input
+            title="Estado:"
+            type="select"
+            name="state"
+            extra="deliveryAddress"
+            error={this.props.errorKeys.includes("state")}
+            onChange={this.handleChange}
+            disabled={this.props.disabled}
+            value={this.props.snapshot.deliveryAddress.state}>
+            {tools.states.map((item, i) => {
+              return <option key={i} value={item}>{item}</option>
+            })}
+          </Input>
+          <Input
+            title="Número:"
+            name="number"
+            type="number"
+            extra="deliveryAddress"
+            error={this.props.errorKeys.includes("number")}
+            value={this.props.snapshot.deliveryAddress.number}
+            onChange={this.handleChange}
+            disabled={this.props.disabled}
+          />
+          <Input
+            title="Complemento:"
+            className="grid-span-2"
+            name="additional"
+            type="text"
+            extra="deliveryAddress"
+            value={this.props.snapshot.deliveryAddress.additional}
+            onChange={this.handleChange}
+            disabled={this.props.disabled}
+          />
+        </div>
       )
   }
 }

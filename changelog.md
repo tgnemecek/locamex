@@ -1,6 +1,9 @@
 # Changelog:
 
 - Updated discount for 2020;
+- Added server-side security with user autentication;
+- Added SimpleSchema to other databases;
+- Rewrote databases to include all information in a single document;
 
 ## Version 2.4.4
 

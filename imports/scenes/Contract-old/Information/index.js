@@ -1,34 +1,36 @@
 import React from 'react';
 import moment from 'moment';
+import { Link } from 'react-router-dom';
 import tools from '/imports/startup/tools/index';
 
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
-import CalendarBar from '/imports/components/CalendarBar/index';
 import SuggestionBar from '/imports/components/SuggestionBar/index';
+import CalendarBar from '/imports/components/CalendarBar/index';
 
 export default class Information extends React.Component {
   changeDuration = (e) => {
     var duration = e.target.value;
+    var firstChange = e.target.firstChange;
     var discount = 0;
     if (this.props.contract.dates.timeUnit === "months") {
       if (duration >= 3 && duration <= 5) {
-        discount = 0.2;
+        discount = 0.15;
       } else if (duration >= 6 && duration <= 8) {
-        discount = 0.25;
+        discount = 0.2;
       } else if (duration >= 9 && duration <= 11) {
-        discount = 0.3;
+        discount = 0.25;
       } else if (duration >= 12) {
-        discount = 0.35;
+        discount = 0.3;
       }
     }
     var dates = {...this.props.contract.dates};
     dates.duration = duration;
     this.props.updateContract({
       dates,
-      discount,
-      billingProducts: [],
-      billingServices: []
+      discount: firstChange ? this.props.contract.discount : discount,
+      billingProducts: firstChange ? this.props.contract.billingProducts : [],
+      billingServices: firstChange ? this.props.contract.billingServices : []
     });
   }
 
@@ -36,13 +38,27 @@ export default class Information extends React.Component {
     var timeUnit = e.target.value;
     var dates = {...this.props.contract.dates};
     var discount = 0;
+    var firstChange = e.target.firstChange;
     dates.duration = 1;
     dates.timeUnit = timeUnit;
     this.props.updateContract({
       dates,
-      discount,
-      billingProducts: {},
-      billingServices: {}
+      discount: firstChange ? this.props.contract.discount : discount,
+      billingProducts: firstChange ? this.props.contract.billingProducts : [],
+      billingServices: firstChange ? this.props.contract.billingServices : []
+    })
+  }
+
+  changeDeliveryDate = (e) => {
+    var startDate = e.target.value;
+    var firstChange = e.target.firstChange;
+    this.props.updateContract({
+      dates: {
+        ...this.props.contract.dates,
+        startDate
+      },
+      billingProducts: firstChange ? this.props.contract.billingProducts : [],
+      billingServices: firstChange ? this.props.contract.billingServices : []
     })
   }
 
@@ -77,47 +93,54 @@ export default class Information extends React.Component {
   render() {
       return (
         <div className="contract__information">
-          <div>
+          <div className="contract__information__left">
             <SuggestionBar
               title="Cliente:"
               name="clientId"
               className="span4"
+              disabled={this.props.disabled}
               database={this.props.clientsDatabase}
               fields={['description', 'registry']}
               error={this.props.errorKeys.includes("clientId")}
               value={this.props.contract.clientId}
               onClick={this.handleChange}>
             </SuggestionBar>
-            <Input
-              title="Proposta:"
-              name="proposal"
-              type="text"
+            <Link
               className="span2"
-              disabled={true}
-              value={this.props.contract.proposal + "." + (this.props.contract.proposalVersion+1)}
-              onChange={this.handleChange}
-            />
+              to={`/proposal/${this.props.contract.proposal}`}
+              style={{textDecoration: 'none', cursor: 'pointer'}}>
+              <Input
+                title="Proposta:"
+                name="proposal"
+                type="text"
+                disabled={true}
+                value={this.props.contract.proposal + "." + (this.props.contract.proposalVersion+1)}
+                onChange={this.handleChange}
+              />
+            </Link>
             <CalendarBar
-              title="Data da Entrega:"
-              name="deliveryDate"
+              title="Início:"
+              name="startDate"
               extra="dates"
               className="span2"
-              onChange={this.handleChange}
-              value={this.props.contract.dates.deliveryDate}
+              disabled={this.props.disabled}
+              onChange={this.changeDeliveryDate}
+              value={this.props.contract.dates.startDate}
             />
             <Input
               title="Desconto:"
               name="discount"
-              type="number"
-              max={100}
+              type="percent"
+              disabled={this.props.disabled}
               error={this.props.errorKeys.includes("discount")}
-              value={(this.props.contract.discount) * 100}
-              onChange={(e) => this.handleChange({target: {value: tools.round((Number(e.target.value) / 100), 2), name: e.target.name}})}
+              value={this.props.contract.discount}
+              onChange={this.handleChange}
             />
             <Input
               title="Duração:"
               value={this.props.contract.dates.duration}
               onChange={this.changeDuration}
+              disabled={this.props.disabled}
               error={this.props.errorKeys.includes("duration")}
               name="duration"
               extra="dates"
@@ -132,12 +155,13 @@ export default class Information extends React.Component {
               extra="dates"
               className="span2"
               onChange={this.changeTimeUnit}
+              disabled={this.props.disabled}
               value={this.props.contract.dates.timeUnit}>
                 <option value="months">Meses</option>
                 <option value="days">Dias</option>
             </Input>
           </div>
-          <div>
+          <div className="contract__information__right">
             <Input
               title="Endereço de Entrega:"
               name="street"
@@ -147,6 +171,7 @@ export default class Information extends React.Component {
               error={this.props.errorKeys.includes("street")}
               value={this.props.contract.deliveryAddress.street}
               onChange={this.handleChange}
+              disabled={this.props.disabled}
             />
             <Input
               title="CEP:"
@@ -158,6 +183,7 @@ export default class Information extends React.Component {
               buttonClick={this.cepButtonClick}
               value={this.props.contract.deliveryAddress.cep}
               onChange={this.handleChange}
+              disabled={this.props.disabled}
             />
 
             <Input
@@ -169,6 +195,7 @@ export default class Information extends React.Component {
               error={this.props.errorKeys.includes("city")}
               value={this.props.contract.deliveryAddress.city}
               onChange={this.handleChange}
+              disabled={this.props.disabled}
             />
             <Input
               title="Estado:"
@@ -177,6 +204,7 @@ export default class Information extends React.Component {
               extra="deliveryAddress"
               error={this.props.errorKeys.includes("state")}
               onChange={this.handleChange}
+              disabled={this.props.disabled}
               value={this.props.contract.deliveryAddress.state}>
               {tools.states.map((item, i) => {
                 return <option key={i} value={item}>{item}</option>
@@ -185,11 +213,12 @@ export default class Information extends React.Component {
             <Input
               title="Número:"
               name="number"
-              type="number"
+              type="text"
               extra="deliveryAddress"
               error={this.props.errorKeys.includes("number")}
               value={this.props.contract.deliveryAddress.number}
               onChange={this.handleChange}
+              disabled={this.props.disabled}
             />
             <Input
               title="Complemento:"
@@ -199,6 +228,7 @@ export default class Information extends React.Component {
               extra="deliveryAddress"
               value={this.props.contract.deliveryAddress.additional}
               onChange={this.handleChange}
+              disabled={this.props.disabled}
             />
           </div>
         </div>

@@ -18,15 +18,25 @@ export default class EqualCharges extends React.Component {
       })
     }
 
-    var charges = setEqualValues(this.props.charges);
-    this.props.updateBilling(charges);
+    if (!this.props.disabled) {
+      var charges = setEqualValues(this.props.charges);
+      this.props.updateBilling(charges);
+    }
+  }
+  className = () => {
+    var className = "button--pill billing-schedule__equal-charges";
+    if (this.props.disabled) {
+      className += " disable-click"
+    }
+    return className;
   }
   render() {
     return (
       <div>
         <button
           onClick={this.onClick}
-          className="button--pill billing-schedule__equal-charges">
+          disabled={this.props.disabled}
+          className={this.className()}>
           Divisão Exata
         </button>
       </div>

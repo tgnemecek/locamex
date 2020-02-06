@@ -9,6 +9,7 @@ var userNameMaxLength = 40;
 
 if (Meteor.isServer) {
   Meteor.publish('usersPub', function () {
+    if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
     return Meteor.users.find(
       { visible: true },
       { fields: { type: 1, emails: 1, firstName: 1, lastName: 1 } },
@@ -18,6 +19,7 @@ if (Meteor.isServer) {
 
   Meteor.methods({
     'users.insert'(state) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       var firstName = state.firstName;
       var lastName = state.lastName;
       var username = state.username;
@@ -53,6 +55,7 @@ if (Meteor.isServer) {
     },
 
     'users.hide'(_id) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       const data = {
         _id,
         visible: false
@@ -62,6 +65,7 @@ if (Meteor.isServer) {
     },
 
     'users.update'(state) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       var _id = state._id;
       var firstName = state.firstName;
       var lastName = state.lastName;

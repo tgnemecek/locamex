@@ -22,6 +22,7 @@ export default class ExpiryDate extends React.Component {
     return (
       <CalendarBar
         title="Primeiro Vencimento:"
+        disabled={this.props.disabled}
         value={this.props.billingProducts[0].expiryDate}
         onChange={this.onChange}/>
     )

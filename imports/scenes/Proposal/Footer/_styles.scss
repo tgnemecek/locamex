@@ -1,13 +1,9 @@
-.scene-footer {
-  padding: $space;
-}
-
-.scene-footer__total-value {
+.main-footer__total-value {
   text-align: center;
   font-weight: bold;
 }
 
-.scene-footer__text {
+.main-footer__text {
   text-align: center;
   font-style: italic;
   color: $dark-grey;

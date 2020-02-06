@@ -4,9 +4,8 @@ import React from 'react';
 import tools from '/imports/startup/tools/index';
 
 import Box from '/imports/components/Box/index';
-import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
-import SearchBar from '/imports/components/SearchBar/index';
+import FilterBar from '/imports/components/FilterBar/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
 import Database from './Database/index';
@@ -16,15 +15,29 @@ export default class ManageItems extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      addedItems: this.props.snapshot[this.props.type] || []
+      addedItems: this.props.snapshot[this.props.type] || [],
+      searchTerm: ''
     }
   }
 
   filteredDatabase = () => {
+    function compare(inputValue, dbValue) {
+      inputValue = tools.removeSpecialChars(
+        inputValue,
+        /[\.\/\-\(\) ]/g
+      ).toUpperCase();
+      dbValue = tools.removeSpecialChars(
+        dbValue, /[\.\/\-\(\) ]/g
+      ).toUpperCase();
+      return dbValue.search(inputValue) === -1 ? false : true;
+    }
+
     return this.props.fullDatabase.filter((dbItem) => {
-      return !this.state.addedItems.find((addedItem) => {
-        return dbItem._id === addedItem._id;
-      })
+      if (compare(this.state.searchTerm, dbItem.description)) {
+        return !this.state.addedItems.find((addedItem) => {
+          return dbItem._id === addedItem._id;
+        })
+      } else return false;
     })
   }
 
@@ -63,6 +76,10 @@ export default class ManageItems extends React.Component {
       }
     })
     this.setState({ addedItems });
+  }
+
+  updateSearch = (e) => {
+    this.setState({ searchTerm: e.target.value });
   }
 
   // filterSearch = (filteredDatabase) => {
@@ -112,43 +129,51 @@ export default class ManageItems extends React.Component {
     addedItems.forEach((item) => {
       if (item.renting > 0) newArray.push(item);
     })
-    this.props.updateSnapshot({
-      [this.props.type]: newArray,
-      billingProducts: [],
-      billingServices: []
-    });
+    if (this.props.docType === 'contract') {
+      this.props.updateSnapshot({
+        [this.props.type]: newArray,
+        billingProducts: [],
+        billingServices: []
+      });
+    } else {
+      this.props.updateSnapshot({
+        [this.props.type]: newArray
+      });
+    }
     this.props.toggleWindow();
   }
 
   render() {
     return (
       <Box
+        className="manage-items"
         title={"Seleção de " + this.title()}
-        closeBox={this.props.toggleWindow}
-        width="1200px">
-          <Block columns={2}>
-            <div></div>
-            {/* <SearchBar
-              database={this.props.fullDatabase}
-              searchHere={['description']}
-              filterSearch={this.filterSearch}/> */}
-            <div style={{marginTop: "30px"}}>
-              <label>{`${this.title()} Adicionados:`}</label>
+        closeBox={this.props.toggleWindow}>
+          <div className="manage-items__body">
+            <div>
+              <FilterBar
+                value={this.state.searchTerm}
+                onChange={this.updateSearch}/>
+              <Database
+                database={this.filteredDatabase()}
+                addItem={this.addItem}/>
             </div>
-            <Database
-              database={this.filteredDatabase()}
-              addItem={this.addItem}/>
-            <AddedItems
-              type={this.props.type}
-              addedItems={this.state.addedItems}
+            <div>
+              <AddedItems
+                type={this.props.type}
+                addedItems={this.state.addedItems}
 
-              changePrice={this.changePrice}
-              changeQuantity={this.changeQuantity}
-              removeItem={this.removeItem}
+                changePrice={this.changePrice}
+                changeQuantity={this.changeQuantity}
+                removeItem={this.removeItem}
 
-              togglePackScreen={this.togglePackScreen}
-              toggleModularScreen={this.toggleModularScreen}/>
-          </Block>
+                togglePackScreen={this.togglePackScreen}
+                toggleModularScreen={this.toggleModularScreen}/>
+            </div>
+            {/* <div style={{marginTop: "30px"}}>
+              <label>{`${this.title()} Adicionados:`}</label>
+            </div> */}
+          </div>
           <FooterButtons buttons={[
             {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
             {text: "Salvar", onClick: this.saveEdits}

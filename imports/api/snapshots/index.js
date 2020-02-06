@@ -13,6 +13,7 @@ var DATABASE_SET = {
 if (Meteor.isServer) {
   Meteor.methods({
     'snapshot.add' (item, urls) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       try {
         var Database = DATABASE_SET[item.type];
         var _id = item._id;

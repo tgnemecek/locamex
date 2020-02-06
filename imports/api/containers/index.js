@@ -1,12 +1,7 @@
 import { Mongo } from 'meteor/mongo';
 import { Series } from '/imports/api/series/index';
 import tools from '/imports/startup/tools/index';
-import {
-  insertFixedSchema,
-  insertModularSchema,
-  updateFixedSchema,
-  updateModularSchema
-} from './schemas';
+import schema from '/imports/startup/schema/index';
 import updateReferences from './update-references';
 
 export const Containers = new Mongo.Collection('containers');
@@ -19,13 +14,15 @@ Containers.deny({
 
 if (Meteor.isServer) {
   Meteor.publish('containersPub', () => {
+    if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
     return Containers.find({ visible: true }, {sort: { description: 1 }});
   })
   Meteor.methods({
     // FIXED
     'containers.fixed.insert' (state) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       const _id = tools.generateId();
-      var data = insertFixedSchema.clean({
+      var data = schema('containers', 'fullFixed').clean({
         _id,
         description: state.description,
         type: "fixed",
@@ -36,18 +33,19 @@ if (Meteor.isServer) {
 
         visible: true
       })
-      insertFixedSchema.validate(data);
+      schema('containers', 'fullFixed').validate(data);
       Containers.insert(data);
       Meteor.call('history.insert', data, 'containers.fixed.insert');
     },
 
     'containers.fixed.update' (state) {
-      var data = updateFixedSchema.clean({
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      var data = schema('containers', 'updateFixed').clean({
         description: state.description,
         price: state.price,
         restitution: state.restitution
       })
-      updateFixedSchema.validate(data);
+      schema('containers', 'updateFixed').validate(data);
 
       Containers.update({ _id: state._id }, { $set: data });
       updateReferences({...data, _id: state._id});
@@ -55,6 +53,7 @@ if (Meteor.isServer) {
     },
 
     'containers.update.one' (_id, key, value) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       var data = {
         _id,
         [key]: value
@@ -65,8 +64,9 @@ if (Meteor.isServer) {
 
     // MODULAR
     'containers.modular.insert' (state) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       const _id = tools.generateId();
-      var data = insertModularSchema.clean({
+      var data = schema('containers', 'fullModular').clean({
         _id,
         description: state.description,
         type: "modular",
@@ -79,25 +79,28 @@ if (Meteor.isServer) {
 
         visible: true
       })
-      insertModularSchema.validate(data);
+      schema('containers', 'fullModular').validate(data);
       Containers.insert(data);
       Meteor.call('history.insert', data, 'containers.modular.insert');
     },
 
     'containers.modular.update' (state) {
-      var data = updateModularSchema.clean({
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      var data = schema('containers', 'updateModular').clean({
         description: state.description,
         price: state.price,
         restitution: state.restitution,
         allowedModules: state.allowedModules
       });
-      updateModularSchema.validate(data);
+      schema('containers', 'updateModular').validate(data);
       Containers.update({ _id: state._id }, { $set: data });
+      updateReferences({...data, _id: state._id});
       Meteor.call('history.insert', { ...data, _id: state._id }, 'containers.modular.update');
     },
 
     // OTHER
     'containers.update.flyer' (state) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       var flyer = {};
       flyer.paragraphs = state.hasFlyer ? state.paragraphs : [];
       if (!state.hasFlyer) {
@@ -118,6 +121,7 @@ if (Meteor.isServer) {
       return state._id;
     },
     'containers.delete.flyer.images' (_id) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       return new Promise((resolve, reject) => {
         var item = Containers.findOne({ _id });
         if (!item.flyer) resolve(_id);
@@ -132,21 +136,5 @@ if (Meteor.isServer) {
         })
       })
     },
-    'a'(value) {
-      return new Promise((resolve, reject) => {
-        Meteor.call('b', value, (err, res) => {
-          if (res) {
-            resolve(res);
-          }
-        })
-      });
-    },
-    'b'(value) {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          resolve(value+2)
-        }, 3000)
-      })
-    }
   })
 }

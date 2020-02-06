@@ -1,6 +1,7 @@
 import { Mongo } from 'meteor/mongo';
 import { Meteor } from 'meteor/meteor';
 import tools from '/imports/startup/tools/index';
+import schema from '/imports/startup/schema/index';
 
 export const Services = new Mongo.Collection('services');
 
@@ -12,37 +13,41 @@ Services.deny({
 
 if (Meteor.isServer) {
   Meteor.publish('servicesPub', () => {
+    if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
     return Services.find({ visible: true }, {sort: { description: 1 }});
   })
 
   Meteor.methods({
     'services.insert'(description, price) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       const _id = tools.generateId();
-      const data = {
+      var data = schema('services', 'full').clean({
         _id,
         description,
         price,
         type: "service",
         visible: true
-      }
+      })
+      schema('services', 'full').validate(data);
       Services.insert(data);
       Meteor.call('history.insert', data, 'services');
     },
     'services.hide'(_id) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       const data = {
-        _id,
         visible: false
-      };
+      }
+      schema('services', 'hide').validate(data);
       Services.update({ _id }, { $set: data });
       Meteor.call('history.insert', data, 'services');
     },
-
     'services.update'(_id, description, price) {
-      const data = {
-        _id,
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      const data = schema('services', 'update').clean({
         description,
         price
-      };
+      })
+      schema('services', 'update').validate(data);
       Services.update({ _id }, { $set: data });
       Meteor.call('history.insert', data, 'services');
     }

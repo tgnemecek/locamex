@@ -9,7 +9,7 @@ export default class AddedItems extends React.Component {
   renderAddedItems = () => {
     return this.props.addedItems.map((item, i, array) => {
       return (
-        <tr key={i} className="item-list__selection__db-item">
+        <tr key={i} className="manage-items__selection__db-item">
           <td>{item.description}</td>
           <td className="medium-column">
             <Input
@@ -40,9 +40,9 @@ export default class AddedItems extends React.Component {
 
   render() {
       return (
-        <div className="item-list__selection__added-items">
-          <div className="item-list__selection__scroll-block">
-            <table className="table item-list__selection__table">
+        <div className="manage-items__selection__added-items">
+          <div className="manage-items__selection__scroll-block">
+            <table className="table manage-items__selection__table">
               <thead>
                 <tr>
                   <th>Descrição</th>

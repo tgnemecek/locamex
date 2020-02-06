@@ -102,7 +102,7 @@ export default class MainHeader extends React.Component {
   }
 
   checkIfHasContent = () => {
-    var hasContent = (this.props.master.observations.internal || this.props.master.observations.external);
+    var hasContent = (this.props.snapshot.observations.internal || this.props.master.observations.external);
     return hasContent ? "content-inside" : "";
   }
 
@@ -176,15 +176,60 @@ export default class MainHeader extends React.Component {
   }
 
   toggleCancelWindow = () => {
-    this.setState({ windowOpen: false, cancelWindow: !this.state.cancelWindow });
+    this.setState({
+      windowOpen: false,
+      cancelWindow: !this.state.cancelWindow
+    });
   }
 
   cancelMaster = () => {
     this.props.cancelMaster(this.toggleCancelWindow);
   }
 
-  versionStyle = () => {
-    return {};
+  snapshotsOptions = () => {
+    var snapshots = this.props.snapshots;
+    var result = [];
+    for (var i = 0; i < snapshots.length; i++) {
+      var style = snapshots[i].active ?
+        {background: "#77cc77"} : {background: "white"};
+
+      result.unshift((
+        <option
+          key={i} value={i} style={style}>
+            {i + 1}
+        </option>
+      ))
+    }
+    return result;
+
+
+    // this.props.snapshots.reverse().map((item, i, arr) => {
+    //   var index = arr.length-i-1;
+    //   var label = index + 1;
+    //   const style = () => {
+    //     if (item.active) {
+    //       return {background: "#77cc77"}
+    //     } else return {background: "white"}
+    //   }
+    //   return (
+    //     <option
+    //       key={i} value={index} style={style()}>
+    //         {index + 1}
+    //     </option>
+    //   )
+    // })
+  }
+
+  selectStyle = () => {
+    if (this.props.snapshots) {
+      var snapshot = this.props.snapshots[this.props.snapshotIndex];
+      if (snapshot) {
+        if (snapshot.active) {
+          return {background: "#77cc77"}
+        }
+      }
+    }
+    return {background: "white"}
   }
 
   render() {
@@ -197,7 +242,17 @@ export default class MainHeader extends React.Component {
             <h1 className="main-header__title">
               {this.props.title}
             </h1>
-            {this.props.children}
+            {this.props.snapshots.length ?
+              (this.props.changeSnapshot ?
+              <Input
+                onChange={this.props.changeSnapshot}
+                value={this.props.snapshotIndex}
+                style={this.selectStyle()}
+                className="main-header__snapshot-selection"
+                type="select">
+                  {this.snapshotsOptions()}
+              </Input>
+            : this.props.snapshotIndex) : null}
           </div>
           <div className="main-header__right-side">
             {this.props.toggleDocuments ?
@@ -208,7 +263,7 @@ export default class MainHeader extends React.Component {
             : null}
             {this.props.toggleCancel ?
               <button className="main-header__button"
-                onClick={this.props.toggleCancel}>
+                onClick={this.toggleCancelWindow}>
                 <Icon icon="not"/>
               </button>
             : null}
@@ -218,6 +273,12 @@ export default class MainHeader extends React.Component {
               type={this.props.type}/>
             </h3>
           </div>
+          <ConfirmationWindow
+            isOpen={this.state.cancelWindow}
+            closeBox={this.toggleCancelWindow}
+            message="Deseja cancelar permanentemente este documento? Ele não poderá ser reativado ou editado."
+            leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleCancelWindow}}
+            rightButton={{text: "Sim", className: "button--danger", onClick: this.cancelMaster}}/>
 
 
 
@@ -251,12 +312,7 @@ export default class MainHeader extends React.Component {
             {this.showDocumentsButton()}
             {this.showDuplicateButton()}
             {this.showCancelButton()}
-            <ConfirmationWindow
-              isOpen={this.state.cancelWindow}
-              closeBox={this.toggleCancelWindow}
-              message="Deseja cancelar permanentemente este documento? Ele não poderá ser reativado ou editado."
-              leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleCancelWindow}}
-              rightButton={{text: "Sim", className: "button--danger", onClick: this.cancelMaster}}/>
+
           </div>
           {this.renderTitle()}
           <div className="master__subtitle">

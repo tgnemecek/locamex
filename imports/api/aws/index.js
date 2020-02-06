@@ -7,6 +7,7 @@ if (Meteor.isServer) {
 
   Meteor.methods({
     'aws.read'(Key, callback) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       var params = {
         Bucket,
         Key
@@ -24,6 +25,7 @@ if (Meteor.isServer) {
       })
     },
     'aws.write'(dataUrl, filePath) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       var buff = new Buffer(dataUrl.split(',')[1], 'base64');
       if (Meteor.isDevelopment) {
         filePath = "tests/" + filePath;
@@ -45,6 +47,7 @@ if (Meteor.isServer) {
       })
     },
     'aws.write.multiple'(filesWithUrl) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       return new Promise((resolve, reject) => {
         var promises = filesWithUrl.map((file, i) => {
           return new Promise((resolve, reject) => {
@@ -65,6 +68,7 @@ if (Meteor.isServer) {
       })
     },
     'aws.copy.object' (oldKey, newKey, deleteOrigin) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       return new Promise((resolve, reject) => {
         // if (Meteor.isDevelopment) {
         //   oldKey = "tests/" + oldKey;
@@ -99,7 +103,8 @@ if (Meteor.isServer) {
       })
     },
     // 'aws.delete.objects'(Keys) { // NOT YET USED, CHECK IF ITS WORKING
-    //   return new Promise((resolve, reject) => {
+    //  if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+    // return new Promise((resolve, reject) => {
     //     return resolve(Keys);
     //     if (!Array.isArray(Keys)) reject('not-array');
     //     if (!Keys.length) return resolve(Keys);
@@ -126,6 +131,7 @@ if (Meteor.isServer) {
     //   })
     // },
     'aws.delete.directory' (folder) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       return new Promise((resolve, reject) => {
         if (Meteor.isDevelopment) {
           folder = "tests/" + folder;

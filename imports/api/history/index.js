@@ -11,11 +11,13 @@ History.deny({
 
 if (Meteor.isServer) {
   Meteor.publish('historyPub', () => {
+    if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
     return History.find({}, {sort: { insertionDate: -1 }});
   })
 
   Meteor.methods({
     'history.insert' (data, type) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       History.insert({
         insertionDate: new Date(),
         user: Meteor.user(),

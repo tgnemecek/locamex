@@ -1,11 +1,51 @@
 @import './ManageItems/styles';
 
-.master__items {
+.main-items {
   background: white;
   border: 1px solid $grey;
-  margin: 5px;
-  padding: 5px;
-  flex-grow: 1;
-  margin-bottom: 10px;
+  margin: $space 0;
+  padding: ($space /2);
+  height: 400px;
   overflow-y: auto;
+}
+
+.main-items__list__value-column {
+  width: 100px;
+  text-align: right;
+}
+
+.main-items__list {
+  position: relative;
+  margin-bottom: 10px;
+  cursor: pointer;
+  input {
+    text-align: right;
+  }
+}
+.main-items__list__overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: .5s ease;
+  background-color: $brand-primary;
+  div {
+    color: white;
+    font-size: 30px;
+    line-height: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+}
+.main-items__list__overlay:hover {
+  opacity: .9;
 }

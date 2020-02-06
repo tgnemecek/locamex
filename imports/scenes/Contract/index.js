@@ -21,7 +21,7 @@ import AppHeader from '/imports/components/AppHeader/index';
 import NotFound from '/imports/components/NotFound/index';
 import Loading from '/imports/components/Loading/index';
 
-import SceneHeader from '/imports/components/SceneHeader/index';
+import MainHeader from '/imports/components/MainHeader/index';
 import SceneItems from '/imports/components/SceneItems/index';
 import SceneFooter from '/imports/components/SceneFooter/index';
 import DatabaseStatus from '/imports/components/DatabaseStatus/index';
@@ -33,49 +33,21 @@ import Information from './Information/index';
 class Contract extends React.Component {
   constructor(props) {
     super(props);
+    var snapshot;
+    var snapshotIndex = 0 ;
+    if (this.props.contract.status === "inactive") {
+      snapshotIndex = this.props.contract.snapshots.length-1;
+      snapshot = this.props.contract.snapshots[snapshotIndex];
+    } else {
+      snapshotIndex = this.props.contract.snapshots.find((item) => {
+        return item.active === true;
+      });
+      snapshot = this.props.contract.snapshots[snapshotIndex];
+    }
+
     this.state = {
-      contract: tools.explodeContract(this.props.contract) || {
-        _id: undefined,
-        createdBy: Meteor.user()._id,
-        status: "inactive",
-
-        clientId: '',
-
-        version: 0,
-        negociatorId: '',
-        representativesId: [],
-
-        proposal: '',
-        proposalVersion: 0,
-
-        discount: 0,
-
-        observations: {
-          internal: '',
-          external: ''
-        },
-
-        billingProducts: [],
-        billingServices: [],
-
-        deliveryAddress: {
-          street: '',
-          cep: '',
-          city: '',
-          state: 'SP',
-          number: '',
-          additional: ''
-        },
-        dates: {
-          creationDate: new Date(),
-          duration: 1,
-          timeUnit: "months",
-          startDate: new Date()
-        },
-        containers: [],
-        accessories: [],
-        services: []
-      },
+      snapshot,
+      snapshotIndex,
       errorMsg: '',
       errorKeys: [],
       clientSetupWindow: true,
@@ -83,12 +55,12 @@ class Contract extends React.Component {
     }
   }
 
-  updateContract = (changes, callback) => {
-    var contract = {
-      ...this.state.contract,
+  updateSnapshot = (changes, callback) => {
+    var snapshot = {
+      ...this.state.snapshot,
       ...changes,
     };
-    this.setState({ contract, errorKeys: [], errorMsg: '' }, () => {
+    this.setState({ snapshot, errorKeys: [], errorMsg: '' }, () => {
       if (typeof (callback) === "function") callback();
     })
   }
@@ -109,24 +81,24 @@ class Contract extends React.Component {
 
   changeVersion = (e) => {
     this.setState({
-      contract: tools.explodeContract({
-        ...this.props.contract,
-        _id: this.state.contract._id
+      snapshot: tools.explodeSnapshot({
+        ...this.props.snapshot,
+        _id: this.state.snapshot._id
       }, e.target.value)
     });
   }
 
-  cancelContract = (callback) => {
+  cancelSnapshot = (callback) => {
     this.setState({ databaseStatus: "loading" }, () => {
-      const cancel = (contract) => {
-        Meteor.call('contracts.cancel', contract._id, (err, res) => {
+      const cancel = (snapshot) => {
+        Meteor.call('snapshots.cancel', snapshot._id, (err, res) => {
           if (res) {
             var databaseStatus = {
               status: "completed",
               message: "Proposta Cancelada!"
             }
-            contract.status = "cancelled";
-            this.setState({ contract, databaseStatus });
+            snapshot.status = "cancelled";
+            this.setState({ snapshot, databaseStatus });
           } else if (err) {
             this.setState({ databaseStatus: "failed" });
             console.log(err);
@@ -138,18 +110,18 @@ class Contract extends React.Component {
     })
   }
 
-  activateContract = (callback) => {
+  activateSnapshot = (callback) => {
     this.setState({ databaseStatus: "loading" }, () => {
-      const activate = (contract) => {
-        Meteor.call('contracts.activate', contract, (err, res) => {
+      const activate = (snapshot) => {
+        Meteor.call('snapshots.activate', snapshot, (err, res) => {
           if (res) {
             var databaseStatus = {
               status: "completed",
               message: "Contrato Ativado!"
             }
-            contract.status = "active";
-            contract.activeVersion = contract.version;
-            this.setState({ contract, databaseStatus });
+            snapshot.status = "active";
+            snapshot.activeVersion = snapshot.version;
+            this.setState({ snapshot, databaseStatus });
           } else if (err) {
             this.setState({ databaseStatus: "failed" });
             console.log(err);
@@ -161,17 +133,17 @@ class Contract extends React.Component {
     })
   }
 
-  finalizeContract = (callback) => {
+  finalizeSnapshot = (callback) => {
     this.setState({ databaseStatus: "loading" }, () => {
-      const finalize = (contract) => {
-        Meteor.call('contracts.finalize', contract._id, (err, res) => {
+      const finalize = (snapshot) => {
+        Meteor.call('snapshots.finalize', snapshot._id, (err, res) => {
           if (res) {
             var databaseStatus = {
               status: "completed",
               message: "Contrato Finalizado!"
             }
-            contract.status = "finalized";
-            this.setState({ contract, databaseStatus });
+            snapshot.status = "finalized";
+            this.setState({ snapshot, databaseStatus });
           } else if (err) {
             this.setState({ databaseStatus: "failed" });
             console.log(err);
@@ -185,24 +157,24 @@ class Contract extends React.Component {
 
   saveEdits = (callback) => {
     this.setState({ databaseStatus: "loading" }, () => {
-      // Only update. Contracts are inserted by activating Proposals
-      Meteor.call('contracts.update', this.state.contract, (err, res) => {
+      // Only update. Snapshots are inserted by activating Proposals
+      Meteor.call('snapshots.update', this.state.snapshot, (err, res) => {
         if (res) {
-          var contract;
+          var snapshot;
           var databaseStatus;
           if (res.hasChanged) {
-            contract = tools.explodeContract(res.contract);
+            snapshot = tools.explodeSnapshot(res.snapshot);
             databaseStatus = "completed";
           } else {
-            contract = this.state.contract;
+            snapshot = this.state.snapshot;
             databaseStatus = {
               status: "completed",
               message: "Nenhuma alteração realizada."
             }
           }
           if (typeof callback === "function") {
-            callback(contract);
-          } else this.setState({ contract, databaseStatus });
+            callback(snapshot);
+          } else this.setState({ snapshot, databaseStatus });
         } else if (err) {
           this.setState({ databaseStatus: "failed" });
           console.log(err);
@@ -213,7 +185,7 @@ class Contract extends React.Component {
 
   generateDocument = () => {
     const generate = (master) => {
-      master.type = "contract";
+      master.type = "snapshot";
 
       Meteor.call('pdf.generate', master, (err, res) => {
         if (res) {
@@ -230,11 +202,11 @@ class Contract extends React.Component {
   }
 
   totalValue = (option) => {
-    var duration = this.state.contract.dates.timeUnit === "months" ? this.state.contract.dates.duration : 1;
-    var discount = this.state.contract.discount;
+    var duration = this.state.snapshot.dates.timeUnit === "months" ? this.state.snapshot.dates.duration : 1;
+    var discount = this.state.snapshot.discount;
 
-    var containers = this.state.contract.containers || [];
-    var accessories = this.state.contract.accessories || [];
+    var containers = this.state.snapshot.containers || [];
+    var accessories = this.state.snapshot.accessories || [];
 
     var products = containers.concat(accessories);
     var productsValue = products.reduce((acc, current) => {
@@ -243,7 +215,7 @@ class Contract extends React.Component {
     }, 0);
     productsValue = productsValue * (1 - discount);
 
-    var services = this.state.contract.services || [];
+    var services = this.state.snapshot.services || [];
     var servicesValue = services.reduce((acc, current) => {
       var renting = current.renting ? current.renting : 1;
       return acc + (current.price * renting)
@@ -258,45 +230,45 @@ class Contract extends React.Component {
   }
 
   render () {
-    var disabled = this.state.contract.status === "cancelled";
+    var disabled = this.state.snapshot.status === "cancelled";
     return (
       <div className="page-content">
-        {/* <RedirectUser currentPage="contract"/> */}
-        <div className="base-scene contract">
-          <SceneHeader
-            master={{...this.state.contract, type: "contract"}}
+        {/* <RedirectUser currentPage="snapshot"/> */}
+        <div className="base-scene snapshot">
+          <MainHeader
+            master={{...this.state.snapshot, type: "snapshot"}}
             databases={this.props.databases}
-            snapshots={this.props.contract ? this.props.contract.snapshots : []}
+            snapshots={this.props.snapshot ? this.props.snapshot.snapshots : []}
             changeVersion={this.changeVersion}
 
             BillingSchedule={BillingSchedule}
 
-            updateMaster={this.updateContract}
-            cancelMaster={this.cancelContract}
+            updateMaster={this.updateSnapshot}
+            cancelMaster={this.cancelSnapshot}
             saveMaster={this.saveEdits}
             generateDocument={this.generateDocument}
 
             errorKeys={this.state.errorKeys}
             disabled={disabled}
           />
-          <div className="contract__body">
+          {/* <div className="snapshot__body">
             <Information
-              disabled={this.state.contract.status !== "inactive"}
+              disabled={this.state.snapshot.status !== "inactive"}
               clientsDatabase={this.props.databases.clientsDatabase}
-              contract={this.state.contract}
-              updateContract={this.updateContract}
+              snapshot={this.state.snapshot}
+              updateSnapshot={this.updateSnapshot}
               errorKeys={this.state.errorKeys}
             />
             <SceneItems
-              disabled={this.state.contract.status !== "inactive"}
-              master={this.state.contract}
+              disabled={this.state.snapshot.status !== "inactive"}
+              master={this.state.snapshot}
               databases={this.props.databases}
-              updateMaster={this.updateContract}
+              updateMaster={this.updateSnapshot}
             />
             <DatabaseStatus status={this.state.databaseStatus}/>
             {this.state.clientSetupWindow ?
               <ClientSetup
-                updateContract={this.updateContract}
+                updateSnapshot={this.updateSnapshot}
                 proposal={this.props.proposal}
                 closeWindow={() => this.setState({ clientSetupWindow: false })}
                 clientsDatabase={this.props.databases.clientsDatabase}/>
@@ -310,50 +282,49 @@ class Contract extends React.Component {
             setError={this.setError}
             errorMsg={this.state.errorMsg}
 
-            master={{...this.state.contract, type: "contract"}}
+            master={{...this.state.snapshot, type: "snapshot"}}
 
             saveEdits={this.saveEdits}
-            activateMaster={this.activateContract}
-            finalizeMaster={this.finalizeContract}
-          />
+            activateMaster={this.activateSnapshot}
+            finalizeMaster={this.finalizeSnapshot}
+          />*/}
         </div>
       </div>
     )
   }
 }
 
-function ContractLoader (props) {
-  if (props.match.params.contractId === 'new' || props.contract) {
+function SnapshotLoader (props) {
+  if (props.match.params.snapshotId === 'new' || props.contract) {
     return <Contract {...props} />
   } else return null;
 }
 
-export default ContractWrapper = withTracker((props) => {
+export default SnapshotWrapper = withTracker((props) => {
   Meteor.subscribe('contractsPub');
-  Meteor.subscribe('proposalsPub');
   Meteor.subscribe('clientsPub');
-  Meteor.subscribe('accountsPub');
-
-  Meteor.subscribe('placesPub');
-
   Meteor.subscribe('containersPub');
   Meteor.subscribe('accessoriesPub');
   Meteor.subscribe('servicesPub');
+  Meteor.subscribe('proposalsPub');
+  Meteor.subscribe('accountsPub');
 
-  Meteor.subscribe('usersPub');
+
+  // Meteor.subscribe('placesPub');
+  // Meteor.subscribe('usersPub');
 
   var databases = {
-    contractsDatabase: Contracts.find().fetch(),
+    // contractsDatabase: Contracts.find().fetch(),
     clientsDatabase: Clients.find().fetch(),
     accountsDatabase: Accounts.find().fetch(),
-
-    placesDatabase: Places.find().fetch(),
-
+    //
+    // placesDatabase: Places.find().fetch(),
+    //
     containersDatabase: Containers.find().fetch(),
     accessoriesDatabase: Accessories.find().fetch(),
     servicesDatabase: Services.find().fetch(),
-
-    usersDatabase: Meteor.users.find().fetch()
+    //
+    // usersDatabase: Meteor.users.find().fetch()
 
   }
   var contract = undefined;
@@ -361,12 +332,22 @@ export default ContractWrapper = withTracker((props) => {
     contract = Contracts.findOne({ _id: props.match.params.contractId });
   }
 
-  var proposal = contract ? Proposals.findOne({ _id: contract.proposal }) : null;
-  proposal = proposal ? {
-    ...proposal,
-    ...proposal.snapshots[proposal.activeVersion]
-  } : null;
+  var proposalClient = {};
 
-  return { databases, contract, proposal }
+  if (contract) {
+    var proposalId = contract.proposalNumber.replace(/\.\d+/g, '');
+    var proposal = Proposals.findOne({ _id: proposalId });
+    if (proposal) {
+      var proposalSnapshot = proposal.snapshots.find((item) => {
+        return item.active === true;
+      })
+      proposalClient = proposalSnapshot.client;
+    }
+  }
 
-})(ContractLoader);
+  return {
+    databases,
+    contract,
+    proposalClient
+  }
+})(SnapshotLoader);

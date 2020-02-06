@@ -1,15 +1,6 @@
 import SimpleSchema from 'simpl-schema';
-import { check } from 'meteor/check';
 
-var options = {
-  clean: {
-    trimStrings: true,
-    removeEmptyStrings: false
-  },
-  check
-}
-
-var insertSchema = new SimpleSchema({
+var insert = {
   _id: String,
   type: String,
 
@@ -21,26 +12,26 @@ var insertSchema = new SimpleSchema({
   snapshots: Array,
   'snapshots.$': String,
   'visible': Boolean
-}, options)
+}
 
-var updateSchema = new SimpleSchema({
+var update = {
   placeId: String,
   placeDescription: String,
   observations: String
-}, options);
+}
 
-var snapshotsSchema = new SimpleSchema({
+var snapshots = {
   snapshots: Array,
   'snapshots.$': String
-})
+}
 
-var hideSchema = new SimpleSchema({
+var hide = {
   'visible': Boolean
-})
+}
 
-module.exports = {
-  insertSchema,
-  updateSchema,
-  snapshotsSchema,
-  hideSchema
+export default {
+  insert,
+  update,
+  snapshots,
+  hide
 }

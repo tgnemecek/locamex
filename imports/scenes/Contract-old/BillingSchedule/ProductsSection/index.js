@@ -29,9 +29,6 @@ export default class ProductsSection extends React.Component {
     })
   }
 
-  changeStartDate = (e) => {
-    this.props.changeStartDate(e.target.value);
-  }
 
   // Rendering: ----------------------------------------------------------------
 
@@ -68,6 +65,7 @@ export default class ProductsSection extends React.Component {
               name={i}
               value={charge.description}
               onChange={onChangeDescription}
+              disabled={this.props.disabled}
               type="textarea"/>
           </td>
           <td>
@@ -75,6 +73,7 @@ export default class ProductsSection extends React.Component {
               style={{textAlign: 'right'}}
               name="value"
               onChange={onChangePrice}
+              disabled={this.props.disabled}
               value={charge.value}/>
           </td>
         </tr>
@@ -93,20 +92,23 @@ export default class ProductsSection extends React.Component {
               type="number"
               disabled={true}
               value={this.props.billingProducts.length}/>
-            <CalendarBar
-              title="Início da Cobrança:"
-              onChange={this.changeStartDate}
-              value={this.props.billingProducts[0].startDate}/>
+            <Input
+              title="Início:"
+              disabled={true}
+              value={moment(this.props.billingProducts[0].startDate).format("DD/MM/YYYY")}/>
             <ExpiryDate
+              disabled={this.props.disabled}
               billingProducts={this.props.billingProducts}
               updateBilling={this.props.updateBilling}
             />
             <this.props.AccountsSelector
+              disabled={this.props.disabled}
               accountsDatabase={this.props.accountsDatabase}
               charges={this.props.billingProducts}
               updateBilling={this.updateBilling}
             />
             <this.props.EqualCharges
+              disabled={this.props.disabled}
               masterValue={this.props.productsValue}
               charges={this.props.billingProducts}
               updateBilling={this.updateBilling}/>

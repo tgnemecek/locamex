@@ -8,7 +8,7 @@ export default class Database extends React.Component {
   renderDatabase = () => {
     return this.props.database.map((item, i, array) => {
       return (
-        <tr key={i} className="item-list__selection__db-item">
+        <tr key={i} className="manage-items__selection__db-item">
           <td>{item.description}</td>
           <td className="buttom-column">
             <button onClick={() => this.props.addItem(item)}>
@@ -23,9 +23,9 @@ export default class Database extends React.Component {
 
   render() {
       return (
-        <div className="item-list__selection__database">
-          <div className="item-list__selection__scroll-block">
-            <table className="table item-list__selection__table">
+        <div className="manage-items__selection__database">
+          <div className="manage-items__selection__scroll-block">
+            <table className="table manage-items__selection__table">
               <thead>
                 <tr>
                   <th>Descrição</th>

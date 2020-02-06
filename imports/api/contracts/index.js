@@ -1,5 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import tools from '/imports/startup/tools/index';
+import schema from '/imports/startup/schema/index';
 
 import { Proposals } from '/imports/api/proposals/index';
 import { Series } from '/imports/api/series/index';
@@ -16,23 +17,117 @@ Contracts.deny({
 
 if (Meteor.isServer) {
   Meteor.publish('contractsPub', () => {
+    if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
     return Contracts.find({}, {sort: { _id: -1 }});
   })
 
   Meteor.methods({
-    'contracts.insert'(data) {
-      const prefix = new Date().getFullYear();
+    'contracts.insert'(proposalId) {
+      var proposal = Proposals.findOne({ _id: proposalId });
+      var snapshotIndex;
+      var snapshot = proposal.snapshots.find((snapshot, i) => {
+        if (snapshot.active === true) {
+          snapshotIndex = i;
+          return true
+        }
+      });
+
+      var prefix = new Date().getFullYear();
       var offset = 32;
-      var suffix = Contracts.find({ _id: { $regex: new RegExp(prefix)} }).count() + offset;
-      suffix = suffix.toString().padStart(3, '0');;
-      const _id = prefix + "-" + suffix;
+      var suffix = Contracts.find(
+        { _id: {
+          $regex: new RegExp(prefix)}
+        }).count() + offset;
 
-      data._id = _id;
-      data.visible = true;
+      var _id = prefix + '-' + suffix.toString().padStart(3, '0');
+      var user = Meteor.user();
 
-      Contracts.insert(data);
-      Meteor.call('history.insert', data, 'contracts.insert');
+      var contract = {
+        _id,
+        status: 'inactive',
+        proposalNumber: proposalId + "." + (snapshotIndex+1),
+        shipping: [],
+        visible: true,
+        snapshots: [{
+          active: false,
+          createdById: user._id,
+          createdByName: `${user.firstName} ${user.lastName}`,
+          client: {
+            _id: '',
+            description: '',
+            type: '',
+            registry: '',
+            officialName: '',
+            registryES: '',
+            registryMU: '',
+            observations: '',
+            contacts: [],
+            address: {
+              street: '',
+              cep: '',
+              city: '',
+              state: '',
+              number: '',
+              additional: '',
+            }
+          },
+          discount: snapshot.discount,
+          observations: {
+            internal: '',
+            external: ''
+          },
+          deliveryAddress: {
+            street: '',
+            cep: '',
+            city: '',
+            state: '',
+            number: '',
+            additional: '',
+          },
+          dates: {
+            creationDate: new Date(),
+            startDate: snapshot.dates.startDate,
+            duration: snapshot.dates.duration,
+            timeUnit: snapshot.dates.timeUnit
+          },
+
+          billingProducts: [],
+          billingServices: [],
+
+          containers: snapshot.containers,
+          accessories: snapshot.accessories,
+          services: snapshot.services
+        }]
+      }
+
+      schema('contracts', 'full').clean(contract.snapshots[0])
+      schema('contracts', 'full').validate(contract.snapshots[0]);
+
+      Contracts.insert(contract);
+      Meteor.call('history.insert', contract, 'contracts.insert');
       return _id;
+      //
+      //
+      //
+      //
+      //
+      //
+      //
+      //
+      //
+      //
+      // const prefix = new Date().getFullYear();
+      // var offset = 32;
+      // var suffix = Contracts.find({ _id: { $regex: new RegExp(prefix)} }).count() + offset;
+      // suffix = suffix.toString().padStart(3, '0');;
+      // const _id = prefix + "-" + suffix;
+      //
+      // data._id = _id;
+      // data.visible = true;
+      //
+      // Contracts.insert(data);
+      // Meteor.call('history.insert', data, 'contracts.insert');
+      // return _id;
     },
     'contracts.update'(snapshot) {
       var _id = snapshot._id;

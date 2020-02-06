@@ -11,11 +11,13 @@ Modules.deny({
 
 if (Meteor.isServer) {
   Meteor.publish('modulesPub', () => {
+    if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
     return Modules.find({ visible: true }, {sort: { description: 1 }});
   })
 
   Meteor.methods({
     'modules.insert'(state) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       const _id = tools.generateId();
       const data = {
         _id,
@@ -32,6 +34,7 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', data, 'modules.insert');
     },
     'modules.update'(state) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       const data = {
         description: state.description
       };
@@ -39,6 +42,7 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', {...data, _id: state._id}, 'modules.update');
     },
     'modules.stock.update'(item) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       const data = {
         place: item.place
       }
@@ -46,18 +50,21 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', {...data, _id: item._id}, 'modules.stock.update');
     },
     'modules.shipping.send'(product) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       var _id = product._id;
       delete product._id;
       Modules.update({ _id }, product);
       Meteor.call('history.insert', {product, _id}, 'modules.shipping.send');
     },
     'modules.shipping.receive'(product) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       var _id = product._id;
       delete product._id;
       Modules.update({ _id }, product);
       Meteor.call('history.insert', {product, _id}, 'modules.shipping.receive');
     },
     'modules.hide'(_id) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       const data = {
         visible: false
       };

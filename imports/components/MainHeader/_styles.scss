@@ -3,7 +3,7 @@
 .main-header {
   background: $grey;
   display: grid;
-  padding: ($space /2);
+  padding: $space;
   grid-template-columns: 1fr 1fr;
 }
 
@@ -17,6 +17,11 @@
 .main-header__title {
   margin-bottom: 0;
   line-height: 30px;
+  display: inline-block;
+}
+
+.main-header__snapshot-selection {
+  display: inline-block;
 }
 
 .main-header__right-side {

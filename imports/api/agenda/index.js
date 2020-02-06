@@ -14,6 +14,7 @@ Agenda.deny({
 
 if (Meteor.isServer) {
   Meteor.publish('agendaPub', () => {
+    if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
     var user = Meteor.user();
     if (user.type === "administrator") {
       return Agenda.find({});
@@ -25,6 +26,7 @@ if (Meteor.isServer) {
 
   Meteor.methods({
     'agenda.insert' (data) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       Agenda.insert({
         insertionDate: new Date(),
         insertedBy: Meteor.user()._id,

@@ -87,9 +87,24 @@ export default class BillingSchedule extends React.Component {
       })
     }
     billingProducts = this.setEqualValues(billingProducts, "billingProducts");
-    this.setState({ billingProducts }, () => {
-      this.changeStartDate(this.props.master.dates.deliveryDate);
-    });
+
+    function changeStartDate(billingProducts, date) {
+      return billingProducts.map((charge, i) => {
+        var startDate = moment(date).add((i * 30 + (i * 1)), 'days').toDate();
+        var endDate = moment(startDate).add(30, 'days').toDate();
+        var expiryDate = moment(startDate).add(1, "months").toDate();
+        return {
+          ...charge,
+          startDate,
+          endDate,
+          expiryDate
+        }
+      })
+    }
+    billingProducts = changeStartDate(
+      billingProducts, this.props.master.dates.startDate
+    )
+    this.setState({ billingProducts });
   }
 
   setBillingServices = (quantity, firstSetup) => {
@@ -108,7 +123,7 @@ export default class BillingSchedule extends React.Component {
       }
       var billingServices = [
         {
-          expiryDate: moment(this.props.master.dates.deliveryDate)
+          expiryDate: moment(this.props.master.dates.startDate)
                       .add(1, 'months').toDate(),
           inss: 11,
           iss: 5,
@@ -147,21 +162,21 @@ export default class BillingSchedule extends React.Component {
     this.setState({ billingServices });
   }
 
-  changeStartDate = (date) => {
-    var billingProducts = [...this.state.billingProducts];
-    var billingProducts = this.state.billingProducts.map((charge, i) => {
-      var startDate = moment(date).add((i * 30 + (i * 1)), 'days').toDate();
-      var endDate = moment(startDate).add(30, 'days').toDate();
-      var expiryDate = moment(startDate).add(1, "months").toDate();
-      return {
-        ...charge,
-        startDate,
-        endDate,
-        expiryDate
-      }
-    })
-    this.setState({ billingProducts });
-  }
+  // changeStartDate = (date) => {
+  //   var billingProducts = [...this.state.billingProducts];
+  //   var billingProducts = this.state.billingProducts.map((charge, i) => {
+  //     var startDate = moment(date).add((i * 30 + (i * 1)), 'days').toDate();
+  //     var endDate = moment(startDate).add(30, 'days').toDate();
+  //     var expiryDate = moment(startDate).add(1, "months").toDate();
+  //     return {
+  //       ...charge,
+  //       startDate,
+  //       endDate,
+  //       expiryDate
+  //     }
+  //   })
+  //   this.setState({ billingProducts });
+  // }
 
   setEqualValues = (charges, which) => {
     var value = which === "billingProducts" ? this.state.productsValue : this.state.servicesValue;
@@ -231,25 +246,24 @@ export default class BillingSchedule extends React.Component {
           className="billing-schedule"
           closeBox={this.props.toggleWindow}>
           <div className="error-message">{this.state.errorMsg}</div>
-          <div className={this.props.master.status !== "inactive" ? "disable-click" : ""}>
-            <ProductsSection
-              updateBilling={this.updateBilling}
-              changeStartDate={this.changeStartDate}
-              billingProducts={this.state.billingProducts}
-              productsValue={this.state.productsValue}
-              AccountsSelector={AccountsSelector}
-              accountsDatabase={this.props.accountsDatabase}
-              EqualCharges={EqualCharges}/>
-            <ServicesSection
-              updateBilling={this.updateBilling}
-              billingServices={this.state.billingServices}
-              startDate={this.state.billingProducts.startDate}
-              setCharges={this.setBillingServices}
-              servicesValue={this.state.servicesValue}
-              AccountsSelector={AccountsSelector}
-              accountsDatabase={this.props.accountsDatabase}
-              EqualCharges={EqualCharges}/>
-          </div>
+          <ProductsSection
+            disabled={this.props.master.status !== "inactive"}
+            updateBilling={this.updateBilling}
+            billingProducts={this.state.billingProducts}
+            productsValue={this.state.productsValue}
+            AccountsSelector={AccountsSelector}
+            accountsDatabase={this.props.accountsDatabase}
+            EqualCharges={EqualCharges}/>
+          <ServicesSection
+            disabled={this.props.master.status !== "inactive"}
+            updateBilling={this.updateBilling}
+            billingServices={this.state.billingServices}
+            startDate={this.state.billingProducts.startDate}
+            setCharges={this.setBillingServices}
+            servicesValue={this.state.servicesValue}
+            AccountsSelector={AccountsSelector}
+            accountsDatabase={this.props.accountsDatabase}
+            EqualCharges={EqualCharges}/>
           {this.props.master.status === "inactive" ?
             <FooterButtons buttons={[{text: "Salvar", onClick: this.saveEdits}]}/>
           : null}

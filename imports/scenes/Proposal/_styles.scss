@@ -1,4 +1,4 @@
-@import './Information/styles';
+@import './Footer/styles';
 
 .proposal {
   box-shadow: $box-shadow-spread;
@@ -7,6 +7,12 @@
 
 .proposal__body {
   padding: $space;
+}
+
+.proposal__information {
+  display: grid;
+  grid-gap: ($space /2);
+  grid-template-columns: repeat(12, 1fr);
 }
 
 .proposal__footer {

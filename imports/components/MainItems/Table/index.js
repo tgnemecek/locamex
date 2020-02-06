@@ -8,7 +8,7 @@ export default class Table extends React.Component {
       return (
         <tr key={i}>
           <td>{item.description}</td>
-          <td className="master__item-list__value-column">{tools.format(item.price, "currency")}</td>
+          <td className="main-items__list__value-column">{tools.format(item.price, "currency")}</td>
           <td className="table__small-column">{item.renting}</td>
         </tr>
       )
@@ -17,17 +17,17 @@ export default class Table extends React.Component {
 
   render() {
     return (
-      <div className={!this.props.disabled ? "master__item-list" : "master__item-list disable-click"} onClick={this.props.toggleWindow}>
+      <div className={!this.props.disabled ? "main-items__list" : "main-items__list disable-click"} onClick={this.props.toggleWindow}>
         {this.props.addedItems.length > 0 ?
           <div>
-            <div className="master__item-list__overlay">
+            <div className="main-items__list__overlay">
               <div>✎</div>
             </div>
-            <table className="table master__item-list__table">
+            <table className="table main-items__list__table">
               <tbody>
                 <tr>
                   <th>Descrição</th>
-                  <th className="master__item-list__value-column">Valor</th>
+                  <th className="main-items__list__value-column">Valor</th>
                   <th className="table__small-column">Qtd.</th>
                 </tr>
                 {this.row()}
@@ -36,7 +36,7 @@ export default class Table extends React.Component {
           </div>
            :
           <div>
-             <div className="master__item-list__overlay">
+             <div className="main-items__list__overlay">
                <div>+</div>
              </div>
              <div>

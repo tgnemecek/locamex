@@ -4,6 +4,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 
 import { Accounts } from '/imports/api/accounts/index';
 import { Contracts } from '/imports/api/contracts/index';
+import { Proposals } from '/imports/api/proposals/index';
 import { Clients } from '/imports/api/clients/index';
 import { Places } from '/imports/api/places/index';
 import { Containers } from '/imports/api/containers/index';
@@ -13,7 +14,6 @@ import { Users } from '/imports/api/users/index';
 
 import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
-import Pdf from '/imports/helpers/Pdf/index';
 
 import Box from '/imports/components/Box/index';
 import Checkmark from '/imports/components/Checkmark/index';
@@ -26,32 +26,15 @@ import SceneItems from '/imports/components/SceneItems/index';
 import SceneFooter from '/imports/components/SceneFooter/index';
 import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 
+import ClientSetup from './ClientSetup/index';
 import BillingSchedule from './BillingSchedule/index';
 import Information from './Information/index';
 
 class Contract extends React.Component {
   constructor(props) {
     super(props);
-    const getDocument = () => {
-      if (this.props.contract) {
-        var version;
-        if (this.props.contract.status === "active") {
-          version = this.props.contract.activeVersion;
-        } else version = this.props.contract.snapshots.length-1;
-
-        return {
-          ...this.props.contract.snapshots[version],
-          _id: this.props.contract._id,
-          status: this.props.contract.status,
-          activeVersion: this.props.contract.activeVersion,
-          version,
-          proposal: this.props.contract.proposal,
-          proposalVersion: this.props.contract.proposalVersion
-        }
-      } else return null;
-    }
     this.state = {
-      contract: getDocument() || {
+      contract: tools.explodeContract(this.props.contract) || {
         _id: undefined,
         createdBy: Meteor.user()._id,
         status: "inactive",
@@ -85,9 +68,9 @@ class Contract extends React.Component {
         },
         dates: {
           creationDate: new Date(),
-          deliveryDate: new Date(),
           duration: 1,
-          timeUnit: "months"
+          timeUnit: "months",
+          startDate: new Date()
         },
         containers: [],
         accessories: [],
@@ -95,43 +78,9 @@ class Contract extends React.Component {
       },
       errorMsg: '',
       errorKeys: [],
+      clientSetupWindow: true,
       databaseStatus: ''
     }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.databases !== this.props.databases
-      || prevState.contract.version !== this.state.contract.version) {
-      this.setUpdatedItemInformation();
-    }
-  }
-
-  setUpdatedItemInformation = () => {
-    var contract = { ...this.state.contract };
-    var arrayOfArrays = [contract.containers, contract.accessories, contract.services];
-    arrayOfArrays.forEach((itemArray) => {
-      itemArray.forEach((item) => {
-        var database;
-        switch (item.type) {
-          case 'modular':
-          case 'fixed':
-            database = this.props.databases.containersDatabase;
-            break;
-          case 'accessory':
-            database = this.props.databases.accessoriesDatabase;
-            break;
-          case 'service':
-            database = this.props.databases.servicesDatabase;
-            break;
-          default:
-            throw new Meteor.Error('type-not-found');
-        }
-        var productFromDatabase = tools.findUsingId(database, item.productId);
-        item.description = productFromDatabase.description;
-        item.restitution = productFromDatabase.restitution;
-      })
-    })
-    this.setState({ contract });
   }
 
   updateContract = (changes, callback) => {
@@ -159,17 +108,12 @@ class Contract extends React.Component {
   }
 
   changeVersion = (e) => {
-    var newVersion = e.target.value;
-    var contract = {
-      ...this.props.contract.snapshots[newVersion],
-      _id: this.state.contract._id,
-      status: this.props.contract.status,
-      version: newVersion,
-      activeVersion: this.props.contract.activeVersion,
-      proposal: this.props.contract.proposal,
-      proposalVersion: this.props.contract.proposalVersion
-    }
-    this.setState({ contract });
+    this.setState({
+      contract: tools.explodeContract({
+        ...this.props.contract,
+        _id: this.state.contract._id
+      }, e.target.value)
+    });
   }
 
   cancelContract = (callback) => {
@@ -241,53 +185,45 @@ class Contract extends React.Component {
 
   saveEdits = (callback) => {
     this.setState({ databaseStatus: "loading" }, () => {
-      if (this.props.match.params.contractId == 'new') {
-        Meteor.call('contracts.insert', this.state.contract, (err, res) => {
-          if (res) {
-            var contract = {
-              ...this.state.contract,
-              _id: res
+      // Only update. Contracts are inserted by activating Proposals
+      Meteor.call('contracts.update', this.state.contract, (err, res) => {
+        if (res) {
+          var contract;
+          var databaseStatus;
+          if (res.hasChanged) {
+            contract = tools.explodeContract(res.contract);
+            databaseStatus = "completed";
+          } else {
+            contract = this.state.contract;
+            databaseStatus = {
+              status: "completed",
+              message: "Nenhuma alteração realizada."
             }
-            this.props.history.push("/contract/" + res);
-            if (typeof callback === "function") {
-              callback(contract);
-            } else this.setState({ contract, databaseStatus: "completed" });
           }
-          else if (err) {
-            this.setState({ databaseStatus: "failed" });
-            console.log(err);
-          }
-        });
-      } else {
-        Meteor.call('contracts.update', this.state.contract, (err, res) => {
-          if (res) {
-            var contract = {...this.state.contract};
-            var databaseStatus = {status: "completed"};
-            if (res.hasChanged) {
-              contract.version = res.data.snapshots.length-1;
-            } else databaseStatus.message = "Nenhuma alteração realizada."
-
-            if (typeof callback === "function") {
-              callback(contract);
-            } else this.setState({ contract, databaseStatus });
-          } else if (err) {
-            this.setState({ databaseStatus: "failed" });
-            console.log(err);
-          }
-        });
-      }
+          if (typeof callback === "function") {
+            callback(contract);
+          } else this.setState({ contract, databaseStatus });
+        } else if (err) {
+          this.setState({ databaseStatus: "failed" });
+          console.log(err);
+        }
+      });
     })
   }
 
   generateDocument = () => {
     const generate = (master) => {
       master.type = "contract";
-      var pdf = new Pdf(master, this.props.databases);
-      pdf.generate().then(() => {
-        this.setState({ databaseStatus: "completed" });
-      }).catch((err) => {
-        console.log(err);
-        this.setState({ databaseStatus: "failed" });
+
+      Meteor.call('pdf.generate', master, (err, res) => {
+        if (res) {
+          saveAs(res.data, res.fileName);
+          this.setState({ databaseStatus: "completed" });
+        }
+        if (err) {
+          this.setState({ databaseStatus: "failed" });
+          console.log(err);
+        }
       })
     }
     this.saveEdits(generate);
@@ -343,34 +279,43 @@ class Contract extends React.Component {
             errorKeys={this.state.errorKeys}
             disabled={disabled}
           />
-          <div className={this.state.contract.status !== "inactive" ? "contract__body disable-click" : "contract__body"}>
+          <div className="contract__body">
             <Information
+              disabled={this.state.contract.status !== "inactive"}
               clientsDatabase={this.props.databases.clientsDatabase}
               contract={this.state.contract}
               updateContract={this.updateContract}
               errorKeys={this.state.errorKeys}
             />
             <SceneItems
+              disabled={this.state.contract.status !== "inactive"}
               master={this.state.contract}
               databases={this.props.databases}
               updateMaster={this.updateContract}
             />
-            <SceneFooter
-              totalValue={this.totalValue()}
-              productsValue={this.totalValue('products')}
-              servicesValue={this.totalValue('services')}
-
-              setError={this.setError}
-              errorMsg={this.state.errorMsg}
-
-              master={{...this.state.contract, type: "contract"}}
-
-              saveEdits={this.saveEdits}
-              activateMaster={this.activateContract}
-              finalizeMaster={this.finalizeContract}
-            />
             <DatabaseStatus status={this.state.databaseStatus}/>
+            {this.state.clientSetupWindow ?
+              <ClientSetup
+                updateContract={this.updateContract}
+                proposal={this.props.proposal}
+                closeWindow={() => this.setState({ clientSetupWindow: false })}
+                clientsDatabase={this.props.databases.clientsDatabase}/>
+            : null}
           </div>
+          <SceneFooter
+            totalValue={this.totalValue()}
+            productsValue={this.totalValue('products')}
+            servicesValue={this.totalValue('services')}
+
+            setError={this.setError}
+            errorMsg={this.state.errorMsg}
+
+            master={{...this.state.contract, type: "contract"}}
+
+            saveEdits={this.saveEdits}
+            activateMaster={this.activateContract}
+            finalizeMaster={this.finalizeContract}
+          />
         </div>
       </div>
     )
@@ -385,6 +330,7 @@ function ContractLoader (props) {
 
 export default ContractWrapper = withTracker((props) => {
   Meteor.subscribe('contractsPub');
+  Meteor.subscribe('proposalsPub');
   Meteor.subscribe('clientsPub');
   Meteor.subscribe('accountsPub');
 
@@ -414,6 +360,13 @@ export default ContractWrapper = withTracker((props) => {
   if (props.match.params.contractId !== 'new') {
     contract = Contracts.findOne({ _id: props.match.params.contractId });
   }
-  return { databases, contract }
+
+  var proposal = contract ? Proposals.findOne({ _id: contract.proposal }) : null;
+  proposal = proposal ? {
+    ...proposal,
+    ...proposal.snapshots[proposal.activeVersion]
+  } : null;
+
+  return { databases, contract, proposal }
 
 })(ContractLoader);

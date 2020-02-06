@@ -14,6 +14,7 @@ export default class ChargesNumber extends React.Component {
         title="Número de Cobranças:"
         type="number"
         min={1}
+        disabled={this.props.disabled}
         value={this.props.billingServices.length}
         onChange={this.onChange}/>
     )

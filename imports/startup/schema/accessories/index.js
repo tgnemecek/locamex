@@ -1,15 +1,6 @@
 import SimpleSchema from 'simpl-schema';
-import { check } from 'meteor/check';
 
-var options = {
-  clean: {
-    trimStrings: true,
-    removeEmptyStrings: false
-  },
-  check
-}
-
-var variations = {
+var stock = {
   variations: Array,
   'variations.$': Object,
   'variations.$._id': String,
@@ -24,7 +15,7 @@ var variations = {
   'variations.$.visible': Boolean
 }
 
-var insertSchema = new SimpleSchema({
+var full = {
   _id: String,
   type: String,
 
@@ -33,37 +24,35 @@ var insertSchema = new SimpleSchema({
   restitution: Number,
   observations: String,
 
-  ...variations,
+  ...stock,
 
   images: Array,
   'images.$': String,
 
   'visible': Boolean
-}, options)
+}
 
-var updateSchema = new SimpleSchema({
+var update = {
   description: String,
   price: Number,
   restitution: Number,
   observations: String,
-  ...variations
-}, options);
+  ...stock
+}
 
-var imagesSchema = new SimpleSchema({
+var images = {
   images: Array,
   'images.$': String
-})
+}
 
-var stockSchema = new SimpleSchema(variations, options)
-
-var hideSchema = new SimpleSchema({
+var hide = {
   'visible': Boolean
-})
+}
 
-module.exports = {
-  insertSchema,
-  updateSchema,
-  stockSchema,
-  imagesSchema,
-  hideSchema
+export default {
+  full,
+  update,
+  stock,
+  images,
+  hide
 }

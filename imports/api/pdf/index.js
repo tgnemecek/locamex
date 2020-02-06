@@ -30,6 +30,7 @@ var printer = new PdfPrinter({
 if (Meteor.isServer) {
   Meteor.methods({
     async 'pdf.generate'(master) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       try {
         var docDefinition = generateDocDefinition(master).await();
         docDefinition.pageBreakBefore = setPageBreaks();
@@ -96,7 +97,7 @@ function generateProposal(master) {
     master.createdByFullName = getCreatedBy(master.createdBy);
 
     var props = {
-      master: getProductsInformation(master),
+      master,
       generateTable,
       header,
       styles
@@ -106,7 +107,7 @@ function generateProposal(master) {
       if (master.includeFlyer) {
         var promises = master.containers.map((container) => {
           return new Promise((resolve, reject) => {
-            getFlyerImages(container.productId).then((images) => {
+            getFlyerImages(container).then((images) => {
               var item = Containers.findOne({
                 _id: container.productId
               });
@@ -189,7 +190,7 @@ function generateShipping(master) {
 
 function generateFlyer(master) {
   return new Promise((resolve, reject) => {
-    getFlyerImages(master._id).then((images) => {
+    getFlyerImages(master).then((images) => {
       var item = Containers.findOne({ _id: master._id });
       resolve(flyerPdf({...item, images}, header));
     });
@@ -204,7 +205,7 @@ function getCreatedBy(userId) {
   var user = usersDatabase.find((user) => {
     return user._id === userId;
   })
-  if (!user) throw new Meteor.Error("user-not-found!");
+  if (!user) return '';
 
   return user.firstName + " " + user.lastName;
 }
@@ -280,10 +281,8 @@ function generateFooter(docDefinition) {
   }
 }
 
-function getFlyerImages(_id) {
+function getFlyerImages(item) {
   var promises = [];
-  var item = Containers.findOne({ _id });
-
   if (!item.flyer) return Promise.resolve([]);
 
   item.flyer.images.forEach((image) => {
