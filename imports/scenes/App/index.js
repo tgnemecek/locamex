@@ -2,6 +2,8 @@ import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { version } from '/package.json';
 
+import ErrorBoundary from '/imports/components/ErrorBoundary/index';
+
 import AppHeader from '/imports/components/AppHeader/index';
 import NotFound from '/imports/components/NotFound/index';
 import Test from '/imports/scenes/Test/index';
@@ -38,7 +40,6 @@ export default class App extends React.Component {
       return (
         <div id="app">
           <Route path="/" render={ props => <AppHeader {...props} user={this.state.user}/> }/>
-
           <Switch>
             <Route path="/dashboard" render={(props) => <Dashboard {...props} user={this.state.user}/>}/>
             <Route path="/contract/:contractId" render={(props) => <Contract {...props} user={this.state.user}/>}/>
