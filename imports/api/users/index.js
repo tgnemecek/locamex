@@ -7,6 +7,12 @@ var passwordMinLength = 4;
 var userNameMinLength = 3;
 var userNameMaxLength = 40;
 
+Meteor.users.deny({
+  insert() { return true; },
+  update() { return true; },
+  remove() { return true; },
+});
+
 if (Meteor.isServer) {
   Meteor.publish('usersPub', function () {
     if (!Meteor.userId()) throw new Meteor.Error('unauthorized');

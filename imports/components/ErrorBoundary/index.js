@@ -16,7 +16,19 @@ export default class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.error) {
-      return null;
+      return (
+        <div className="page-content">
+          <h2>Ocorreu um erro.</h2>
+          <div style={{ whiteSpace: 'pre-wrap' }}>
+            <div>
+              {this.state.error && this.state.error.toString()}
+            </div>
+            <div>
+              {this.state.errorInfo.componentStack}
+            </div>
+          </div>
+        </div>
+      )
     } else return this.props.children;
   }
 }

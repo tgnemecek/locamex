@@ -37,6 +37,7 @@ export default class AppHeader extends React.Component {
   }
 
   renderMenuItems = () => {
+    return null;
     var filteredPages = [];
     var currentUserType = this.props.user.type;
     if (!this.props.user.type) return null;
