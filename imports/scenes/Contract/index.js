@@ -27,6 +27,7 @@ import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 
 import ClientSetup from './ClientSetup/index';
 import BillingSchedule from './BillingSchedule/index';
+import Documents from './Documents/index';
 import Information from './Information/index';
 import Footer from './Footer/index';
 
@@ -51,6 +52,7 @@ class Contract extends React.Component {
       errorMsg: '',
       errorKeys: [],
       clientSetupWindow: (snapshotIndex === 0 && !snapshot.client),
+      documentsOpen: false,
       databaseStatus: ''
     }
   }
@@ -163,6 +165,32 @@ class Contract extends React.Component {
     })
   }
 
+  toggleDocuments = () => {
+    this.setState({ documentsOpen: !this.state.documentsOpen })
+  }
+
+  generateDocument = () => {
+    const generate = (master) => {
+      master.type = "contract";
+      master._id = this.props.contract._id;
+      master.proposalId = this.props.contract.proposalId;
+      master.proposalSnapshot = this.props.contract.proposalSnapshot;
+
+      Meteor.call('pdf.generate', master, (err, res) => {
+        if (res) {
+          saveAs(res.data, res.fileName);
+          this.setState({ databaseStatus: "completed" });
+        }
+        if (err) {
+          this.setState({ databaseStatus: "failed" });
+          console.log(err);
+        }
+      })
+    }
+    this.saveEdits(generate);
+  }
+
+
   // setError = (errorMsg, errorKeys) => {
   //   this.setState({ errorMsg, errorKeys })
   // }
@@ -260,24 +288,7 @@ class Contract extends React.Component {
   //   })
   // }
   //
-  // generateDocument = () => {
-  //   const generate = (master) => {
-  //     master.type = "snapshot";
-  //
-  //     Meteor.call('pdf.generate', master, (err, res) => {
-  //       if (res) {
-  //         saveAs(res.data, res.fileName);
-  //         this.setState({ databaseStatus: "completed" });
-  //       }
-  //       if (err) {
-  //         this.setState({ databaseStatus: "failed" });
-  //         console.log(err);
-  //       }
-  //     })
-  //   }
-  //   this.saveEdits(generate);
-  // }
-  //
+
   totalValue = (option) => {
     var duration = this.state.snapshot.dates.timeUnit === "months" ? this.state.snapshot.dates.duration : 1;
     var discount = this.state.snapshot.discount;
@@ -357,6 +368,16 @@ class Contract extends React.Component {
               proposalClient={this.props.proposalClient}
               closeWindow={() => this.setState({ clientSetupWindow: false })}
               clientsDatabase={this.props.databases.clientsDatabase}/>
+          : null}
+          {this.state.documentsOpen ?
+            <Documents
+              snapshot={this.state.snapshot}
+              updateSnapshot={this.updateSnapshot}
+              disabled={this.props.contract.status !== "inactive"}
+              toggleWindow={this.toggleDocuments}
+              settings={this.props.settings}
+              generateDocument={this.generateDocument}
+            />
           : null}
         </div>
       </div>

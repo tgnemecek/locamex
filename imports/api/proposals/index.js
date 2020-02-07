@@ -32,10 +32,6 @@ if (Meteor.isServer) {
         _id: { $regex: new RegExp(prefix)} }).count().toString().padStart(4, '0');
       var _id = prefix + "-" + suffix;
 
-      var user = Meteor.user();
-      snapshot.createdById = user._id;
-      snapshot.createdByName = `${user.firstName} ${user.lastName}`
-
       snapshot = schema('proposals', 'full').clean(snapshot);
       schema('proposals', 'full').validate(snapshot);
 

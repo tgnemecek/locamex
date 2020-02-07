@@ -51,8 +51,8 @@ if (Meteor.isServer) {
         visible: true,
         snapshots: [{
           active: false,
-          createdById: user._id,
-          createdByName: `${user.firstName} ${user.lastName}`,
+          createdById: snapshot.createdById,
+          createdByName: snapshot.createdByName,
           client: {
             _id: '',
             description: '',
