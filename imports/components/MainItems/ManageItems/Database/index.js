@@ -14,7 +14,6 @@ export default class Database extends React.Component {
             <button onClick={() => this.props.addItem(item)}>
               <Icon icon="arrowRight"/>
             </button>
-
           </td>
         </tr>
       )

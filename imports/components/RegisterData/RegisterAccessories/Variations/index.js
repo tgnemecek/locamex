@@ -33,7 +33,7 @@ export default class Variations extends React.Component {
           description: "Padrão " + tools.convertToLetter(i+1),
           observations: this.state.observations,
           rented: 0,
-          place: [],
+          places: [],
           new: true, // This is only to allow deletion
           visible: true
         });

@@ -7,11 +7,12 @@ var stock = {
   'variations.$.description': String,
   'variations.$.observations': String,
   'variations.$.rented': SimpleSchema.Integer,
-  'variations.$.place': Array,
-  'variations.$.place.$': Object,
-  'variations.$.place.$._id': String,
-  'variations.$.place.$.available': SimpleSchema.Integer,
-  'variations.$.place.$.inactive': SimpleSchema.Integer,
+  'variations.$.places': Array,
+  'variations.$.places.$': Object,
+  'variations.$.places.$._id': String,
+  'variations.$.places.$.description': String,
+  'variations.$.places.$.available': SimpleSchema.Integer,
+  'variations.$.places.$.inactive': SimpleSchema.Integer,
   'variations.$.visible': Boolean
 }
 

@@ -22,7 +22,7 @@ export default class RegisterAccessories extends React.Component {
         description: "Padrão Único",
         observations: '',
         rented: 0,
-        place: [],
+        places: [],
         visible: true
       }],
 
@@ -50,7 +50,7 @@ export default class RegisterAccessories extends React.Component {
           description: i > 1 ? "Padrão " + tools.convertToLetter(j) : "Padrão Único",
           observations: '',
           rented: 0,
-          place: [],
+          places: [],
           visible: true
         })
       }
@@ -69,7 +69,6 @@ export default class RegisterAccessories extends React.Component {
     this.props.toggleWindow();
   }
   saveEdits = () => {
-    console.log(this.state);
     var errorKeys = [];
     if (!this.state.description.trim()) {
       errorKeys.push("description");

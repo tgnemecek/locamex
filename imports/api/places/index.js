@@ -1,6 +1,7 @@
 import { Mongo } from 'meteor/mongo';
 import { Series } from '/imports/api/series/index';
 import tools from '/imports/startup/tools/index';
+import updateReferences from '/imports/startup/update-references/index';
 
 export const Places = new Mongo.Collection('places');
 
@@ -23,10 +24,13 @@ if (Meteor.isServer) {
       const data = {
         _id,
         description,
-        items: [],
         visible: true
       }
       Places.insert(data);
+      updateReferences(_id, 'places.insert', {
+        _id,
+        description
+      });
       Meteor.call('history.insert', data, 'places');
     },
     'places.hide'(_id) {
@@ -45,11 +49,10 @@ if (Meteor.isServer) {
         description
       };
       Places.update({ _id }, { $set: {description} });
-      Series.update(
-        {placeId: _id},
-        {$set: {placeDescription: description}},
-        {multi: true}
-      );
+      updateReferences(_id, 'places.update', {
+        _id,
+        description
+      });
       Meteor.call('history.insert', data, 'places');
     }
   });

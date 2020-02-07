@@ -177,7 +177,7 @@ class AccessoriesTable extends React.Component {
 function count(item, which) {
   var result = 0;
   item.variations.forEach((variation) => {
-    result = result + variation.place.reduce((acc, cur) => {
+    result = result + variation.places.reduce((acc, cur) => {
       return acc + cur[which];
     }, 0);
   })

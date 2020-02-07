@@ -1,5 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import { Meteor } from 'meteor/meteor';
+import updateReferences from '/imports/startup/update-references/index';
 import tools from '/imports/startup/tools/index';
 import schema from '/imports/startup/schema/index';
 
@@ -49,7 +50,12 @@ if (Meteor.isServer) {
       })
       schema('services', 'update').validate(data);
       Services.update({ _id }, { $set: data });
+      updateReferences(_id, 'services', {
+        ...data,
+        price: undefined
+      });
       Meteor.call('history.insert', data, 'services');
+      return true;
     }
   })
 }

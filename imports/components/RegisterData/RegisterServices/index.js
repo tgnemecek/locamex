@@ -8,6 +8,7 @@ import Box from '/imports/components/Box/index';
 import Input from '/imports/components/Input/index';
 import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
+import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 
 export default class RegisterServices extends React.Component {
   constructor(props) {
@@ -20,14 +21,15 @@ export default class RegisterServices extends React.Component {
       errorMsg: '',
       errorKeys: [],
 
-      confirmationWindow: false
+      confirmationWindow: false,
+      databaseStatus: false
     }
   }
   onChange = (e) => {
     var errorKeys = [...this.state.errorKeys];
     var fieldIndex = errorKeys.findIndex((key) => key === e.target.name);
     errorKeys.splice(fieldIndex, 1);
-    
+
     this.setState({ [e.target.name]: e.target.value });
   }
   toggleConfirmationWindow = () => {
@@ -39,15 +41,47 @@ export default class RegisterServices extends React.Component {
     this.props.toggleWindow();
   }
   saveEdits = () => {
+    const error = () => {
+      this.setState({ databaseStatus: {
+        status: "failed",
+        message: tools.translateError(err)
+      }})
+    }
+    const success = () => {
+      this.setState({ databaseStatus: {
+        status: "completed",
+        callback: this.props.toggleWindow
+      }})
+    }
     var errorKeys = [];
     if (!this.state.description.trim()) {
       errorKeys.push("description");
       this.setState({ errorMsg: "Favor informar uma descrição.", errorKeys });
     } else {
-      if (this.props.item._id) {
-        Meteor.call('services.update', this.state._id, this.state.description, this.state.price);
-      } else Meteor.call('services.insert', this.state.description, this.state.price);
-      this.props.toggleWindow();
+      this.setState({ databaseStatus: "loading" }, () => {
+        if (this.props.item._id) {
+          Meteor.call(
+            'services.update',
+            this.state._id,
+            this.state.description,
+            this.state.price,
+            (err, res) => {
+              if (err) error();
+              if (res) success();
+            }
+          );
+        } else {
+          Meteor.call(
+            'services.insert',
+            this.state.description,
+            this.state.price,
+            (err, res) => {
+              if (err) error();
+              if (res) success();
+            }
+          );
+        }
+      })
     }
   }
   render() {
@@ -89,6 +123,7 @@ export default class RegisterServices extends React.Component {
             {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
             {text: "Salvar", onClick: this.saveEdits}
           ]}/>
+          <DatabaseStatus status={this.state.databaseStatus}/>
       </Box>
     )
   }

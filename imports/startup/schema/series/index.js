@@ -5,7 +5,7 @@ var insert = {
   type: String,
 
   containerId: String,
-  containerDescription: String,
+  description: String,
   placeId: String,
   placeDescription: String,
   observations: String,

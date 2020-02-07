@@ -2,7 +2,7 @@ import { Mongo } from 'meteor/mongo';
 import { Series } from '/imports/api/series/index';
 import tools from '/imports/startup/tools/index';
 import schema from '/imports/startup/schema/index';
-import updateReferences from './update-references';
+import updateReferences from '/imports/startup/update-references/index';
 
 export const Containers = new Mongo.Collection('containers');
 
@@ -48,7 +48,10 @@ if (Meteor.isServer) {
       schema('containers', 'updateFixed').validate(data);
 
       Containers.update({ _id: state._id }, { $set: data });
-      updateReferences({...data, _id: state._id});
+      updateReferences(state._id, 'containers', {
+        ...data,
+        price: undefined
+      });
       Meteor.call('history.insert', { ...data, _id: state._id }, 'containers.fixed.update');
     },
 
@@ -94,7 +97,10 @@ if (Meteor.isServer) {
       });
       schema('containers', 'updateModular').validate(data);
       Containers.update({ _id: state._id }, { $set: data });
-      updateReferences({...data, _id: state._id});
+      updateReferences(state._id, 'containers', {
+        ...data,
+        price: undefined
+      });
       Meteor.call('history.insert', { ...data, _id: state._id }, 'containers.modular.update');
     },
 

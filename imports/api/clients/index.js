@@ -1,5 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import tools from '/imports/startup/tools/index';
+import updateReferences from '/imports/startup/update-references/index';
 
 export const Clients = new Mongo.Collection('clients');
 
@@ -108,6 +109,10 @@ if (Meteor.isServer) {
         };
       }
       Clients.update({ _id: state._id }, { $set: data });
+      updateReferences(state._id, 'client', {
+        ...data,
+        _id: undefined
+      });
       Meteor.call('history.insert', data, 'clients');
       return state._id;
     }

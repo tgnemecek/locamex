@@ -60,7 +60,7 @@ class SeriesTable extends React.Component {
       var body = this.props.fullDatabase.map((item) => {
         return [
           item._id,
-          item.containerDescription,
+          item.description,
           item.placeDescription,
           item.observations
         ]
@@ -118,7 +118,7 @@ class SeriesTable extends React.Component {
             {item._id}
           </td>
           <td style={{textAlign: 'left'}}>
-            {item.containerDescription}
+            {item.description}
           </td>
           <td className="table__small-column">
             {item.placeDescription}

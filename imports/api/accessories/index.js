@@ -1,5 +1,7 @@
 import { Mongo } from 'meteor/mongo';
+import { Places } from '/imports/api/places/index';
 import tools from '/imports/startup/tools/index';
+import updateReferences from '/imports/startup/update-references/index';
 import schema from '/imports/startup/schema/index';
 
 export const Accessories = new Mongo.Collection('accessories');
@@ -18,8 +20,9 @@ if (Meteor.isServer) {
   Meteor.methods({
     'accessories.insert'(state) {
       if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      var places = Places.find().fetch();
       const _id = tools.generateId();
-      var data = schema('accessories', 'full').clean({
+      var data = {
         _id,
         type: "accessory",
         description: state.description,
@@ -27,25 +30,40 @@ if (Meteor.isServer) {
         restitution: state.restitution,
         observations: state.observations,
         images: [],
-        variations: state.variations,
+        variations: state.variations.map((variation) => {
+          return {
+            ...variation,
+            places: places.map((place) => {
+              return {
+                description: place.description,
+                _id: place._id,
+                available: 0,
+                inactive: 0
+              }
+            })
+          }
+        }),
         visible: true
-      })
+      }
       schema('accessories', 'full').validate(data);
       Accessories.insert(data);
       Meteor.call('history.insert', data, 'accessories.insert');
     },
     'accessories.update'(state) {
       if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
-      var data = schema('accessories', 'update').clean({
+      var data = {
         description: state.description,
         price: state.price,
         restitution: state.restitution,
         observations: state.observations,
         variations: state.variations
-      })
-      console.log(data);
+      }
       schema('accessories', 'update').validate(data);
       Accessories.update({ _id: state._id }, { $set: data });
+      updateReferences(state._id, 'accessories', {
+        ...data,
+        price: undefined
+      });
       Meteor.call('history.insert', data, 'accessories.update');
     },
     'accessories.update.images'(_id, images) {
@@ -64,10 +82,10 @@ if (Meteor.isServer) {
     'accessories.update.stock'(_id, variations) {
       if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       try {
-        var data = stockSchema.clean({
+        var data = schema('accessories', 'stock').clean({
           variations
         })
-        stockSchema.validate(data);
+        schema('accessories', 'stock').validate(data);
         Accessories.update({ _id }, { $set: data });
         Meteor.call('history.insert', {...data, _id}, 'accessories.update.stock');
       }

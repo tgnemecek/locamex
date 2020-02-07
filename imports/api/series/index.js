@@ -27,20 +27,20 @@ if (Meteor.isServer) {
       if (isIdInUse) throw new Meteor.Error('id-in-use');
 
       var container = Containers.findOne({_id: state.containerId});
-      var containerDescription = container.description || 'Alugado';
+      var description = container.description;
 
-      var data = schema('series', 'full').clean({
+      var data = {
         _id: state._id,
         containerId: state.containerId,
-        containerDescription,
+        description,
         placeId: state.placeId,
         placeDescription: Places.findOne({_id: state.placeId}).description,
         observations: state.observations,
         type: 'series',
         snapshots: [],
         visible: true
-      })
-      schema('series', 'full').validate(data);
+      }
+      // schema('series', 'full').validate(data);
       Series.insert(data);
       Meteor.call('history.insert', data, 'series.insert');
       return true;
