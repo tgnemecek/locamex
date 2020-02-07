@@ -29,6 +29,7 @@ import Footer from './Footer/index';
 class Proposal extends React.Component {
   constructor(props) {
     super(props);
+    var user = this.props.user;
     var snapshot;
     var snapshotIndex = 0;
     if (this.props.proposal) {
@@ -45,8 +46,8 @@ class Proposal extends React.Component {
     this.state = {
       snapshot: snapshot || {
         active: false,
-        createdById: '',
-        createdByName: '',
+        createdById: user._id,
+        createdByName: user.profile.firstName + " " + user.profile.lastName,
         client: {
           description: '',
           name: '',
@@ -82,18 +83,6 @@ class Proposal extends React.Component {
       errorMsg: '',
       errorKeys: [],
       databaseStatus: ''
-    }
-  }
-
-  componentDidUpdate(prevProps) {
-    var user = Meteor.user();
-    if (prevProps.user !== user && user.firstName) {
-      if (!this.state.createdById) {
-        this.setState({
-          createdById: user._id,
-          createdByName: user.firstName + " " + user.lastName
-        })
-      }
     }
   }
 
@@ -178,7 +167,6 @@ class Proposal extends React.Component {
   }
 
   saveEdits = (callback) => {
-    console.log(this.state.snapshot);
     this.setState({ databaseStatus: "loading" }, () => {
       if (this.props.proposal && this.props.proposal.status !== 'inactive') {
         return callback(this.state.snapshot);
@@ -296,7 +284,7 @@ class Proposal extends React.Component {
         <RedirectUser currentPage="proposal"/>
         <div className="base-scene proposal">
           <MainHeader
-            createdByName={this.state.createdByName}
+            createdByName={this.state.snapshot.createdByName}
             title={this.props.proposal ?
               "Proposta #" + this.props.proposal._id + "."
               : "Nova Proposta"}
@@ -357,7 +345,7 @@ class Proposal extends React.Component {
 
 function ProposalLoader (props) {
   if (props.match.params.proposalId === 'new' || props.proposal) {
-    if (Object.entries(props.settings).length) {
+    if (Object.entries(props.settings).length && props.user) {
       return <ErrorBoundary><Proposal {...props} /></ErrorBoundary>
     }
   }
