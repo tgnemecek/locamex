@@ -23,7 +23,7 @@ export default class Information extends React.Component {
     var duration = e.target.value;
     var firstChange = e.target.firstChange;
     var discount = 0;
-    if (this.props.snapshot.dates.timeUnit === "months") {
+    if (this.props.proposal.dates.timeUnit === "months") {
       if (duration >= 3 && duration <= 5) {
         discount = 0.15;
       } else if (duration >= 6 && duration <= 8) {
