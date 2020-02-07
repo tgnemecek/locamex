@@ -37,8 +37,7 @@ export default {
     password,
     ...profile,
     ...optionals,
-    email: SimpleSchema.RegEx.Email,
-    visible: Boolean
+    email: SimpleSchema.RegEx.Email
   },
   update: {
     username,

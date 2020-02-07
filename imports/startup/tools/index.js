@@ -248,11 +248,13 @@ export default class tools {
   // Strings
 
   static translateError = (error) => {
+    console.log(error);
     if (typeof error === "object") {
       error = error.reason;
     }
     var dictionary = {
-      'Incorrect password': 'Senha Incorreta'
+      'Incorrect password': 'Senha Incorreta.',
+      'Username already exists.': 'Nome de usuário já existe.'
     }
     return dictionary[error] || 'Erro de Servidor';
   }

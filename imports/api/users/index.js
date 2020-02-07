@@ -28,11 +28,12 @@ if (Meteor.isServer) {
           type: state.profile.type
         }
       }
-      schema('users', 'update').validate(data);
+      schema('users', 'insert').validate(data);
       var _id = Accounts.createUser(data);
       if (!_id) {throw new Meteor.Error('user-not-created')}
       delete data.password;
       Meteor.call('history.insert', {...data, _id}, 'users.insert');
+      return true;
     },
     // 'users.hide'(_id) {
     //   if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
@@ -45,7 +46,7 @@ if (Meteor.isServer) {
     // },
     'users.update'(state) {
       if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
-      if (!Meteor.user().profile.type !== 'administrator') {
+      if (Meteor.user().profile.type !== 'administrator') {
         throw new Meteor.Error('unauthorized');
       }
       var _id = state._id;

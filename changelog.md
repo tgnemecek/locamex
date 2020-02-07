@@ -7,6 +7,7 @@
 - Added UserSettings and possibility of changing user password;
 - Added schema for new Users;
 - Some user fields moved to user.profile;
+- Added new userType: 'general' that has almost administrator-level access;
 
 ## Version 2.4.4
 
