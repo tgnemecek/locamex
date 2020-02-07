@@ -9,7 +9,7 @@ export default class Dashboard extends React.Component {
     if (this.props.user) {
       return (
         <div className="page-content">
-          <div className="base-scene dashboard">
+          <div className="main-scene dashboard">
             <h1>Página Inicial</h1>
             <h2>Olá {this.props.user.firstName}.</h2>
             <Widgets/>

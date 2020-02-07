@@ -56,7 +56,7 @@ class Configuration extends React.Component {
     return (
       <div className="page-content">
         <RedirectUser currentPage="configuration"/>
-        <div className="base-scene configuration">
+        <div className="main-scene configuration">
           <MainHeader
             title="Configurações"
             type="configuration"/>

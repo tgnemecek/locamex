@@ -24,10 +24,10 @@ if (Meteor.isServer) {
   Meteor.methods({
     'contracts.insert'(proposalId) {
       var proposal = Proposals.findOne({ _id: proposalId });
-      var snapshotIndex;
+      var proposalSnapshot;
       var snapshot = proposal.snapshots.find((snapshot, i) => {
         if (snapshot.active === true) {
-          snapshotIndex = i;
+          proposalSnapshot = i;
           return true
         }
       });
@@ -45,7 +45,8 @@ if (Meteor.isServer) {
       var contract = {
         _id,
         status: 'inactive',
-        proposalNumber: proposalId + "." + (snapshotIndex+1),
+        proposalId: proposalId,
+        proposalSnapshot,
         shipping: [],
         visible: true,
         snapshots: [{
@@ -99,8 +100,6 @@ if (Meteor.isServer) {
           services: snapshot.services
         }]
       }
-
-      schema('contracts', 'full').clean(contract.snapshots[0])
       schema('contracts', 'full').validate(contract.snapshots[0]);
 
       Contracts.insert(contract);
@@ -129,32 +128,33 @@ if (Meteor.isServer) {
       // Meteor.call('history.insert', data, 'contracts.insert');
       // return _id;
     },
-    'contracts.update'(snapshot) {
-      var _id = snapshot._id;
-      var index = snapshot.version;
-      var data = Contracts.findOne({ _id });
-      var hasChanged = !tools.compare(data.snapshots[index], snapshot, "activeVersion");
-      if (!hasChanged) return { hasChanged: false, contract: data };
+    'contracts.update'(snapshot, _id, index) {
+      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      var oldContract = Contracts.findOne({ _id });
+      var hasChanged = !tools.compare(
+        oldContract.snapshots[index], snapshot
+      );
+      if (!hasChanged) {
+        return {hasChanged: false};
+      }
 
-      const newSnapshot = {
-        ...snapshot,
-        _id: undefined,
-        version: undefined,
-        status: undefined,
-        activeVersion: undefined,
-        shipping: undefined,
+      schema('contracts', 'full').validate(snapshot);
 
-        containers: snapshot.containers,
-        accessories: snapshot.accessories,
-        services: snapshot.services
+      if (oldContract.snapshots.length === 1) {
+        Contracts.update({ _id },
+          {$set: { snapshots: [snapshot] }}
+        )
+      } else {
+        Contracts.update({ _id },
+          {$push: { snapshots: snapshot }}
+        )
+      }
+      Meteor.call('history.insert', {_id, ...snapshot}, 'contracts.update');
+      return {
+        hasChanged: true,
+        snapshot,
+        index: oldContract.snapshots.length
       };
-
-      data.snapshots.push(newSnapshot);
-      data.activeVersion = Number(snapshot.version)+1;
-
-      Contracts.update({ _id }, { $set: data });
-      Meteor.call('history.insert', data, 'contracts.update');
-      return { hasChanged: true, contract: data };
     },
     'contracts.activate'(contract) {
       var _id = contract._id;
@@ -170,8 +170,14 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', { _id }, 'contracts.finalize');
       return _id;
     },
-    'contracts.cancel'(_id, proposalId) {
-      Proposals.update({ _id: proposalId }, { $set: {status: "cancelled"} });
+    'contracts.cancel'(_id) {
+      var contract = Contracts.findOne({_id});
+      var proposal = Proposals.findOne({_id: contract.proposalId});
+
+      proposal.status = 'inactive';
+      proposal.snapshots[contract.proposalSnapshot].active = false;
+
+      Proposals.update({ _id: contract.proposalId }, proposal);
       Contracts.update({ _id }, { $set: { status: "cancelled" } } );
       Meteor.call('history.insert', { _id }, 'contracts.cancel');
       return _id;

@@ -1,36 +1,36 @@
-@import './Footer/styles';
-
-.proposal {
-  box-shadow: $box-shadow-spread;
-  background: $light-grey;
-}
-
-.proposal__body {
-  padding: $space;
-}
-
-.proposal__information {
-  display: grid;
-  grid-gap: ($space /2);
-  grid-template-columns: repeat(12, 1fr);
-}
-
-.proposal__footer {
-  padding: $space;
-}
-
-.proposal--disabled {
-  pointer-events: none;
-}
-
-.proposal__total-value {
-  text-align: center;
-  font-weight: bold;
-}
-
-.proposal__footer-text {
-  text-align: center;
-  font-style: italic;
-  color: $dark-grey;
-  margin-top: $space;
-}
+// @import './Footer/styles';
+//
+// .proposal {
+//   box-shadow: $box-shadow-spread;
+//   background: $light-grey;
+// }
+//
+// .proposal__body {
+//   padding: $space;
+// }
+//
+// .proposal__information {
+//   display: grid;
+//   grid-gap: ($space /2);
+//   grid-template-columns: repeat(12, 1fr);
+// }
+//
+// .proposal__footer {
+//   padding: $space;
+// }
+//
+// .proposal--disabled {
+//   pointer-events: none;
+// }
+//
+// .proposal__total-value {
+//   text-align: center;
+//   font-weight: bold;
+// }
+//
+// .proposal__footer-text {
+//   text-align: center;
+//   font-style: italic;
+//   color: $dark-grey;
+//   margin-top: $space;
+// }

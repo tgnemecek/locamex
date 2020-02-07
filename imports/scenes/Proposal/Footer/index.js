@@ -38,16 +38,16 @@ export default class Footer extends React.Component {
 
   render() {
     return (
-      <div className="main-footer">
-        <div className="main-footer__total-value">
+      <div className="main-scene__footer">
+        <div className="main-scene__total-value">
           <h3>
             Valor Total: {tools.format(this.props.totalValue, 'currency')}
           </h3>
         </div>
         {this.renderButtons()}
-        <div className="main-footer__text">
+        {/* <div className="main-footer__text">
           Documento criado dia {moment(this.props.creationDate).format("DD/MM/YYYY")}
-        </div>
+        </div> */}
         <ConfirmationWindow
           isOpen={this.state.confirmationWindow}
           closeBox={this.toggleConfirmationWindow}

@@ -10,127 +10,106 @@ export default class SuggestionBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      buttonMode: false,
-      query: '',
-      results: [],
-      value: ''
+      input: '',
+      result: ''
     }
   }
 
-  componentDidMount() {
-    if (this.props.value) {
-      this.setup();
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (prevProps.database.length !== this.props.database.length
-        || this.props.value !== this.state.value
-    ) {
-      this.setup();
-    }
-  }
-
-  setup = () => {
-    this.props.database.find((item) => {
-      if (item._id === this.props.value) {
-        this.props.onClick({
-          target: {value: item._id, name: this.props.name}
-        });
-        this.setState({
-          query: item.description,
-          buttonMode: true,
-          value: this.props.value
-        });
-        return true;
-      }
-    })
-  }
-
-  hideDropbox = () => {
-    this.setState({ results: [] });
-  }
-
-  getResults = () => {
-    var database = this.props.database || [];
-    var query = this.state.query;
-    var fields = this.props.fields || ["description"];
-    var results = [];
-
-    function compareValues(input, value) {
-      input = input.toString();
-      value = value.toString();
-
-      input = tools.removeSpecialChars(input, /[\.\/\-\(\) ]/g).toUpperCase();
-      value = tools.removeSpecialChars(value, /[\.\/\-\(\) ]/g).toUpperCase();
-
-      return input.search(value) !== -1 ? true : false;
-    }
-
-    database.forEach((item) => {
-      fields.forEach((field) => {
-        if (compareValues(item[field], query)) {
-          results.push(item);
+  componentDidUpdate(prevProps) {
+    if (this.props.value && prevProps.database) {
+      if (prevProps.database.length === 0) {
+        var result = this.props.database.find((item) => {
+          return item._id === this.props.value;
+        })
+        if (result) {
+          var input = result.description;
+          this.setState({ result, input });
         }
-      })
-    })
-    this.setState({ results });
+      }
+    }
   }
 
   renderResults = () => {
-    const onClick = (e) => {
-      var value = e.target.value;
-      var exportObject = this.state.results[e.target.name] || {};
-      this.props.onClick({target: {
-        value,
-        name: this.props.name
-      }}, exportObject);
+    const getResults = () => {
+      if (this.props.showAll && !this.state.result) return database;
+      if (this.state.result) return [];
 
-      this.setState({
-        query: exportObject.description,
-        buttonMode: true,
-        value
-      }, () => {
-        this.hideDropbox();
+      var database = this.props.database || [];
+      var input = this.state.input;
+      var fields = this.props.fields || ["description"];
+      var results = [];
+
+      function compareValues(input, value) {
+        input = input.toString();
+        value = value.toString();
+
+        input = tools.removeSpecialChars(input, /[\.\/\-\(\) ]/g).toUpperCase();
+        value = tools.removeSpecialChars(value, /[\.\/\-\(\) ]/g).toUpperCase();
+
+        return input.search(value) !== -1 ? true : false;
+      }
+
+      database.forEach((item) => {
+        fields.forEach((field) => {
+          if (compareValues(item[field], input)) {
+            results.push(item);
+          }
+        })
       })
+      return results;
     }
-    return this.state.results.map((item, i) => {
-      return <li key={i}><button name={i} onClick={onClick} value={item._id}>{item.description}</button></li>
-    })
+
+    if (this.state.input.length < 3) {
+      return null;
+    }
+    var filtered = getResults();
+    if (filtered.length === 0) return null;
+    return (
+      <ul className="suggestion-bar__dropbox">
+        {filtered.map((item, i) => {
+          const onClick = () => {
+            var result = item;
+            this.props.onClick({target: {
+              value: result._id,
+              name: this.props.name
+            }}, result);
+
+            this.setState({
+              input: result.description,
+              result: result,
+            })
+          }
+          return (
+            <li key={i}>
+              <button
+                onClick={onClick}>
+                {item.description}
+              </button>
+            </li>
+          )
+        })}
+      </ul>
+    )
   }
 
-  conditionalShowAll = () => {
-    if (!this.state.query && this.props.showAll) {
-      this.setState({ results: this.props.database });
-    }
+  onChange = (e) => {
+    this.setState({ input: e.target.value });
+  }
+
+  buttonClick = () => {
+    this.setState({ input: '', result: '' }, () => {
+      this.props.onClick({target: {value: '', name: this.props.name}}, {});
+    });
   }
 
   onBlur = (e) => {
     var currentTarget = e.currentTarget;
     const hideDropbox = this.hideDropbox;
-    setTimeout(function() {
+    setTimeout(() => {
       if (!currentTarget.contains(document.activeElement)) {
-        hideDropbox();
+        this.setState({ input: '' });
       }
     }, 0);
-  }
-
-  buttonClick = () => {
-    var buttonMode = this.state.buttonMode;
-    if (!buttonMode) return;
-
-    this.setState({ buttonMode: false, query: '' }, () => {
-      this.props.onClick({target: {value: '', name: this.props.name}}, {});
-      this.conditionalShowAll();
-    });
-  }
-
-  onChange = (e) => {
-    this.setState({ query: e.target.value }, () => {
-      if (this.state.query.length > 1) {
-        this.getResults();
-      } else this.hideDropbox();
-    });
   }
 
   render() {
@@ -141,19 +120,14 @@ export default class SuggestionBar extends React.Component {
         </div>
         <Input
           title={this.props.title}
-          className={this.state.buttonMode ? "suggestion-bar__input--button" : ""}
           type="text"
           style={this.props.style}
           onChange={this.onChange}
           buttonClick={this.buttonClick}
           disabled={this.props.disabled}
           error={this.props.error}
-          value={this.state.query}/>
-        {this.state.results.length > 0 ?
-          <ul className="suggestion-bar__dropbox">
-            {this.renderResults()}
-          </ul>
-        : null}
+          value={this.state.input}/>
+        {this.renderResults()}
       </div>
     )
   }

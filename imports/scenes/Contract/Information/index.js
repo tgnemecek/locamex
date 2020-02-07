@@ -13,7 +13,7 @@ export default class Information extends React.Component {
     var duration = e.target.value;
     var firstChange = e.target.firstChange;
     var discount = 0;
-    if (this.props.contract.dates.timeUnit === "months") {
+    if (this.props.snapshot.dates.timeUnit === "months") {
       if (duration >= 3 && duration <= 5) {
         discount = 0.15;
       } else if (duration >= 6 && duration <= 8) {
@@ -24,41 +24,41 @@ export default class Information extends React.Component {
         discount = 0.3;
       }
     }
-    var dates = {...this.props.contract.dates};
+    var dates = {...this.props.snapshot.dates};
     dates.duration = duration;
-    this.props.updateContract({
+    this.props.updateSnapshot({
       dates,
-      discount: firstChange ? this.props.contract.discount : discount,
-      billingProducts: firstChange ? this.props.contract.billingProducts : [],
-      billingServices: firstChange ? this.props.contract.billingServices : []
+      discount: firstChange ? this.props.snapshot.discount : discount,
+      billingProducts: firstChange ? this.props.snapshot.billingProducts : [],
+      billingServices: firstChange ? this.props.snapshot.billingServices : []
     });
   }
 
   changeTimeUnit = (e) => {
     var timeUnit = e.target.value;
-    var dates = {...this.props.contract.dates};
+    var dates = {...this.props.snapshot.dates};
     var discount = 0;
     var firstChange = e.target.firstChange;
     dates.duration = 1;
     dates.timeUnit = timeUnit;
-    this.props.updateContract({
+    this.props.updateSnapshot({
       dates,
-      discount: firstChange ? this.props.contract.discount : discount,
-      billingProducts: firstChange ? this.props.contract.billingProducts : [],
-      billingServices: firstChange ? this.props.contract.billingServices : []
+      discount: firstChange ? this.props.snapshot.discount : discount,
+      billingProducts: firstChange ? this.props.snapshot.billingProducts : [],
+      billingServices: firstChange ? this.props.snapshot.billingServices : []
     })
   }
 
   changeDeliveryDate = (e) => {
     var startDate = e.target.value;
     var firstChange = e.target.firstChange;
-    this.props.updateContract({
+    this.props.updateSnapshot({
       dates: {
-        ...this.props.contract.dates,
+        ...this.props.snapshot.dates,
         startDate
       },
-      billingProducts: firstChange ? this.props.contract.billingProducts : [],
-      billingServices: firstChange ? this.props.contract.billingServices : []
+      billingProducts: firstChange ? this.props.snapshot.billingProducts : [],
+      billingServices: firstChange ? this.props.snapshot.billingServices : []
     })
   }
 
@@ -68,18 +68,22 @@ export default class Information extends React.Component {
     var extra = e.target.extra;
 
     if (!extra) {
-      this.props.updateContract({[name]: value});
+      this.props.updateSnapshot({[name]: value});
     } else {
-      var obj = {...this.props.contract[extra]};
+      var obj = {...this.props.snapshot[extra]};
       obj[name] = value;
-      this.props.updateContract({[extra]: obj});
+      this.props.updateSnapshot({[extra]: obj});
     }
+  }
+
+  handleChangeClient = (e, client) => {
+    this.props.updateSnapshot({ client });
   }
 
   cepButtonClick = (data) => {
     if (!data.cep) return;
     var deliveryAddress = {
-      ...this.props.contract.deliveryAddress,
+      ...this.props.snapshot.deliveryAddress,
       street: data.logradouro,
       district: data.bairro,
       city: data.localidade,
@@ -87,150 +91,146 @@ export default class Information extends React.Component {
       number: '',
       additional: ''
     };
-    this.props.updateContract({ deliveryAddress });
+    this.props.updateSnapshot({ deliveryAddress });
   }
 
   render() {
       return (
-        <div className="contract__information">
-          <div className="contract__information__left">
-            <SuggestionBar
-              title="Cliente:"
-              name="clientId"
-              className="span4"
-              disabled={this.props.disabled}
-              database={this.props.clientsDatabase}
-              fields={['description', 'registry']}
-              error={this.props.errorKeys.includes("clientId")}
-              value={this.props.contract.clientId}
-              onClick={this.handleChange}>
-            </SuggestionBar>
-            <Link
-              className="span2"
-              to={`/proposal/${this.props.contract.proposal}`}
-              style={{textDecoration: 'none', cursor: 'pointer'}}>
-              <Input
-                title="Proposta:"
-                name="proposal"
-                type="text"
-                disabled={true}
-                value={this.props.contract.proposal + "." + (this.props.contract.proposalVersion+1)}
-                onChange={this.handleChange}
-              />
-            </Link>
-            <CalendarBar
-              title="Início:"
-              name="startDate"
-              extra="dates"
-              className="span2"
-              disabled={this.props.disabled}
-              onChange={this.changeDeliveryDate}
-              value={this.props.contract.dates.startDate}
-            />
+        <div className="main-scene__information--contract">
+          <SuggestionBar
+            title="Cliente:"
+            name="client"
+            className="grid-span-4"
+            disabled={this.props.disabled}
+            database={this.props.clientsDatabase}
+            fields={['description', 'registry']}
+            error={this.props.errorKeys.includes("client")}
+            value={this.props.snapshot.client._id}
+            onClick={this.handleChangeClient}>
+          </SuggestionBar>
+          <Link
+            className="grid-span-2"
+            to={`/proposal/${this.props.contract.proposalId}`}
+            style={{textDecoration: 'none', cursor: 'pointer'}}>
             <Input
-              title="Desconto:"
-              name="discount"
-              type="percent"
-              disabled={this.props.disabled}
-              error={this.props.errorKeys.includes("discount")}
-              value={this.props.contract.discount}
-              onChange={this.handleChange}
-            />
-            <Input
-              title="Duração:"
-              value={this.props.contract.dates.duration}
-              onChange={this.changeDuration}
-              disabled={this.props.disabled}
-              error={this.props.errorKeys.includes("duration")}
-              name="duration"
-              extra="dates"
-              type="number"
-              min={1}
-              max={this.props.contract.dates.timeUnit === "months" ? 999 : 30}
-            />
-            <Input
-              title="Unidade:"
-              type="select"
-              name="timeUnit"
-              extra="dates"
-              className="span2"
-              onChange={this.changeTimeUnit}
-              disabled={this.props.disabled}
-              value={this.props.contract.dates.timeUnit}>
-                <option value="months">Meses</option>
-                <option value="days">Dias</option>
-            </Input>
-          </div>
-          <div className="contract__information__right">
-            <Input
-              title="Endereço de Entrega:"
-              name="street"
+              title="Proposta:"
+              name="proposal"
               type="text"
-              className="span4"
-              extra="deliveryAddress"
-              error={this.props.errorKeys.includes("street")}
-              value={this.props.contract.deliveryAddress.street}
+              disabled={true}
+              value={this.props.contract.proposalId + "." + (this.props.contract.proposalSnapshot+1)}
               onChange={this.handleChange}
-              disabled={this.props.disabled}
             />
-            <Input
-              title="CEP:"
-              name="cep"
-              type="cep"
-              className="span2"
-              extra="deliveryAddress"
-              error={this.props.errorKeys.includes("cep")}
-              buttonClick={this.cepButtonClick}
-              value={this.props.contract.deliveryAddress.cep}
-              onChange={this.handleChange}
-              disabled={this.props.disabled}
-            />
+          </Link>
+          <Input
+            title="Endereço de Entrega:"
+            name="street"
+            type="text"
+            className="grid-span-4"
+            extra="deliveryAddress"
+            error={this.props.errorKeys.includes("street")}
+            value={this.props.snapshot.deliveryAddress.street}
+            onChange={this.handleChange}
+            disabled={this.props.disabled}
+          />
+          <Input
+            title="CEP:"
+            name="cep"
+            type="cep"
+            className="grid-span-2"
+            extra="deliveryAddress"
+            error={this.props.errorKeys.includes("cep")}
+            buttonClick={this.cepButtonClick}
+            value={this.props.snapshot.deliveryAddress.cep}
+            onChange={this.handleChange}
+            disabled={this.props.disabled}
+          />
+          <CalendarBar
+            title="Início:"
+            name="startDate"
+            extra="dates"
+            className="grid-span-2"
+            disabled={this.props.disabled}
+            onChange={this.changeDeliveryDate}
+            value={this.props.snapshot.dates.startDate}
+          />
+          <Input
+            title="Desconto:"
+            name="discount"
+            type="percent"
+            disabled={this.props.disabled}
+            error={this.props.errorKeys.includes("discount")}
+            value={this.props.snapshot.discount}
+            onChange={this.handleChange}
+          />
+          <Input
+            title="Duração:"
+            value={this.props.snapshot.dates.duration}
+            onChange={this.changeDuration}
+            disabled={this.props.disabled}
+            error={this.props.errorKeys.includes("duration")}
+            name="duration"
+            extra="dates"
+            type="number"
+            min={1}
+            max={this.props.snapshot.dates.timeUnit === "months" ? 999 : 30}
+          />
+          <Input
+            title="Unidade:"
+            type="select"
+            name="timeUnit"
+            extra="dates"
+            className="grid-span-2"
+            onChange={this.changeTimeUnit}
+            disabled={this.props.disabled}
+            value={this.props.snapshot.dates.timeUnit}>
+              <option value="months">Meses</option>
+              <option value="days">Dias</option>
+          </Input>
 
-            <Input
-              title="Cidade:"
-              name="city"
-              type="text"
-              className="span2"
-              extra="deliveryAddress"
-              error={this.props.errorKeys.includes("city")}
-              value={this.props.contract.deliveryAddress.city}
-              onChange={this.handleChange}
-              disabled={this.props.disabled}
-            />
-            <Input
-              title="Estado:"
-              type="select"
-              name="state"
-              extra="deliveryAddress"
-              error={this.props.errorKeys.includes("state")}
-              onChange={this.handleChange}
-              disabled={this.props.disabled}
-              value={this.props.contract.deliveryAddress.state}>
-              {tools.states.map((item, i) => {
-                return <option key={i} value={item}>{item}</option>
-              })}
-            </Input>
-            <Input
-              title="Número:"
-              name="number"
-              type="text"
-              extra="deliveryAddress"
-              error={this.props.errorKeys.includes("number")}
-              value={this.props.contract.deliveryAddress.number}
-              onChange={this.handleChange}
-              disabled={this.props.disabled}
-            />
-            <Input
-              title="Complemento:"
-              name="additional"
-              type="text"
-              className="span2"
-              extra="deliveryAddress"
-              value={this.props.contract.deliveryAddress.additional}
-              onChange={this.handleChange}
-              disabled={this.props.disabled}
-            />
-          </div>
+          <Input
+            title="Cidade:"
+            name="city"
+            type="text"
+            className="grid-span-2"
+            extra="deliveryAddress"
+            error={this.props.errorKeys.includes("city")}
+            value={this.props.snapshot.deliveryAddress.city}
+            onChange={this.handleChange}
+            disabled={this.props.disabled}
+          />
+          <Input
+            title="Estado:"
+            type="select"
+            name="state"
+            extra="deliveryAddress"
+            error={this.props.errorKeys.includes("state")}
+            onChange={this.handleChange}
+            disabled={this.props.disabled}
+            value={this.props.snapshot.deliveryAddress.state}>
+            {tools.states.map((item, i) => {
+              return <option key={i} value={item}>{item}</option>
+            })}
+          </Input>
+          <Input
+            title="Número:"
+            name="number"
+            type="text"
+            extra="deliveryAddress"
+            error={this.props.errorKeys.includes("number")}
+            value={this.props.snapshot.deliveryAddress.number}
+            onChange={this.handleChange}
+            disabled={this.props.disabled}
+          />
+          <Input
+            title="Complemento:"
+            name="additional"
+            type="text"
+            className="grid-span-2"
+            extra="deliveryAddress"
+            value={this.props.snapshot.deliveryAddress.additional}
+            onChange={this.handleChange}
+            disabled={this.props.disabled}
+          />
         </div>
       )
   }

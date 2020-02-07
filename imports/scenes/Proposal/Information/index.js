@@ -94,7 +94,7 @@ export default class Information extends React.Component {
 
   render() {
       return (
-        <div className="proposal__information">
+        <div className="main-scene__information--proposal">
           <Input
             title="Nome do Cliente:"
             className="grid-span-2"

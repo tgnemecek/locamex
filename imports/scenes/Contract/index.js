@@ -22,13 +22,13 @@ import NotFound from '/imports/components/NotFound/index';
 import Loading from '/imports/components/Loading/index';
 
 import MainHeader from '/imports/components/MainHeader/index';
-import SceneItems from '/imports/components/SceneItems/index';
-import SceneFooter from '/imports/components/SceneFooter/index';
+import MainItems from '/imports/components/MainItems/index';
 import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 
 import ClientSetup from './ClientSetup/index';
 import BillingSchedule from './BillingSchedule/index';
 import Information from './Information/index';
+import Footer from './Footer/index';
 
 class Contract extends React.Component {
   constructor(props) {
@@ -50,7 +50,7 @@ class Contract extends React.Component {
       snapshotIndex,
       errorMsg: '',
       errorKeys: [],
-      clientSetupWindow: true,
+      clientSetupWindow: (snapshotIndex === 0 && !snapshot.client),
       databaseStatus: ''
     }
   }
@@ -65,63 +65,93 @@ class Contract extends React.Component {
     })
   }
 
-  setError = (errorMsg, errorKeys) => {
-    this.setState({ errorMsg, errorKeys })
-  }
-
-  toggleCancelWindow = () => {
-    var toggleCancelWindow = !this.state.toggleCancelWindow;
-    this.setState({ toggleCancelWindow });
-  }
-
-  toggleFinalizeWindow = () => {
-    var toggleFinalizeWindow = !this.state.toggleFinalizeWindow;
-    this.setState({ toggleFinalizeWindow });
-  }
-
-  changeVersion = (e) => {
-    this.setState({
-      snapshot: tools.explodeSnapshot({
-        ...this.props.snapshot,
-        _id: this.state.snapshot._id
-      }, e.target.value)
+  changeSnapshot = (e, callback) => {
+    var snapshotIndex = e.target.value;
+    var snapshot = this.props.contract.snapshots[snapshotIndex];
+    this.setState({ snapshot, snapshotIndex }, () => {
+      if (typeof callback === "function") {
+        callback();
+      }
     });
   }
 
-  cancelSnapshot = (callback) => {
+  cancelContract = (callback) => {
     this.setState({ databaseStatus: "loading" }, () => {
-      const cancel = (snapshot) => {
-        Meteor.call('snapshots.cancel', snapshot._id, (err, res) => {
+      const cancel = () => {
+        Meteor.call('contracts.cancel', this.props.contract._id, (err, res) => {
           if (res) {
             var databaseStatus = {
               status: "completed",
-              message: "Proposta Cancelada!"
+              message: "Contrato Cancelado!"
             }
-            snapshot.status = "cancelled";
-            this.setState({ snapshot, databaseStatus });
+            this.setState({ databaseStatus });
           } else if (err) {
             this.setState({ databaseStatus: "failed" });
             console.log(err);
           }
-          callback();
+          if (typeof callback === "function") {
+            callback();
+          }
         });
       }
       this.saveEdits(cancel);
     })
   }
 
-  activateSnapshot = (callback) => {
+  saveEdits = (callback) => {
     this.setState({ databaseStatus: "loading" }, () => {
-      const activate = (snapshot) => {
-        Meteor.call('snapshots.activate', snapshot, (err, res) => {
+      if (this.props.contract.status !== 'inactive') {
+        return callback(this.state.snapshot);
+      }
+      Meteor.call(
+        'contracts.update',
+        this.state.snapshot,
+        this.props.contract._id,
+        this.state.snapshotIndex,
+        (err, res) => {
+        if (res) {
+          var snapshot = this.state.snapshot;
+          var snapshotIndex = this.state.snapshotIndex;
+          var databaseStatus;
+          if (res.hasChanged) {
+            snapshotIndex = res.index;
+            snapshot = res.snapshot;
+            databaseStatus = "completed";
+          } else {
+            databaseStatus = {
+              status: "completed",
+              message: "Nenhuma alteração realizada."
+            }
+          }
+          if (typeof callback === "function") {
+            callback(snapshot);
+          } else {
+            this.setState({
+              snapshot,
+              snapshotIndex,
+              databaseStatus
+            });
+          }
+        } else if (err) {
+          this.setState({ databaseStatus: "failed" });
+          console.log(err);
+        }
+      });
+    })
+  }
+
+  activateContract = (callback) => {
+    this.setState({ databaseStatus: "loading" }, () => {
+      const activate = () => {
+        var _id = this.props.contract._id;
+        var snapshotIndex = this.state.snapshotIndex;
+        Meteor.call('contracts.activate', _id, snapshotIndex, (err, res) => {
           if (res) {
             var databaseStatus = {
               status: "completed",
               message: "Contrato Ativado!"
             }
-            snapshot.status = "active";
-            snapshot.activeVersion = snapshot.version;
-            this.setState({ snapshot, databaseStatus });
+            this.setState({ databaseStatus });
           } else if (err) {
             this.setState({ databaseStatus: "failed" });
             console.log(err);
@@ -133,74 +163,121 @@ class Contract extends React.Component {
     })
   }
 
-  finalizeSnapshot = (callback) => {
-    this.setState({ databaseStatus: "loading" }, () => {
-      const finalize = (snapshot) => {
-        Meteor.call('snapshots.finalize', snapshot._id, (err, res) => {
-          if (res) {
-            var databaseStatus = {
-              status: "completed",
-              message: "Contrato Finalizado!"
-            }
-            snapshot.status = "finalized";
-            this.setState({ snapshot, databaseStatus });
-          } else if (err) {
-            this.setState({ databaseStatus: "failed" });
-            console.log(err);
-          }
-          callback();
-        });
-      }
-      this.saveEdits(finalize);
-    })
-  }
+  // setError = (errorMsg, errorKeys) => {
+  //   this.setState({ errorMsg, errorKeys })
+  // }
+  //
+  // toggleCancelWindow = () => {
+  //   var toggleCancelWindow = !this.state.toggleCancelWindow;
+  //   this.setState({ toggleCancelWindow });
+  // }
+  //
+  // toggleFinalizeWindow = () => {
+  //   var toggleFinalizeWindow = !this.state.toggleFinalizeWindow;
+  //   this.setState({ toggleFinalizeWindow });
+  // }
+  //
+  // changeVersion = (e) => {
+  //   this.setState({
+  //     snapshot: tools.explodeSnapshot({
+  //       ...this.props.snapshot,
+  //       _id: this.state.snapshot._id
+  //     }, e.target.value)
+  //   });
+  // }
+  //
+  // cancelSnapshot = (callback) => {
+  //   this.setState({ databaseStatus: "loading" }, () => {
+  //     const cancel = (snapshot) => {
+  //       Meteor.call('snapshots.cancel', snapshot._id, (err, res) => {
+  //         if (res) {
+  //           var databaseStatus = {
+  //             status: "completed",
+  //             message: "Proposta Cancelada!"
+  //           }
+  //           snapshot.status = "cancelled";
+  //           this.setState({ snapshot, databaseStatus });
+  //         } else if (err) {
+  //           this.setState({ databaseStatus: "failed" });
+  //           console.log(err);
+  //         }
+  //         callback();
+  //       });
+  //     }
+  //     this.saveEdits(cancel);
+  //   })
+  // }
+  //
 
-  saveEdits = (callback) => {
-    this.setState({ databaseStatus: "loading" }, () => {
-      // Only update. Snapshots are inserted by activating Proposals
-      Meteor.call('snapshots.update', this.state.snapshot, (err, res) => {
-        if (res) {
-          var snapshot;
-          var databaseStatus;
-          if (res.hasChanged) {
-            snapshot = tools.explodeSnapshot(res.snapshot);
-            databaseStatus = "completed";
-          } else {
-            snapshot = this.state.snapshot;
-            databaseStatus = {
-              status: "completed",
-              message: "Nenhuma alteração realizada."
-            }
-          }
-          if (typeof callback === "function") {
-            callback(snapshot);
-          } else this.setState({ snapshot, databaseStatus });
-        } else if (err) {
-          this.setState({ databaseStatus: "failed" });
-          console.log(err);
-        }
-      });
-    })
-  }
-
-  generateDocument = () => {
-    const generate = (master) => {
-      master.type = "snapshot";
-
-      Meteor.call('pdf.generate', master, (err, res) => {
-        if (res) {
-          saveAs(res.data, res.fileName);
-          this.setState({ databaseStatus: "completed" });
-        }
-        if (err) {
-          this.setState({ databaseStatus: "failed" });
-          console.log(err);
-        }
-      })
-    }
-    this.saveEdits(generate);
-  }
-
+  //
+  // finalizeSnapshot = (callback) => {
+  //   this.setState({ databaseStatus: "loading" }, () => {
+  //     const finalize = (snapshot) => {
+  //       Meteor.call('snapshots.finalize', snapshot._id, (err, res) => {
+  //         if (res) {
+  //           var databaseStatus = {
+  //             status: "completed",
+  //             message: "Contrato Finalizado!"
+  //           }
+  //           snapshot.status = "finalized";
+  //           this.setState({ snapshot, databaseStatus });
+  //         } else if (err) {
+  //           this.setState({ databaseStatus: "failed" });
+  //           console.log(err);
+  //         }
+  //         callback();
+  //       });
+  //     }
+  //     this.saveEdits(finalize);
+  //   })
+  // }
+  //
+  // saveEdits = (callback) => {
+  //   this.setState({ databaseStatus: "loading" }, () => {
+  //     // Only update. Snapshots are inserted by activating Proposals
+  //     Meteor.call('snapshots.update', this.state.snapshot, (err, res) => {
+  //       if (res) {
+  //         var snapshot;
+  //         var databaseStatus;
+  //         if (res.hasChanged) {
+  //           snapshot = tools.explodeSnapshot(res.snapshot);
+  //           databaseStatus = "completed";
+  //         } else {
+  //           snapshot = this.state.snapshot;
+  //           databaseStatus = {
+  //             status: "completed",
+  //             message: "Nenhuma alteração realizada."
+  //           }
+  //         }
+  //         if (typeof callback === "function") {
+  //           callback(snapshot);
+  //         } else this.setState({ snapshot, databaseStatus });
+  //       } else if (err) {
+  //         this.setState({ databaseStatus: "failed" });
+  //         console.log(err);
+  //       }
+  //     });
+  //   })
+  // }
+  //
+  // generateDocument = () => {
+  //   const generate = (master) => {
+  //     master.type = "snapshot";
+  //
+  //     Meteor.call('pdf.generate', master, (err, res) => {
+  //       if (res) {
+  //         saveAs(res.data, res.fileName);
+  //         this.setState({ databaseStatus: "completed" });
+  //       }
+  //       if (err) {
+  //         this.setState({ databaseStatus: "failed" });
+  //         console.log(err);
+  //       }
+  //     })
+  //   }
+  //   this.saveEdits(generate);
+  // }
+  //
   totalValue = (option) => {
     var duration = this.state.snapshot.dates.timeUnit === "months" ? this.state.snapshot.dates.duration : 1;
     var discount = this.state.snapshot.discount;
@@ -230,64 +307,57 @@ class Contract extends React.Component {
   }
 
   render () {
-    var disabled = this.state.snapshot.status === "cancelled";
     return (
       <div className="page-content">
-        {/* <RedirectUser currentPage="snapshot"/> */}
-        <div className="base-scene snapshot">
+        <RedirectUser currentPage="contract"/>
+        <div className="main-scene">
           <MainHeader
-            master={{...this.state.snapshot, type: "snapshot"}}
-            databases={this.props.databases}
-            snapshots={this.props.snapshot ? this.props.snapshot.snapshots : []}
-            changeVersion={this.changeVersion}
+            createdByName={this.state.snapshot.createdByName}
+            title={"Contrato #" + this.props.contract._id}
+            status={this.props.contract.status}
+            type="contract"
+            toggleDocuments={this.toggleDocuments}
+            cancelMaster={this.cancelContract}
 
-            BillingSchedule={BillingSchedule}
-
-            updateMaster={this.updateSnapshot}
-            cancelMaster={this.cancelSnapshot}
-            saveMaster={this.saveEdits}
-            generateDocument={this.generateDocument}
-
-            errorKeys={this.state.errorKeys}
-            disabled={disabled}
+            changeSnapshot={this.changeSnapshot}
+            snapshotIndex={this.state.snapshotIndex}
+            snapshots={this.props.contract.snapshots}
           />
-          {/* <div className="snapshot__body">
+          <div className="main-scene__body">
             <Information
-              disabled={this.state.snapshot.status !== "inactive"}
+              disabled={this.props.contract.status !== "inactive"}
               clientsDatabase={this.props.databases.clientsDatabase}
+              contract={this.props.contract}
               snapshot={this.state.snapshot}
               updateSnapshot={this.updateSnapshot}
               errorKeys={this.state.errorKeys}
+              settings={this.props.settings}
             />
-            <SceneItems
-              disabled={this.state.snapshot.status !== "inactive"}
-              master={this.state.snapshot}
+            <MainItems
+              disabled={this.props.contract.status !== "inactive"}
+              snapshot={this.state.snapshot}
               databases={this.props.databases}
-              updateMaster={this.updateSnapshot}
+              updateSnapshot={this.updateSnapshot}
+              docType="contract"
             />
-            <DatabaseStatus status={this.state.databaseStatus}/>
-            {this.state.clientSetupWindow ?
-              <ClientSetup
-                updateSnapshot={this.updateSnapshot}
-                proposal={this.props.proposal}
-                closeWindow={() => this.setState({ clientSetupWindow: false })}
-                clientsDatabase={this.props.databases.clientsDatabase}/>
-            : null}
+            <Footer
+              totalValue={this.totalValue()}
+              productsValue={this.totalValue('products')}
+              servicesValue={this.totalValue('services')}
+              creationDate={this.props.contract.snapshots[0].dates.creationDate}
+              status={this.props.contract.status}
+              saveEdits={this.saveEdits}
+              activateContract={this.activateContract}
+            />
           </div>
-          <SceneFooter
-            totalValue={this.totalValue()}
-            productsValue={this.totalValue('products')}
-            servicesValue={this.totalValue('services')}
-
-            setError={this.setError}
-            errorMsg={this.state.errorMsg}
-
-            master={{...this.state.snapshot, type: "snapshot"}}
-
-            saveEdits={this.saveEdits}
-            activateMaster={this.activateSnapshot}
-            finalizeMaster={this.finalizeSnapshot}
-          />*/}
+          <DatabaseStatus status={this.state.databaseStatus}/>
+          {this.state.clientSetupWindow ?
+            <ClientSetup
+              updateSnapshot={this.updateSnapshot}
+              proposalClient={this.props.proposalClient}
+              closeWindow={() => this.setState({ clientSetupWindow: false })}
+              clientsDatabase={this.props.databases.clientsDatabase}/>
+          : null}
         </div>
       </div>
     )
@@ -334,13 +404,11 @@ export default SnapshotWrapper = withTracker((props) => {
 
   var proposalClient = {};
 
-  if (contract) {
-    var proposalId = contract.proposalNumber.replace(/\.\d+/g, '');
-    var proposal = Proposals.findOne({ _id: proposalId });
+  if (contract && contract.snapshots.length === 1) {
+    var proposal = Proposals.findOne({ _id: contract.proposalId });
     if (proposal) {
-      var proposalSnapshot = proposal.snapshots.find((item) => {
-        return item.active === true;
-      })
+      var index = contract.proposalSnapshot;
+      var proposalSnapshot = proposal.snapshots[index];
       proposalClient = proposalSnapshot.client;
     }
   }

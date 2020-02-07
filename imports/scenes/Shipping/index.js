@@ -232,7 +232,7 @@ class Shipping extends React.Component {
     return (
       <div className="page-content">
         <RedirectUser currentPage="shipping"/>
-        <div className="base-scene shipping">
+        <div className="main-scene shipping">
           <SceneHeader
             master={{...this.props.contract, type: "shipping"}}
             databases={this.props.databases}

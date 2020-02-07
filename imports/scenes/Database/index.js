@@ -50,7 +50,7 @@ export default class Database extends React.Component {
   render () {
     return (
       <div className="page-content">
-        <div className="base-scene database">
+        <div className="main-scene database">
           <DatabaseTable
             type={this.props.match.params.database}
             item={this.state.item}

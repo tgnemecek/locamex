@@ -56,7 +56,7 @@ if (Meteor.isServer) {
       }
       Clients.insert(data);
       Meteor.call('history.insert', data, 'clients');
-      return _id;
+      return data;
     },
 
     'clients.hideContact'(_id, contactId) {

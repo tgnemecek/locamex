@@ -282,7 +282,7 @@ class Proposal extends React.Component {
     return (
       <div className="page-content">
         <RedirectUser currentPage="proposal"/>
-        <div className="base-scene proposal">
+        <div className="main-scene">
           <MainHeader
             createdByName={this.state.snapshot.createdByName}
             title={this.props.proposal ?
@@ -300,10 +300,9 @@ class Proposal extends React.Component {
             snapshots={this.props.proposal ?
               this.props.proposal.snapshots : []}
           />
-          <div className="proposal__body">
+          <div className="main-scene__body">
             <Information
               disabled={this.props.proposal ? this.props.proposal.status !== "inactive" : false}
-              clientsDatabase={this.props.databases.clientsDatabase}
               snapshot={this.state.snapshot}
               updateSnapshot={this.updateSnapshot}
               errorKeys={this.state.errorKeys}

@@ -12,7 +12,7 @@ export default class ClientSetup extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      clientId: '',
+      client: '',
       clientWindow: false,
       confirmationWindow: false
     }
@@ -20,39 +20,39 @@ export default class ClientSetup extends React.Component {
   toggleConfirmationWindow = () => {
     this.setState({ confirmationWindow: !this.state.confirmationWindow })
   }
-  handleChange = (e) => {
-    this.setState({ clientId: e.target.value })
+  handleChange = (e, client) => {
+    this.setState({ client })
   }
-  toggleClientWindow = (_id) => {
+  toggleClientWindow = (client) => {
     var clientWindow = this.state.clientWindow ? false : {
-      description: this.props.proposal.client.description,
+      description: this.props.proposalClient.description,
       contacts: [
         {
-          name: this.props.proposal.client.name,
-          email: this.props.proposal.client.email,
-          phone1: this.props.proposal.client.phone
+          name: this.props.proposalClient.name,
+          email: this.props.proposalClient.email,
+          phone1: this.props.proposalClient.phone
         }
       ]
     };
     this.setState({
       clientWindow,
-      clientId: _id || ''
+      client
     })
   }
   verification = () => {
-    if (!this.state.clientId) {
+    if (!this.state.client) {
       this.toggleConfirmationWindow();
     } else {
       this.saveEdits();
     }
   }
   saveEdits = () => {
-    this.props.updateContract({
-      clientId: this.state.clientId
+    this.props.updateSnapshot({
+      client: this.state.client
     }, this.props.closeWindow)
   }
   render () {
-    if (!this.props.proposal) return null;
+    if (!this.props.proposalClient) return null;
     return (
       <Box
         title="Seleção Inicial de Cliente">
@@ -63,28 +63,28 @@ export default class ClientSetup extends React.Component {
             <div className="client-setup__proposal-body">
               <div>
                 <label className="client-setup__label">Nome do Cliente:</label>
-                {this.props.proposal.client.description}
+                {this.props.proposalClient.description}
               </div>
               <div>
                 <label className="client-setup__label">Nome do Contato:</label>
-                {this.props.proposal.client.name}
+                {this.props.proposalClient.name}
               </div>
               <div>
                 <label className="client-setup__label">Email:</label>
-                {this.props.proposal.client.email}
+                {this.props.proposalClient.email}
               </div>
               <div>
                 <label className="client-setup__label">Telefone:</label>
-                {this.props.proposal.client.phone}
+                {this.props.proposalClient.phone}
               </div>
             </div>
             <div className="client-setup__client-body">
               <SuggestionBar
                 title="Selecionar Cliente:"
-                name="clientId"
+                name="client"
                 database={this.props.clientsDatabase}
                 fields={['description', 'registry']}
-                value={this.state.clientId}
+                value={this.state.client._id}
                 onClick={this.handleChange}>
               </SuggestionBar>
               <button onClick={this.toggleClientWindow} className="button--pill client-setup__add-new-button">

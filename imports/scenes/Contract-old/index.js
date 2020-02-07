@@ -262,7 +262,7 @@ class Contract extends React.Component {
     return (
       <div className="page-content">
         {/* <RedirectUser currentPage="contract"/> */}
-        <div className="base-scene contract">
+        <div className="main-scene contract">
           <SceneHeader
             master={{...this.state.contract, type: "contract"}}
             databases={this.props.databases}

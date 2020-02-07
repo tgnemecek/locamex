@@ -62,8 +62,10 @@ export default function schema(database, selector, options) {
       full: {
         ...contracts.partial,
         deliveryAddress: new SimpleSchema(addresses),
-        client: new SimpleSchema(clients.full),
-
+        client: {
+          type: Object,
+          blackbox: true // Temporary
+        },
         accessories: Array,
         'accessories.$': {
           type: Object,
