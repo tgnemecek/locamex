@@ -1,5 +1,9 @@
 # Changelog:
 
+## Version 2.4.5
+
+- Updated discounts for 2020;
+
 ## Version 2.4.4
 
 - Implemented SimpleSchema & Migration for Accessories;

@@ -13,15 +13,15 @@ export default class Information extends React.Component {
     var duration = e.target.value;
     var firstChange = e.target.firstChange;
     var discount = 0;
-    if (this.props.contract.dates.timeUnit === "months") {
+    if (this.props.snapshot.dates.timeUnit === "months") {
       if (duration >= 3 && duration <= 5) {
-        discount = 0.2;
+        discount = 0.15;
       } else if (duration >= 6 && duration <= 8) {
-        discount = 0.25;
+        discount = 0.2;
       } else if (duration >= 9 && duration <= 11) {
-        discount = 0.3;
+        discount = 0.25;
       } else if (duration >= 12) {
-        discount = 0.35;
+        discount = 0.3;
       }
     }
     var dates = {...this.props.contract.dates};
