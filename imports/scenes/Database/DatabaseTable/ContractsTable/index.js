@@ -78,7 +78,7 @@ class ContractsTable extends React.Component {
         return tools.format((productsValue + servicesValue), "currency");
       }
       const renderContractButton = () => {
-        if (tools.isUserAllowed("contract")) {
+        if (tools.isReadAllowed("contract")) {
           return (
             <td className="table__small-column">
               <Link key={i} to={"/contract/" + item._id}>
@@ -89,7 +89,7 @@ class ContractsTable extends React.Component {
         } else return null;
       }
       const renderBillingButton = () => {
-        if (tools.isUserAllowed("billing") && item.status === "active") {
+        if (tools.isReadAllowed("billing") && item.status === "active") {
           return (
             <td className="table__small-column">
               <Link key={i} to={"/billing/" + item._id}>
@@ -100,7 +100,7 @@ class ContractsTable extends React.Component {
         } else return null;
       }
       const renderShippingButton = () => {
-        if (tools.isUserAllowed("shipping") && item.status === "active") {
+        if (tools.isReadAllowed("shipping") && item.status === "active") {
           return (
             <td className="table__small-column">
               <Link key={i} to={"/shipping/" + item._id}>

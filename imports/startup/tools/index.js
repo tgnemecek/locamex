@@ -216,12 +216,25 @@ export default class tools {
     } return {};
   }
 
-  static isUserAllowed = (page) => {
+  static isReadAllowed = (page) => {
     var user = Meteor.user();
-    if (user.type === 'administrator') return true;
-    var allowedPages = userTypes[user.type].pages;
-    if (!allowedPages) return false;
-    return allowedPages.includes(page);
+    if (!user || !user.profile.type) return false;
+    if (user.profile.type === 'administrator') return true;
+    var write = userTypes[user.profile.type].write;
+    if (write.includes(page)) {
+      return true
+    } else {
+      var read = userTypes[user.profile.type].read;
+      return read.includes(page);
+    }
+  }
+
+  static isWriteAllowed = (page) => {
+    var user = Meteor.user();
+    if (!user || !user.profile.type) return false;
+    if (user.profile.type === 'administrator') return true;
+    var write = userTypes[user.profile.type].write;
+    return write.includes(page);
   }
 
   static countAvailableItems = (array) => {
@@ -233,6 +246,16 @@ export default class tools {
   }
 
   // Strings
+
+  static translateError = (error) => {
+    if (typeof error === "object") {
+      error = error.reason;
+    }
+    var dictionary = {
+      'Incorrect password': 'Senha Incorreta'
+    }
+    return dictionary[error] || 'Erro de Servidor';
+  }
 
   static makeValidFileName = (string) => {
     return string.replace(/[<>:"/\\|?*]/g, "").trim();

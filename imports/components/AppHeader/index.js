@@ -2,15 +2,18 @@ import React from 'react';
 import { Accounts } from 'meteor/accounts-base';
 import { Link, Redirect } from 'react-router-dom';
 import Icon from '/imports/components/Icon/index';
+import UserSettings from '/imports/components/UserSettings/index';
 import { appStructure } from './app-structure/index';
 import { userTypes } from '/imports/startup/user-types/index';
+
 import MenuItem from './MenuItem/index'
 
 export default class AppHeader extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentPage: {}
+      currentPage: {},
+      windowOpen: false
     }
   };
 
@@ -37,13 +40,12 @@ export default class AppHeader extends React.Component {
   }
 
   renderMenuItems = () => {
-    return null;
     var filteredPages = [];
-    var currentUserType = this.props.user.type;
-    if (!this.props.user.type) return null;
+    var currentUserType = Meteor.user().profile.type;
     var allowedPages = [];
     if (currentUserType !== "administrator") {
-      allowedPages = userTypes[currentUserType].pages;
+      allowedPages = userTypes[currentUserType].write;
+      allowedPages = allowedPages.concat(userTypes[currentUserType].read);
     }
     appStructure.forEach((group, i) => {
       var tempObject = { ...group, pages: [] };
@@ -71,6 +73,10 @@ export default class AppHeader extends React.Component {
     })
   }
 
+  toggleWindow = () => {
+    this.setState({ windowOpen: !this.state.windowOpen })
+  }
+
   render() {
     return (
       <div className="header__background">
@@ -78,16 +84,27 @@ export default class AppHeader extends React.Component {
           <img src="https://s3-sa-east-1.amazonaws.com/locamex-app/app-required/logo-sistema-branco_336x104_21-09-2018.png" className="header__logo"/>
         </Link>
         <div className="header">
-          <h1 className="header__title">{this.state.currentPage.title}</h1>
+          <h1 className="header__title">
+            {this.state.currentPage.title}
+          </h1>
           <div className="header__mobile-dropdown">
             <button className="header__mobile-menu-icon">
               <Icon icon="menu" size="2x"/>
             </button>
             <div className="header__menu">
             {this.renderMenuItems()}
-            <div className="menu-item">
-              <button onClick={() => Meteor.logout()}>Sair</button>
+            <div className="menu-item menu-item--user">
+              <Icon icon="user"/>
+              <div className="menu-item__dropbox menu-item__dropbox--user">
+                <button onClick={this.toggleWindow}>
+                  Alterar Senha
+                </button>
+                <button onClick={() => Meteor.logout()}>Sair</button>
+              </div>
             </div>
+            {this.state.windowOpen ?
+              <UserSettings toggleWindow={this.toggleWindow} />
+            : null}
           </div>
           </div>
         </div>

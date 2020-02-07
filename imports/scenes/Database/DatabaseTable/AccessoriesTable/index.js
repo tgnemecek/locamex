@@ -93,7 +93,7 @@ class AccessoriesTable extends React.Component {
         this.props.toggleImageWindow(item);
       }
       const renderEditButton = () => {
-        if (tools.isUserAllowed("accessories.edit")) {
+        if (tools.isReadAllowed("accessories.edit")) {
           return (
             <td className="table__small-column">
               <button onClick={toggleEditWindow}>
@@ -104,7 +104,7 @@ class AccessoriesTable extends React.Component {
         } else return null;
       }
       const renderStockButton = () => {
-        if (tools.isUserAllowed("accessories.stock")) {
+        if (tools.isReadAllowed("accessories.stock")) {
           return (
             <td className="table__small-column">
               <button onClick={toggleStockVisualizer}>

@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { saveAs } from 'file-saver';
+import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 
 import { Proposals } from '/imports/api/proposals/index';
 import { Containers } from '/imports/api/containers/index';
@@ -357,7 +358,7 @@ class Proposal extends React.Component {
 function ProposalLoader (props) {
   if (props.match.params.proposalId === 'new' || props.proposal) {
     if (Object.entries(props.settings).length) {
-      return <Proposal {...props} />
+      return <ErrorBoundary><Proposal {...props} /></ErrorBoundary>
     }
   }
   return null;

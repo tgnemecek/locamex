@@ -4,6 +4,9 @@
 - Added server-side security with user autentication;
 - Added SimpleSchema to other databases;
 - Rewrote databases to include all information in a single document;
+- Added UserSettings and possibility of changing user password;
+- Added schema for new Users;
+- Some user fields moved to user.profile;
 
 ## Version 2.4.4
 

@@ -23,7 +23,8 @@ import {
   faStar,
   faCalendarAlt,
   faFileInvoiceDollar,
-  faBars
+  faBars,
+  faUser
 } from '@fortawesome/free-solid-svg-icons';
 
 const ICON_SET = {
@@ -48,7 +49,8 @@ const ICON_SET = {
   star: faStar,
   calendar: faCalendarAlt,
   invoice: faFileInvoiceDollar,
-  menu: faBars
+  menu: faBars,
+  user: faUser
 }
 
 export default class Icon extends React.Component {

@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import tools from '/imports/startup/tools/index';
+import { userTypes } from '/imports/startup/user-types/index';
 
 import Block from '/imports/components/Block/index';
 import Box from '/imports/components/Box/index';
@@ -12,34 +13,32 @@ import FooterButtons from '/imports/components/FooterButtons/index';
 export default class RegisterUsers extends React.Component {
   constructor(props) {
     super(props);
-    var emails;
-    if (this.props.item.emails) {
-      if (this.props.item.emails[0]) {
-        emails = this.props.item.emails[0].address;
-      } else emails = '';
-    } else emails = '';
+    var item = this.props.item;
+    var email = (item.emails && item.emails[0]) ? item.emails[0].address : '';
     this.state = {
-      _id: this.props.item._id || '',
-      firstName: this.props.item.firstName || '',
-      lastName: this.props.item.lastName || '',
-      username: this.props.item.username || '',
-
-      type: this.props.item.type || 'administrator',
-      emails,
+      _id: item._id || '',
+      username: item.username || '',
+      email,
       password: '',
-
+      profile: {
+        firstName: item.profile ? item.profile.firstName : '',
+        lastName: item.profile ? item.profile.lastName : '',
+        type: item.profile ? item.profile.type : 'administrator',
+      },
       errorMsg: '',
       errorKeys: [],
-
       confirmationWindow: false
     }
   }
   onChange = (e) => {
-    var errorKeys = [...this.state.errorKeys];
-    var fieldIndex = errorKeys.findIndex((key) => key === e.target.name);
-    errorKeys.splice(fieldIndex, 1);
-    
     this.setState({ [e.target.name]: e.target.value });
+  }
+  onChangeProfile = (e) => {
+    var profile = {
+      ...this.state.profile,
+      [e.target.name]: e.target.value
+    }
+    this.setState({ profile });
   }
   toggleConfirmationWindow = () => {
     var confirmationWindow = !this.state.confirmationWindow;
@@ -55,26 +54,26 @@ export default class RegisterUsers extends React.Component {
     if (!this.state.username.trim()) {
       errorKeys.push("username");
     }
-    if (!this.state.firstName.trim()) {
+    if (!this.state.profile.firstName.trim()) {
       errorKeys.push("firstName");
     }
-    if (!this.state.lastName.trim()) {
+    if (!this.state.profile.lastName.trim()) {
       errorKeys.push("lastName");
     }
     if (!this.state.password.trim() && !this.props.item._id) {
       errorKeys.push("password");
     }
-    if (!this.state.emails || !tools.checkEmail(this.state.emails)) {
-      errorKeys.push("emails");
+    if (!this.state.email || !tools.checkEmail(this.state.email)) {
+      errorKeys.push("email");
     }
     errorMsg = 'Campos obrigatórios não preenchidos/inválidos.';
     if (this.state.password.trim() && this.state.password.trim().length < 4) {
       errorKeys.push("password");
       errorMsg = 'A senha deve ter ao menos 4 caracteres';
     }
-    if (this.state.username.trim() && this.state.username.trim().length < 3) {
+    if (this.state.username.trim() && this.state.username.trim().length < 4) {
       errorKeys.push("username");
-      errorMsg = 'O nome de usuário deve ter ao menos 3 caracteres';
+      errorMsg = 'O nome de usuário deve ter ao menos 4 caracteres';
     }
     if (errorKeys.length === 0) {
       if (this.props.item._id) {
@@ -85,13 +84,25 @@ export default class RegisterUsers extends React.Component {
       this.props.toggleWindow();
     } else this.setState({ errorMsg, errorKeys })
   }
+  renderUserTypesOptions = () => {
+    var array = Object.keys(userTypes);
+    array.sort();
+    return array.map((key, i) => {
+      return (
+        <option
+          key={i}
+          value={key}>
+            {userTypes[key].label}
+        </option>
+      )
+    })
+  }
   render() {
     return (
       <ErrorBoundary>
         <Box className="register-data"
           title={this.props.item._id ? "Editar Usuário" : "Criar Novo Usuário"}
-          closeBox={this.props.toggleWindow}
-          width="800px">
+          closeBox={this.props.toggleWindow}>
             <div className="error-message">{this.state.errorMsg}</div>
             <Block columns={3}>
               <Input
@@ -99,23 +110,23 @@ export default class RegisterUsers extends React.Component {
                 type="text"
                 name="firstName"
                 error={this.state.errorKeys.includes("firstName")}
-                value={this.state.firstName}
-                onChange={this.onChange}
+                value={this.state.profile.firstName}
+                onChange={this.onChangeProfile}
               />
               <Input
                 title="Sobrenome:"
                 type="text"
                 name="lastName"
                 error={this.state.errorKeys.includes("lastName")}
-                value={this.state.lastName}
-                onChange={this.onChange}
+                value={this.state.profile.lastName}
+                onChange={this.onChangeProfile}
               />
               <Input
                 title="Email:"
                 type="email"
-                name="emails"
-                error={this.state.errorKeys.includes("emails")}
-                value={this.state.emails}
+                name="email"
+                error={this.state.errorKeys.includes("email")}
+                value={this.state.profile.email}
                 onChange={this.onChange}
               />
               <Input
@@ -133,16 +144,15 @@ export default class RegisterUsers extends React.Component {
                 error={this.state.errorKeys.includes("password")}
                 value={this.state.password}
                 onChange={this.onChange}
+                disabled={!!this.props.item._id}
               />
               <Input
                 title="Tipo de Usuário"
                 type="select"
                 name="type"
-                onChange={this.onChange}>
-                <option value="administrator">Administrador</option>
-                <option value="sales">Vendas</option>
-                <option value="finances">Financeiro</option>
-                <option value="maintenance">Manutenção</option>
+                value={this.state.profile.type}
+                onChange={this.onChangeProfile}>
+                {this.renderUserTypesOptions()}
               </Input>
             </Block>
             <ConfirmationWindow

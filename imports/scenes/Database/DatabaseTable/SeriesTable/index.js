@@ -102,7 +102,7 @@ class SeriesTable extends React.Component {
         this.props.toggleImageWindow(item);
       }
       const renderEditButton = () => {
-        if (tools.isUserAllowed("series.edit")) {
+        if (tools.isReadAllowed("series.edit")) {
           return (
             <td className="table__small-column">
               <button onClick={toggleEditWindow}>

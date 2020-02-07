@@ -1,5 +1,6 @@
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
+import { userTypes } from '/imports/startup/user-types/index';
 import tools from '/imports/startup/tools/index';
 import Icon from '/imports/components/Icon/index';
 import RedirectUser from '/imports/components/RedirectUser/index';
@@ -28,34 +29,20 @@ class UsersTable extends React.Component {
     )
   }
   renderBody = () => {
-    function translate(type) {
-      switch (type) {
-        case 'administrator':
-          return "Administrador";
-          break;
-        case "sales":
-          return "Vendas";
-          break;
-        case "finances":
-          return "Financeiro";
-          break;
-        case "maintenance":
-          return "Manutenção";
-          break;
-        default:
-          return "-"
-      }
-    }
     return this.props.fullDatabase.map((item, i) => {
       const toggleEditWindow = () => {
         this.props.toggleEditWindow(item);
       }
       return (
         <tr key={i}>
-          <td>{item.firstName + " " + item.lastName}</td>
+          <td>{item.profile.firstName + " " + item.profile.lastName}</td>
           <td>{item.username}</td>
-          <td className="table__small-column">{translate(item.type)}</td>
-          <td className="table__small-column hide-at-700px">{item.emails[0].address}</td>
+          <td className="table__small-column">
+            {userTypes[item.profile.type].label}
+          </td>
+          <td className="table__small-column hide-at-700px">
+            {item.emails[0].address}
+          </td>
           <td className="table__small-column">
             <button onClick={toggleEditWindow}>
               <Icon icon="edit" />

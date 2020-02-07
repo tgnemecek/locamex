@@ -73,7 +73,7 @@ class ProposalsTable extends React.Component {
         return tools.format((productsValue + servicesValue), "currency");
       }
       const renderProposalButton = () => {
-        if (tools.isUserAllowed("proposal")) {
+        if (tools.isReadAllowed("proposal")) {
           return (
             <td className="table__small-column">
               <Link key={i} to={"/proposal/" + item._id}>
@@ -84,7 +84,7 @@ class ProposalsTable extends React.Component {
         } else return null;
       }
       const renderShippingButton = () => {
-        if (tools.isUserAllowed("shipping") && item.status === "active") {
+        if (tools.isReadAllowed("shipping") && item.status === "active") {
           return (
             <td className="table__small-column">
               <Link key={i} to={"/shipping/" + item._id}>
@@ -148,7 +148,6 @@ class ProposalsTable extends React.Component {
 export default ProposalsTableWrapper = withTracker((props) => {
   var recordsToShow = 50;
   Meteor.subscribe('proposalsPub', recordsToShow);
-  Meteor.subscribe('usersPub');
   var fullDatabase = Proposals.find().fetch();
   fullDatabase = tools.sortObjects(fullDatabase, '_id', {reverseOrder: true});
   fullDatabase = fullDatabase.map((item) => {

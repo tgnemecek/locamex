@@ -1,24 +1,74 @@
+// Each userType has a write and read array of pages
+// A 'write' permission is also a 'read' permission
+// The 'events' array is temporary
+
 export const userTypes = {
+  administrator: {
+    label: "Administrador",
+    write: ['all'],
+    read: ['all'],
+    events: ['all']
+  },
+  general: {
+    label: "Geral",
+    write: [
+      "clients",
+      "series",
+      "accessories",
+      "packs",
+      "proposals",
+      "proposal",
+      "contracts",
+      "contract",
+      "billing",
+      "accounts",
+      "shipping",
+      "modules"
+    ],
+    read: [],
+    events: [ // Temporary so it doesn't break!
+      "billingProducts",
+      "billingServices"
+    ]
+  },
   sales: {
-    pages: ["clients", "series", "accessories", "packs", "proposals", "proposal"],
-    events: []
+    label: "Vendas",
+    write: [
+      "clients",
+      "series",
+      "accessories",
+      "packs",
+      "proposals",
+      "proposal"
+    ],
+    read: []
   },
   finances: {
-    pages: ["clients", "contracts", "contract", "billing", "accounts"],
-    events: [
+    label: "Financeiro",
+    write: [
+      "clients",
+      "contracts",
+      "contract",
+      "billing",
+      "accounts"
+    ],
+    read: [],
+    events: [ // Temporary so it doesn't break!
       "billingProducts",
       "billingServices"
     ]
   },
   maintenance: {
-    pages: [
-      "series", "series.edit",
-      "accessories", "accessories.edit", "accessories.stock",
+    label: "Manutenção",
+    write: [
+      "series",
+      "accessories",
       "modules",
       "packs",
       "contracts",
       "shipping"
     ],
-    events: ["deliveryDate"]
+    read: [],
+    events: ["deliveryDate"] // Temporary so it doesn't break!
   }
 }

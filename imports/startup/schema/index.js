@@ -1,6 +1,5 @@
 import SimpleSchema from 'simpl-schema';
 import { check } from 'meteor/check';
-
 import addresses from './addresses';
 import accessories from './accessories';
 import containers from './containers';
@@ -9,9 +8,11 @@ import services from './services';
 import clients from './clients';
 import proposals from './proposals';
 import contracts from './contracts';
+import users from './users';
 
 export default function schema(database, selector, options) {
-  if (!Meteor.isServer) throw new Meteor.Error('server-only');
+  if (!Meteor.isServer) throw new Meteor.Error('unauthorized');
+
   options || {};
   options = {
     clean: {
@@ -36,6 +37,7 @@ export default function schema(database, selector, options) {
     series,
     services,
     clients,
+    users,
     proposals: {
       full: {
         ...proposals.partial,

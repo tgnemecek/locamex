@@ -4,9 +4,14 @@
   padding: $space ($space /2);
   text-decoration: none;
   position: relative;
+  font-size: 1.5rem;
   button {
     color: white;
   }
+}
+
+.menu-item--user {
+  text-align: center;
 }
 
 .menu-item__parent {
@@ -33,15 +38,42 @@
     transform: scaleY(0);
     transform-origin: top;
     transition: transform 0.25s;
-    width: 100px;
+    left: 0;
+    width: 120px;
     a {
       display: block;
       color: $dark-grey;
       cursor: pointer;
       padding: ($space /2);
       text-decoration: none;
+      font-size: 1.5rem;
     }
     a:hover {
       background-color: darken(white, 15);
     }
+}
+
+.menu-item__dropbox--user {
+  left: -95px;
+  button {
+    display: block;
+    color: $dark-grey;
+    padding: ($space /2);
+    width: 100%;
+    text-align: right;
+    font-size: 1.5rem;
+  }
+  button:hover {
+    background-color: darken(white, 15);
+  }
+}
+
+@media screen and (max-width: 700px) {
+  .menu-item {
+    width: 100%
+  }
+  .menu-item__dropbox {
+    left: -120px;
+    top: -14px;
+  }
 }
