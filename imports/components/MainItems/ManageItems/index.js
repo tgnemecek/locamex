@@ -151,28 +151,29 @@ export default class ManageItems extends React.Component {
         closeBox={this.props.toggleWindow}>
           <div className="manage-items__body">
             <div>
+              <div className="manage-items__subtitle">
+                Banco de Dados:
+              </div>
               <FilterBar
                 value={this.state.searchTerm}
                 onChange={this.updateSearch}/>
-              <Database
-                database={this.filteredDatabase()}
-                addItem={this.addItem}/>
             </div>
-            <div>
-              <AddedItems
-                type={this.props.type}
-                addedItems={this.state.addedItems}
-
-                changePrice={this.changePrice}
-                changeQuantity={this.changeQuantity}
-                removeItem={this.removeItem}
-
-                togglePackScreen={this.togglePackScreen}
-                toggleModularScreen={this.toggleModularScreen}/>
+            <div className="manage-items__subtitle">
+              {this.title() + " Adicionados:"}
             </div>
-            {/* <div style={{marginTop: "30px"}}>
-              <label>{`${this.title()} Adicionados:`}</label>
-            </div> */}
+            <Database
+              database={this.filteredDatabase()}
+              addItem={this.addItem}/>
+            <AddedItems
+              type={this.props.type}
+              addedItems={this.state.addedItems}
+
+              changePrice={this.changePrice}
+              changeQuantity={this.changeQuantity}
+              removeItem={this.removeItem}
+
+              togglePackScreen={this.togglePackScreen}
+              toggleModularScreen={this.toggleModularScreen}/>
           </div>
           <FooterButtons buttons={[
             {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},

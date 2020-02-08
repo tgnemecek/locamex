@@ -446,9 +446,11 @@ export default class tools {
             thirds = 0;
           } else {
             thirds++;
-            if (thirds === 3 && i !== 0) {
-              newString = "." + newString;
-              thirds = 0;
+            if (thirds === 3
+              && i !== 0
+              && value.charAt(i-1) !== "-") {
+                newString = "." + newString;
+                thirds = 0;
             }
           }
         }

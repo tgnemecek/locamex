@@ -5,9 +5,13 @@
 .manage-items__body {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: 70px 1fr;
   grid-gap: $space;
-  align-items: flex-start;
   height: 50vh;
+}
+
+.manage-items__subtitle {
+  margin-bottom: 10px;
 }
 
 .manage-items__selection {
@@ -32,9 +36,6 @@
 }
 .manage-items__selection__scroll-block {
   overflow-y: auto;
-}
-.manage-items__selection__database {
-  margin-top: $space;
 }
 .manage-items__selection__added-items {
   label {margin-bottom: 10px;}

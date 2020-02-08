@@ -140,11 +140,14 @@ if (Meteor.isServer) {
 
       schema('contracts', 'full').validate(snapshot);
 
+      var newIndex;
       if (oldContract.snapshots.length === 1) {
+        newIndex = 0;
         Contracts.update({ _id },
           {$set: { snapshots: [snapshot] }}
         )
       } else {
+        newIndex = oldContract.snapshots.length;
         Contracts.update({ _id },
           {$push: { snapshots: snapshot }}
         )
@@ -153,7 +156,7 @@ if (Meteor.isServer) {
       return {
         hasChanged: true,
         snapshot,
-        index: oldContract.snapshots.length
+        index: newIndex
       };
     },
     'contracts.activate'(contract) {

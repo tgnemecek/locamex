@@ -51,8 +51,9 @@ class Contract extends React.Component {
       snapshotIndex,
       errorMsg: '',
       errorKeys: [],
-      clientSetupWindow: (snapshotIndex === 0 && !snapshot.client),
+      clientSetupOpen: (snapshotIndex === 0 && !snapshot.client),
       documentsOpen: false,
+      billingOpen: false,
       databaseStatus: ''
     }
   }
@@ -169,6 +170,10 @@ class Contract extends React.Component {
     this.setState({ documentsOpen: !this.state.documentsOpen })
   }
 
+  toggleBilling = () => {
+    this.setState({ billingOpen: !this.state.billingOpen })
+  }
+
   generateDocument = () => {
     const generate = (master) => {
       master.type = "contract";
@@ -190,10 +195,10 @@ class Contract extends React.Component {
     this.saveEdits(generate);
   }
 
+  setError = (errorMsg, errorKeys) => {
+    this.setState({ errorMsg, errorKeys })
+  }
 
-  // setError = (errorMsg, errorKeys) => {
-  //   this.setState({ errorMsg, errorKeys })
-  // }
   //
   // toggleCancelWindow = () => {
   //   var toggleCancelWindow = !this.state.toggleCancelWindow;
@@ -314,7 +319,6 @@ class Contract extends React.Component {
     } else if (option === 'services') {
       return servicesValue;
     } else return productsValue + servicesValue;
-
   }
 
   render () {
@@ -328,8 +332,11 @@ class Contract extends React.Component {
             status={this.props.contract.status}
             type="contract"
             toggleDocuments={this.toggleDocuments}
-            cancelMaster={this.cancelContract}
 
+            toggleBilling={this.toggleBilling}
+            errorKeys={this.state.errorKeys}
+
+            cancelMaster={this.cancelContract}
             changeSnapshot={this.changeSnapshot}
             snapshotIndex={this.state.snapshotIndex}
             snapshots={this.props.contract.snapshots}
@@ -355,6 +362,8 @@ class Contract extends React.Component {
               totalValue={this.totalValue()}
               productsValue={this.totalValue('products')}
               servicesValue={this.totalValue('services')}
+              snapshot={this.state.snapshot}
+              setError={this.setError}
               creationDate={this.props.contract.snapshots[0].dates.creationDate}
               status={this.props.contract.status}
               saveEdits={this.saveEdits}
@@ -362,11 +371,11 @@ class Contract extends React.Component {
             />
           </div>
           <DatabaseStatus status={this.state.databaseStatus}/>
-          {this.state.clientSetupWindow ?
+          {this.state.clientSetupOpen ?
             <ClientSetup
               updateSnapshot={this.updateSnapshot}
               proposalClient={this.props.proposalClient}
-              closeWindow={() => this.setState({ clientSetupWindow: false })}
+              closeWindow={() => this.setState({ clientSetupOpen: false})}
               clientsDatabase={this.props.databases.clientsDatabase}/>
           : null}
           {this.state.documentsOpen ?
@@ -379,6 +388,15 @@ class Contract extends React.Component {
               generateDocument={this.generateDocument}
             />
           : null}
+          {this.state.billingOpen ?
+          <BillingSchedule
+            disabled={this.props.contract.status !== "inactive"}
+            snapshot={this.state.snapshot}
+            totalValue={this.totalValue}
+            closeWindow={this.toggleBilling}
+            updateSnapshot={this.updateSnapshot}
+            errorKeys={this.props.errorKeys}
+            /> : null}
         </div>
       </div>
     )

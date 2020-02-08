@@ -6,7 +6,7 @@ import Input from '/imports/components/Input/index';
 
 export default class ChargesNumber extends React.Component {
   onChange = (e) => {
-    this.props.setBilling(Number(e.target.value));
+    this.props.setCharges(Number(e.target.value));
   }
   render() {
     return (

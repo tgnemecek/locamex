@@ -7,9 +7,9 @@ import CalendarBar from '/imports/components/CalendarBar/index';
 export default class ExpiryDate extends React.Component {
   onChange = (e) => {
     var firstExpiry = e.target.value;
-    var billingProducts = this.props.billingProducts.map((bill, i) => {
+    var billingProducts = this.props.billingProducts.map((charge, i) => {
       return {
-        ...bill,
+        ...charge,
         expiryDate:  moment(firstExpiry).add((1 * i), 'months').toDate()
       }
     })

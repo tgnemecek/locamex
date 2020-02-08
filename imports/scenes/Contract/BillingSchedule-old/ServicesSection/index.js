@@ -21,11 +21,7 @@ export default class ServicesSection extends React.Component {
   displayDifference = () => {
     var difference = 0 - (this.props.servicesValue - this.sumValues());
     var className = difference !== 0 ? "billing-schedule__difference--danger" : "billing-schedule__difference--zero";
-    return (
-      <span className={className}>
-        {tools.format(difference, "currency")}
-      </span>
-    )
+    return <span className={className}>{tools.format(difference, "currency")}</span>
   }
 
   updateBilling = (billingServices) => {
@@ -38,9 +34,9 @@ export default class ServicesSection extends React.Component {
 
   onChangeTaxes = (e) => {
     var value = Number(e.target.value);
-    var billingServices = this.props.billingServices.map((bill) => {
+    var billingServices = this.props.billingServices.map((charge) => {
       return {
-        ...bill,
+        ...charge,
         [e.target.name]: e.target.value
       }
     })
@@ -52,7 +48,7 @@ export default class ServicesSection extends React.Component {
   // Rendering: ----------------------------------------------------------------
 
   renderBody = () => {
-    return this.props.billingServices.map((bill, i, array) => {
+    return this.props.billingServices.map((charge, i, array) => {
       const onChangePrice = (e) => {
         var value = Number(e.target.value);
         var billingServices = [...array];
@@ -78,11 +74,11 @@ export default class ServicesSection extends React.Component {
         });
       }
       const calculateTaxes = () => {
-        var value = bill.value;
+        var value = charge.value;
         if (!value) return tools.format(0, "currency");
 
-        var inssDiscount = value * this.props.billingServices[0].inss;
-        var issDiscount = value * this.props.billingServices[0].iss;
+        var inssDiscount = (value * this.props.billingServices[0].inss) / 100;
+        var issDiscount = (value * this.props.billingServices[0].iss) / 100;
         value = inssDiscount + issDiscount;
         return tools.format(value, "currency");
       }
@@ -93,12 +89,12 @@ export default class ServicesSection extends React.Component {
             <CalendarBar
               onChange={changeExpiryDate}
               disabled={this.props.disabled}
-              value={bill.expiryDate}/>
+              value={charge.expiryDate}/>
           </td>
           <td>
             <Input
               name={i}
-              value={bill.description} onChange={onChangeDescription}
+              value={charge.description} onChange={onChangeDescription}
               disabled={this.props.disabled}
               type="textarea"/>
           </td>
@@ -107,10 +103,10 @@ export default class ServicesSection extends React.Component {
             <Input name={i} type="currency"
               style={{textAlign: 'right'}}
               name="value"
-              allowNegative={false}
+              allowNegative={true}
               onChange={onChangePrice}
               disabled={this.props.disabled}
-              value={bill.value}/>
+              value={charge.value}/>
           </td>
         </tr>
       )
@@ -118,7 +114,7 @@ export default class ServicesSection extends React.Component {
   }
 
   render() {
-    if (this.props.billingServices[0]) {
+    if (this.props.servicesValue) {
       return (
         <section className="billing-schedule__services-section">
           <h4>Pacote de Serviços:</h4>
@@ -126,30 +122,31 @@ export default class ServicesSection extends React.Component {
             <ChargesNumber
               disabled={this.props.disabled}
               billingServices={this.props.billingServices}
-              setBilling={this.props.setBilling}/>
+              setCharges={this.props.setCharges}/>
             <Input
               title="INSS: (%)"
-              type="percent"
+              type="number"
               name="inss"
               disabled={this.props.disabled}
               value={this.props.billingServices[0].inss}
               onChange={this.onChangeTaxes}/>
             <Input
               title="ISS: (%)"
-              type="percent"
+              type="number"
               name="iss"
               disabled={this.props.disabled}
               value={this.props.billingServices[0].iss}
               onChange={this.onChangeTaxes}/>
             <this.props.AccountsSelector
               disabled={this.props.disabled}
-              billing={this.props.billingServices}
+              accountsDatabase={this.props.accountsDatabase}
+              charges={this.props.billingServices}
               updateBilling={this.updateBilling}
             />
             <this.props.EqualCharges
               disabled={this.props.disabled}
-              calculation={this.props.calculation}
-              billing={this.props.billingServices}
+              masterValue={this.props.servicesValue}
+              charges={this.props.billingServices}
               updateBilling={this.updateBilling}/>
           </div>
           <table className="table table--billing-schedule--services">

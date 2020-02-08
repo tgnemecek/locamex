@@ -82,7 +82,7 @@ export default class ProductsSection extends React.Component {
   }
 
   render() {
-    if (this.props.billingProducts[0]) {
+    if (this.props.productsValue) {
       return (
         <section className="billing-schedule__products-section">
           <h4>Cobranças de Locação:</h4>
@@ -103,13 +103,14 @@ export default class ProductsSection extends React.Component {
             />
             <this.props.AccountsSelector
               disabled={this.props.disabled}
-              billing={this.props.billingProducts}
+              accountsDatabase={this.props.accountsDatabase}
+              charges={this.props.billingProducts}
               updateBilling={this.updateBilling}
             />
             <this.props.EqualCharges
               disabled={this.props.disabled}
-              calculation={this.props.calculation}
-              billing={this.props.billingProducts}
+              masterValue={this.props.productsValue}
+              charges={this.props.billingProducts}
               updateBilling={this.updateBilling}/>
           </div>
           <table className="table table--billing-schedule--products">

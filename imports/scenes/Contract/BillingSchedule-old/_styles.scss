@@ -1,0 +1,33 @@
+@import './ProductsSection/styles';
+@import './ServicesSection/styles';
+
+.billing-schedule {
+  width: ($site-max-width /1.5);
+  section {
+    margin-top: $space;
+  }
+  textarea {
+    font-size: 1.2rem;
+  }
+  h4 {
+    padding: ($space /2);
+  }
+  table {
+    box-shadow: none !important;
+  }
+}
+
+.billing-schedule__difference--zero {
+  color: $green !important;
+}
+.billing-schedule__difference--danger {
+  color: $red !important;
+}
+.billing-schedule__equal-charges {
+  display: inline-flex;
+  height: 35px;
+  width: 100%;
+  margin: 16px 0 0 0;
+  justify-content: center;
+  align-items: flex-end;
+}

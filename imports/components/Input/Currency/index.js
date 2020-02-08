@@ -76,7 +76,11 @@ export default class Currency extends React.Component {
   }
 
   format = () => {
-    var displayValue = tools.format(this.state.displayValue, 'currency');
+    var displayValue = this.state.displayValue;
+    if (displayValue === "-") displayValue = "0";
+    if (displayValue === "") displayValue = "0";
+
+    displayValue = tools.format(displayValue, 'currency');
     this.setState({ displayValue });
   }
 

@@ -116,10 +116,8 @@ input[type="number"] {
   text-align: center;
   font-weight: bold;
 }
-//
-// .main-scene__footer-text {
-//   text-align: center;
-//   font-style: italic;
-//   color: $dark-grey;
-//   margin-top: $space;
-// }
+.error-message {
+  color: red;
+  text-align: center;
+  height: 20px;
+}
