@@ -26,21 +26,16 @@ if (Meteor.isServer) {
       var isIdInUse = !!Series.findOne({_id: state._id});
       if (isIdInUse) throw new Meteor.Error('id-in-use');
 
-      var container = Containers.findOne({_id: state.containerId});
-      var description = container.description;
-
       var data = {
         _id: state._id,
-        containerId: state.containerId,
-        description,
-        placeId: state.placeId,
-        placeDescription: Places.findOne({_id: state.placeId}).description,
+        container: state.container,
+        place: state.place,
         observations: state.observations,
         type: 'series',
         snapshots: [],
         visible: true
       }
-      // schema('series', 'full').validate(data);
+      schema('series', 'full').validate(data);
       Series.insert(data);
       Meteor.call('history.insert', data, 'series.insert');
       return true;

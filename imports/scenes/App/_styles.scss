@@ -1,14 +1,15 @@
-.app-footer {
+.app__footer {
   color: $dark-grey;
   font-style: italic;
 }
 
-.app-user {
+.app__footer__user {
   position: fixed;
   bottom: ($space /2);
+  left: ($space /2);
 }
 
-.app-version {
+.app__footer__version {
   position: fixed;
   bottom: ($space /2);
   right: ($space /2);

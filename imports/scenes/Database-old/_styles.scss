@@ -1,0 +1,16 @@
+@import './DatabaseTable/styles';
+
+.database__table__button {
+  height: 23px;
+  width: 23px;
+  padding: ($space /4);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.database__scroll-div {
+  margin-top: $space;
+  overflow-y: auto;
+  height: 70vh;
+}

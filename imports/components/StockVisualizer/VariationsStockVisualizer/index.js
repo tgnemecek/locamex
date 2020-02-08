@@ -13,7 +13,7 @@ class VariationsStockVisualizer extends React.Component {
     super(props);
     this.state = {
       item: this.props.item.variations[0],
-      totalItems: this.props.item.variations[0].place.reduce((acc, cur) => {
+      totalItems: this.props.item.variations[0].places.reduce((acc, cur) => {
         return acc + (cur.available + cur.inactive);
       }, 0),
       variationIndex: 0,
@@ -45,14 +45,14 @@ class VariationsStockVisualizer extends React.Component {
     this.setState({
       variationIndex,
       item: this.props.item.variations[variationIndex],
-      totalItems: this.props.item.variations[variationIndex].place.reduce((acc, cur) => {
+      totalItems: this.props.item.variations[variationIndex].places.reduce((acc, cur) => {
         return acc + (cur.available + cur.inactive);
       }, 0),
     });
   }
 
   countSumItems = () => {
-    return this.state.item.place.reduce((acc, cur) => {
+    return this.state.item.places.reduce((acc, cur) => {
       return acc + (cur.available + cur.inactive);
     }, 0);
   }

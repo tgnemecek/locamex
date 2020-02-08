@@ -95,7 +95,7 @@ class ModuleList extends React.Component {
           filterSearch={this.filterSearch}
         />
         <div className="register-containers__module-list">
-          <table className="table database__table">
+          <table className="table">
             <thead>
               <tr>
                 <th>Descrição</th>

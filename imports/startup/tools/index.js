@@ -51,6 +51,28 @@ export default class tools {
     } else return false;
   }
 
+  static totalValue = (snapshot) => {
+    var duration = snapshot.dates.timeUnit === "months" ?
+                    snapshot.dates.duration : 1;
+    var discount = snapshot.discount;
+
+    var containers = snapshot.containers || [];
+    var accessories = snapshot.accessories || [];
+    var products = containers.concat(accessories);
+    var productsValue = products.reduce((acc, current) => {
+      var renting = current.renting || 1;
+      return acc + (current.price * renting * duration)
+    }, 0);
+    productsValue = productsValue * (1 - discount);
+
+    var services = snapshot.services || [];
+    var servicesValue = services.reduce((acc, current) => {
+      var renting = current.renting ? current.renting : 1;
+      return acc + (current.price * renting)
+    }, 0);
+    return productsValue + servicesValue;
+  }
+
   static deepCopy = (input) => {
     if (Array.isArray(input) || typeof(input) == 'object') {
       return JSON.parse(JSON.stringify(input));
@@ -246,6 +268,25 @@ export default class tools {
   }
 
   // Strings
+
+  static findSubstring = (substring, stringArray) => {
+    if (typeof stringArray === 'string') {
+      stringArray = [stringArray];
+    }
+
+    substring = tools.removeSpecialChars(
+      substring, /[\.\/\-\(\) ]/g).toUpperCase();
+
+    for (var i = 0; i < stringArray.length; i++) {
+      stringArray[i] = tools.removeSpecialChars(
+        stringArray[i], /[\.\/\-\(\) ]/g).toUpperCase();
+
+      if (stringArray[i].search(substring) !== -1) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   static translateError = (error) => {
     console.log(error);

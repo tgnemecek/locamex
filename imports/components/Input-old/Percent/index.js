@@ -3,6 +3,10 @@ import { Meteor } from 'meteor/meteor';
 
 import tools from '/imports/startup/tools/index';
 
+// This is the best use of Input. Other types should follow this.
+// The displayValue is only set after update in props.
+// When onChange happens, the component will only export the value
+// The update on display will happen after, in componentDidUpdate
 export default class Percent extends React.Component {
   constructor(props) {
     super(props);

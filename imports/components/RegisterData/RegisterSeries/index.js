@@ -15,8 +15,14 @@ class RegisterSeries extends React.Component {
     super(props);
     this.state = {
       _id: this.props.item._id || '',
-      containerId: this.props.item.containerId || '',
-      placeId: this.props.item.placeId || '',
+      container: this.props.item.container || {
+        _id: '',
+        description: ''
+      },
+      place: this.props.item.place || {
+        _id: '',
+        description: ''
+      },
       observations: this.props.item.observations || '',
 
       errorKeys: [],
@@ -32,11 +38,28 @@ class RegisterSeries extends React.Component {
     this.setState({ [e.target.name]: e.target.value, errorKeys });
   }
 
+  onChangeContainer = (e) => {
+    var _id = e.target.value;
+    var container = this.props.containersDatabase.find((container) => {
+      return container._id === _id;
+    }) || {};
+    this.setState({ container });
+  }
+
+  onChangePlace = (e) => {
+    var _id = e.target.value;
+    var place = this.props.placesDatabase.find((place) => {
+      return place._id === _id;
+    }) || {};
+    this.setState({ place });
+  }
+
   renderModels = () => {
-    var filtered = this.props.containersDatabase.filter((model) => model.type === "fixed");
-    return filtered.map((model, i) => {
-      return <option key={i} value={model._id}>{model.description}</option>
-    })
+    return this.props.containersDatabase
+      .filter((model) => model.type === "fixed")
+      .map((model, i) => {
+        return <option key={i} value={model._id}>{model.description}</option>
+      })
   }
 
   renderPlaces = () => {
@@ -46,58 +69,58 @@ class RegisterSeries extends React.Component {
   }
 
   saveEdits = () => {
-
-    const check = (keys) => {
-      var errorKeys = [];
-      keys.forEach((key) => {
-        if (!this.state[key]) errorKeys.push(key);
-      })
-      return errorKeys;
+    var errorKeys = [];
+    if (!this.state._id) {
+      errorKeys.push('_id');
     }
-
-    var errorKeys = check(['_id', 'containerId', 'placeId']);
+    if (!this.state.container._id) {
+      errorKeys.push('container._id');
+    }
+    if (!this.state.place._id) {
+      errorKeys.push('place._id');
+    }
     if (errorKeys.length) {
       this.setState({ errorKeys });
-    } else {
-      if (this.props.item._id) {
-        var changes = {
-          placeId: this.state.placeId,
-          observations: this.state.observations
-        }
-        this.setState({ databaseStatus: "loading" }, () => {
-          Meteor.call('series.update', changes, this.state._id, (err, res) => {
-            if (err) {
-              console.log(err);
-              this.setState({ databaseStatus: "failed" });
-            }
-            if (res) {
-              this.setState({ databaseStatus: {
-                status: "completed",
-                callback: this.props.toggleWindow
-              }})
-            }
-          });
-        })
-
-      } else {
-        this.setState({ databaseStatus: "loading" }, () => {
-          Meteor.call('series.insert', this.state, (err, res) => {
-            if (err) {
-              var message = err.error === 'id-in-use' ? `Série #${this.state._id} já existente! Favor escolher outra série.` : "";
-              this.setState({ databaseStatus: {
-                status: "failed",
-                message,
-                timeout: 3000
-              } });
-            } else if (res) {
-              this.setState({ databaseStatus: {
-                status: "completed",
-                callback: this.props.toggleWindow
-              }})
-            }
-          });
-        })
+      return;
+    }
+    if (this.props.item._id) {
+      var changes = {
+        place: this.state.place,
+        observations: this.state.observations
       }
+      this.setState({ databaseStatus: "loading" }, () => {
+        Meteor.call('series.update', changes, this.state._id, (err, res) => {
+          if (err) {
+            console.log(err);
+            this.setState({ databaseStatus: "failed" });
+          }
+          if (res) {
+            this.setState({ databaseStatus: {
+              status: "completed",
+              callback: this.props.toggleWindow
+            }})
+          }
+        });
+      })
+
+    } else {
+      this.setState({ databaseStatus: "loading" }, () => {
+        Meteor.call('series.insert', this.state, (err, res) => {
+          if (err) {
+            var message = err.error === 'id-in-use' ? `Série #${this.state._id} já existente! Favor escolher outra série.` : "";
+            this.setState({ databaseStatus: {
+              status: "failed",
+              message,
+              timeout: 3000
+            } });
+          } else if (res) {
+            this.setState({ databaseStatus: {
+              status: "completed",
+              callback: this.props.toggleWindow
+            }})
+          }
+        });
+      })
     }
   }
 
@@ -143,23 +166,23 @@ class RegisterSeries extends React.Component {
             <Input
               title="Modelo:"
               type="select"
-              name="containerId"
-              error={this.state.errorKeys.includes("containerId")}
+              error={this.state.errorKeys.includes("container._id")}
               disabled={this.props.item._id}
-              value={this.state.containerId}
-              onChange={this.onChange}>
+              value={this.state.container._id}
+              onChange={this.onChangeContainer}>
                 <option value=''></option>
                 {this.renderModels()}
             </Input>
             <Input
               title="Pátio:"
               type="select"
-              name="placeId"
-              disabled={this.props.item.placeId === 'rented'}
-              error={this.state.errorKeys.includes("placeId")}
-              value={this.state.placeId}
-              onChange={this.onChange}>
-                {this.props.item.placeId === 'rented' ?
+              disabled={this.props.item.place
+                && this.props.item.place._id === 'rented'}
+              error={this.state.errorKeys.includes("place._id")}
+              value={this.state.place._id}
+              onChange={this.onChangePlace}>
+                {this.props.item.place &&
+                  this.props.item.place._id === 'rented' ?
                   <option value='rented'>Alugado</option>
                 : <option value=''></option>}
                 {this.renderPlaces()}

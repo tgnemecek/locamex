@@ -1,11 +1,29 @@
 .table {
-  text-align: left;
+  text-align: center;
   border-collapse: collapse;
   width: 100%;
   box-shadow: $box-shadow-contained;
+  white-space: nowrap;
 }
 
-.table th,
+.table__wide {
+  text-align: left;
+  width: 100%;
+}
+
+.table th {
+  position: sticky;
+  top: 0;
+  background: white;
+  background-clip: padding-box;
+  padding: ($space /4) ($space /2) ($space /4) ($space /2);
+  border-top: none;
+  border-bottom: none;
+  border-left: 1px solid $dark-grey;
+  border-right: 1px solid $dark-grey;
+  box-shadow: inset 0 1px 0 $dark-grey;
+}
+
 .table td {
   border: 1px solid $dark-grey;
   padding: ($space /4) ($space /2) ($space /4) ($space /2);

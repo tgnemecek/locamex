@@ -55,9 +55,13 @@ class App extends React.Component {
               </Switch>
             <Route path="/" render={() => {
               return (
-                <div className="app-footer">
-                  <div className="app-user">Logado como {user.firstName}</div>
-                  <div className="app-version">versão {version}</div>
+                <div className="app__footer">
+                  <div className="app__footer__user">
+                    Logado como {user.profile.firstName}
+                  </div>
+                  <div className="app__footer__version">
+                    versão {version}
+                  </div>
                 </div>
               )
             }}/>

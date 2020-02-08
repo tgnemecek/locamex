@@ -1,4 +1,10 @@
+.show-more {
+  margin: $space;
+  font-size: $base-font-size;
+}
+
 .show-more__button {
   text-decoration: underline;
   color: $brand-primary;
+  font-size: $base-font-size;
 }

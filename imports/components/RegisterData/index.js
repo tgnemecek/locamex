@@ -24,7 +24,7 @@ export default function RegisterData(props) {
     case 'accounts':
       return <RegisterAccounts {...props} Footer={Footer} />
       break;
-    case 'models':
+    case 'containers':
       return <RegisterContainers {...props} Footer={Footer} />
       break;
     case 'clients':

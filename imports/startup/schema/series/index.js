@@ -1,17 +1,20 @@
 import SimpleSchema from 'simpl-schema';
 
-var insert = {
+var full = {
   _id: String,
   type: String,
 
-  containerId: String,
-  description: String,
-  placeId: String,
-  placeDescription: String,
+  container: Object,
+  'container._id': String,
+  'container.description': String,
+  place: Object,
+  'place._id': String,
+  'place.description': String,
+
   observations: String,
   snapshots: Array,
   'snapshots.$': String,
-  'visible': Boolean
+  visible: Boolean
 }
 
 var update = {
@@ -26,11 +29,11 @@ var snapshots = {
 }
 
 var hide = {
-  'visible': Boolean
+  visible: Boolean
 }
 
 export default {
-  insert,
+  full,
   update,
   snapshots,
   hide
