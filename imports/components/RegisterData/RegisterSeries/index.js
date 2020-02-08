@@ -111,7 +111,7 @@ class RegisterSeries extends React.Component {
             this.setState({ databaseStatus: {
               status: "failed",
               message,
-              timeout: 3000
+              wait: 3000
             } });
           } else if (res) {
             this.setState({ databaseStatus: {

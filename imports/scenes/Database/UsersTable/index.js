@@ -2,49 +2,44 @@ import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { userTypes } from '/imports/startup/user-types/index';
 import tools from '/imports/startup/tools/index';
+
+import RegisterData from '/imports/components/RegisterData/index';
 import Icon from '/imports/components/Icon/index';
 import RedirectUser from '/imports/components/RedirectUser/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
-import SearchBar from '/imports/components/SearchBar/index';
-
-
 
 class UsersTable extends React.Component {
-  renderHeader = () => {
-    const toggleEditWindow = () => {
-      this.props.toggleEditWindow({});
+  constructor(props) {
+    super(props);
+    this.state = {
+      item: false
     }
-    return (
-      <tr>
-        <th>Nome</th>
-        <th className="table__small-column">Login</th>
-        <th className="table__small-column">Tipo de Usuário</th>
-        <th className="table__small-column hide-at-700px">Email</th>
-        <th className="table__small-column">
-          <button onClick={toggleEditWindow}>
-            <Icon icon="new" />
-          </button>
-        </th>
-      </tr>
-    )
   }
+
+  toggleWindow = (item) => {
+    if (this.state.item) {
+      this.setState({ item: false });
+    } else {
+      this.setState({ item });
+    }
+  }
+
   renderBody = () => {
-    return this.props.fullDatabase.map((item, i) => {
-      const toggleEditWindow = () => {
-        this.props.toggleEditWindow(item);
-      }
+    return this.props.database.map((item, i) => {
       return (
         <tr key={i}>
-          <td>{item.profile.firstName + " " + item.profile.lastName}</td>
+          <td className="table__wide">
+            {item.profile.firstName + " " + item.profile.lastName}
+          </td>
           <td>{item.username}</td>
-          <td className="table__small-column">
+          <td>
             {userTypes[item.profile.type].label}
           </td>
-          <td className="table__small-column hide-at-700px">
+          <td className="hide-at-700px">
             {item.emails[0].address}
           </td>
-          <td className="table__small-column">
-            <button onClick={toggleEditWindow}>
+          <td>
+            <button onClick={() => this.toggleWindow(item)}>
               <Icon icon="edit" />
             </button>
           </td>
@@ -53,42 +48,49 @@ class UsersTable extends React.Component {
     })
   }
   render () {
-    if (this.props.ready) {
-      return (
-        <ErrorBoundary>
-          <RedirectUser currentPage="users"/>
-          <div className="database__scroll-div">
-            <table className="table">
-              <thead>
-                {this.renderHeader()}
-              </thead>
-              <tbody>
-                {this.renderBody()}
-              </tbody>
-            </table>
-          </div>
-        </ErrorBoundary>
-      )
-    } else if (!this.props.ready) {
-      return (
-        <div className="database__scroll-div">
+    return (
+      <ErrorBoundary>
+        <RedirectUser currentPage="users"/>
+        <div className="__scroll-div">
           <table className="table">
             <thead>
-              {this.renderHeader()}
+              <tr>
+                <th className="table__wide">
+                  Nome
+                </th>
+                <th>Login</th>
+                <th>Tipo de Usuário</th>
+                <th className="hide-at-700px">
+                  Email
+                </th>
+                <th>
+                  <button onClick={() => this.toggleWindow({})}>
+                    <Icon icon="new" />
+                  </button>
+                </th>
+              </tr>
             </thead>
+            <tbody>
+              {this.renderBody()}
+            </tbody>
           </table>
         </div>
-      )
-    }
+        {this.state.item ?
+          <RegisterData
+            type='users'
+            item={this.state.item}
+            toggleWindow={this.toggleWindow}
+          />
+        : null}
+      </ErrorBoundary>
+    )
   }
 }
 
 export default UsersTableWrapper = withTracker((props) => {
   Meteor.subscribe('usersPub');
-  var fullDatabase = Meteor.users.find().fetch();
-  var ready = !!fullDatabase.length;
+  var database = Meteor.users.find().fetch() || [];
   return {
-    fullDatabase,
-    ready
+    database
   }
 })(UsersTable);

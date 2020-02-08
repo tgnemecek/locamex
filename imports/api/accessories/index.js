@@ -65,6 +65,7 @@ if (Meteor.isServer) {
         price: undefined
       });
       Meteor.call('history.insert', data, 'accessories.update');
+      return true;
     },
     'accessories.update.images'(_id, images) {
       if (!Meteor.userId()) throw new Meteor.Error('unauthorized');

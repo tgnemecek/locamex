@@ -97,7 +97,7 @@ class ProposalsTable extends React.Component {
 export default ProposalsTableWrapper = withTracker((props) => {
   var recordsToShow = 50;
   Meteor.subscribe('proposalsPub', recordsToShow);
-  var database = Proposals.find().fetch();
+  var database = Proposals.find().fetch() || [];
   database = tools.sortObjects(database, '_id', {reverseOrder: true});
 
   database = database.map((proposal) => {

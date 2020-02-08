@@ -186,7 +186,7 @@ class SeriesTable extends React.Component {
 export default SeriesTableWrapper = withTracker((props) => {
   Meteor.subscribe('seriesPub');
 
-  var database = Series.find().fetch();
+  var database = Series.find().fetch() || [];
   database = tools.sortObjects(database, '_id', {convertToNumber: true});
 
   var containers = [];

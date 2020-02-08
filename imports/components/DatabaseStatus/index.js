@@ -14,7 +14,6 @@ class DatabaseStatus extends React.Component {
     this.state = {
       showContent: true
     }
-    this.timeout = this.props.timeout ? this.props.timeout : 1500;
   }
   componentDidUpdate(prevProps) {
     if (this.props.status === "loading"
@@ -38,7 +37,7 @@ class DatabaseStatus extends React.Component {
           this.props.callback();
         }
       })
-    }, this.timeout);
+    }, this.props.wait);
   }
 
   className = () => {
@@ -62,6 +61,7 @@ export default function DatabaseStatusWrapper(props) {
   var status;
   var message;
   var callback;
+  var wait = props.wait || 1500;
   var dictionary = {
     loading: 'Carregando',
     completed: 'Feito!',
@@ -76,12 +76,11 @@ export default function DatabaseStatusWrapper(props) {
     status = props.status;
     message = dictionary[status] || "";
   }
-
   return (
     <DatabaseStatus
       status={status}
       message={message}
       callback={callback}
-      timeout={props.timeout}/>
+      wait={wait}/>
   )
 }
