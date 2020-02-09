@@ -7,9 +7,11 @@ export default class Table extends React.Component {
     return this.props.addedItems.map((item, i) => {
       return (
         <tr key={i}>
-          <td>{item.description}</td>
-          <td className="main-items__list__value-column">{tools.format(item.price, "currency")}</td>
-          <td className="table__small-column">{item.renting}</td>
+          <td className="table__wide">{item.description}</td>
+          <td className="main-items__list__value-column">
+            {tools.format(item.price, "currency")}
+          </td>
+          <td>{item.renting}</td>
         </tr>
       )
     })
@@ -26,9 +28,11 @@ export default class Table extends React.Component {
             <table className="table main-items__list__table">
               <tbody>
                 <tr>
-                  <th>Descrição</th>
-                  <th className="main-items__list__value-column">Valor</th>
-                  <th className="table__small-column">Qtd.</th>
+                  <th className="table__wide">Descrição</th>
+                  <th className="main-items__list__value-column">
+                    Valor
+                  </th>
+                  <th>Qtd.</th>
                 </tr>
                 {this.row()}
               </tbody>

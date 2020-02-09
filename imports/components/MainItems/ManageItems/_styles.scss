@@ -1,5 +1,5 @@
 .manage-items {
-  width: 80vw;
+  width: ($site-max-width / 1.5);
 }
 
 .manage-items__body {
@@ -14,29 +14,10 @@
   margin-bottom: 10px;
 }
 
-.manage-items__selection {
-  display: flex;
-  justify-content: space-between;
-}
-.manage-items__selection__edit-button {
-  padding: ($space /4);
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-.manage-items__selection__table {
-  .medium-column {
-    text-align: center;
-    width: 120px;
+.manage-items__buttom-column {
+  padding: 0 !important;
+  button {
+    width: 25px;
+    height: 25px;
   }
-  .buttom-column {
-    text-align: center;
-    width: 42px;
-  }
-}
-.manage-items__selection__scroll-block {
-  overflow-y: auto;
-}
-.manage-items__selection__added-items {
-  label {margin-bottom: 10px;}
 }

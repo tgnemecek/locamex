@@ -1,6 +1,4 @@
 import React from 'react';
-
-import Box from '/imports/components/Box/index';
 import Input from '/imports/components/Input/index';
 
 export default class Distribution extends React.Component {

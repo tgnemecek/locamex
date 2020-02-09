@@ -25,9 +25,15 @@ class StockVisualizer extends React.Component {
     var item = {...this.state.item};
     if (this.props.item.type === 'module') {
       item.places = places;
+    } else {
+      var index = this.state.variationIndex;
+      item.variations[index].places = places;
     }
-
     this.setState({ item });
+  }
+
+  setVariationIndex = (variationIndex) => {
+    this.setState({ variationIndex });
   }
 
   setOffset = (offset, callback) => {
@@ -65,6 +71,11 @@ class StockVisualizer extends React.Component {
     var places;
     if (this.props.item.type === 'module') {
       places = this.state.item.places;
+    } else {
+      places = [];
+      this.props.item.variations.forEach((item) => {
+        places = [...places, ...item.places];
+      })
     }
 
     return places.reduce((acc, cur) => {
@@ -76,6 +87,11 @@ class StockVisualizer extends React.Component {
     var places;
     if (this.props.item.type === 'module') {
       places = this.props.item.places;
+    } else {
+      places = [];
+      this.props.item.variations.forEach((item) => {
+        places = [...places, ...item.places];
+      })
     }
     return this.state.offset + places.reduce((acc, cur) => {
       return acc + cur.available + cur.inactive;
@@ -88,21 +104,23 @@ class StockVisualizer extends React.Component {
     var difference = goal - current;
     if (difference === 0) {
       this.setState({ databaseStatus: "loading" }, () => {
+        var method;
         if (this.props.item.type === 'module') {
-          Meteor.call('modules.update', this.state.item, (err, res) => {
-            var status = {}
-            if (res) {
-              status.status = "completed";
-              status.callback = this.props.toggleWindow
-            }
-            if (err) {
-              status.status = "failed";
-              status.message = tools.translateError(err);
-            }
-            this.setState({databaseStatus: status})
-          })
-        }
+          method = 'modules.update';
+        } else method = 'accessories.update';
 
+        Meteor.call(method, this.state.item, (err, res) => {
+          var status = {}
+          if (res) {
+            status.status = "completed";
+            status.callback = this.props.toggleWindow
+          }
+          if (err) {
+            status.status = "failed";
+            status.message = tools.translateError(err);
+          }
+          this.setState({databaseStatus: status})
+        })
       })
     } else {
       this.setState({
@@ -118,8 +136,14 @@ class StockVisualizer extends React.Component {
         className="stock-visualizer"
         closeBox={this.props.toggleWindow}>
           <div className="error-message">{this.state.errorMsg}</div>
-          <VariationsFilter
-            variations={this.props.item.variations}/>
+          <div className="stock-visualizer__top">
+            <h4>Produto: {this.props.item.description}</h4>
+            <VariationsFilter
+              setVariationIndex={this.setVariationIndex}
+              variationIndex={this.state.variationIndex}
+              variations={this.props.item.variations}/>
+          </div>
+
           <Distribution
             updateItem={this.updateItem}
             places={this.getPlaces()}/>

@@ -1,17 +1,40 @@
 import React from 'react';
-
-import Box from '/imports/components/Box/index';
+import Input from '/imports/components/Input/index';
 
 export default class VariationsFilter extends React.Component {
+
+  getValue = () => {
+    var index = this.props.variationIndex;
+    var variation = this.props.variations[index];
+    return variation._id
+  }
+
+  onChange = (e) => {
+    var index = this.props.variations.findIndex((item) => {
+      return item._id === e.target.value;
+    });
+    this.props.setVariationIndex(index);
+  }
+
   render() {
-    if (!this.props.variations) {
+    if (this.props.variations) {
       return (
-        <div>VARIATIONS FILTER (HIDDEN!!)</div>
+        <Input
+          type="select"
+          onChange={this.onChange}
+          value={this.getValue()}
+          >
+          {this.props.variations.map((variation, i) => {
+            return (
+              <option
+                key={i}
+                value={variation._id}>
+                  {variation.description}
+              </option>
+            )
+          })}
+        </Input>
       )
-    } else {
-      return (
-        <div>VARIATIONS FILTER</div>
-      )
-    }
+    } else return null;
   }
 }

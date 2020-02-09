@@ -1,6 +1,4 @@
 import React from 'react';
-
-import Box from '/imports/components/Box/index';
 import Input from '/imports/components/Input/index';
 
 export default class BuySell extends React.Component {
@@ -20,6 +18,12 @@ export default class BuySell extends React.Component {
     this.props.setOffset(offset, () => {
       this.setState({ [which]: 0 })
     });
+  }
+  differenceStyle = () => {
+    var difference = this.props.totalGoal - this.props.sumOfPlaces;
+    if (difference === 0) {
+      return {color: "green"};
+    } else return {color: "red"}
   }
   render() {
     return (
@@ -41,14 +45,18 @@ export default class BuySell extends React.Component {
         </div>
         <div className="stock-visualizer__ammounts">
           <div style={{textAlign: "right"}}>
+            {/* <div>Modificação:</div> */}
             <div>Soma:</div>
-            <div>Modificação:</div>
             <div>Total:</div>
+            <div style={this.differenceStyle()}>Diferença:</div>
           </div>
           <div style={{textAlign: "left"}}>
+            {/* <div>{this.props.offset}</div> */}
             <div>{this.props.sumOfPlaces}</div>
-            <div>{this.props.offset}</div>
             <div>{this.props.totalGoal}</div>
+            <div style={this.differenceStyle()}>
+              {this.props.totalGoal - this.props.sumOfPlaces}
+            </div>
           </div>
         </div>
         <div className="stock-visualizer__inputs">

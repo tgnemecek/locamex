@@ -156,7 +156,6 @@ class AccessoriesTable extends React.Component {
         : null}
         {this.state.windowType === 'stock' ?
           <StockVisualizer
-            type='accessories'
             item={this.state.item}
             toggleWindow={this.toggleWindow}
           />

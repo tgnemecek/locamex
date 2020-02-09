@@ -4,38 +4,33 @@ import Icon from '/imports/components/Icon/index';
 import tools from '/imports/startup/tools/index';
 
 export default class Database extends React.Component {
-
-  renderDatabase = () => {
-    return this.props.database.map((item, i, array) => {
-      return (
-        <tr key={i} className="manage-items__selection__db-item">
-          <td>{item.description}</td>
-          <td className="buttom-column">
-            <button onClick={() => this.props.addItem(item)}>
-              <Icon icon="arrowRight"/>
-            </button>
-          </td>
-        </tr>
-      )
-    })
-  }
-
   render() {
       return (
-        <div className="manage-items__selection__database">
-          <div className="manage-items__selection__scroll-block">
-            <table className="table manage-items__selection__table">
-              <thead>
-                <tr>
-                  <th>Descrição</th>
-                  <th className="buttom-column" style={{visibility: "hidden"}}></th>
-                </tr>
-              </thead>
-              <tbody>
-                {this.renderDatabase()}
-              </tbody>
-            </table>
-          </div>
+        <div>
+          <table className="table">
+            <thead>
+              <tr>
+                <th className="table__wide">Descrição</th>
+              </tr>
+            </thead>
+            <tbody>
+            {this.props.database.map((item, i, array) => {
+                return (
+                  <tr key={i}>
+                    <td className="table__wide">
+                      {item.description}
+                    </td>
+                    <td className="manage-items__buttom-column">
+                      <button
+                        onClick={() => this.props.addItem(item)}>
+                        <Icon icon="arrowRight"/>
+                      </button>
+                    </td>
+                  </tr>
+                )
+            })}
+            </tbody>
+          </table>
         </div>
       )
   }

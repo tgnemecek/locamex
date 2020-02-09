@@ -2,6 +2,12 @@
   width: ($site-max-width /1.5);
 }
 
+.stock-visualizer__top {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
 .stock-visualizer__distribution {
   display: grid;
   grid-template-columns: 1fr 1fr;
