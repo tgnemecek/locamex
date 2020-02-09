@@ -13,11 +13,14 @@ Packs.deny({
 if (Meteor.isServer) {
   Meteor.publish('packsPub', () => {
     if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+    if (!tools.isReadAllowed('packs')) return [];
     return Packs.find({ visible: true }, {sort: { description: 1 }});
   })
   Meteor.methods({
     'packs.insert' (packInfo) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      if (!Meteor.userId() || !tools.isWriteAllowed('packs')) {
+        throw new Meteor.Error('unauthorized');
+      }
       var maxIterations = packInfo.selectedAssembled;
       for (var i = 0; i < maxIterations; i++) {
         var _id = tools.generateId();
@@ -43,7 +46,9 @@ if (Meteor.isServer) {
       }
     },
     'packs.transaction'(state) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      if (!Meteor.userId() || !tools.isWriteAllowed('packs')) {
+        throw new Meteor.Error('unauthorized');
+      }
       const data = {
         _id: state._id,
         status: state.status,
@@ -53,7 +58,9 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', data, 'packs');
     },
     'packs.check'(_id) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      if (!Meteor.userId() || !tools.isWriteAllowed('packs')) {
+        throw new Meteor.Error('unauthorized');
+      }
       const item = Packs.findOne(
         {
           $and: [
@@ -68,12 +75,16 @@ if (Meteor.isServer) {
       } else return false;
     },
     'packs.rent' (_id) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      if (!Meteor.userId() || !tools.isWriteAllowed('packs')) {
+        throw new Meteor.Error('unauthorized');
+      }
       Packs.remove({ _id });
       Meteor.call('history.insert', _id, 'packs.rent');
     },
     'packs.unmount' (pack) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      if (!Meteor.userId() || !tools.isWriteAllowed('packs')) {
+        throw new Meteor.Error('unauthorized');
+      }
       var _id = pack._id;
       var data = {
         ...pack,
@@ -85,7 +96,9 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', data, 'packs.unmount');
     },
     'packs.update'(pack) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      if (!Meteor.userId() || !tools.isWriteAllowed('packs')) {
+        throw new Meteor.Error('unauthorized');
+      }
       const data = {
         place: pack.place
       };

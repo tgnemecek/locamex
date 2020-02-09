@@ -42,10 +42,25 @@ export default class RegisterModules extends React.Component {
       errorKeys.push("description");
       this.setState({ errorMsg: "Favor informar uma descrição.", errorKeys });
     } else {
+      this.props.databaseLoading();
       if (this.props.item._id) {
-        Meteor.call('modules.update', this.state);
-      } else Meteor.call('modules.insert', this.state);
-      this.props.toggleWindow();
+        var data = {
+          _id: this.state._id,
+          description: this.state.description
+        }
+        Meteor.call('modules.update', data, (err, res) => {
+          if (err) this.props.databaseFailed(err);
+          if (res) this.props.databaseCompleted();
+        });
+      } else {
+        var data = {
+          description: this.state.description
+        }
+        Meteor.call('modules.insert', data, (err, res) => {
+          if (err) this.props.databaseFailed(err);
+          if (res) this.props.databaseCompleted();
+        });
+      }
     }
   }
   render() {

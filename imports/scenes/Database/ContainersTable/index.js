@@ -10,8 +10,6 @@ import tools from '/imports/startup/tools/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import Icon from '/imports/components/Icon/index';
 
-
-
 import FlyerCreator from './FlyerCreator/index';
 
 class ContainersTable extends React.Component {
@@ -68,7 +66,7 @@ class ContainersTable extends React.Component {
           </button>
         </th>
         <th>
-          <button onClick={() => this.toggleWindow()}>
+          <button onClick={() => this.toggleWindow({})}>
             <Icon icon="new" />
           </button>
         </th>

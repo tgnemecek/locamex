@@ -1,10 +1,17 @@
 import { Mongo } from 'meteor/mongo';
+import SimpleSchema from 'simpl-schema';
 import { Meteor } from 'meteor/meteor';
-import updateReferences from '/imports/startup/update-references/index';
 import tools from '/imports/startup/tools/index';
-import schema from '/imports/startup/schema/index';
 
 export const Services = new Mongo.Collection('services');
+export const servicesSchema = new SimpleSchema({
+  _id: String,
+  type: String,
+  description: String,
+  price: Number,
+  visible: Boolean
+})
+Services.attachSchema(servicesSchema);
 
 Services.deny({
   insert() { return true; },
@@ -15,45 +22,49 @@ Services.deny({
 if (Meteor.isServer) {
   Meteor.publish('servicesPub', () => {
     if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+    if (!tools.isReadAllowed('services')) return [];
     return Services.find({ visible: true }, {sort: { description: 1 }});
   })
 
   Meteor.methods({
-    'services.insert'(description, price) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+    'services.insert'(state) {
+      if (!Meteor.userId() || !tools.isWriteAllowed('services')) {
+        throw new Meteor.Error('unauthorized');
+      }
       const _id = tools.generateId();
-      var data = schema('services', 'full').clean({
+      var data = {
         _id,
-        description,
-        price,
+        description: state.description,
+        price: state.price,
         type: "service",
         visible: true
-      })
-      schema('services', 'full').validate(data);
+      }
       Services.insert(data);
       Meteor.call('history.insert', data, 'services');
+      return true;
     },
     'services.hide'(_id) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      if (!Meteor.userId() || !tools.isWriteAllowed('services')) {
+        throw new Meteor.Error('unauthorized');
+      }
       const data = {
         visible: false
       }
       schema('services', 'hide').validate(data);
       Services.update({ _id }, { $set: data });
       Meteor.call('history.insert', data, 'services');
+      return true;
     },
-    'services.update'(_id, description, price) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
-      const data = schema('services', 'update').clean({
-        description,
-        price
-      })
-      schema('services', 'update').validate(data);
+    'services.update'(state) {
+      if (!Meteor.userId() || !tools.isWriteAllowed('services')) {
+        throw new Meteor.Error('unauthorized');
+      }
+      const data = {
+        _id: state._id,
+        description: state.description,
+        price: state.price
+      }
       Services.update({ _id }, { $set: data });
-      updateReferences(_id, 'services', {
-        ...data,
-        price: undefined
-      });
       Meteor.call('history.insert', data, 'services');
       return true;
     }

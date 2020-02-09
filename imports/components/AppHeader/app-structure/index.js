@@ -28,6 +28,24 @@ export const appStructure = [
         visible: true
       },
       {
+        name: "history",
+        title: "Histórico",
+        link: "/database/history",
+        visible: true
+      },
+      {
+        name: "configuration",
+        title: "Configurações",
+        link: "/configuration",
+        visible: true
+      }
+    ]
+  },
+  {
+    groupName: "general",
+    groupTitle: "Geral",
+    pages: [
+      {
         name: "services",
         title: "Serviços",
         link: "/database/services",
@@ -43,18 +61,6 @@ export const appStructure = [
         name: "accounts",
         title: "Contas",
         link: "/database/accounts",
-        visible: true
-      },
-      {
-        name: "history",
-        title: "Histórico",
-        link: "/database/history",
-        visible: true
-      },
-      {
-        name: "configuration",
-        title: "Configurações",
-        link: "/configuration",
         visible: true
       }
     ]

@@ -1,12 +1,68 @@
 import { Mongo } from 'meteor/mongo';
+import SimpleSchema from 'simpl-schema';
 import tools from '/imports/startup/tools/index';
-import schema from '/imports/startup/schema/index';
 
 import { Series } from '/imports/api/series/index';
 import { Modules } from '/imports/api/modules/index';
-import { Accessories } from '/imports/api/accessories/index';
+import { Accessories, accessoriesSchema } from '/imports/api/accessories/index';
+import { containersSchema } from '/imports/api/containers/index';
+import { servicesSchema } from '/imports/api/services/index';
 
 export const Proposals = new Mongo.Collection('proposals');
+Proposals.attachSchema(new SimpleSchema({
+  _id: String,
+  status: String,
+  visible: Boolean,
+  snapshots: Array,
+  'snapshots.$': new SimpleSchema({
+    active: Boolean,
+    createdById: String,
+    createdByName: String,
+    client: {
+      type: Object,
+      blackbox: true
+    },
+    discount: Number,
+    observations: Object,
+    'observations.internal': {
+      type: String,
+      optional: true
+    },
+    'observations.external': {
+      type: String,
+      optional: true
+    },
+    'observations.conditions': {
+      type: String,
+      optional: true
+    },
+    deliveryAddress: {
+      type: Object,
+      blackbox: true
+    },
+    dates: Object,
+    'dates.creationDate': Date,
+    'dates.startDate': Date,
+    'dates.duration': SimpleSchema.Integer,
+    'dates.creationDate': Date,
+    'dates.timeUnit': {
+      type: String,
+      allowedValues: ['months', 'days']
+    },
+    containers: Array,
+    'containers.$': {
+      type: containersSchema
+    },
+    accessories: Array,
+    'accessories.$': {
+      type: accessoriesSchema
+    },
+    services: Array,
+    'services.$': {
+      type: servicesSchema
+    }
+  })
+}))
 
 Proposals.deny({
   insert() { return true; },
@@ -17,6 +73,7 @@ Proposals.deny({
 if (Meteor.isServer) {
   Meteor.publish('proposalsPub', (limit) => {
     if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+    if (!tools.isReadAllowed('proposals')) return [];
     return Proposals.find({}, {
         sort: { _id: -1 },
         limit: limit || 0
@@ -26,28 +83,28 @@ if (Meteor.isServer) {
 
   Meteor.methods({
     'proposals.insert'(snapshot) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      if (!Meteor.userId() || !tools.isWriteAllowed('proposals')) {
+        throw new Meteor.Error('unauthorized');
+      }
       const prefix = new Date().getFullYear();
       const suffix = Proposals.find({
         _id: { $regex: new RegExp(prefix)} }).count().toString().padStart(4, '0');
       var _id = prefix + "-" + suffix;
 
-      snapshot = schema('proposals', 'full').clean(snapshot);
-      schema('proposals', 'full').validate(snapshot);
-
       var proposal = {
         _id,
         status: "inactive",
-        snapshots: [
-          snapshot
-        ]
+        snapshots: [snapshot],
+        visible: true
       };
       Proposals.insert(proposal);
       Meteor.call('history.insert', proposal, 'proposals.insert');
       return proposal;
     },
     'proposals.update'(snapshot, _id, index) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      if (!Meteor.userId() || !tools.isWriteAllowed('proposals')) {
+        throw new Meteor.Error('unauthorized');
+      }
       var oldProposal = Proposals.findOne({ _id });
       var hasChanged = !tools.compare(
         oldProposal.snapshots[index], snapshot
@@ -55,13 +112,11 @@ if (Meteor.isServer) {
       if (!hasChanged) {
         return {hasChanged: false};
       }
+      var data = oldProposal;
+      data.snapshots.push(snapshot)
+      Proposals.update({ _id }, {$set: data})
 
-      schema('proposals', 'full').validate(snapshot);
-
-      Proposals.update({ _id },
-        {$push: { snapshots: snapshot }}
-      )
-      Meteor.call('history.insert', {_id, ...snapshot}, 'proposals.update');
+      Meteor.call('history.insert', data, 'proposals.update');
       return {
         hasChanged: true,
         snapshot,
@@ -69,15 +124,16 @@ if (Meteor.isServer) {
       };
     },
     'proposals.activate'(_id, index) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      if (!Meteor.userId() || !tools.isWriteAllowed('proposals')) {
+        throw new Meteor.Error('unauthorized');
+      }
       var proposal = Proposals.findOne({ _id });
       var backupProposal = {...proposal};
 
       proposal.status = 'active';
       proposal.snapshots[index].active = true;
-      delete proposal._id;
 
-      Proposals.update({ _id }, proposal);
+      Proposals.update({ _id }, {$set: proposal});
       Meteor.call('history.insert', { _id }, 'proposals.activate');
 
       try {
@@ -86,48 +142,13 @@ if (Meteor.isServer) {
       }
       catch(err) {
         Proposals.update({ _id }, backupProposal);
-        throw new Meteor.Error(err);
+        throw err;
       }
-
-
-
-      // try {
-      //   var _id = master._id;
-      //   var contractId = Meteor.call('contracts.insert', {
-      //     status: 'inactive',
-      //     proposal: _id,
-      //     proposalVersion: Number(master.version),
-      //     activeVersion: undefined,
-      //     shipping: [],
-      //     snapshots: [
-      //       {
-      //         createdBy: master.createdBy,
-      //         clientId: '',
-      //         discount: master.discount,
-      //         observations: master.observations,
-      //         deliveryAddress: master.deliveryAddress,
-      //         dates: master.dates,
-      //         billingProducts: [],
-      //         billingServices: [],
-      //         containers: master.containers,
-      //         accessories: master.accessories,
-      //         services: master.services
-      //       }
-      //     ]
-      //   })
-      //   Proposals.update({ _id }, { $set: {
-      //     status: "active",
-      //     activeVersion: Number(master.version)
-      //   } })
-      //   Meteor.call('history.insert', { _id }, 'proposals.activate');
-      //   return { proposal: Proposals.findOne({ _id }), contractId };
-      // }
-      // catch(err){
-      //   throw new Meteor.Error(err);
-      // }
     },
     'proposals.cancel'(_id) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      if (!Meteor.userId() || !tools.isWriteAllowed('proposals')) {
+        throw new Meteor.Error('unauthorized');
+      }
       Proposals.update({ _id }, { $set: { status: "cancelled" } } );
       Meteor.call('history.insert', { _id }, 'proposals.cancel');
       return _id;

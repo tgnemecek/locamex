@@ -1,5 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import { version } from '/package.json';
+import tools from '/imports/startup/tools/index';
 
 export const History = new Mongo.Collection('history');
 
@@ -10,9 +11,13 @@ History.deny({
 });
 
 if (Meteor.isServer) {
-  Meteor.publish('historyPub', () => {
+  Meteor.publish('historyPub', (limit) => {
     if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
-    return History.find({}, {sort: { insertionDate: -1 }});
+    if (!tools.isReadAllowed('history')) return [];
+    return History.find({}, {
+      sort: { insertionDate: -1 },
+      limit: limit || 0
+    });
   })
 
   Meteor.methods({

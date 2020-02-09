@@ -9,7 +9,6 @@ import Box from '/imports/components/Box/index';
 import Input from '/imports/components/Input/index';
 import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
-import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 
 export default class RegisterUsers extends React.Component {
   constructor(props) {
@@ -78,41 +77,21 @@ export default class RegisterUsers extends React.Component {
       errorKeys.push("username");
       errorMsg = 'O nome de usuário deve ter ao menos 4 caracteres';
     }
-    if (errorKeys.length === 0) {
-      this.setState({ databaseStatus: "loading" }, () => {
-        if (this.props.item._id) {
-          Meteor.call('users.update', this.state, (err, res) => {
-            if (err) {
-              this.setState({databaseStatus: {
-                status: "failed",
-                message: tools.translateError(err)
-              }})
-            }
-            if (res) {
-              this.setState({ databaseStatus: {
-                status: "completed",
-                callback: this.props.toggleWindow
-              } });
-            }
-          });
-        } else {
-          Meteor.call('users.insert', this.state, (err, res) => {
-            if (err) {
-              this.setState({databaseStatus: {
-                status: "failed",
-                message: tools.translateError(err)
-              }})
-            }
-            if (res) {
-              this.setState({ databaseStatus: {
-                status: "completed",
-                callback: this.props.toggleWindow
-              } });
-            }
-          });
-        }
-      })
-    } else this.setState({ errorMsg, errorKeys })
+    if (errorKeys.length) {
+      this.setState({ errorMsg, errorKeys });
+      return
+    }
+    if (this.props.item._id) {
+      Meteor.call('users.update', this.state, (err, res) => {
+        if (err) this.props.databaseFailed(err);
+        if (res) this.props.databaseCompleted();
+      });
+    } else {
+      Meteor.call('users.insert', this.state, (err, res) => {
+        if (err) this.props.databaseFailed(err);
+        if (res) this.props.databaseCompleted();
+      });
+    }
   }
   renderUserTypesOptions = () => {
     var array = Object.keys(userTypes);
@@ -195,7 +174,6 @@ export default class RegisterUsers extends React.Component {
               {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
               {text: "Salvar", onClick: this.saveEdits}
             ]}/>
-            <DatabaseStatus status={this.state.databaseStatus}/>
         </Box>
       </ErrorBoundary>
     )

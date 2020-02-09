@@ -26,7 +26,7 @@ export default class RegisterPlaces extends React.Component {
     var errorKeys = [...this.state.errorKeys];
     var fieldIndex = errorKeys.findIndex((key) => key === e.target.name);
     errorKeys.splice(fieldIndex, 1);
-    
+
     this.setState({ [e.target.name]: e.target.value });
   }
   toggleConfirmationWindow = () => {
@@ -43,10 +43,16 @@ export default class RegisterPlaces extends React.Component {
       errorKeys.push("description");
       this.setState({ errorMsg: "Favor informar uma descrição.", errorKeys });
     } else {
+      this.props.databaseLoading();
       if (this.props.item._id) {
-        Meteor.call('places.update', this.state._id, this.state.description);
-      } else Meteor.call('places.insert', this.state.description);
-      this.props.toggleWindow();
+        Meteor.call('places.update', this.state._id, this.state.description, (err, res) => {
+          if (err) this.props.databaseFailed(err);
+          if (res) this.props.databaseCompleted();
+        });
+      } else Meteor.call('places.insert', this.state.description, (err, res) => {
+        if (err) this.props.databaseFailed(err);
+        if (res) this.props.databaseCompleted();
+      });
     }
   }
   render() {

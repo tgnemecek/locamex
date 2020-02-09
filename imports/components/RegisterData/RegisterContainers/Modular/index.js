@@ -52,10 +52,18 @@ export default class Modular extends React.Component {
       errorKeys.push("description");
       this.setState({ errorMsg: "Favor informar uma descrição.", errorKeys });
     } else {
+      this.props.databaseLoading();
       if (this.props.item._id) {
-        Meteor.call('containers.modular.update', this.state);
-      } else Meteor.call('containers.modular.insert', this.state);
-      this.props.toggleWindow();
+        Meteor.call('containers.modular.update', this.state, (err, res) => {
+          if (err) this.props.databaseFailed(err);
+          if (res) this.props.databaseCompleted();
+        });
+      } else {
+        Meteor.call('containers.modular.insert', this.state, (err, res) => {
+          if (err) this.props.databaseFailed(err);
+          if (res) this.props.databaseCompleted();
+        });
+      }
     }
   }
   render() {

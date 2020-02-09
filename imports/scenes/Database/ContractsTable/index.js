@@ -68,7 +68,7 @@ class ContractsTable extends React.Component {
           <tr key={i}>
             <td>{item._id}</td>
             <td className="hide-at-700px">
-              {item.proposalId + "." + (item.proposalSnapshot+1)}
+              {item.proposalId + "." + (item.proposalIndex+1)}
             </td>
             <td className="table__wide">{item.clientDescription}</td>
             <td><Status status={item.status} type="contract"/></td>

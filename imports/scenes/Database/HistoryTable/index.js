@@ -6,6 +6,7 @@ import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
 import Icon from '/imports/components/Icon/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
+import ShowMore from '/imports/components/ShowMore/index';
 
 class HistoryTable extends React.Component {
   render () {
@@ -40,15 +41,25 @@ class HistoryTable extends React.Component {
             </tbody>
           </table>
         </div>
+        <ShowMore
+          showMore={this.props.showMore}
+          numberOfRecords={this.props.recordsToShow}
+        />
       </ErrorBoundary>
     )
   }
 }
 
 export default HistoryTableWrapper = withTracker((props) => {
-  Meteor.subscribe('historyPub');
+  var recordsToShow = 50;
+  Meteor.subscribe('historyPub', recordsToShow);
   var database = History.find().fetch() || [];
+  const showMore = () => {
+    Meteor.subscribe('historyPub', 0);
+  }
   return {
-    database
+    database,
+    recordsToShow,
+    showMore
   }
 })(HistoryTable);

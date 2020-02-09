@@ -17,8 +17,7 @@ import Configuration from '/imports/scenes/Configuration/index';
 
 class App extends React.Component {
   render() {
-    var user = Meteor.user();
-    if (user) {
+    if (this.props.user) {
       return (
         <BrowserRouter id="app">
           <div>
@@ -57,7 +56,7 @@ class App extends React.Component {
               return (
                 <div className="app__footer">
                   <div className="app__footer__user">
-                    Logado como {user.profile.firstName}
+                    Logado como {this.props.user.profile.firstName}
                   </div>
                   <div className="app__footer__version">
                     versão {version}
@@ -68,15 +67,14 @@ class App extends React.Component {
           </div>
         </BrowserRouter>
       )
-    } else if (user === null) { // User is not logged in
+    } else if (this.props.user === null) { // User is not logged in
       return <Route path="*" render={(props) => <Login {...props}/>}/>
     } else return null; // Still checking for user's login status
   }
 }
 
 export default AppWrapper = withTracker((props) => {
-  var user = Meteor.user(); // This is to make the wrapper reactive
   return {
-    ...props
+    user: Meteor.user()
   }
 })(App);

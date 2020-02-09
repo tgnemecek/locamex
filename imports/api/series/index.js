@@ -1,13 +1,32 @@
 import { Mongo } from 'meteor/mongo';
+import SimpleSchema from 'simpl-schema';
 import { Meteor } from 'meteor/meteor';
 import tools from '/imports/startup/tools/index';
-import schema from '/imports/startup/schema/index';
 
 import { Contracts } from '/imports/api/contracts/index';
 import { Places } from '/imports/api/places/index';
 import { Containers } from '/imports/api/containers/index';
 
 export const Series = new Mongo.Collection('series');
+Series.attachSchema(new SimpleSchema({
+  _id: String,
+  type: String,
+
+  container: Object,
+  'container._id': String,
+  'container.description': String,
+  place: Object,
+  'place._id': String,
+  'place.description': String,
+
+  observations: {
+    type: String,
+    optional: true
+  },
+  snapshots: Array,
+  'snapshots.$': String,
+  visible: Boolean
+}))
 
 Series.deny({
   insert() { return true; },
@@ -18,11 +37,14 @@ Series.deny({
 if (Meteor.isServer) {
   Meteor.publish('seriesPub', () => {
     if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+    if (!tools.isReadAllowed('series')) return [];
     return Series.find({ visible: true }, {sort: { description: 1 }});
   })
   Meteor.methods({
     'series.insert' (state) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      if (!Meteor.userId() || !tools.isWriteAllowed('series')) {
+        throw new Meteor.Error('unauthorized');
+      }
       var isIdInUse = !!Series.findOne({_id: state._id});
       if (isIdInUse) throw new Meteor.Error('id-in-use');
 
@@ -35,24 +57,28 @@ if (Meteor.isServer) {
         snapshots: [],
         visible: true
       }
-      schema('series', 'full').validate(data);
       Series.insert(data);
       Meteor.call('history.insert', data, 'series.insert');
       return true;
     },
-    'series.update' (changes, _id) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
-      changes.placeDescription = Places.findOne({
-        _id: changes.placeId
-      }).description,
-      changes = schema('series', 'update').clean(changes);
-      schema('series', 'update').validate(changes);
-      Series.update({_id: _id}, {$set: changes} );
-      Meteor.call('history.insert', {_id, changes}, 'series.update');
-      return _id;
+    'series.update' (state) {
+      if (!Meteor.userId() || !tools.isWriteAllowed('series')) {
+        throw new Meteor.Error('unauthorized');
+      }
+      var data = {
+        _id: state._id,
+        container: state.container,
+        place: state.place,
+        observations: state.observations
+      }
+      Series.update({_id: state._id}, {$set: data} );
+      Meteor.call('history.insert', data, 'series.update');
+      return state._id;
     },
     // 'series.update.snapshots' (_id, snapshots) {
-    // if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+    // if (!Meteor.userId() || !tools.isWriteAllowed('series')) {
+    //   throw new Meteor.Error('unauthorized');
+    // }
     //   snapshots = snapshotsSchema.clean(snapshots);
     //   snapshotsSchema.validate(snapshots);
     //   Series.update({_id: _id}, {$set: snapshots} );
@@ -60,7 +86,9 @@ if (Meteor.isServer) {
     //   return _id;
     // },
     'series.delete' (_id) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      if (!Meteor.userId() || !tools.isWriteAllowed('series')) {
+        throw new Meteor.Error('unauthorized');
+      }
       // This function is temporarily disabled
       // After Shipping module is complete, this must be enabled
       // It should look into shipping property in contracts and

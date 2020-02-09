@@ -7,7 +7,6 @@ import tools from '/imports/startup/tools/index';
 import Box from '/imports/components/Box/index';
 import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
-import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
 class RegisterSeries extends React.Component {
@@ -83,43 +82,16 @@ class RegisterSeries extends React.Component {
       this.setState({ errorKeys });
       return;
     }
+    this.props.databaseLoading();
     if (this.props.item._id) {
-      var changes = {
-        place: this.state.place,
-        observations: this.state.observations
-      }
-      this.setState({ databaseStatus: "loading" }, () => {
-        Meteor.call('series.update', changes, this.state._id, (err, res) => {
-          if (err) {
-            console.log(err);
-            this.setState({ databaseStatus: "failed" });
-          }
-          if (res) {
-            this.setState({ databaseStatus: {
-              status: "completed",
-              callback: this.props.toggleWindow
-            }})
-          }
-        });
+      Meteor.call('series.update', this.state, (err, res) => {
+        if (err) this.props.databaseFailed(err);
+        if (res) this.props.databaseCompleted();
       })
-
     } else {
-      this.setState({ databaseStatus: "loading" }, () => {
-        Meteor.call('series.insert', this.state, (err, res) => {
-          if (err) {
-            var message = err.error === 'id-in-use' ? `Série #${this.state._id} já existente! Favor escolher outra série.` : "";
-            this.setState({ databaseStatus: {
-              status: "failed",
-              message,
-              wait: 3000
-            } });
-          } else if (res) {
-            this.setState({ databaseStatus: {
-              status: "completed",
-              callback: this.props.toggleWindow
-            }})
-          }
-        });
+      Meteor.call('series.insert', this.state, (err, res) => {
+        if (err) this.props.databaseFailed(err);
+        if (res) this.props.databaseCompleted();
       })
     }
   }
@@ -207,7 +179,6 @@ class RegisterSeries extends React.Component {
               {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
               {text: "Salvar", onClick: this.saveEdits}
             ]}/>
-          <DatabaseStatus status={this.state.databaseStatus} />
       </Box>
     )
   }

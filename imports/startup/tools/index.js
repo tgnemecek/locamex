@@ -243,12 +243,9 @@ export default class tools {
     if (!user || !user.profile.type) return false;
     if (user.profile.type === 'administrator') return true;
     var write = userTypes[user.profile.type].write;
-    if (write.includes(page)) {
-      return true
-    } else {
-      var read = userTypes[user.profile.type].read;
-      return read.includes(page);
-    }
+    var read = userTypes[user.profile.type].read;
+    var allowed = write.concat(read);
+    return allowed.includes(page);
   }
 
   static isWriteAllowed = (page) => {
@@ -291,11 +288,15 @@ export default class tools {
   static translateError = (error) => {
     console.log(error);
     if (typeof error === "object") {
-      error = error.reason;
+      if (error.errorType === "Meteor.Error") {
+        error = error.error;
+      } else error = error.reason;
     }
     var dictionary = {
       'Incorrect password': 'Senha Incorreta.',
-      'Username already exists.': 'Nome de usuário já existe.'
+      'Username already exists.': 'Nome de usuário já existe.',
+      'duplicate-registry': 'O Cliente que você está tentando cadastrar já existe.',
+      'id-in-use': 'Série já existente. Favor escolher outra.'
     }
     return dictionary[error] || 'Erro de Servidor';
   }

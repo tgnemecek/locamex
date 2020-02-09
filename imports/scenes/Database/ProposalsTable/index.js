@@ -84,11 +84,11 @@ class ProposalsTable extends React.Component {
               {this.renderBody()}
             </tbody>
           </table>
-          <ShowMore
-            showMore={this.props.showMore}
-            numberOfRecords={this.props.recordsToShow}
-          />
         </div>
+        <ShowMore
+          showMore={this.props.showMore}
+          numberOfRecords={this.props.recordsToShow}
+        />
       </ErrorBoundary>
     )
   }
@@ -117,8 +117,7 @@ export default ProposalsTableWrapper = withTracker((props) => {
   })
 
   const showMore = () => {
-    recordsToShow = 0; // all records
-    Meteor.subscribe('proposalsPub', recordsToShow);
+    Meteor.subscribe('proposalsPub', 0);
   }
 
   return {

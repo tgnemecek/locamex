@@ -1,10 +1,28 @@
 import { Mongo } from 'meteor/mongo';
+import SimpleSchema from 'simpl-schema';
 import { Series } from '/imports/api/series/index';
+import { modulesSchema } from '/imports/api/modules/index';
 import tools from '/imports/startup/tools/index';
-import schema from '/imports/startup/schema/index';
-import updateReferences from '/imports/startup/update-references/index';
 
 export const Containers = new Mongo.Collection('containers');
+export const containersSchema = new SimpleSchema({
+  _id: String,
+  description: String,
+  type: String,
+  price: Number,
+  restitution: Number,
+  flyer: {
+    type: String,
+    optional: true
+  },
+  allowedModules: {
+    type: Array,
+    optional: true
+  },
+  'allowedModules.$': modulesSchema,
+  visible: Boolean
+})
+Containers.attachSchema(containersSchema);
 
 Containers.deny({
   insert() { return true; },
@@ -15,61 +33,69 @@ Containers.deny({
 if (Meteor.isServer) {
   Meteor.publish('containersPub', () => {
     if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+    if (!tools.isReadAllowed('containers')) return [];
     return Containers.find({ visible: true }, {sort: { description: 1 }});
   })
   Meteor.methods({
     // FIXED
     'containers.fixed.insert' (state) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      if (!Meteor.userId() || !tools.isWriteAllowed('containers')) {
+        throw new Meteor.Error('unauthorized');
+      }
       const _id = tools.generateId();
-      var data = schema('containers', 'fullFixed').clean({
+      var data = {
         _id,
         description: state.description,
         type: "fixed",
-
         price: state.price,
         restitution: state.restitution,
         flyer: false,
-
         visible: true
-      })
-      schema('containers', 'fullFixed').validate(data);
+      }
       Containers.insert(data);
       Meteor.call('history.insert', data, 'containers.fixed.insert');
+      return true;
     },
 
     'containers.fixed.update' (state) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
-      var data = schema('containers', 'updateFixed').clean({
+      if (!Meteor.userId() || !tools.isWriteAllowed('containers')) {
+        throw new Meteor.Error('unauthorized');
+      }
+      var data = {
         description: state.description,
         price: state.price,
         restitution: state.restitution
-      })
-      schema('containers', 'updateFixed').validate(data);
+      }
 
       Containers.update({ _id: state._id }, { $set: data });
-      updateReferences(state._id, 'containers', {
-        ...data,
-        price: undefined
-      });
+      updateReferences(state._id, {
+        description: state.description,
+        restitution: state.restitution
+      })
       Meteor.call('history.insert', { ...data, _id: state._id }, 'containers.fixed.update');
+      return true;
     },
 
     'containers.update.one' (_id, key, value) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      if (!Meteor.userId() || !tools.isWriteAllowed('containers')) {
+        throw new Meteor.Error('unauthorized');
+      }
       var data = {
         _id,
         [key]: value
       }
       Containers.update({ _id }, {$set: {[key]: value}});
       Meteor.call('history.insert', data, 'containers.update.one');
+      return true;
     },
 
     // MODULAR
     'containers.modular.insert' (state) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      if (!Meteor.userId() || !tools.isWriteAllowed('containers')) {
+        throw new Meteor.Error('unauthorized');
+      }
       const _id = tools.generateId();
-      var data = schema('containers', 'fullModular').clean({
+      var data = {
         _id,
         description: state.description,
         type: "modular",
@@ -81,32 +107,36 @@ if (Meteor.isServer) {
         flyer: false,
 
         visible: true
-      })
-      schema('containers', 'fullModular').validate(data);
+      }
       Containers.insert(data);
       Meteor.call('history.insert', data, 'containers.modular.insert');
+      return true;
     },
 
     'containers.modular.update' (state) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
-      var data = schema('containers', 'updateModular').clean({
+      if (!Meteor.userId() || !tools.isWriteAllowed('containers')) {
+        throw new Meteor.Error('unauthorized');
+      }
+      var data = {
         description: state.description,
         price: state.price,
         restitution: state.restitution,
         allowedModules: state.allowedModules
-      });
-      schema('containers', 'updateModular').validate(data);
+      }
       Containers.update({ _id: state._id }, { $set: data });
-      updateReferences(state._id, 'containers', {
-        ...data,
-        price: undefined
-      });
+      // updateReferences(state._id, 'containers', {
+      //   ...data,
+      //   price: undefined
+      // });
       Meteor.call('history.insert', { ...data, _id: state._id }, 'containers.modular.update');
+      return true;
     },
 
     // OTHER
     'containers.update.flyer' (state) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      if (!Meteor.userId() || !tools.isWriteAllowed('containers')) {
+        throw new Meteor.Error('unauthorized');
+      }
       var flyer = {};
       flyer.paragraphs = state.hasFlyer ? state.paragraphs : [];
       if (!state.hasFlyer) {
@@ -127,7 +157,9 @@ if (Meteor.isServer) {
       return state._id;
     },
     'containers.delete.flyer.images' (_id) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      if (!Meteor.userId() || !tools.isWriteAllowed('containers')) {
+        throw new Meteor.Error('unauthorized');
+      }
       return new Promise((resolve, reject) => {
         var item = Containers.findOne({ _id });
         if (!item.flyer) resolve(_id);
@@ -143,4 +175,39 @@ if (Meteor.isServer) {
       })
     },
   })
+
+  function updateReferences(_id, changes) {
+    Proposals.find({status: "inactive"})
+    .forEach((proposal) => {
+        proposal.snapshots.forEach((snapshot) => {
+          snapshot.accessories = snapshot.accessories
+          .map((item) => {
+            if (item._id === _id) {
+              return {
+                ...item,
+                ...changes
+              }
+            } else return item;
+          })
+        })
+        Proposals.update({ _id: proposal._id },
+          {$set: proposal});
+    })
+    Contracts.find({status: "inactive"})
+    .forEach((contract) => {
+        contract.snapshots.forEach((snapshot) => {
+          snapshot.accessories = snapshot.accessories
+          .map((item) => {
+            if (item._id === _id) {
+              return {
+                ...item,
+                ...changes
+              }
+            } else return item;
+          })
+        })
+        Contracts.update({ _id: contract._id },
+          {$set: contract});
+    })
+  }
 }

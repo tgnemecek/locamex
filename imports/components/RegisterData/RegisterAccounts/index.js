@@ -13,6 +13,7 @@ export default class RegisterAccounts extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      _id: this.props.item._id || "",
       description: this.props.item.description || "",
       bank: this.props.item.bank || "",
       bankNumber: this.props.item.bankNumber || "",
@@ -52,9 +53,14 @@ export default class RegisterAccounts extends React.Component {
       return;
     }
     if (this.props.item._id) {
-      Meteor.call('accounts.update', this.props.item._id, this.state);
-    } else Meteor.call('accounts.insert', this.state);
-    this.props.toggleWindow();
+      Meteor.call('accounts.update', this.state, (err, res) => {
+        if (err) this.props.databaseFailed(err);
+        if (res) this.props.databaseCompleted();
+      });
+    } else Meteor.call('accounts.insert', this.state, (err, res) => {
+      if (err) this.props.databaseFailed(err);
+      if (res) this.props.databaseCompleted();
+    });
   }
   render() {
     return (

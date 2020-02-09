@@ -49,8 +49,8 @@ class ModulesTable extends React.Component {
         "Total"
       ]]
       var body = this.props.database.map((item) => {
-        var available = count(item.place, 'available');
-        var inactive = count(item.place, 'inactive');
+        var available = count(item.places, 'available');
+        var inactive = count(item.places, 'inactive');
         return [
           item.description,
           available,
@@ -89,8 +89,8 @@ class ModulesTable extends React.Component {
         )
       })
       .map((item, i) => {
-        var available = count(item.place, 'available');
-        var inactive = count(item.place, 'inactive');
+        var available = count(item.places, 'available');
+        var inactive = count(item.places, 'inactive');
         return (
           <tr key={i}>
             <td className="table__wide">{item.description}</td>

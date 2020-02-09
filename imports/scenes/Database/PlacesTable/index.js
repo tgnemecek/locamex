@@ -32,11 +32,13 @@ class PlacesTable extends React.Component {
             <thead>
               <tr>
                 <th className="table__wide">Pátio</th>
-                <th>
-                  <button onClick={() => this.toggleWindow({})}>
-                    <Icon icon="new" />
-                  </button>
-                </th>
+                {tools.isWriteAllowed('places') ?
+                  <th>
+                    <button onClick={() => this.toggleWindow({})}>
+                      <Icon icon="new" />
+                    </button>
+                  </th>
+                : null}
               </tr>
             </thead>
             <tbody>
@@ -44,11 +46,13 @@ class PlacesTable extends React.Component {
                 return (
                   <tr key={i}>
                     <td className="table__wide">{item.description}</td>
-                    <td>
-                      <button onClick={() => this.toggleWindow(item)}>
-                        <Icon icon="edit" />
-                      </button>
-                    </td>
+                    {tools.isWriteAllowed('places') ?
+                      <td>
+                        <button onClick={() => this.toggleWindow(item)}>
+                          <Icon icon="edit" />
+                        </button>
+                      </td>
+                    : null}
                   </tr>
                 )
               })}

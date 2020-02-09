@@ -1,13 +1,98 @@
 import { Mongo } from 'meteor/mongo';
+import SimpleSchema from 'simpl-schema';
 import tools from '/imports/startup/tools/index';
-import schema from '/imports/startup/schema/index';
-
+import { addressSchema } from '/imports/api/address/index';
+import { accountsSchema } from '/imports/api/accounts/index';
+import { containersSchema } from '/imports/api/containers/index';
 import { Proposals } from '/imports/api/proposals/index';
 import { Series } from '/imports/api/series/index';
 import { Modules } from '/imports/api/modules/index';
-import { Accessories } from '/imports/api/accessories/index';
+import { Accessories, accessoriesSchema } from '/imports/api/accessories/index';
+import { servicesSchema } from '/imports/api/services/index';
 
 export const Contracts = new Mongo.Collection('contracts');
+Contracts.attachSchema(new SimpleSchema({
+  _id: String,
+  status: String,
+  proposalId: String,
+  proposalIndex: SimpleSchema.Integer,
+  shipping: Array,
+  'shipping': {
+    type: Object,
+    blackbox: true
+  },
+  visible: Boolean,
+  snapshots: Array,
+  'snapshots.$': new SimpleSchema({
+    active: Boolean,
+    createdById: String,
+    createdByName: String,
+    client: {
+      type: Object,
+      blackbox: true
+    },
+    discount: Number,
+    observations: Object,
+    'observations.internal': {
+      type: String,
+      optional: true
+    },
+    'observations.external': {
+      type: String,
+      optional: true
+    },
+    deliveryAddress: {
+      type: Object,
+      blackbox: true
+    },
+    dates: Object,
+    'dates.creationDate': Date,
+    'dates.startDate': Date,
+    'dates.duration': SimpleSchema.Integer,
+    'dates.creationDate': Date,
+    'dates.timeUnit': {
+      type: String,
+      allowedValues: ['months', 'days']
+    },
+    billingProducts: Array,
+    'billingProducts.$': Object,
+    'billingProducts.$.description': String,
+    'billingProducts.$.value': Number,
+    'billingProducts.$.startDate': Date,
+    'billingProducts.$.endDate': Date,
+    'billingProducts.$.expiryDate': Date,
+    'billingProducts.$.account': accountsSchema,
+    billingServices: Array,
+    'billingServices.$': Object,
+    'billingServices.$.description': String,
+    'billingServices.$.inss': {
+      type: Number,
+      min: 0,
+      max: 1
+    },
+    'billingServices.$.iss': {
+      type: Number,
+      min: 0,
+      max: 1
+    },
+    'billingServices.$.value': Number,
+    'billingServices.$.expiryDate': Date,
+    'billingServices.$.account': accountsSchema,
+
+    containers: Array,
+    'containers.$': {
+      type: containersSchema
+    },
+    accessories: Array,
+    'accessories.$': {
+      type: accessoriesSchema
+    },
+    services: Array,
+    'services.$': {
+      type: servicesSchema
+    }
+  })
+}))
 
 Contracts.deny({
   insert() { return true; },
@@ -18,16 +103,20 @@ Contracts.deny({
 if (Meteor.isServer) {
   Meteor.publish('contractsPub', () => {
     if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+    if (!tools.isReadAllowed('contracts')) return [];
     return Contracts.find({}, {sort: { _id: -1 }});
   })
 
   Meteor.methods({
     'contracts.insert'(proposalId) {
+      if (!Meteor.userId() || !tools.isWriteAllowed('proposals')) {
+        throw new Meteor.Error('unauthorized');
+      }
       var proposal = Proposals.findOne({ _id: proposalId });
-      var proposalSnapshot;
+      var proposalIndex;
       var snapshot = proposal.snapshots.find((snapshot, i) => {
         if (snapshot.active === true) {
-          proposalSnapshot = i;
+          proposalIndex = i;
           return true
         }
       });
@@ -46,7 +135,7 @@ if (Meteor.isServer) {
         _id,
         status: 'inactive',
         proposalId: proposalId,
-        proposalSnapshot,
+        proposalIndex,
         shipping: [],
         visible: true,
         snapshots: [{
@@ -100,36 +189,14 @@ if (Meteor.isServer) {
           services: snapshot.services
         }]
       }
-      schema('contracts', 'full').validate(contract.snapshots[0]);
-
       Contracts.insert(contract);
       Meteor.call('history.insert', contract, 'contracts.insert');
       return _id;
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      //
-      // const prefix = new Date().getFullYear();
-      // var offset = 32;
-      // var suffix = Contracts.find({ _id: { $regex: new RegExp(prefix)} }).count() + offset;
-      // suffix = suffix.toString().padStart(3, '0');;
-      // const _id = prefix + "-" + suffix;
-      //
-      // data._id = _id;
-      // data.visible = true;
-      //
-      // Contracts.insert(data);
-      // Meteor.call('history.insert', data, 'contracts.insert');
-      // return _id;
     },
     'contracts.update'(snapshot, _id, index) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+      if (!Meteor.userId() || !tools.isWriteAllowed('contracts')) {
+        throw new Meteor.Error('unauthorized');
+      }
       var oldContract = Contracts.findOne({ _id });
       var hasChanged = !tools.compare(
         oldContract.snapshots[index], snapshot
@@ -138,20 +205,22 @@ if (Meteor.isServer) {
         return {hasChanged: false};
       }
 
-      schema('contracts', 'full').validate(snapshot);
-
+      var data;
       var newIndex;
+
       if (oldContract.snapshots.length === 1) {
         newIndex = 0;
-        Contracts.update({ _id },
-          {$set: { snapshots: [snapshot] }}
-        )
+        data = {
+          ...oldContract,
+          snapshots: [snapshot]
+        }
       } else {
         newIndex = oldContract.snapshots.length;
-        Contracts.update({ _id },
-          {$push: { snapshots: snapshot }}
-        )
+        data = oldContract;
+        data.snapshots.push(snapshot);
       }
+
+      Contracts.update({ _id }, {$set: data})
       Meteor.call('history.insert', {_id, ...snapshot}, 'contracts.update');
       return {
         hasChanged: true,
@@ -160,6 +229,9 @@ if (Meteor.isServer) {
       };
     },
     'contracts.activate'(contract) {
+      if (!Meteor.userId() || !tools.isWriteAllowed('contracts')) {
+        throw new Meteor.Error('unauthorized');
+      }
       var _id = contract._id;
       Contracts.update({ _id }, { $set: {
         status: "active",
@@ -169,16 +241,22 @@ if (Meteor.isServer) {
       return { _id };
     },
     'contracts.finalize'(_id) {
+      if (!Meteor.userId() || !tools.isWriteAllowed('contracts')) {
+        throw new Meteor.Error('unauthorized');
+      }
       Contracts.update({ _id }, { $set: { status: "finalized" } } );
       Meteor.call('history.insert', { _id }, 'contracts.finalize');
       return _id;
     },
     'contracts.cancel'(_id) {
+      if (!Meteor.userId() || !tools.isWriteAllowed('contracts')) {
+        throw new Meteor.Error('unauthorized');
+      }
       var contract = Contracts.findOne({_id});
       var proposal = Proposals.findOne({_id: contract.proposalId});
 
       proposal.status = 'inactive';
-      proposal.snapshots[contract.proposalSnapshot].active = false;
+      proposal.snapshots[contract.proposalIndex].active = false;
 
       Proposals.update({ _id: contract.proposalId }, proposal);
       Contracts.update({ _id }, { $set: { status: "cancelled" } } );
@@ -186,6 +264,9 @@ if (Meteor.isServer) {
       return _id;
     },
     'contracts.shipping.send'(master) {
+      if (!Meteor.userId() || !tools.isWriteAllowed('contracts')) {
+        throw new Meteor.Error('unauthorized');
+      }
       var _id = master._id;
       var oldShipping = Contracts.findOne({ _id }).shipping;
 
@@ -292,6 +373,9 @@ if (Meteor.isServer) {
       return _id;
     },
     'contracts.shipping.receive'(master) {
+      if (!Meteor.userId() || !tools.isWriteAllowed('contracts')) {
+        throw new Meteor.Error('unauthorized');
+      }
       var _id = master._id;
       var oldShipping = Contracts.findOne({ _id }).shipping;
 
@@ -393,6 +477,9 @@ if (Meteor.isServer) {
       return true;
     },
     'contracts.billing.update' (_id, billing, type) {
+      if (!Meteor.userId() || !tools.isWriteAllowed('contracts')) {
+        throw new Meteor.Error('unauthorized');
+      }
       var contract = Contracts.findOne({_id});
       var snapshot = contract.snapshots[contract.activeVersion];
       snapshot[type] = billing;

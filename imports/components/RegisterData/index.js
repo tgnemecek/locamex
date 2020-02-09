@@ -1,6 +1,7 @@
 import React from 'react';
 
 import DatabaseStatus from '/imports/components/DatabaseStatus/index';
+import tools from '/imports/startup/tools/index';
 
 import RegisterAccessories from './RegisterAccessories/index';
 import RegisterAccounts from './RegisterAccounts/index';
@@ -43,51 +44,53 @@ export default class RegisterData extends React.Component {
   }
 
   selectComponent = () => {
+    var Component;
     switch (this.props.type) {
       case 'accessories':
-        return (
-          <RegisterAccessories
-            {...this.props}
-            databaseLoading={this.databaseLoading}
-            databaseFailed={this.databaseFailed}
-            databaseCompleted={this.databaseCompleted}
-            Footer={Footer}
-          />
-        )
+        Component = RegisterAccessories;
         break;
       case 'accounts':
-        return <RegisterAccounts {...this.props} Footer={Footer} />
+        Component = RegisterAccounts;
         break;
       case 'containers':
-        return <RegisterContainers {...this.props} Footer={Footer} />
+        Component = RegisterContainers;
         break;
       case 'clients':
-        return <RegisterClients {...this.props} Footer={Footer} />
+        Component = RegisterClients;
         break;
       case 'history':
-        return <RegisterHistory {...this.props} Footer={Footer} />
+        Component = RegisterHistory;
         break;
       case 'series':
-        return <RegisterSeries {...this.props} Footer={Footer} />
+        Component = RegisterSeries;
         break;
       case 'modules':
-        return <RegisterModules {...this.props} Footer={Footer} />
+        Component = RegisterModules;
         break;
       case 'packs':
-        return <RegisterPacks {...this.props} Footer={Footer} />
+        Component = RegisterPacks;
         break;
       case 'places':
-        return <RegisterPlaces {...this.props} Footer={Footer} />
+        Component = RegisterPlaces;
         break;
       case 'services':
-        return <RegisterServices {...this.props} Footer={Footer} />
+        Component = RegisterServices;
         break;
       case 'users':
-        return <RegisterUsers {...this.props} Footer={Footer} />
+        Component = RegisterUsers;
         break;
       default:
         return null;
     }
+    return (
+      <Component
+        {...this.props}
+        databaseLoading={this.databaseLoading}
+        databaseFailed={this.databaseFailed}
+        databaseCompleted={this.databaseCompleted}
+        Footer={Footer}
+      />
+    )
   }
 
   render() {

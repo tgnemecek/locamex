@@ -91,41 +91,43 @@ class SeriesTable extends React.Component {
   renderBody = () => {
     return this.props.database
       .filter((item) => {
+        if (!this.state.filterIdContainer
+            && !this.state.filterIdPlace) return true;
         if (item.container._id === this.state.filterIdContainer) {
           return true;
         } else return item.place._id === this.state.filterIdPlace;
       })
-    return filteredDatabase.map((item, i) => {
-      const renderEditButton = () => {
-        if (tools.isWriteAllowed("series")) {
-          return (
+      .map((item, i) => {
+        const renderEditButton = () => {
+          if (tools.isWriteAllowed("series")) {
+            return (
+              <td>
+                <button onClick={() => this.toggleWindow(item, 'edit')}>
+                  <Icon icon="edit" />
+                </button>
+              </td>
+            )
+          } else return null;
+        }
+        return (
+          <tr key={i}>
             <td>
-              <button onClick={() => this.toggleWindow(item, 'edit')}>
-                <Icon icon="edit" />
+              {item._id}
+            </td>
+            <td style={{textAlign: 'left'}}>
+              {item.container.description}
+            </td>
+            <td>
+              {item.place.description}
+            </td>
+            {renderEditButton()}
+            <td>
+              <button onClick={() => this.toggleWindow(item, 'image')}>
+                <Icon icon="image" />
               </button>
             </td>
-          )
-        } else return null;
-      }
-      return (
-        <tr key={i}>
-          <td>
-            {item._id}
-          </td>
-          <td style={{textAlign: 'left'}}>
-            {item.container.description}
-          </td>
-          <td>
-            {item.place.description}
-          </td>
-          {renderEditButton()}
-          <td>
-            <button onClick={() => this.toggleWindow(item, 'image')}>
-              <Icon icon="image" />
-            </button>
-          </td>
-        </tr>
-      )
+          </tr>
+        )
     })
   }
 

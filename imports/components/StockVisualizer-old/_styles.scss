@@ -1,0 +1,35 @@
+.stock-visualizer {
+  width: 50%;
+}
+
+.stock-visualizer__place-block {
+  background: $brand-primary;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  color: white;
+  line-height: 35px;
+  text-align: left;
+  padding-left: ($space /2);
+  margin: ($space /2) 0;
+  div {
+    padding: 0px;
+  }
+}
+
+.stock-visualizer__buy-sell-wrapper {
+  display: inline-flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-bottom: ($space);
+}
+
+.stock-visualizer__buy-sell-ammounts {
+  width: 100%;
+}
+
+.stock-visualizer__buy-sell {
+  display: inline-flex;
+}
+.stock-visualizer__buy-sell__button {
+  margin: 17px 0 0 0;
+}

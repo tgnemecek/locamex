@@ -179,7 +179,7 @@ class Contract extends React.Component {
       master.type = "contract";
       master._id = this.props.contract._id;
       master.proposalId = this.props.contract.proposalId;
-      master.proposalSnapshot = this.props.contract.proposalSnapshot;
+      master.proposalIndex = this.props.contract.proposalIndex;
 
       Meteor.call('pdf.generate', master, (err, res) => {
         if (res) {
@@ -409,7 +409,7 @@ function SnapshotLoader (props) {
   } else return null;
 }
 
-export default SnapshotWrapper = withTracker((props) => {
+export default ContractWrapper = withTracker((props) => {
   Meteor.subscribe('contractsPub');
   Meteor.subscribe('clientsPub');
   Meteor.subscribe('containersPub');
@@ -446,9 +446,9 @@ export default SnapshotWrapper = withTracker((props) => {
   if (contract && contract.snapshots.length === 1) {
     var proposal = Proposals.findOne({ _id: contract.proposalId });
     if (proposal) {
-      var index = contract.proposalSnapshot;
-      var proposalSnapshot = proposal.snapshots[index];
-      proposalClient = proposalSnapshot.client;
+      var index = contract.proposalIndex;
+      var proposalIndex = proposal.snapshots[index];
+      proposalClient = proposalIndex.client;
     }
   }
 

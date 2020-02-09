@@ -13,23 +13,27 @@ var DATABASE_SET = {
 if (Meteor.isServer) {
   Meteor.methods({
     'snapshot.add' (item, urls) {
+      // ADD THIS LATER:
+      // if (!Meteor.userId() || !tools.isWriteAllowed('services')) {
+      //   throw new Meteor.Error('unauthorized');
+      // }
       if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
-      try {
-        var Database = DATABASE_SET[item.type];
-        var _id = item._id;
-        if (!Database) throw new Meteor.Error("type-not-found: " + item.type);
+      var Database = DATABASE_SET[item.type];
+      var _id = item._id;
+      if (!Database) {
+        throw new Meteor.Error("type-not-found: " + item.type);
+      }
 
-        var snapshots = {
-          date: new Date(),
-          images: urls
-        };
-        Database.update({ _id }, { $push: { snapshots } });
-        Meteor.call('history.insert', { ...snapshots, _id }, 'snapshot.add');
-        return urls;
-      }
-      catch(err) {
-        throw new Meteor.Error(err);
-      }
+      var snapshot = {
+        date: new Date(),
+        images: urls
+      };
+      var data = Database.findOne({ _id });
+      data.snapshots.push(snapshot);
+
+      Database.update({ _id }, { $set: data });
+      Meteor.call('history.insert', { ...snapshots, _id }, 'snapshot.add');
+      return urls;
     }
   })
 }

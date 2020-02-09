@@ -35,13 +35,12 @@ export const userTypes = {
     label: "Vendas",
     write: [
       "clients",
-      "series",
       "accessories",
       "packs",
       "proposals",
       "proposal"
     ],
-    read: []
+    read: ["places", "series"]
   },
   finances: {
     label: "Financeiro",
