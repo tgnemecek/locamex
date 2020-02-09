@@ -1,10 +1,6 @@
-import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import ErrorBoundary from '/imports/components/ErrorBoundary/index';
-import tools from '/imports/startup/tools/index';
-import Block from '/imports/components/Block/index';
+
 import Box from '/imports/components/Box/index';
-import FooterButtons from '/imports/components/FooterButtons/index';
 import Input from '/imports/components/Input/index';
 
 export default class BuySell extends React.Component {
@@ -13,52 +9,62 @@ export default class BuySell extends React.Component {
     this.state = {
       in: 0,
       out: 0
-    };
+    }
   }
   onChange = (e) => {
-    var name = e.target.name;
-    var value = e.target.value;
-    this.setState({ [name]: value })
+    this.setState({ [e.target.name]: e.target.value })
   }
-  applyChange = (e) => {
-    var name = e.target.name;
-    var value;
-    if (name === "in") {
-      value = this.state.in;
-    } else if (name === "out") {
-      value = (0 - this.state.out);
-    }
-    this.props.changeTotal(value);
-    this.setState({ [name]: 0 })
+  setOffset = (which) => {
+    var offset = this.state[which];
+    if (which === 'out') offset = -offset;
+    this.props.setOffset(offset, () => {
+      this.setState({ [which]: 0 })
+    });
   }
   render() {
     return (
-      <div className="stock-visualizer__buy-sell-wrapper">
-        <div className="stock-visualizer__buy-sell-ammounts">
-          TOTAL: {this.props.totalItems} / SOMA ATUAL: {this.props.sumItems}
-        </div>
-        <div className="stock-visualizer__buy-sell">
+      <div className="stock-visualizer__buy-sell">
+        <div className="stock-visualizer__inputs">
           <Input
-            title="Compra/Entrada"
-            min={0}
+            title="Entrada:"
+            type="number"
             name="in"
-            type="number"
-            onChange={this.onChange}
-            value={this.state.in}
-          />
-          <button className="button--pill stock-visualizer__buy-sell__button" name="in" onClick={this.applyChange}>Aplicar</button>
-        </div>
-        <div className="stock-visualizer__buy-sell">
-          <Input
-            title="Desmanche/Saída"
             min={0}
-            max={this.props.totalItems}
-            name="out"
-            type="number"
+            max={999}
+            value={this.state.in}
             onChange={this.onChange}
-            value={this.state.out}
           />
-          <button className="button--pill stock-visualizer__buy-sell__button" name="out" onClick={this.applyChange}>Aplicar</button>
+          <button className="button--pill"
+            onClick={() => this.setOffset('in')}>
+            Aplicar
+          </button>
+        </div>
+        <div className="stock-visualizer__ammounts">
+          <div style={{textAlign: "right"}}>
+            <div>Soma:</div>
+            <div>Modificação:</div>
+            <div>Total:</div>
+          </div>
+          <div style={{textAlign: "left"}}>
+            <div>{this.props.sumOfPlaces}</div>
+            <div>{this.props.offset}</div>
+            <div>{this.props.totalGoal}</div>
+          </div>
+        </div>
+        <div className="stock-visualizer__inputs">
+          <Input
+            title="Saída:"
+            type="number"
+            name="out"
+            min={0}
+            max={999}
+            value={this.state.out}
+            onChange={this.onChange}
+          />
+          <button className="button--pill"
+            onClick={() => this.setOffset('out')}>
+            Aplicar
+          </button>
         </div>
       </div>
     )

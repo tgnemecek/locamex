@@ -102,20 +102,8 @@ export default class Input extends React.PureComponent {
           {...this.props}
           style={this.style()}
           value={this.props.value}
-          onChange={this.onChange}
-          // style={this.props.style}
-          // type={this.props.type}
-          // id={this.props.id}
-          //
-          // readOnly={this.props.readOnly}
-          // placeholder={this.props.placeholder}
-          // disabled={this.props.disabled}
-          // buttonClick={this.props.buttonClick}
-          // min={this.props.min}
-          // max={this.props.max}
-          // options={this.props.options}
-          >
-          {this.props.children}
+          onChange={this.onChange}>
+            {this.props.children}
         </ChosenComponent>
       </div>
     )

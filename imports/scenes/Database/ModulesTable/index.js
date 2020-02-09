@@ -138,7 +138,6 @@ class ModulesTable extends React.Component {
         : null}
         {this.state.windowType === 'stock' ?
           <StockVisualizer
-            type='modules'
             item={this.state.item}
             toggleWindow={this.toggleWindow}
           />
