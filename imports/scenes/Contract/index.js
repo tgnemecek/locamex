@@ -51,7 +51,7 @@ class Contract extends React.Component {
       snapshotIndex,
       errorMsg: '',
       errorKeys: [],
-      clientSetupOpen: (snapshotIndex === 0 && !snapshot.client),
+      clientSetupOpen: (snapshotIndex === 0 && !snapshot.client._id),
       documentsOpen: false,
       billingOpen: false,
       databaseStatus: ''
@@ -63,8 +63,12 @@ class Contract extends React.Component {
       ...this.state.snapshot,
       ...changes,
     };
-    this.setState({ snapshot, errorKeys: [], errorMsg: '' }, () => {
-      if (typeof (callback) === "function") callback();
+    this.setState({
+      snapshot,
+      errorKeys: [],
+      errorMsg: ''
+    }, () => {
+      if (typeof callback === "function") callback();
     })
   }
 
@@ -76,6 +80,29 @@ class Contract extends React.Component {
         callback();
       }
     });
+  }
+
+  activateContract = (callback) => {
+    this.setState({ databaseStatus: "loading" }, () => {
+      const activate = () => {
+        var _id = this.props.contract._id;
+        var snapshotIndex = this.state.snapshotIndex;
+        Meteor.call('contracts.activate', _id, snapshotIndex, (err, res) => {
+          if (res) {
+            var databaseStatus = {
+              status: "completed",
+              message: "Contrato Ativado!"
+            }
+            this.setState({ databaseStatus });
+          } else if (err) {
+            this.setState({ databaseStatus: "failed" });
+            console.log(err);
+          }
+          callback();
+        });
+      }
+      this.saveEdits(activate);
+    })
   }
 
   cancelContract = (callback) => {
@@ -126,43 +153,20 @@ class Contract extends React.Component {
               message: "Nenhuma alteração realizada."
             }
           }
-          if (typeof callback === "function") {
-            callback(snapshot);
-          } else {
-            this.setState({
-              snapshot,
-              snapshotIndex,
-              databaseStatus
-            });
-          }
+          this.setState({
+            snapshot,
+            snapshotIndex,
+            databaseStatus
+          }, () => {
+            if (typeof callback === "function") {
+              callback(snapshot);
+            }
+          });
         } else if (err) {
           this.setState({ databaseStatus: "failed" });
           console.log(err);
         }
       });
-    })
-  }
-
-  activateContract = (callback) => {
-    this.setState({ databaseStatus: "loading" }, () => {
-      const activate = () => {
-        var _id = this.props.contract._id;
-        var snapshotIndex = this.state.snapshotIndex;
-        Meteor.call('contracts.activate', _id, snapshotIndex, (err, res) => {
-          if (res) {
-            var databaseStatus = {
-              status: "completed",
-              message: "Contrato Ativado!"
-            }
-            this.setState({ databaseStatus });
-          } else if (err) {
-            this.setState({ databaseStatus: "failed" });
-            console.log(err);
-          }
-          callback();
-        });
-      }
-      this.saveEdits(activate);
     })
   }
 
@@ -175,13 +179,14 @@ class Contract extends React.Component {
   }
 
   generateDocument = () => {
-    const generate = (master) => {
-      master.type = "contract";
-      master._id = this.props.contract._id;
-      master.proposalId = this.props.contract.proposalId;
-      master.proposalIndex = this.props.contract.proposalIndex;
+    const generate = (snapshot) => {
+      snapshot.type = "contract";
+      snapshot._id = this.props.contract._id;
+      snapshot.proposalId = this.props.contract.proposalId;
+      snapshot.proposalIndex = this.props.contract.proposalIndex;
+      snapshot.version = Number(this.state.snapshotIndex)+1;
 
-      Meteor.call('pdf.generate', master, (err, res) => {
+      Meteor.call('pdf.generate', snapshot, (err, res) => {
         if (res) {
           saveAs(res.data, res.fileName);
           this.setState({ databaseStatus: "completed" });
@@ -193,10 +198,6 @@ class Contract extends React.Component {
       })
     }
     this.saveEdits(generate);
-  }
-
-  setError = (errorMsg, errorKeys) => {
-    this.setState({ errorMsg, errorKeys })
   }
 
   //
@@ -294,6 +295,78 @@ class Contract extends React.Component {
   // }
   //
 
+  verifyFields = () => {
+    var errorKeys = [];
+    var errorMsg = '';
+
+    const isBillingCorrect = () => {
+      if (!this.state.snapshot.billingProducts.length) return false;
+      if (!this.state.snapshot.billingServices.length) return false;
+
+      var productsGoalValue = this.totalValue('products');
+      var productsValue = this.state.snapshot.billingProducts.reduce((acc, cur) => {
+        return acc + cur.value;
+      }, 0);
+      productsValue = tools.round(productsValue, 2);
+      if (productsGoalValue !== productsValue) return false;
+
+      var servicesGoalValue = this.totalValue('services');
+      var servicesValue = this.state.snapshot.billingServices.reduce((acc, cur) => {
+        return acc + cur.value;
+      }, 0);
+      servicesValue = tools.round(servicesValue, 2);
+      if (servicesGoalValue !== servicesValue) return false;
+      return true;
+    }
+
+    const setErrorKeys = () => {
+      if (!this.state.snapshot.client._id) {
+        errorKeys.push("client");
+      }
+      if (!this.state.snapshot.dates.duration) {
+        errorKeys.push("duration");
+      }
+      if (!this.state.snapshot.negociatorId) {
+        errorKeys.push("negociatorId");
+      }
+      if (!this.state.snapshot.representativesId[0]) {
+        errorKeys.push("rep0");
+      }
+      if (!this.state.snapshot.deliveryAddress.cep) {
+        errorKeys.push("cep");
+      }
+      if (!this.state.snapshot.deliveryAddress.street) {
+        errorKeys.push("street");
+      }
+      if (!this.state.snapshot.deliveryAddress.city) {
+        errorKeys.push("city");
+      }
+      if (!this.state.snapshot.deliveryAddress.state) {
+        errorKeys.push("state");
+      }
+      if (!this.state.snapshot.deliveryAddress.number) {
+        errorKeys.push("number");
+      }
+      if (!isBillingCorrect()) {
+        errorKeys.push("billing");
+      }
+      // if (this.totalValue() <= 0) {
+      //   errorKeys.push("totalValue");
+      // }
+    }
+
+    setErrorKeys();
+
+    if (errorKeys.length > 0) {
+      errorMsg = 'Campos obrigatórios não preenchidos.';
+      this.setState({ errorMsg, errorKeys })
+      return false;
+    } else {
+      this.setState({errorMsg: '', errorKeys})
+      return true;
+    }
+  }
+
   totalValue = (option) => {
     var duration = this.state.snapshot.dates.timeUnit === "months" ? this.state.snapshot.dates.duration : 1;
     var discount = this.state.snapshot.discount;
@@ -331,10 +404,14 @@ class Contract extends React.Component {
             title={"Contrato #" + this.props.contract._id}
             status={this.props.contract.status}
             type="contract"
+
             toggleDocuments={this.toggleDocuments}
+            documentsError={
+              this.state.errorKeys.includes('negociatorId') ||
+              this.state.errorKeys.includes('rep0')}
 
             toggleBilling={this.toggleBilling}
-            errorKeys={this.state.errorKeys}
+            billingError={this.state.errorKeys.includes('billing')}
 
             cancelMaster={this.cancelContract}
             changeSnapshot={this.changeSnapshot}
@@ -358,13 +435,15 @@ class Contract extends React.Component {
               updateSnapshot={this.updateSnapshot}
               docType="contract"
             />
+            <div className="error-message">
+              {this.state.errorMsg}
+            </div>
             <Footer
               totalValue={this.totalValue()}
               productsValue={this.totalValue('products')}
               servicesValue={this.totalValue('services')}
               snapshot={this.state.snapshot}
-              setError={this.setError}
-              creationDate={this.props.contract.snapshots[0].dates.creationDate}
+              verifyFields={this.verifyFields}
               status={this.props.contract.status}
               saveEdits={this.saveEdits}
               activateContract={this.activateContract}
@@ -380,12 +459,19 @@ class Contract extends React.Component {
           : null}
           {this.state.documentsOpen ?
             <Documents
-              snapshot={this.state.snapshot}
+              // snapshot={this.state.snapshot}
+              // updateSnapshot={this.updateSnapshot}
+              // disabled={this.props.contract.status !== "inactive"}
+              // settings={this.props.settings}
+              verifyFields={this.verifyFields}
+              errorKeys={this.state.errorKeys}
               updateSnapshot={this.updateSnapshot}
-              disabled={this.props.contract.status !== "inactive"}
-              toggleWindow={this.toggleDocuments}
-              settings={this.props.settings}
+              client={this.state.snapshot.client}
+              representativesId={
+                this.state.snapshot.representativesId}
+              negociatorId={this.state.snapshot.negociatorId}
               generateDocument={this.generateDocument}
+              toggleWindow={this.toggleDocuments}
             />
           : null}
           {this.state.billingOpen ?

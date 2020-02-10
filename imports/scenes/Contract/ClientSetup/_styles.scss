@@ -1,4 +1,5 @@
 .client-setup {
+  width: 60%;
 }
 
 .client-setup__proposal-title {
@@ -15,7 +16,7 @@
 
 .client-setup__client-body {
   display: grid;
-  grid-template-columns: 90% 10%;
+  grid-template-columns: 1fr 40px;
   align-items: end;
 }
 

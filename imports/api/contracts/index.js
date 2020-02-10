@@ -17,6 +17,10 @@ Contracts.attachSchema(new SimpleSchema({
   proposalId: String,
   proposalIndex: SimpleSchema.Integer,
   shipping: Array,
+  firstSnapshot: {
+    type: Boolean,
+    optional: true
+  },
   'shipping': {
     type: Object,
     blackbox: true
@@ -31,6 +35,12 @@ Contracts.attachSchema(new SimpleSchema({
       type: Object,
       blackbox: true
     },
+    negociatorId: {
+      type: String,
+      optional: true
+    },
+    representativesId: Array,
+    'representativesId.$': String,
     discount: Number,
     observations: Object,
     'observations.internal': {
@@ -137,6 +147,7 @@ if (Meteor.isServer) {
         proposalId: proposalId,
         proposalIndex,
         shipping: [],
+        firstSnapshot: true,
         visible: true,
         snapshots: [{
           active: false,
@@ -161,6 +172,8 @@ if (Meteor.isServer) {
               additional: '',
             }
           },
+          negociatorId: '',
+          representativesId: [],
           discount: snapshot.discount,
           observations: {
             internal: '',
@@ -170,7 +183,7 @@ if (Meteor.isServer) {
             street: '',
             cep: '',
             city: '',
-            state: '',
+            state: 'SP',
             number: '',
             additional: '',
           },
@@ -197,10 +210,12 @@ if (Meteor.isServer) {
       if (!Meteor.userId() || !tools.isWriteAllowed('contracts')) {
         throw new Meteor.Error('unauthorized');
       }
+
       var oldContract = Contracts.findOne({ _id });
       var hasChanged = !tools.compare(
         oldContract.snapshots[index], snapshot
       );
+
       if (!hasChanged) {
         return {hasChanged: false};
       }
@@ -208,10 +223,11 @@ if (Meteor.isServer) {
       var data;
       var newIndex;
 
-      if (oldContract.snapshots.length === 1) {
+      if (oldContract.firstSnapshot) {
         newIndex = 0;
         data = {
           ...oldContract,
+          firstSnapshot: false,
           snapshots: [snapshot]
         }
       } else {
@@ -228,17 +244,18 @@ if (Meteor.isServer) {
         index: newIndex
       };
     },
-    'contracts.activate'(contract) {
+    'contracts.activate'(_id, index) {
       if (!Meteor.userId() || !tools.isWriteAllowed('contracts')) {
         throw new Meteor.Error('unauthorized');
       }
-      var _id = contract._id;
-      Contracts.update({ _id }, { $set: {
-        status: "active",
-        activeVersion: Number(contract.version)
-      } })
-      Meteor.call('history.insert', { _id }, 'contracts.activate');
-      return { _id };
+      var contract = Contracts.findOne({ _id });
+
+      contract.status = 'active';
+      contract.snapshots[index].active = true;
+
+      Contracts.update({ _id }, {$set: contract});
+      Meteor.call('history.insert', _id, 'contracts.activate');
+      return true;
     },
     'contracts.finalize'(_id) {
       if (!Meteor.userId() || !tools.isWriteAllowed('contracts')) {

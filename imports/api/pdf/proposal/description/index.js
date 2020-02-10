@@ -1,7 +1,7 @@
 import tools from '/imports/startup/tools/index';
 
-export default function conditions (props) {
-  if (!props.observations.external.trim()) return null;
+export default function description (props) {
+  if (!props.observations.external) return null;
 
   return [
     {text: 'Descrição da Proposta', alignment: 'center', style: 'h2'},

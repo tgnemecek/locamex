@@ -216,8 +216,17 @@ export default class BillingSchedule extends React.Component {
             )}
             AccountsSelector={AccountsSelector}
             EqualCharges={EqualCharges}/>
-          {!this.props.disabled ?
-            <FooterButtons buttons={[{text: "Salvar", onClick: this.saveEdits}]}/>
+          {!this.props.disabled &&
+            this.state.billingProducts[0] &&
+            this.state.billingServices[0]
+            ?
+            <FooterButtons buttons={[
+              {text: "Voltar",
+              className: "button--secondary",
+              onClick: this.props.toggleWindow},
+              {text: "Confirmar Edições",
+              onClick: this.saveEdits}
+            ]}/>
           : null}
         </Box>
       )

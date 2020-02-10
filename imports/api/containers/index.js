@@ -11,6 +11,10 @@ export const containersSchema = new SimpleSchema({
   type: String,
   price: Number,
   restitution: Number,
+  renting : {
+    type: SimpleSchema.Integer,
+    optional: true
+  },
   flyer: {
     type: String,
     optional: true

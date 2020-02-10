@@ -58,7 +58,8 @@ class Proposal extends React.Component {
         observations: {
           internal: '',
           external: '',
-          conditions: this.props.settings.defaultConditionsMonths
+          conditions: this.props.settings
+                      .defaultConditionsMonths
         },
         deliveryAddress: {
           street: '',
@@ -279,6 +280,7 @@ class Proposal extends React.Component {
   }
 
   render () {
+    console.log(this.props.settings)
     return (
       <div className="page-content">
         <RedirectUser currentPage="proposal"/>
@@ -315,6 +317,7 @@ class Proposal extends React.Component {
               updateSnapshot={this.updateSnapshot}
               docType="proposal"
             />
+            <div className="error-message"></div>
             <Footer
               totalValue={this.totalValue()}
               creationDate={this.props.proposal ?
@@ -343,10 +346,14 @@ class Proposal extends React.Component {
 }
 
 function ProposalLoader (props) {
-  if (props.match.params.proposalId === 'new' || props.proposal) {
-    if (Object.entries(props.settings).length && props.user) {
-      return <ErrorBoundary><Proposal {...props} /></ErrorBoundary>
-    }
+  if (!props.settings) return null;
+  if (props.match.params.proposalId === 'new'
+      || props.proposal) {
+      return (
+        <ErrorBoundary>
+          <Proposal {...props} />
+        </ErrorBoundary>
+      )
   }
   return null;
 }
@@ -370,12 +377,12 @@ export default ProposalWrapper = withTracker((props) => {
     });
   }
   var user = Meteor.user();
-  var settings = Settings.findOne({});
+  var settings = Settings.findOne({}) || {};
   return {
     databases,
     proposal,
     user,
-    settings: settings ? settings.proposal : {}
+    settings: settings.proposal
   }
 
 })(ProposalLoader);

@@ -23,7 +23,7 @@ export default class Footer extends React.Component {
     if (this.props.status === 'inactive') {
       return (
         <FooterButtons buttons={[
-          {text: "Salvar Edições", className: "button--secondary", onClick: this.props.saveEdits},
+          {text: "Salvar Versão", className: "button--secondary", onClick: this.props.saveEdits},
           {text: "Fechar Proposta", className: "button--primary", onClick: this.toggleConfirmationWindow},
         ]}/>
       )

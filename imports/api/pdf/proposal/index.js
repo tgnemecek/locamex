@@ -3,7 +3,7 @@ import moment from 'moment';
 
 import title from './title/index';
 import tableInformation from './table-information/index';
-import observations from './observations/index';
+import description from './description/index';
 import tableProducts from './table-products/index';
 import tableServices from './table-services/index';
 import tableTotalValue from './table-total-value/index';
@@ -79,7 +79,7 @@ export default function proposalPdf(props) {
     content: [
       title(data),
       tableInformation(data),
-      observations(data),
+      description(data),
       tableProducts(data),
       tableServices(data),
       tableTotalValue(data),

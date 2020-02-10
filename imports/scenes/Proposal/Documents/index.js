@@ -37,6 +37,13 @@ export default class Documents extends React.Component {
     }
     this.setState({ observations })
   }
+
+  updateSnapshot = () => {
+    this.props.updateSnapshot({
+      observations: this.state.observations
+    })
+  }
+
   generateDocument = () => {
     this.props.updateSnapshot({
       observations: this.state.observations
@@ -44,6 +51,7 @@ export default class Documents extends React.Component {
       this.props.generateDocument(this.state.includeFlyer);
     })
   }
+
   render() {
       return (
         <Box
@@ -65,7 +73,7 @@ export default class Documents extends React.Component {
               value={this.state.observations.internal}
               onChange={this.onChangeObservations}/>
             <Input
-              title="Observações para o Cliente:"
+              title="Descrição da Proposta (opcional):"
               name="external"
               type="textarea"
               disabled={this.props.disabled}
@@ -79,7 +87,13 @@ export default class Documents extends React.Component {
               value={this.state.observations.conditions}
               onChange={this.onChangeObservations}/>
             <FooterButtons buttons={[
-              {text: "Salvar e Imprimir Proposta", className: "button--primary", onClick: this.generateDocument},
+              {text: "Salvar Versão e Gerar Documento",
+              className: "button--green",
+              onClick: this.generateDocument},
+              {text: "Voltar",
+              className: "button--secondary",
+              onClick: this.props.toggleWindow},
+              {text: "Confirmar Edições", className: "button--primary", onClick: this.updateSnapshot}
             ]}/>
         </Box>
       )

@@ -20,7 +20,7 @@ export default class ManageItems extends React.Component {
     }
   }
 
-  filteredDatabase = () => {
+  filterDatabase = () => {
     function compare(inputValue, dbValue) {
       inputValue = tools.removeSpecialChars(
         inputValue,
@@ -82,36 +82,12 @@ export default class ManageItems extends React.Component {
     this.setState({ searchTerm: e.target.value });
   }
 
-  // filterSearch = (filteredDatabase) => {
-  //   if (filteredDatabase) {
-  //     filteredDatabase = this.hideFromArray(filteredDatabase);
-  //   } else {
-  //     filteredDatabase = this.hideFromArray(this.props.fullDatabase);
-  //   }
-  //   this.setState({ filteredDatabase });
-  // }
-
-  // hideFromArray = (toFilter, addedItems) => {
-  //   addedItems = addedItems || this.state.addedItems;
-  //
-  //   return toFilter.filter((item) => {
-  //     for (var i = 0; i < addedItems.length; i++) {
-  //       if (item._id === addedItems[i].productId) {
-  //         return false;
-  //       }
-  //     }
-  //     return true;
-  //   })
-  // }
-
   addItem = (item) => {
     var addedItems = [...this.state.addedItems];
-
     addedItems.push({
       ...item,
       renting: 1
     });
-    // filteredDatabase = this.hideFromArray(filteredDatabase, addedItems);
     this.setState({ addedItems });
   }
 
@@ -119,7 +95,6 @@ export default class ManageItems extends React.Component {
     var filteredDatabase;
     var addedItems = [...this.state.addedItems];
     addedItems.splice(i, 1);
-    // filteredDatabase = this.hideFromArray(this.props.fullDatabase, addedItems);
     this.setState({ addedItems });
   }
 
@@ -162,7 +137,7 @@ export default class ManageItems extends React.Component {
               {this.title() + " Adicionados:"}
             </div>
             <Database
-              database={this.filteredDatabase()}
+              database={this.filterDatabase()}
               addItem={this.addItem}/>
             <AddedItems
               type={this.props.type}

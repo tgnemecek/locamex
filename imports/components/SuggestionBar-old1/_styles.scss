@@ -1,0 +1,42 @@
+.suggestion-bar {
+  position: relative;
+  overflow: visible;
+  input {
+    padding-left: 32px;
+  }
+}
+
+.suggestion-bar__magnifier {
+  position: absolute;
+  z-index: 1;
+  left: 1rem;
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+
+.suggestion-bar__input--button {
+  input {
+    color: black;
+    cursor: pointer;
+  }
+}
+
+.suggestion-bar__dropbox {
+  position: absolute;
+  max-height: 170px;
+  overflow-y: auto;
+  width: 100%;
+  z-index: 999;
+  list-style: none;
+  button {
+    background-color: $light-grey;
+    border: 1px solid $grey;
+    text-align: left;
+    padding: ($space /2) 1rem;
+    width: 100%;
+    opacity: 0.95;
+  }
+  button:hover {
+    background-color: $brand-primary-light;
+  }
+}

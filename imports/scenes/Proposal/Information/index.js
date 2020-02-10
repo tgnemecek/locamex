@@ -48,8 +48,10 @@ export default class Information extends React.Component {
     var firstChange = e.target.firstChange;
     var discount = 0;
     var conditions = timeUnit === "months" ?
-      this.props.settings.defaultConditionsMonths :
-      this.props.settings.defaultConditionsDays
+      this.props.settings
+        .defaultConditionsMonths :
+      this.props.settings
+        .defaultConditionsDays
 
     var observations = {
       ...this.props.snapshot.observations,

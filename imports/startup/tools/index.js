@@ -146,19 +146,27 @@ export default class tools {
       } else if (input1 instanceof Date) {
         return input1.getTime() === input2.getTime();
       } else if (typeof input1 === "object") {
-        if (input1 === input2) return true;
         if (Array.isArray(input1)) {
           if (input1.length !== input2.length) return false;
           return input1.every((item, i) => {
             return loop(input1[i], input2[i]);
           })
         } else {
-          return Object.keys(input1).every((key) => {
-            if (key === exception) return true;
+          var arrayOfKeys1 = Object.keys(input1);
+          var arrayOfKeys2 = Object.keys(input2);
+          if (arrayOfKeys1.length !== arrayOfKeys2.length) {
+            return false;
+          }
+          return arrayOfKeys1.every((key) => {
+            if (exception && key === exception) {
+              return true;
+            }
             return loop(input1[key], input2[key]);
           })
         }
-      } else return true;
+      } else {
+        return true;
+      }
     }
     return loop(input1, input2);
   }

@@ -10,14 +10,29 @@ export default class SuggestionBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      input: ''
+      input: '',
+      result: ''
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.value && prevProps.database) {
+      if (prevProps.database.length === 0) {
+        var result = this.props.database.find((item) => {
+          return item._id === this.props.value;
+        })
+        if (result) {
+          var input = result.description;
+          this.setState({ result, input });
+        }
+      }
     }
   }
 
   renderResults = () => {
     const getResults = () => {
       if (this.props.showAll && !this.state.result) return database;
-      if (this.props.value._id) return [];
+      if (this.state.result) return [];
 
       var database = this.props.database || [];
       var input = this.state.input;
@@ -53,7 +68,16 @@ export default class SuggestionBar extends React.Component {
       <ul className="suggestion-bar__dropbox">
         {filtered.map((item, i) => {
           const onClick = () => {
-            this.props.onChange(item);
+            var result = item;
+            this.props.onClick({target: {
+              value: result._id,
+              name: this.props.name
+            }}, result);
+
+            this.setState({
+              input: result.description,
+              result: result,
+            })
           }
           return (
             <li key={i}>
@@ -73,8 +97,8 @@ export default class SuggestionBar extends React.Component {
   }
 
   buttonClick = () => {
-    this.setState({ input: '' }, () => {
-      this.props.onChange({});
+    this.setState({ input: '', result: '' }, () => {
+      this.props.onClick({target: {value: '', name: this.props.name}}, {});
     });
   }
 
@@ -88,19 +112,9 @@ export default class SuggestionBar extends React.Component {
     }, 0);
   }
 
-  className = () => {
-    if (this.props.className) {
-      return this.props.className + " suggestion-bar";
-    } else {
-      return "suggestion-bar";
-    }
-  }
-
   render() {
     return (
-      <div className={this.className()}
-        onBlur={this.onBlur}
-        onFocus={this.conditionalShowAll}>
+      <div className={this.props.className ? this.props.className + " suggestion-bar" : "suggestion-bar"} onBlur={this.onBlur} onFocus={this.conditionalShowAll}>
         <div className="suggestion-bar__magnifier" style={this.props.title ? {top: "2.5rem"} : {top: "1rem"}}>
           <Icon icon="search" />
         </div>
@@ -112,8 +126,7 @@ export default class SuggestionBar extends React.Component {
           buttonClick={this.buttonClick}
           disabled={this.props.disabled}
           error={this.props.error}
-          value={this.props.value.description
-          || this.state.input}/>
+          value={this.state.input}/>
         {this.renderResults()}
       </div>
     )

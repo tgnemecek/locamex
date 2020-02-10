@@ -14,51 +14,7 @@ export default class Footer extends React.Component {
   }
 
   toggleActivateWindow = () => {
-    var errorKeys = [];
-    var errorMsg = 'Campos obrigatórios não preenchidos/inválidos.';
-
-    if (!this.props.snapshot.client._id) errorKeys.push("client");
-    if (!this.props.snapshot.dates.duration) errorKeys.push("duration");
-
-    if (!this.props.snapshot.deliveryAddress.cep) errorKeys.push("cep");
-    if (!this.props.snapshot.deliveryAddress.street) errorKeys.push("street");
-    if (!this.props.snapshot.deliveryAddress.city) errorKeys.push("city");
-    if (!this.props.snapshot.deliveryAddress.state) errorKeys.push("state");
-    if (!this.props.snapshot.deliveryAddress.number) errorKeys.push("number");
-
-    const isBillingCorrect = () => {
-      if (!this.props.snapshot.billingProducts.length) return false;
-      if (!this.props.snapshot.billingServices.length) return false;
-
-      var productsGoalValue = this.props.productsValue;
-      var productsValue = this.props.snapshot.billingProducts.reduce((acc, cur) => {
-        return acc + cur.value;
-      }, 0);
-      productsValue = tools.round(productsValue, 2);
-      if (productsGoalValue !== productsValue) return false;
-
-      var servicesGoalValue = this.props.servicesValue;
-      var servicesValue = this.props.snapshot.billingServices.reduce((acc, cur) => {
-        return acc + cur.value;
-      }, 0);
-      servicesValue = tools.round(servicesValue, 2);
-      if (servicesGoalValue !== servicesValue) return false;
-      return true;
-    }
-
-    if (!isBillingCorrect()) {
-      errorMsg = 'Favor preencher corretamente a Tabela de Cobrança.';
-      errorKeys.push("billing");
-    }
-
-    if (this.props.totalValue <= 0) {
-      errorKeys.push("totalValue");
-      errorMsg = 'O Valor Total não pode ser zero.';
-    }
-    if (errorKeys.length > 0) {
-      this.props.setError(errorMsg, errorKeys);
-    } else {
-      this.props.setError('', errorKeys);
+    if (this.props.verifyFields()) {
       this.setState({ confirmationWindow: 'activate' });
     }
   }
@@ -75,7 +31,7 @@ export default class Footer extends React.Component {
     if (this.props.status === 'inactive') {
       return (
         <FooterButtons buttons={[
-          {text: "Salvar Edições", className: "button--secondary", onClick: this.props.saveEdits},
+          {text: "Salvar Versão", className: "button--secondary", onClick: this.props.saveEdits},
           {text: "Ativar Contrato", className: "button--primary", onClick: this.toggleActivateWindow},
         ]}/>
       )
@@ -88,12 +44,12 @@ export default class Footer extends React.Component {
     } else return null;
   }
 
-  activateSnapshot = () => {
-    this.props.activateSnapshot(() => this.setState({ confirmationWindow: false }))
+  activateContract = () => {
+    this.props.activateContract(() => this.setState({ confirmationWindow: false }))
   }
 
-  finalizeSnapshot = () => {
-    this.props.finalizeSnapshot(() => this.setState({ confirmationWindow: false }))
+  finalizeContract = () => {
+    this.props.finalizeContract(() => this.setState({ confirmationWindow: false }))
   }
 
   render() {
@@ -112,13 +68,13 @@ export default class Footer extends React.Component {
           closeBox={this.toggleWindowsOff}
           message="Deseja finalizar este contrato? Ele não poderá ser reativado e todas as cobranças serão finalizadas."
           leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleWindowsOff}}
-          rightButton={{text: "Sim", className: "button--danger", onClick: this.props.finalizeSnapshot}}/>
+          rightButton={{text: "Sim", className: "button--danger", onClick: this.props.finalizeContract}}/>
         <ConfirmationWindow
           isOpen={this.state.confirmationWindow === 'activate'}
           closeBox={this.toggleWindowsOff}
           message="Deseja ativar este contrato?"
           leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleWindowsOff}}
-          rightButton={{text: "Sim", className: "button--danger", onClick: this.activateSnapshot}}/>
+          rightButton={{text: "Sim", className: "button--danger", onClick: this.activateContract}}/>
       </div>
     )
   }

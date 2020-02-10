@@ -3,8 +3,6 @@ import { Meteor } from 'meteor/meteor';
 const PdfPrinter = require('pdfmake');
 const vfs_fonts = require('pdfmake/build/vfs_fonts');
 
-import { Accounts } from '/imports/api/accounts/index';
-import { Clients } from '/imports/api/clients/index';
 import { Containers } from '/imports/api/containers/index';
 import { Accessories } from '/imports/api/accessories/index';
 import { Services } from '/imports/api/services/index';
@@ -94,8 +92,6 @@ function generateDocDefinition(master) {
 // Sub-functions
 function generateProposal(master) {
   return new Promise((resolve, reject) => {
-    master.createdByFullName = getCreatedBy(master.createdBy);
-
     var props = {
       master,
       generateTable,
@@ -137,12 +133,7 @@ function generateProposal(master) {
 function generateContract(master) {
   return new Promise((resolve, reject) => {
     try {
-      master.createdByFullName = getCreatedBy(master.createdBy);
-      master.client = getClient(master.clientId);
-      master.accountServices = getAccount(master, 'billingServices');
       master = getSignatures(master);
-      master = getProductsInformation(master);
-
       var props = {
         master,
         generateTable,
@@ -158,10 +149,6 @@ function generateContract(master) {
 
 function generateBilling(master) {
   return new Promise((resolve, reject) => {
-    master.createdByFullName = getCreatedBy(master.createdBy);
-    master.client = getClient(master.clientId);
-    master = getProductsInformation(master);
-    master.accountProducts = getAccount(master, 'billingProducts');
 
     var props = {
       master,
@@ -210,12 +197,6 @@ function getCreatedBy(userId) {
   return user.firstName + " " + user.lastName;
 }
 
-function getClient(clientId) {
-  var client = Clients.findOne({ _id: clientId });
-  if (!client) throw new Meteor.Error('client-not-found!');
-  return client;
-}
-
 function getSignatures(master) {
   master.representatives = [];
 
@@ -240,27 +221,6 @@ function getAccount(master, billingName) {
   if (!account) throw new Meteor.Error('account-not-found!');
 
   return account;
-}
-
-function getProductsInformation(master) {
-  function getInformationForArray(array, Database) {
-    return array.map((item) => {
-      var product = Database.findOne({ _id: item.productId });
-      return {
-        ...item,
-        description: product.description,
-        restitution: product.restitution
-      }
-    })
-  }
-
-
-  return {
-    ...master,
-    containers: getInformationForArray(master.containers, Containers),
-    accessories: getInformationForArray(master.accessories, Accessories),
-    services: getInformationForArray(master.services, Services)
-  }
 }
 
 function setPageBreaks() {

@@ -76,8 +76,12 @@ export default class Information extends React.Component {
     }
   }
 
-  handleChangeClient = (e, client) => {
-    this.props.updateSnapshot({ client });
+  handleChangeClient = (client) => {
+    this.props.updateSnapshot({
+      client,
+      negociatorId: '',
+      representativesId: []
+    });
   }
 
   cepButtonClick = (data) => {
@@ -105,8 +109,8 @@ export default class Information extends React.Component {
             database={this.props.clientsDatabase}
             fields={['description', 'registry']}
             error={this.props.errorKeys.includes("client")}
-            value={this.props.snapshot.client._id}
-            onClick={this.handleChangeClient}>
+            value={this.props.snapshot.client}
+            onChange={this.handleChangeClient}>
           </SuggestionBar>
           <Link
             className="grid-span-2"
@@ -117,7 +121,7 @@ export default class Information extends React.Component {
               name="proposal"
               type="text"
               disabled={true}
-              value={this.props.contract.proposalId + "." + (this.props.contract.proposalSnapshot+1)}
+              value={this.props.contract.proposalId + "." + (this.props.contract.proposalIndex+1)}
               onChange={this.handleChange}
             />
           </Link>

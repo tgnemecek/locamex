@@ -113,13 +113,16 @@ export default class MainHeader extends React.Component {
               <button className="main-header__button"
                 onClick={this.props.toggleBilling}>
                 <Icon icon="money"
-                  style={this.props.errorKeys.includes("billing") ? {color: "red"} : null}/>
+                  style={this.props.billingError
+                    ? {color: "red"} : null}/>
               </button>
             : null}
             {this.props.toggleDocuments ?
               <button className="main-header__button"
                 onClick={this.props.toggleDocuments}>
-                <Icon icon="print"/>
+                <Icon icon="print"
+                style={this.props.documentsError
+                  ? {color: "red"} : null}/>
               </button>
             : null}
             {this.props.cancelMaster ?

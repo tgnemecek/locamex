@@ -12,7 +12,7 @@ export default class ClientSetup extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      client: '',
+      client: {},
       clientWindow: false,
       confirmationWindow: false
     }
@@ -20,7 +20,7 @@ export default class ClientSetup extends React.Component {
   toggleConfirmationWindow = () => {
     this.setState({ confirmationWindow: !this.state.confirmationWindow })
   }
-  handleChange = (e, client) => {
+  handleChange = (client) => {
     this.setState({ client })
   }
   toggleClientWindow = (client) => {
@@ -40,7 +40,7 @@ export default class ClientSetup extends React.Component {
     })
   }
   verification = () => {
-    if (!this.state.client) {
+    if (!this.state.client._id) {
       this.toggleConfirmationWindow();
     } else {
       this.saveEdits();
@@ -55,59 +55,59 @@ export default class ClientSetup extends React.Component {
     if (!this.props.proposalClient) return null;
     return (
       <Box
+        closeBox={this.toggleConfirmationWindow}
+        className="client-setup"
         title="Seleção Inicial de Cliente">
-          <div className="client-setup">
-            <h4 className="client-setup__proposal-title">
-              Dados da Proposta:
-            </h4>
-            <div className="client-setup__proposal-body">
-              <div>
-                <label className="client-setup__label">Nome do Cliente:</label>
-                {this.props.proposalClient.description}
-              </div>
-              <div>
-                <label className="client-setup__label">Nome do Contato:</label>
-                {this.props.proposalClient.name}
-              </div>
-              <div>
-                <label className="client-setup__label">Email:</label>
-                {this.props.proposalClient.email}
-              </div>
-              <div>
-                <label className="client-setup__label">Telefone:</label>
-                {this.props.proposalClient.phone}
-              </div>
-            </div>
-            <div className="client-setup__client-body">
-              <SuggestionBar
-                title="Selecionar Cliente:"
-                name="client"
-                database={this.props.clientsDatabase}
-                fields={['description', 'registry']}
-                value={this.state.client._id}
-                onClick={this.handleChange}>
-              </SuggestionBar>
-              <button onClick={this.toggleClientWindow} className="button--pill client-setup__add-new-button">
-                +
-              </button>
-            </div>
-            <FooterButtons buttons={[
-              {text: "Adicionar ao Contrato", onClick: this.verification}
-            ]}/>
-            {this.state.clientWindow ?
-              <RegisterData
-                type="clients"
-                item={this.state.clientWindow}
-                toggleWindow={this.toggleClientWindow}
-              />
-            : null}
-            <ConfirmationWindow
-              isOpen={this.state.confirmationWindow}
-              closeBox={this.toggleConfirmationWindow}
-              message="Deseja mesmo iniciar sem cadastrar o cliente?"
-              leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
-              rightButton={{text: "Sim", className: "button--danger", onClick: this.saveEdits}}/>
+        <h4 className="client-setup__proposal-title">
+          Dados da Proposta:
+        </h4>
+        <div className="client-setup__proposal-body">
+          <div>
+            <label className="client-setup__label">Nome do Cliente:</label>
+            {this.props.proposalClient.description}
           </div>
+          <div>
+            <label className="client-setup__label">Nome do Contato:</label>
+            {this.props.proposalClient.name}
+          </div>
+          <div>
+            <label className="client-setup__label">Email:</label>
+            {this.props.proposalClient.email}
+          </div>
+          <div>
+            <label className="client-setup__label">Telefone:</label>
+            {this.props.proposalClient.phone}
+          </div>
+        </div>
+        <div className="client-setup__client-body">
+          <SuggestionBar
+            title="Selecionar Cliente:"
+            name="client"
+            database={this.props.clientsDatabase}
+            fields={['description', 'registry']}
+            value={this.state.client}
+            onChange={this.handleChange}>
+          </SuggestionBar>
+          <button onClick={this.toggleClientWindow} className="button--pill client-setup__add-new-button">
+            +
+          </button>
+        </div>
+        <FooterButtons buttons={[
+          {text: "Adicionar ao Contrato", onClick: this.verification}
+        ]}/>
+        {this.state.clientWindow ?
+          <RegisterData
+            type="clients"
+            item={this.state.clientWindow}
+            toggleWindow={this.toggleClientWindow}
+          />
+        : null}
+        <ConfirmationWindow
+          isOpen={this.state.confirmationWindow}
+          closeBox={this.toggleConfirmationWindow}
+          message="Deseja mesmo iniciar sem cadastrar o cliente?"
+          leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
+          rightButton={{text: "Sim", className: "button--danger", onClick: this.saveEdits}}/>
       </Box>
     )
   }
