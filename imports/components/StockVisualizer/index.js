@@ -1,6 +1,7 @@
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Places } from '/imports/api/places/index';
+import tools from '/imports/startup/tools/index';
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 import DatabaseStatus from '/imports/components/DatabaseStatus/index';
@@ -14,7 +15,7 @@ class StockVisualizer extends React.Component {
     super(props);
     this.state = {
       variationIndex: 0,
-      item: this.props.item,
+      item: tools.deepCopy(this.props.item),
       offset: 0,
       errorMsg: '',
       databaseStatus: false
@@ -27,7 +28,10 @@ class StockVisualizer extends React.Component {
       item.places = places;
     } else {
       var index = this.state.variationIndex;
-      item.variations[index].places = places;
+      item.variations[index] = {
+        ...item.variations[index],
+        places
+      };
     }
     this.setState({ item });
   }
@@ -73,7 +77,7 @@ class StockVisualizer extends React.Component {
       places = this.state.item.places;
     } else {
       places = [];
-      this.props.item.variations.forEach((item) => {
+      this.state.item.variations.forEach((item) => {
         places = [...places, ...item.places];
       })
     }
@@ -143,7 +147,6 @@ class StockVisualizer extends React.Component {
               variationIndex={this.state.variationIndex}
               variations={this.props.item.variations}/>
           </div>
-
           <Distribution
             updateItem={this.updateItem}
             places={this.getPlaces()}/>

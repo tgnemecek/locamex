@@ -19,7 +19,7 @@ body {
 
 .page-content {
   margin: 0 auto;
-  max-width: ($site-max-width /1.5);
+  max-width: $site-max-width;
   padding: $space;
 }
 
@@ -60,22 +60,30 @@ legend {
   padding: 0 $space;
 }
 
-textarea {
-    font-family: inherit;
-    border: 1px solid $input-border;
-    resize: none;
-    overflow: hidden;
-    padding: ($space /2);
-    width: 100%;
-}
+// textarea {
+//     font-family: inherit;
+//     font-size: $base-font-size;
+//     border: 1px solid $input-border;
+//     resize: none;
+//     overflow: hidden;
+//     padding: ($space /2);
+//     width: 100%;
+// }
 
-input, select {
+input, select, textarea {
   height: 35px;
   border: 1px solid $input-border;
   font-size: $base-font-size;
   margin: 0;
   padding: $input-spacing;
 }
+
+textarea {
+  font-family: inherit;
+  resize: none;
+  overflow: hidden;
+}
+
 input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;

@@ -103,6 +103,7 @@ export default class RegisterAccessories extends React.Component {
               title="Descrição:"
               type="text"
               name="description"
+              disabled={!tools.isWriteAllowed('accessories')}
               error={this.state.errorKeys.includes("description")}
               value={this.state.description}
               onChange={this.onChange}
@@ -111,6 +112,7 @@ export default class RegisterAccessories extends React.Component {
               title="Valor Mensal:"
               type="currency"
               name="price"
+              disabled={!tools.isWriteAllowed('accessories')}
               value={this.state.price}
               onChange={this.onChange}
             />
@@ -118,6 +120,7 @@ export default class RegisterAccessories extends React.Component {
               title="Indenização:"
               type="currency"
               name="restitution"
+              disabled={!tools.isWriteAllowed('accessories')}
               value={this.state.restitution}
               onChange={this.onChange}
             />
@@ -125,6 +128,7 @@ export default class RegisterAccessories extends React.Component {
               title="Observações:"
               type="textarea"
               name="observations"
+              disabled={!tools.isWriteAllowed('accessories')}
               value={this.state.observations}
               onChange={this.onChange}
             />
@@ -135,13 +139,16 @@ export default class RegisterAccessories extends React.Component {
               id="variations"
               value={this.state.variations.length > 1}
               onChange={this.onChangeVariations}
-              disabled={this.props.item.variations ? this.props.item.variations.length > 1 : false}
+              disabled={(this.props.item.variations || !tools.isWriteAllowed('accessories')) ? this.props.item.variations.length > 1 : false}
             />
             <Variations
+              disabled={!tools.isWriteAllowed('accessories')}
               variations={this.state.variations}
               onChange={this.onChange}/>
           </Block>
-          <this.props.Footer {...this.props} saveEdits={this.saveEdits} removeItem={this.removeItem} />
+          <this.props.Footer {...this.props}
+            disabled={!tools.isWriteAllowed('accessories')}
+            saveEdits={this.saveEdits} removeItem={this.removeItem} />
       </Box>
     )
   }

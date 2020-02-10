@@ -10,6 +10,7 @@
   position: fixed;
   height: 100vh;
   width: 100vw;
+  padding: $space;
   z-index: 100;
 }
 
@@ -19,6 +20,9 @@
   text-align: center;
   position: relative;
   outline: none;
+  overflow: hidden;
+  width: 100%;
+  max-width: $site-max-width;
 }
 
 .box__header {

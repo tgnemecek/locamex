@@ -70,19 +70,25 @@ export default class Variations extends React.Component {
           <td>
             <Input
               name={i}
+              disabled={this.props.disabled}
               value={variation.observations}
               onChange={onChange}/>
           </td>
           {variation.new ?
             <td className="register-accessories__table__add-new-column">
-              <button className="database__table__button" onClick={removeItem}>
+              <button className="database__table__button"
+                disabled={this.props.disabled}
+                onClick={removeItem}>
                 <Icon icon="not"/>
               </button>
             </td>
           : null}
           {i === arr.length-1 ?
             <td className="register-accessories__table__add-new-column">
-              <button className="database__table__button" onClick={addNewItem}>
+              <button
+                className="database__table__button"
+                disabled={this.props.disabled}
+                onClick={addNewItem}>
                 <Icon icon="new"/>
               </button>
             </td>

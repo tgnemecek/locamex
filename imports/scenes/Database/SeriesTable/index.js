@@ -98,17 +98,6 @@ class SeriesTable extends React.Component {
         } else return item.place._id === this.state.filterIdPlace;
       })
       .map((item, i) => {
-        const renderEditButton = () => {
-          if (tools.isWriteAllowed("series")) {
-            return (
-              <td>
-                <button onClick={() => this.toggleWindow(item, 'edit')}>
-                  <Icon icon="edit" />
-                </button>
-              </td>
-            )
-          } else return null;
-        }
         return (
           <tr key={i}>
             <td>
@@ -120,7 +109,11 @@ class SeriesTable extends React.Component {
             <td>
               {item.place.description}
             </td>
-            {renderEditButton()}
+            <td>
+              <button onClick={() => this.toggleWindow(item, 'edit')}>
+                <Icon icon="edit" />
+              </button>
+            </td>
             <td>
               <button onClick={() => this.toggleWindow(item, 'image')}>
                 <Icon icon="image" />

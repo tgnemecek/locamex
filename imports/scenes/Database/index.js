@@ -3,11 +3,6 @@ import React from 'react';
 import moment from 'moment';
 import tools from '/imports/startup/tools/index';
 
-// import StockVisualizer from '/imports/components/StockVisualizer/index';
-// import ImageVisualizer from '/imports/components/ImageVisualizer/index';
-// import RegisterData from '/imports/components/RegisterData/index';
-//
-// import DatabaseTable from './DatabaseTable/index';
 import createExcel from '/imports/api/create-excel/index';
 
 import AccessoriesTable from './AccessoriesTable/index';

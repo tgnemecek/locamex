@@ -27,6 +27,7 @@ export default class FooterButtons extends React.Component {
     var type = button.type || "button";
     return (
       <button
+        disabled={this.props.disabled}
         type={type}
         className={className}
         onClick={onClick}>{text}</button>
@@ -44,6 +45,7 @@ export default class FooterButtons extends React.Component {
       var type = button.type || "button";
       return <button
                   key={i}
+                  disabled={this.props.disabled}
                   type={type}
                   className={className}
                   onClick={onClick}>{text}</button>
@@ -62,6 +64,7 @@ export default class FooterButtons extends React.Component {
       var type = button.type || "button";
       return <button
                   key={i}
+                  disabled={this.props.disabled}
                   type={type}
                   className={className}
                   onClick={onClick}>{text}</button>
@@ -69,10 +72,11 @@ export default class FooterButtons extends React.Component {
   }
 
   render() {
-      return (
-        <div className="footer-buttons">
-          {this.selectNumber()}
-        </div>
-      )
+    return (
+      <div className="footer-buttons">
+        {this.props.disabled ? null :
+          this.selectNumber()}
+      </div>
+    )
   }
 }

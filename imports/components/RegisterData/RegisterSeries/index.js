@@ -131,7 +131,7 @@ class RegisterSeries extends React.Component {
               type="digits"
               name="_id"
               error={this.state.errorKeys.includes("_id")}
-              readOnly={!!this.props.item._id}
+              disabled={!!this.props.item._id || !tools.isWriteAllowed('series')}
               value={this.state._id}
               onChange={this.onChange}
             />
@@ -139,7 +139,7 @@ class RegisterSeries extends React.Component {
               title="Modelo:"
               type="select"
               error={this.state.errorKeys.includes("container._id")}
-              disabled={this.props.item._id}
+              disabled={this.props.item._id || !tools.isWriteAllowed('series')}
               value={this.state.container._id}
               onChange={this.onChangeContainer}>
                 <option value=''></option>
@@ -149,7 +149,7 @@ class RegisterSeries extends React.Component {
               title="Pátio:"
               type="select"
               disabled={this.props.item.place
-                && this.props.item.place._id === 'rented'}
+                && this.props.item.place._id === 'rented' || !tools.isWriteAllowed('series')}
               error={this.state.errorKeys.includes("place._id")}
               value={this.state.place._id}
               onChange={this.onChangePlace}>
@@ -163,11 +163,13 @@ class RegisterSeries extends React.Component {
               title="Observações:"
               type="textarea"
               name="observations"
+              disabled={!tools.isWriteAllowed('series')}
               value={this.state.observations}
               onChange={this.onChange}
             />
           </Block>
           <FooterButtons
+            disabled={!tools.isWriteAllowed('series')}
             buttons={this.props.item._id ?
               [
                 {text: "Excluir Registro", className: "button--danger", onClick: this.deleteSeries},

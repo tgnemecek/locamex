@@ -2,7 +2,7 @@
 @import './ServicesSection/styles';
 
 .billing-schedule {
-  width: ($site-max-width /1.5);
+  width: $site-max-width;
   section {
     margin-top: $space;
   }

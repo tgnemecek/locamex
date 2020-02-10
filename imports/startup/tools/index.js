@@ -293,6 +293,7 @@ export default class tools {
       } else error = error.reason;
     }
     var dictionary = {
+      'unauthorized': 'Usuário não autorizado.',
       'Incorrect password': 'Senha Incorreta.',
       'Username already exists.': 'Nome de usuário já existe.',
       'duplicate-registry': 'O Cliente que você está tentando cadastrar já existe.',

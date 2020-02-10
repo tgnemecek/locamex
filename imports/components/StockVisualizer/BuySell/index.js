@@ -51,11 +51,11 @@ export default class BuySell extends React.Component {
             <div style={this.differenceStyle()}>Diferença:</div>
           </div>
           <div style={{textAlign: "left"}}>
-            {/* <div>{this.props.offset}</div> */}
             <div>{this.props.sumOfPlaces}</div>
             <div>{this.props.totalGoal}</div>
             <div style={this.differenceStyle()}>
-              {this.props.totalGoal - this.props.sumOfPlaces}
+              {Math.abs(this.props.totalGoal
+                - this.props.sumOfPlaces)}
             </div>
           </div>
         </div>

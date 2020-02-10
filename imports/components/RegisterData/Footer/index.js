@@ -17,7 +17,8 @@ export default class Footer extends React.Component {
   render() {
     return (
       <div>
-        <FooterButtons buttons={this.props.item._id ? [
+        <FooterButtons disabled={this.props.disabled}
+          buttons={this.props.item._id ? [
           {text: "Excluir Registro", className: "button--danger", onClick: this.toggleConfirmationWindow},
           {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
           {text: "Salvar", onClick: this.props.saveEdits}
