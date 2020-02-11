@@ -13,7 +13,6 @@ class ModuleList extends React.Component {
     super(props);
     this.state = {
       filterTerm: '',
-      databaseFiltered: [],
       allSelected: false
     }
   }

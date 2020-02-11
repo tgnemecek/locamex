@@ -96,7 +96,7 @@ export default class MainHeader extends React.Component {
             <h1 className="main-header__title">
               {this.props.title}
             </h1>
-            {this.props.snapshots.length ?
+            {this.props.snapshots && this.props.snapshots.length ?
               (this.props.changeSnapshot ?
               <Input
                 onChange={this.props.changeSnapshot}

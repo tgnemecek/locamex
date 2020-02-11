@@ -10,7 +10,10 @@ export const accountsSchema = new SimpleSchema({
   bankNumber: String,
   number: String,
   branch: String,
-  visible: Boolean
+  visible: {
+    type: Boolean,
+    optional: true
+  }
 });
 Accounts.attachSchema(accountsSchema);
 

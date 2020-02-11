@@ -1,0 +1,51 @@
+.stock-visualizer {
+  width: $site-max-width;
+}
+
+.stock-visualizer__top {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.stock-visualizer__distribution {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 5px;
+}
+
+.stock-visualizer__place {
+  display: grid;
+  grid-template-columns: 1fr 45px 45px;
+  background: $brand-primary;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  color: white;
+  line-height: 35px;
+  text-align: left;
+  padding-left: ($space /2);
+  margin: ($space /2) 0;
+  div {
+    padding: 0px;
+  }
+}
+
+.stock-visualizer__buy-sell {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  padding: 0 10%;
+}
+
+.stock-visualizer__ammounts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  grid-gap: ($space /2);
+}
+
+.stock-visualizer__inputs {
+  display: inline-flex;
+  button {
+    margin: 16px 0 0 0;
+  }
+}
