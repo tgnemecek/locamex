@@ -1,0 +1,13 @@
+.module-list__scroll {
+  max-height: 500px;
+  overflow: auto;
+}
+
+.module-list__add-new {
+  padding: 0;
+  button {
+    width: 100%;
+    height: $space * 2;
+    text-transform: uppercase;
+  }
+}

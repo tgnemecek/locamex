@@ -7,7 +7,7 @@ import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 
 import SendPacks from './SendPacks/index';
 import SendSeries from './SendSeries/index';
-// import SendAccessories from './SendAccessories/index';
+import SendAccessories from './SendAccessories/index';
 // import Footer from './Footer/index';
 
 export default class Send extends React.Component {
@@ -16,7 +16,7 @@ export default class Send extends React.Component {
     this.state = {
       series: [],
       packs: [],
-      // accessories: [],
+      accessories: [],
 
       databaseStatus: '',
       confirmationWindow: false
@@ -79,7 +79,7 @@ export default class Send extends React.Component {
           currentlyRented={this.props.currentlyRented}
           seriesDatabase={this.props.databases.seriesDatabase}/>
         {!this.state.series.length &&
-          // !this.state.accessories.length &&
+          !this.state.accessories.length &&
           !this.state.packs.length ?
           "Não há itens disponíveis para envio!"
         : null}
@@ -89,13 +89,13 @@ export default class Send extends React.Component {
           currentlyRented={this.props.currentlyRented}
           StockTransition={this.props.StockTransition}
           packs={this.state.packs}/>
-        {/* <SendAccessories
-          onChange={this.onChange}
-          accessories={this.state.accessories}
-
-          accessoriesDatabase={this.props.databases.accessoriesDatabase}
-          placesDatabase={this.props.databases.placesDatabase}/>
-        <Footer
+        <SendAccessories
+          update={this.update}
+          snapshot={this.props.snapshot}
+          currentlyRented={this.props.currentlyRented}
+          StockTransition={this.props.StockTransition}
+          accessories={this.state.accessories}/>
+        {/* <Footer
           hidden={
             !this.state.fixed.length &&
             !this.state.accessories.length &&

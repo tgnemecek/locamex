@@ -7,11 +7,6 @@
   white-space: nowrap;
 }
 
-.table__wide {
-  text-align: left;
-  width: 100%;
-}
-
 .table th {
   position: sticky;
   top: 0;
@@ -23,6 +18,12 @@
   border-left: 1px solid $dark-grey;
   border-right: 1px solid $dark-grey;
   box-shadow: inset 0 1px 0 $dark-grey;
+  z-index: 1;
+}
+
+.table__wide {
+  text-align: left;
+  width: 100%;
 }
 
 .table td {
@@ -32,24 +33,4 @@
 
 .table tr:nth-child(even) {
   background-color: $grey;
-}
-
-.table__small-column {
-  text-align: center;
-  width: 1px;
-  white-space: nowrap;
-}
-
-.table__small-column--wrap {
-  text-align: left;
-  min-width: 300px;
-  white-space: normal;
-}
-
-.table__td-button {
-  padding: 0 !important;
-  button {
-    min-width: 35px;
-    min-height: 35px;
-  }
 }

@@ -60,7 +60,7 @@ export default class StockTransition extends React.Component {
         closeBox={this.props.toggleWindow}
         >
             <div>
-              {"Produto: " + this.props.item.description}
+              {this.props.title}
             </div>
             <PlacesDistribution
               item={this.props.item}
@@ -74,10 +74,7 @@ export default class StockTransition extends React.Component {
             item={this.props.item}
             from={this.state.from}
             places={this.props.places}
-            // productFromDatabase={this.props.productFromDatabase}
-            // selectedList={this.state.selectedList}
-            //
-            // placesDatabase={this.props.placesDatabase}
+            max={this.props.max}
           />
           <Footer
             toggleWindow={this.props.toggleWindow}

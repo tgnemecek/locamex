@@ -24,23 +24,20 @@ export default class SelectedList extends React.Component {
 
   onDrop = (e) => {
     e.preventDefault();
-    debugger;
     var placeId = e.dataTransfer.getData("placeId");
     var available = Number(e.dataTransfer.getData("available"));
     var max;
-    if (this.props.item.type === 'module') {
+    if (this.props.max !== undefined) {
+      max = this.props.max;
+      var fromListQuantity = this.props.from.reduce((acc, cur) => {
+        return acc + cur.renting;
+      }, 0)
+      max = max - fromListQuantity;
+      // max = max < fromListQuantity ? max : fromListQuantity;
+      max = available < max ? available : max;
+    } else {
       max = available;
     }
-    // This should be applied for accessories:
-    // var renting = this.props.item.renting;
-    // var max = available < renting ? available : renting;
-    //
-    // var fromListQuantity = this.props.from.reduce((acc, cur) => {
-    //   return acc + cur.renting;
-    // }, 0)
-    //
-    // max = (renting - fromListQuantity) < max ? (renting - fromListQuantity) : max;
-
     this.setState({
       placeId,
       max,

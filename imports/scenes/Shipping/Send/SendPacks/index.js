@@ -95,7 +95,7 @@ export default class SendPacks extends React.Component {
           <table className="table">
             <thead>
                 <tr>
-                  <th>Etiqueta</th>
+                  <th>#</th>
                   <th className="table__wide">Produto</th>
                   <th>
                     Componentes

@@ -23,6 +23,8 @@
   overflow: hidden;
   width: 100%;
   max-width: $site-max-width;
+  max-height: 700px;
+  overflow: auto;
 }
 
 .box__header {
