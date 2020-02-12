@@ -7,6 +7,7 @@ export const modulesSchema = new SimpleSchema({
   _id: String,
   type: String,
   description: String,
+  rented: SimpleSchema.Integer,
   places: Array,
   'places.$': Object,
   'places.$._id': String,
@@ -52,21 +53,24 @@ if (Meteor.isServer) {
       if (!Meteor.userId() || !tools.isWriteAllowed('modules')) {
         throw new Meteor.Error('unauthorized');
       }
+      data.places = data.places.filter((place) => {
+        return (place.available || place.inactive)
+      })
       Modules.update({ _id: data._id }, { $set: data });
       Meteor.call('history.insert', data, 'modules.update');
       return true;
     },
-    'modules.stock.update'(item) {
-      if (!Meteor.userId() || !tools.isWriteAllowed('modules')) {
-        throw new Meteor.Error('unauthorized');
-      }
-      const data = {
-        place: item.place
-      }
-      Modules.update({ _id: item._id }, { $set: data });
-      Meteor.call('history.insert', {...data, _id: item._id}, 'modules.stock.update');
-      return true;
-    },
+    // 'modules.stock.update'(item) {
+    //   if (!Meteor.userId() || !tools.isWriteAllowed('modules')) {
+    //     throw new Meteor.Error('unauthorized');
+    //   }
+    //   const data = {
+    //     place: item.place
+    //   }
+    //   Modules.update({ _id: item._id }, { $set: data });
+    //   Meteor.call('history.insert', {...data, _id: item._id}, 'modules.stock.update');
+    //   return true;
+    // },
     'modules.shipping.send'(product) {
       if (!Meteor.userId() || !tools.isWriteAllowed('modules')) {
         throw new Meteor.Error('unauthorized');

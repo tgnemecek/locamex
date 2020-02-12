@@ -29,6 +29,7 @@ export default class HowManyBox extends React.Component {
       <Box
         title="Quantidade:"
         closeBox={this.props.toggleWindow}
+        className="shipping__how-many-box"
         style={{position: "absolute", left: this.props.boxX, top: this.props.boxY}}
         columns={1}>
         <Input

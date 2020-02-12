@@ -14,6 +14,7 @@ class RegisterSeries extends React.Component {
     super(props);
     this.state = {
       _id: this.props.item._id || '',
+      description: this.props.item.description || '',
       container: this.props.item.container || {
         _id: '',
         description: ''
@@ -69,8 +70,8 @@ class RegisterSeries extends React.Component {
 
   saveEdits = () => {
     var errorKeys = [];
-    if (!this.state._id) {
-      errorKeys.push('_id');
+    if (!this.state.description) {
+      errorKeys.push('description');
     }
     if (!this.state.container._id) {
       errorKeys.push('container._id');
@@ -128,11 +129,11 @@ class RegisterSeries extends React.Component {
           <Block columns={3} options={[{block: 3, span: 3}]}>
             <Input
               title="Série:"
-              type="digits"
-              name="_id"
-              error={this.state.errorKeys.includes("_id")}
+              type="number"
+              name="description"
+              error={this.state.errorKeys.includes("description")}
               disabled={!!this.props.item._id || !tools.isWriteAllowed('series')}
-              value={this.state._id}
+              value={this.state.description}
               onChange={this.onChange}
             />
             <Input
@@ -148,15 +149,16 @@ class RegisterSeries extends React.Component {
             <Input
               title="Pátio:"
               type="select"
-              disabled={this.props.item.place
-                && this.props.item.place._id === 'rented' || !tools.isWriteAllowed('series')}
+              disabled={this.props.item
+                && this.props.item.rented
+                || !tools.isWriteAllowed('series')}
               error={this.state.errorKeys.includes("place._id")}
               value={this.state.place._id}
               onChange={this.onChangePlace}>
-                {this.props.item.place &&
-                  this.props.item.place._id === 'rented' ?
-                  <option value='rented'>Alugado</option>
-                : <option value=''></option>}
+              <option value=''>
+                {this.props.item && this.props.item.rented ?
+                  "Alugado" : ""}
+              </option>
                 {this.renderPlaces()}
             </Input>
             <Input

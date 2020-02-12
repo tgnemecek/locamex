@@ -1,28 +1,25 @@
 import React from 'react';
 import { Meteor } from 'meteor/meteor';
 
-import tools from '/imports/startup/tools/index';
-
-export default class Digits extends React.Component {
-  formatValue = (value) => {
-    return value.replace(/\D+/g, '');
-  }
-
+export default class Number_ extends React.Component {
   onChange = (e) => {
-    e.preventDefault();
-    this.props.onChange(this.formatValue(e.target.value));
+    if (e) {
+      var value = e.target.value;
+      this.props.onChange(Number(value));
+    }
   }
-
   render() {
     return (
       <input
-        value={this.formatValue(this.props.value)}
-        type="text"
+        value={this.props.value}
         onChange={this.onChange}
+        type="number"
 
         readOnly={this.props.readOnly}
         placeholder={this.props.placeholder}
         disabled={this.props.disabled}
+
+        onClick={this.props.buttonClick}
 
         style={this.props.style}
         />

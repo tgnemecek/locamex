@@ -50,11 +50,13 @@ export default class Variations extends React.Component {
       const removeItem = () => {
         var variations = [...this.props.variations];
         variations.splice(i, 1);
-        for (var j = i; j < variations.length; j++) {
-          variations[j].description = "Padrão " + tools.convertToLetter(j);
+        if (variations.length === 1) {
+          variations[0].description = "Padrão Único";
+        } else {
+          for (var j = i; j < variations.length; j++) {
+            variations[j].description = "Padrão " + tools.convertToLetter(j);
+          }
         }
-
-
         var obj = {target: {
           value: variations,
           name: 'variations'

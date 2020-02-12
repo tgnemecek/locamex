@@ -87,15 +87,16 @@ if (Meteor.isServer) {
         price: state.price,
         restitution: state.restitution,
         observations: state.observations,
-        variations: state.variations
+        variations: state.variations.map((variation) => {
+          return {
+            ...variation,
+            places: variation.places.filter((place) => {
+              return (place.available || place.inactive)
+            })
+          }
+        })
       }
       Accessories.update({ _id: state._id }, {$set: data});
-      updateReferences(state._id, {
-        description: data.description,
-        restitution: data.restitution,
-        observations: data.observations,
-        variations: data.variations
-      })
       Meteor.call('history.insert', data, 'accessories.update');
       return true;
     },

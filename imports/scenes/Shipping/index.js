@@ -7,6 +7,7 @@ import { Contracts } from '/imports/api/contracts/index';
 import { Places } from '/imports/api/places/index';
 import { Series } from '/imports/api/series/index';
 import { Modules } from '/imports/api/modules/index';
+import { Containers } from '/imports/api/containers/index';
 import { Accessories } from '/imports/api/accessories/index';
 import { Packs } from '/imports/api/packs/index';
 
@@ -112,6 +113,7 @@ export default ShippingWrapper = withTracker((props) => {
   Meteor.subscribe('placesPub');
   Meteor.subscribe('seriesPub');
   Meteor.subscribe('modulesPub');
+  Meteor.subscribe('containersPub');
   Meteor.subscribe('accessoriesPub');
   Meteor.subscribe('packsPub');
 
@@ -122,6 +124,7 @@ export default ShippingWrapper = withTracker((props) => {
     placesDatabase: Places.find().fetch(),
     seriesDatabase: Series.find().fetch(),
     modulesDatabase: Modules.find().fetch(),
+    containersDatabase: Containers.find().fetch(),
     accessoriesDatabase: Accessories.find().fetch(),
     packsDatabase: Packs.find().fetch()
   }

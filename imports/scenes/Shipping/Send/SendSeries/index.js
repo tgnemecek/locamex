@@ -26,8 +26,10 @@ export default class SendSeries extends React.Component {
   }
 
   renderOptions = (itemId, containerId) => {
-    return this.props.seriesDatabase.filter((item) => {
-      return item.container._id === containerId;
+    return this.props.seriesDatabase
+      .filter((item) => {
+        if (item.rented) return false;
+        return item.container._id === containerId;
     }).filter((item) => {
       if (item._id === itemId) return true;
       return !this.props.series.find((series) => {
@@ -36,7 +38,7 @@ export default class SendSeries extends React.Component {
     }).map((item, i) => {
       return (
         <option key={i} value={item._id}>
-          {`Série: ${item._id}. Pátio: ${item.place.description}`}
+          {`Série: ${item.description}. Pátio: ${item.place.description}`}
         </option>
       )
     })

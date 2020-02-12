@@ -89,8 +89,12 @@ class ModulesTable extends React.Component {
         )
       })
       .map((item, i) => {
-        var available = count(item.places, 'available');
-        var inactive = count(item.places, 'inactive');
+        var available = item.places.reduce((acc, cur) => {
+          return acc + cur.available;
+        }, 0)
+        var inactive = item.places.reduce((acc, cur) => {
+          return acc + cur.inactive;
+        }, 0)
         return (
           <tr key={i}>
             <td className="table__wide">{item.description}</td>
@@ -145,12 +149,6 @@ class ModulesTable extends React.Component {
       </ErrorBoundary>
     )
   }
-}
-
-function count(places, which) {
-  return places.reduce((acc, cur) => {
-    return acc + cur[which];
-  }, 0);
 }
 
 export default ModulesTableWrapper = withTracker((props) => {

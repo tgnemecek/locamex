@@ -42,13 +42,23 @@ class SeriesTable extends React.Component {
   }
 
   renderFilterOptions = (type) => {
-    return this.props[type].map((item, i) => {
-      return (
-        <option key={i} value={item._id}>
-          {item.description}
-        </option>
-      )
-    })
+    var uniques = [];
+    return this.props.database
+      .filter((series) => {
+        if (uniques.includes(series[type]._id)) {
+          return false;
+        } else {
+          uniques.push(series[type]._id);
+          return true;
+        }
+      })
+      .map((item, i) => {
+        return (
+          <option key={i} value={item[type]._id}>
+            {item[type].description}
+          </option>
+        )
+      })
   }
 
   renderHeader = () => {
@@ -91,23 +101,29 @@ class SeriesTable extends React.Component {
   renderBody = () => {
     return this.props.database
       .filter((item) => {
-        if (!this.state.filterIdContainer
-            && !this.state.filterIdPlace) return true;
-        if (item.container._id === this.state.filterIdContainer) {
-          return true;
-        } else return item.place._id === this.state.filterIdPlace;
+        if (this.state.filterIdContainer) {
+          if (item.container._id !== this.state.filterIdContainer) {
+            return false;
+          }
+        }
+        if (this.state.filterIdPlace) {
+          if (item.place._id !== this.state.filterIdPlace) {
+            return false;
+          }
+        }
+        return true;
       })
       .map((item, i) => {
         return (
           <tr key={i}>
             <td>
-              {item._id}
+              {item.description}
             </td>
             <td style={{textAlign: 'left'}}>
               {item.container.description}
             </td>
             <td>
-              {item.place.description}
+              {item.rented ? "Alugado" : item.place.description}
             </td>
             <td>
               <button onClick={() => this.toggleWindow(item, 'edit')}>
@@ -137,7 +153,7 @@ class SeriesTable extends React.Component {
             <option value="" style={{fontStyle: "italic"}}>
               Mostrar Tudo
             </option>
-            {this.renderFilterOptions("containers")}
+            {this.renderFilterOptions('container')}
           </Input>
           <Input
             title="Pátio"
@@ -147,7 +163,7 @@ class SeriesTable extends React.Component {
             <option value="" style={{fontStyle: "italic"}}>
               Mostrar Tudo
             </option>
-            {this.renderFilterOptions("places")}
+            {this.renderFilterOptions('place')}
           </Input>
         </Block>
         <div className="database__scroll-div">
@@ -182,23 +198,10 @@ export default SeriesTableWrapper = withTracker((props) => {
   Meteor.subscribe('seriesPub');
 
   var database = Series.find().fetch() || [];
-  database = tools.sortObjects(database, '_id', {convertToNumber: true});
-
-  var containers = [];
   var places = [];
-
-  database.forEach((series) => {
-    if (!containers.includes(series.container._id)) {
-      containers.push(series.container);
-    }
-    if (!places.includes(series.place._id)) {
-      places.push(series.place);
-    }
-  })
 
   return {
     database,
-    places,
-    containers
+    places
   }
 })(SeriesTable);

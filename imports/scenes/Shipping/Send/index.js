@@ -77,24 +77,21 @@ export default class Send extends React.Component {
           series={this.state.series}
           snapshot={this.props.snapshot}
           currentlyRented={this.props.currentlyRented}
-          seriesDatabase={this.props.databases.seriesDatabase.sort((a, b) => {
-            var comparison = a.place.localeCompare(b.place);
-            if (comparison === 0) {
-              return a._id.localeCompare(b._id);
-            } else return comparison;
-          })}/>
+          seriesDatabase={this.props.databases.seriesDatabase}/>
         {!this.state.series.length &&
           !this.state.accessories.length &&
           !this.state.packs.length ?
           "Não há itens disponíveis para envio!"
         : null}
-        {/* <SendPacks
+        <SendPacks
           update={this.update}
           snapshot={this.props.snapshot}
+          modulesDatabase={this.props.databases.modulesDatabase}
+          containersDatabase={this.props.databases.containersDatabase}
           currentlyRented={this.props.currentlyRented}
           StockTransition={this.props.StockTransition}
           packs={this.state.packs}/>
-        <SendAccessories
+        {/* <SendAccessories
           update={this.update}
           snapshot={this.props.snapshot}
           currentlyRented={this.props.currentlyRented}

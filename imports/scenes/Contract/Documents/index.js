@@ -63,6 +63,34 @@ export default class Documents extends React.Component {
     }, this.props.toggleWindow);
   }
 
+  selectFooterButtons = () => {
+    if (this.props.disabled) {
+      return [{
+        text: "Gerar Documento",
+        className: "button--green",
+        onClick: this.generateDocument
+      }]
+    }
+    var buttons = [{
+      text: "Salvar Versão e Gerar Documento",
+      className: "button--green",
+      onClick: this.generateDocument
+    }]
+    if (this.props.client.type === "person") {
+      return buttons;
+    } else {
+      return [
+        ...buttons,
+        {text: "Voltar",
+        className: "button--secondary",
+        onClick: this.props.toggleWindow},
+        {text: "Confirmar Edições",
+        className: "button--primary",
+        onClick: this.saveEdits},
+      ]
+    }
+  }
+
   render() {
       return (
         <Box
@@ -76,6 +104,7 @@ export default class Documents extends React.Component {
                 title="Contato da Negociação:"
                 type="select"
                 name="negociatorId"
+                disabled={this.props.disabled}
                 error={this.props.errorKeys.includes("negociatorId")}
                 value={this.props.negociatorId}
                 onChange={this.onChangeNegociator}>
@@ -86,6 +115,7 @@ export default class Documents extends React.Component {
                 title="Representante Legal:"
                 type="select"
                 name="0"
+                disabled={this.props.disabled}
                 error={this.props.errorKeys.includes("rep0")}
                 value={this.props.representativesId[0]}
                 onChange={this.onChangeRepresentatives}>
@@ -96,30 +126,13 @@ export default class Documents extends React.Component {
                 title="Segundo Representante: (opcional)"
                 type="select"
                 name="1"
+                disabled={this.props.disabled}
                 value={this.props.representativesId[1]}
                 onChange={this.onChangeRepresentatives}>
                 <option> </option>
                 {this.displayContacts('rep')}
               </Input>
-              <FooterButtons buttons={
-                this.props.client.type === "company" ?
-                [
-                {text: "Salvar Versão e Gerar Documento",
-                className: "button--green",
-                onClick: this.generateDocument},
-                {text: "Voltar",
-                className: "button--secondary",
-                onClick: this.props.toggleWindow},
-                {text: "Confirmar Edições",
-                className: "button--primary",
-                onClick: this.saveEdits},
-              ] :
-              [
-                {text: "Salvar Versão e Gerar Documento",
-                className: "button--green",
-                onClick: this.props.generateDocument},
-              ]
-            }/>
+              <FooterButtons buttons={this.selectFooterButtons()}/>
             </>
           : "Adicione um cliente antes."}
         </Box>

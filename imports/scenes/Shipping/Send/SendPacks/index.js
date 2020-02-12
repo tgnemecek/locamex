@@ -41,10 +41,9 @@ export default class SendPacks extends React.Component {
   getAllowedModules = () => {
     if (!this.state.packToEdit) return [];
     var containerId = this.state.packToEdit.container._id;
-    var container = this.props.snapshot.containers.find((item) => {
+    return this.props.containersDatabase.find((item) => {
       return item._id === containerId;
-    })
-    return container.allowedModules;
+    }).allowedModules;
   }
 
   update = (pack, callback) => {
@@ -109,17 +108,14 @@ export default class SendPacks extends React.Component {
           {this.state.packToEdit ?
             <ModuleList
               pack={this.state.packToEdit}
+              packs={this.props.packs}
               update={this.update}
               StockTransition={this.props.StockTransition}
               allowedModules={this.getAllowedModules()}
+              modulesDatabase={this.props.modulesDatabase}
               toggleWindow={() => this.setState({
                 packToEdit: false
               })}
-              // modules={item.modules}
-              // modulesDatabase={this.props.modulesDatabase}
-              // placesDatabase={this.props.placesDatabase}
-              // allowedModules={item.allowedModules}
-              // updateModules={updateModules}
             />
           : null}
         </div>

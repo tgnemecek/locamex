@@ -41,22 +41,28 @@ export default class RegisterAccessories extends React.Component {
   }
   onChangeVariations = (e) => {
     var bool = e.target.value;
-    var variations;
-    function createVariations(i) {
-      var result = [];
-      for (var j = 0; j < i; j++) {
-        result.push({
-          _id: tools.generateId(),
-          description: i > 1 ? "Padrão " + tools.convertToLetter(j) : "Padrão Único",
-          observations: '',
-          rented: 0,
-          places: [],
-          visible: true
-        })
-      }
-      return result;
+    var variations = [...this.state.variations];
+    var length = variations.length;
+    if (bool) {
+      variations.push({
+        _id: tools.generateId(),
+        description: "Padrão " + tools.convertToLetter(length),
+        observations: '',
+        rented: 0,
+        new: true,
+        places: [],
+        visible: true
+      })
+    } else {
+      variations = this.state.variations.filter((item) => {
+        return !item.new;
+      })
     }
-    variations = bool ? createVariations(2) : createVariations(1);
+    if (variations.length === 1) {
+      variations[0].description = "Padrão Único";
+    } else {
+      variations[0].description = "Padrão A";
+    }
     this.setState({ variations });
   }
 

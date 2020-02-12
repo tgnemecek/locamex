@@ -198,7 +198,13 @@ class Contract extends React.Component {
         }
       })
     }
-    this.saveEdits(generate);
+    if (this.props.contract.status === 'inactive') {
+      this.saveEdits(generate);
+    } else {
+      this.setState({ databaseStatus: "loading" }, () => {
+        generate(this.state.snapshot);
+      })
+    }
   }
 
   //
@@ -460,10 +466,7 @@ class Contract extends React.Component {
           : null}
           {this.state.documentsOpen ?
             <Documents
-              // snapshot={this.state.snapshot}
-              // updateSnapshot={this.updateSnapshot}
-              // disabled={this.props.contract.status !== "inactive"}
-              // settings={this.props.settings}
+              disabled={this.props.contract.status !== "inactive"}
               verifyFields={this.verifyFields}
               errorKeys={this.state.errorKeys}
               updateSnapshot={this.updateSnapshot}

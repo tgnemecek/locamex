@@ -61,7 +61,7 @@ export default class SelectedList extends React.Component {
     return this.props.from.map((item, i) => {
       return (
         <tr key={i}>
-          <td>{this.props.parentDescription}</td>
+          <td>{this.props.title}</td>
           <td>{this.props.item.description}</td>
           <td>{item.description}</td>
           <td>{item.renting}</td>

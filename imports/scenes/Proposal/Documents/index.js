@@ -41,7 +41,7 @@ export default class Documents extends React.Component {
   updateSnapshot = () => {
     this.props.updateSnapshot({
       observations: this.state.observations
-    })
+    }, this.props.toggleWindow)
   }
 
   generateDocument = () => {
@@ -50,6 +50,26 @@ export default class Documents extends React.Component {
     }, () => {
       this.props.generateDocument(this.state.includeFlyer);
     })
+  }
+
+  selectFooterButtons = () => {
+    if (this.props.disabled) {
+      return [{
+        text: "Gerar Documento",
+        className: "button--green",
+        onClick: this.generateDocument
+      }]
+    } else {
+      return [
+        {text: "Salvar Versão e Gerar Documento",
+        className: "button--green",
+        onClick: this.generateDocument},
+        {text: "Voltar",
+        className: "button--secondary",
+        onClick: this.props.toggleWindow},
+        {text: "Confirmar Edições", className: "button--primary", onClick: this.updateSnapshot}
+      ]
+    }
   }
 
   render() {
@@ -86,15 +106,7 @@ export default class Documents extends React.Component {
               disabled={this.props.disabled}
               value={this.state.observations.conditions}
               onChange={this.onChangeObservations}/>
-            <FooterButtons buttons={[
-              {text: "Salvar Versão e Gerar Documento",
-              className: "button--green",
-              onClick: this.generateDocument},
-              {text: "Voltar",
-              className: "button--secondary",
-              onClick: this.props.toggleWindow},
-              {text: "Confirmar Edições", className: "button--primary", onClick: this.updateSnapshot}
-            ]}/>
+            <FooterButtons buttons={this.selectFooterButtons()}/>
         </Box>
       )
   }

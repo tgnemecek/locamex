@@ -11,7 +11,8 @@ export const Series = new Mongo.Collection('series');
 Series.attachSchema(new SimpleSchema({
   _id: String,
   type: String,
-
+  description: Number,
+  rented: Boolean,
   container: Object,
   'container._id': String,
   'container.description': String,
@@ -45,12 +46,13 @@ if (Meteor.isServer) {
       if (!Meteor.userId() || !tools.isWriteAllowed('series')) {
         throw new Meteor.Error('unauthorized');
       }
-      var isIdInUse = !!Series.findOne({_id: state._id});
+      var isIdInUse = !!Series.findOne({description: Number(state.description)});
       if (isIdInUse) throw new Meteor.Error('id-in-use');
 
       var data = {
-        _id: state._id,
+        description: state.description,
         container: state.container,
+        rented: false,
         place: state.place,
         observations: state.observations,
         type: 'series',
@@ -67,7 +69,6 @@ if (Meteor.isServer) {
       }
       var data = {
         _id: state._id,
-        container: state.container,
         place: state.place,
         observations: state.observations
       }

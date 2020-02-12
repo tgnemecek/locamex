@@ -232,13 +232,13 @@ class Proposal extends React.Component {
   }
 
   generateDocument = (includeFlyer) => {
-    const generate = (master) => {
-      master._id = this.props.proposal._id;
-      master.type = "proposal";
-      master.includeFlyer = includeFlyer;
-      master.version = this.state.snapshotIndex;
+    const generate = (snapshot) => {
+      snapshot._id = this.props.proposal._id;
+      snapshot.type = "proposal";
+      snapshot.includeFlyer = includeFlyer;
+      snapshot.version = this.state.snapshotIndex;
 
-      Meteor.call('pdf.generate', master, (err, res) => {
+      Meteor.call('pdf.generate', snapshot, (err, res) => {
         if (res) {
           saveAs(res.data, res.fileName);
           this.setState({ databaseStatus: "completed" });
@@ -249,7 +249,13 @@ class Proposal extends React.Component {
         }
       })
     }
-    this.saveEdits(generate);
+    if (this.props.proposal && this.props.proposal.status === 'inactive') {
+      this.saveEdits(generate);
+    } else {
+      this.setState({ databaseStatus: "loading" }, () => {
+        generate(this.state.snapshot);
+      })
+    }
   }
 
   totalValue = (option) => {
@@ -331,6 +337,7 @@ class Proposal extends React.Component {
           <DatabaseStatus status={this.state.databaseStatus}/>
           {this.state.documentsOpen ?
             <Documents
+              disabled={this.props.proposal ? this.props.proposal.status !== "inactive" : false}
               snapshot={this.state.snapshot}
               updateSnapshot={this.updateSnapshot}
               disabled={this.props.proposal ? this.props.proposal.status !== "inactive" : false}

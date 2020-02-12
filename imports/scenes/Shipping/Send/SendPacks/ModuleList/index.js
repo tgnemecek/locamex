@@ -72,6 +72,36 @@ export default class ModuleList extends React.Component {
       })
   }
 
+  getPlaces = () => {
+    var fromDatabase = this.props.modulesDatabase.find((item) => {
+      return item._id === this.state.moduleToEdit._id;
+    }).places;
+
+    var joinedModules = [];
+    this.props.packs.forEach((pack) => {
+      if (pack !== this.props.pack) {
+        joinedModules = joinedModules.concat(pack.modules);
+      }
+    })
+    var filteredModules = joinedModules.filter((item) => {
+      return item._id === this.state.moduleToEdit._id;
+    })
+    var rentingByPlace = filteredModules.reduce((acc, item) => {
+      return acc.concat(item.from);
+    }, [])
+    return fromDatabase.map((item) => {
+      var renting = rentingByPlace.reduce((acc, cur) => {
+        if (cur._id === item._id) {
+          return acc + cur.renting;
+        } else return acc;
+      }, 0)
+      return {
+        ...item,
+        available: item.available - renting
+      }
+    })
+  }
+
   saveEdits = () => {
     var modules = this.state.modules;
     var pack = {...this.props.pack};
@@ -171,9 +201,7 @@ export default class ModuleList extends React.Component {
               toggleWindow={() => this.setState({
                 moduleToEdit: false
               })}
-              places={this.props.allowedModules.find((item) => {
-                return item._id === this.state.moduleToEdit._id;
-              }).places}
+              places={this.getPlaces()}
               item={this.state.moduleToEdit}/>
           : null}
       </Box>
