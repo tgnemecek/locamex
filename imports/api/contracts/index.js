@@ -90,17 +90,30 @@ Contracts.attachSchema(new SimpleSchema({
     'billingServices.$.account': accountsSchema,
 
     containers: Array,
-    'containers.$': {
-      type: containersSchema
-    },
+    'containers.$': Object,
+    'containers.$._id': String,
+    'containers.$.type': String,
+    'containers.$.description': String,
+    'containers.$.restitution': Number,
+    'containers.$.price': Number,
+    'containers.$.renting': SimpleSchema.Integer,
+
     accessories: Array,
-    'accessories.$': {
-      type: accessoriesSchema
-    },
+    'accessories.$': Object,
+    'accessories.$._id': String,
+    'accessories.$.type': String,
+    'accessories.$.description': String,
+    'accessories.$.restitution': Number,
+    'accessories.$.price': Number,
+    'accessories.$.renting': SimpleSchema.Integer,
+
     services: Array,
-    'services.$': {
-      type: servicesSchema
-    }
+    'services.$': Object,
+    'services.$._id': String,
+    'services.$.type': String,
+    'services.$.description': String,
+    'services.$.price': Number,
+    'services.$.renting': SimpleSchema.Integer
   })
 }))
 

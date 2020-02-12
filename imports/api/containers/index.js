@@ -11,10 +11,6 @@ export const containersSchema = new SimpleSchema({
   type: String,
   price: Number,
   restitution: Number,
-  renting : {
-    type: SimpleSchema.Integer,
-    optional: true
-  },
   flyer: {
     type: String,
     optional: true
@@ -23,7 +19,11 @@ export const containersSchema = new SimpleSchema({
     type: Array,
     optional: true
   },
-  'allowedModules.$': modulesSchema,
+  'allowedModules.$': Object,
+  'allowedModules.$._id': String,
+  'allowedModules.$.type': String,
+  'allowedModules.$.description': String,
+
   visible: Boolean
 })
 Containers.attachSchema(containersSchema);

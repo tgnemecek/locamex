@@ -85,7 +85,11 @@ export default class ManageItems extends React.Component {
   addItem = (item) => {
     var addedItems = [...this.state.addedItems];
     addedItems.push({
-      ...item,
+      _id: item._id,
+      type: item.type,
+      description: item.description,
+      restitution: item.restitution,
+      price: item.price,
       renting: 1
     });
     this.setState({ addedItems });

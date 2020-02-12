@@ -77,13 +77,18 @@ export default class Send extends React.Component {
           series={this.state.series}
           snapshot={this.props.snapshot}
           currentlyRented={this.props.currentlyRented}
-          seriesDatabase={this.props.databases.seriesDatabase}/>
+          seriesDatabase={this.props.databases.seriesDatabase.sort((a, b) => {
+            var comparison = a.place.localeCompare(b.place);
+            if (comparison === 0) {
+              return a._id.localeCompare(b._id);
+            } else return comparison;
+          })}/>
         {!this.state.series.length &&
           !this.state.accessories.length &&
           !this.state.packs.length ?
           "Não há itens disponíveis para envio!"
         : null}
-        <SendPacks
+        {/* <SendPacks
           update={this.update}
           snapshot={this.props.snapshot}
           currentlyRented={this.props.currentlyRented}
@@ -94,7 +99,7 @@ export default class Send extends React.Component {
           snapshot={this.props.snapshot}
           currentlyRented={this.props.currentlyRented}
           StockTransition={this.props.StockTransition}
-          accessories={this.state.accessories}/>
+          accessories={this.state.accessories}/> */}
         {/* <Footer
           hidden={
             !this.state.fixed.length &&

@@ -7,7 +7,6 @@ export const modulesSchema = new SimpleSchema({
   _id: String,
   type: String,
   description: String,
-  rented: SimpleSchema.Integer,
   places: Array,
   'places.$': Object,
   'places.$._id': String,

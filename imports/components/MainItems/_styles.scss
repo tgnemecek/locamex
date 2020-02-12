@@ -10,10 +10,13 @@
   th {
     position: inherit !important;
   }
+  .table__wide {
+    width: 80%;
+  }
 }
 
 .main-items__list__value-column {
-  width: 100px;
+  width: 120px;
   text-align: right;
 }
 

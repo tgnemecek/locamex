@@ -9,10 +9,6 @@ export const servicesSchema = new SimpleSchema({
   type: String,
   description: String,
   price: Number,
-  renting : {
-    type: SimpleSchema.Integer,
-    optional: true
-  },
   visible: Boolean
 })
 Services.attachSchema(servicesSchema);
