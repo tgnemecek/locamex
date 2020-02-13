@@ -1,14 +1,12 @@
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 import tools from '/imports/startup/tools/index';
-import { addressSchema } from '/imports/api/address/index';
 import { accountsSchema } from '/imports/api/accounts/index';
-import { containersSchema } from '/imports/api/containers/index';
 import { Proposals } from '/imports/api/proposals/index';
 import { Series } from '/imports/api/series/index';
 import { Modules } from '/imports/api/modules/index';
-import { Accessories, accessoriesSchema } from '/imports/api/accessories/index';
-import { servicesSchema } from '/imports/api/services/index';
+import { Packs } from '/imports/api/packs/index';
+import { Accessories } from '/imports/api/accessories/index';
 
 export const Contracts = new Mongo.Collection('contracts');
 Contracts.attachSchema(new SimpleSchema({
@@ -16,15 +14,75 @@ Contracts.attachSchema(new SimpleSchema({
   status: String,
   proposalId: String,
   proposalIndex: SimpleSchema.Integer,
-  shipping: Array,
   firstSnapshot: {
     type: Boolean,
     optional: true
   },
-  'shipping': {
+  shipping: Array,
+  'shipping.$': Object,
+  'shipping.$._id': String,
+  'shipping.$.date': Date,
+  'shipping.$.type': {
+    type: String,
+    allowedValues: ["send", "receive"]
+  },
+  'shipping.$.series': Array,
+  'shipping.$.series.$': Object,
+  'shipping.$.series.$._id': String,
+  'shipping.$.series.$.description': Number,
+  'shipping.$.series.$.type': String,
+  'shipping.$.series.$.container': Object,
+  'shipping.$.series.$.container._id': String,
+  'shipping.$.series.$.container.description': String,
+  'shipping.$.series.$.place': Object,
+  'shipping.$.series.$.place._id': String,
+  'shipping.$.series.$.place.description': String,
+  'shipping.$.series.$.snapshots': Array,
+  'shipping.$.series.$.snapshots.$': {
     type: Object,
     blackbox: true
   },
+
+  'shipping.$.accessories': Array,
+  'shipping.$.accessories.$': Object,
+  'shipping.$.accessories.$._id': String,
+  'shipping.$.accessories.$.description': String,
+  'shipping.$.accessories.$.type': String,
+  'shipping.$.accessories.$.variations': Array,
+  'shipping.$.accessories.$.variations.$': Object,
+  'shipping.$.accessories.$.variations.$._id': String,
+  'shipping.$.accessories.$.variations.$.description': String,
+  'shipping.$.accessories.$.variations.$.observations': {
+    type: String,
+    optional: true
+  },
+  'shipping.$.accessories.$.variations.$.type': String,
+  'shipping.$.accessories.$.variations.$.from': Array,
+  'shipping.$.accessories.$.variations.$.from.$': Object,
+  'shipping.$.accessories.$.variations.$.from.$._id': String,
+  'shipping.$.accessories.$.variations.$.from.$.description': String,
+  'shipping.$.accessories.$.variations.$.from.$.renting': SimpleSchema.Integer,
+
+  'shipping.$.packs': Array,
+  'shipping.$.packs.$': Object,
+  'shipping.$.packs.$._id': String,
+  'shipping.$.packs.$.description': String,
+  'shipping.$.packs.$.type': String,
+  'shipping.$.packs.$.container': Object,
+  'shipping.$.packs.$.container._id': String,
+  'shipping.$.packs.$.container.description': String,
+  'shipping.$.packs.$.modules': Array,
+  'shipping.$.packs.$.modules.$': Object,
+  'shipping.$.packs.$.modules.$._id': String,
+  'shipping.$.packs.$.modules.$.description': String,
+  'shipping.$.packs.$.modules.$.renting': SimpleSchema.Integer,
+  'shipping.$.packs.$.modules.$.type': String,
+  'shipping.$.packs.$.modules.$.from': Array,
+  'shipping.$.packs.$.modules.$.from.$': Object,
+  'shipping.$.packs.$.modules.$.from.$._id': String,
+  'shipping.$.packs.$.modules.$.from.$.description': String,
+  'shipping.$.packs.$.modules.$.from.$.renting': SimpleSchema.Integer,
+
   visible: Boolean,
   snapshots: Array,
   'snapshots.$': new SimpleSchema({
@@ -293,113 +351,144 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', { _id }, 'contracts.cancel');
       return _id;
     },
-    'contracts.shipping.send'(master) {
+    'contracts.shipping.send'(data) {
       if (!Meteor.userId() || !tools.isWriteAllowed('contracts')) {
         throw new Meteor.Error('unauthorized');
       }
-      var _id = master._id;
-      var oldShipping = Contracts.findOne({ _id }).shipping;
+      var _id = data.contractId;
+      var contract = Contracts.findOne({ _id });
 
-      var shipping = [...oldShipping];
+      var shipping = [...contract.shipping];
 
-      shipping.push({
+      data = {
+        series: data.series.filter((item) => {
+          return item._id
+        }),
+        accessories: data.accessories.filter((item) => {
+          return item.variations.length;
+        }),
+        packs: data.packs.filter((item) => {
+          return item.modules.length;
+        }),
         _id: tools.generateId(),
         date: new Date(),
-        type: 'send',
-        fixed: master.fixed.filter((item) => {
-          return !!item.seriesId;
-        }),
-        packs: master.packs.filter((pack) => {
-          var count = 0;
-          pack.modules.filter((module) => {
-            count += module.selected.length;
-            return !!module.selected.length;
-          })
-          return !!count;
-        }),
-        accessories: master.accessories.filter((item) => {
-          delete item.renting;
-          return !!item.selected.length;
-        })
-      });
-
-      var currentShipping = shipping[shipping.length-1];
-
-      function updateModule(product, module) {
-        var place = [...product.place];
-        var rented = product.rented;
-        module.selected.forEach((moduleSelected) => {
-          var exists = place.findIndex((item) => item._id === moduleSelected.place);
-          if (exists > -1) {
-            place[exists].available -= moduleSelected.selected;
-            if (place[exists].available < 0) throw new Meteor.Error('product-already-rented');
-            rented = rented + moduleSelected.selected;
-          } else throw new Meteor.Error('product-already-rented');
-        })
-        return {
-          ...product,
-          rented,
-          place
-        }
+        type: 'send'
       }
+      shipping.push(data);
 
-      function updateAccessory(product, accessory) {
-        var variations = product.variations.map((variation, i) => {
-          var place = [...variation.place];
-          var rented = variation.rented;
-          accessory.selected.forEach((accessorySelected) => {
-            if (i === accessorySelected.variationIndex) {
-              var exists = place.findIndex((item) => item._id === accessorySelected.place);
-              if (exists > -1) {
-                place[exists].available = place[exists].available - accessorySelected.selected;
-                if (place[exists].available < 0) throw new Meteor.Error('product-already-rented');
-                rented = rented + accessorySelected.selected;
-              } else throw new Meteor.Error('product-already-rented' + accessorySelected.place);
+      const executeTransactions = (isSimulation) => {
+        data.series.forEach((series) => {
+          if (isSimulation) {
+            var currentSeries = Series.findOne({_id: series._id});
+            if (currentSeries.rented) {
+              throw new Meteor.Error('stock-unavailable', '', {
+                _id: currentSeries._id,
+                type: currentSeries.type,
+                item: currentSeries.description,
+                place: currentSeries.place.description
+              })
             }
-          })
-          return {
-            ...variation,
-            rented,
-            place
+          } else {
+            Series.update({_id: series._id}, {$set: {
+              place: {},
+              rented: true
+            }})
           }
         })
-        return {
-          ...product,
-          variations
-        }
-      }
-
-      const executeRent = (isSimulation) => {
-        currentShipping.fixed.forEach((fixed) => {
-          var productFromDatabase = Series.findOne({ _id: fixed.seriesId });
-          if (!productFromDatabase) throw new Meteor.Error('product-not-found');
-          if (productFromDatabase.place === "rented") throw new Meteor.Error('product-already-rented');
-          if (!isSimulation) Meteor.call('series.update', {place: "rented"}, fixed.seriesId);
-        })
-        currentShipping.packs.forEach((pack) => {
-          pack.modules.forEach((module) => {
-            var productFromDatabase = Modules.findOne({ _id: module.productId });
-            if (!productFromDatabase) throw new Meteor.Error('product-not-found');
-            productFromDatabase = updateModule(productFromDatabase, module);
-            if (!isSimulation) Meteor.call('modules.shipping.send', productFromDatabase);
+        data.accessories.forEach((accessory) => {
+          var newAccessory = Accessories.findOne({_id: accessory._id});
+          accessory.variations.forEach((variation) => {
+            var varRented = 0;
+            var oldVariation = newAccessory.variations.find((oldVar) => {
+              return oldVar._id === variation._id;
+            })
+            variation.from.forEach((fromPlace) => {
+              var oldPlace = oldVariation.places.find((oldPl) => {
+                return oldPl._id === fromPlace._id;
+              })
+              varRented += fromPlace.renting;
+              oldPlace.available -= fromPlace.renting;
+              if (oldPlace.available < 0) {
+                throw new Meteor.Error('stock-unavailable', '', {
+                  _id: newAccessory._id,
+                  type: newAccessory.type,
+                  item: newAccessory.description,
+                  extra: variation.description,
+                  place: fromPlace.description
+                })
+              }
+            })
+            oldVariation.rented += varRented;
           })
+          if (!isSimulation) {
+            Accessories.update({_id: accessory._id},
+              {$set: newAccessory})
+          }
         })
-        currentShipping.accessories.forEach((accessory) => {
-          var productFromDatabase = Accessories.findOne({ _id: accessory.productId });
-          if (!productFromDatabase) throw new Meteor.Error('product-not-found');
-          productFromDatabase = updateAccessory(productFromDatabase, accessory);
-          if (!isSimulation) Meteor.call('accessories.shipping.send', productFromDatabase);
+        data.packs.forEach((pack) => {
+          if (pack.locked) {
+            if (!isSimulation) {
+              Packs.update({_id: pack._id}, {$set: {
+                rented: true,
+                place: {
+                  _id: '',
+                  description: ''
+                }
+              }});
+            }
+          } else {
+            pack.modules.forEach((module) => {
+              var newModule = Modules.findOne({_id: module._id});
+              var modRented = 0;
+              module.from.forEach((fromPlace) => {
+                var oldPlace = newModule.places.find((oldPl) => {
+                  return oldPl._id === fromPlace._id;
+                })
+                modRented += fromPlace.renting;
+                oldPlace.available -= fromPlace.renting;
+                if (oldPlace.available < 0) {
+                  throw new Meteor.Error('stock-unavailable', '', {
+                    _id: newModule._id,
+                    type: newModule.type,
+                    item: newModule.description,
+                    place: fromPlace.description
+                  })
+                }
+              })
+              newModule.rented += modRented;
+              if (!isSimulation) {
+                Modules.update({_id: newModule._id},
+                  {$set: newModule})
+              }
+            })
+            if (!isSimulation) {
+              delete pack._id;
+              var description = Packs.find({}).count().toString();
+              description = "M" + description.padStart(4, '0');
+              Packs.insert({
+                ...pack,
+                description,
+                rented: true,
+                place: {
+                  _id: '',
+                  description: ''
+                }
+              });
+            }
+          }
         })
-        return true;
       }
 
-      executeRent(true);
-      // executeRent(false);
+      executeTransactions(true);
+      executeTransactions(false);
 
-      Contracts.update({ _id }, { $set: { shipping } });
-      Meteor.call('history.insert',
-        {...currentShipping, contractId: _id},
-        'contracts.shipping.send');
+      console.log(shipping)
+      Contracts.update({ _id },
+        { $set: { shipping }
+      });
+      // Meteor.call('history.insert',
+      //   {...currentShipping, contractId: _id},
+      //   'contracts.shipping.send');
       return _id;
     },
     'contracts.shipping.receive'(master) {

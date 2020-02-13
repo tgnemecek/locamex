@@ -8,6 +8,7 @@ import Code from './Code/index';
 import Digits from './Digits/index';
 import File from './File/index';
 import Text from './Text/index';
+import Number_ from './Number_/index';
 import Password from './Password/index';
 import Percent from './Percent/index';
 import Select from './Select/index';
@@ -67,6 +68,9 @@ export default class Input extends React.PureComponent {
         ChosenComponent = Code;
         break;
       case 'number':
+        ChosenComponent = Number_;
+        break;
+      case 'digits':
         ChosenComponent = Digits;
         break;
       case 'percent':
@@ -102,20 +106,8 @@ export default class Input extends React.PureComponent {
           {...this.props}
           style={this.style()}
           value={this.props.value}
-          onChange={this.onChange}
-          // style={this.props.style}
-          // type={this.props.type}
-          // id={this.props.id}
-          //
-          // readOnly={this.props.readOnly}
-          // placeholder={this.props.placeholder}
-          // disabled={this.props.disabled}
-          // buttonClick={this.props.buttonClick}
-          // min={this.props.min}
-          // max={this.props.max}
-          // options={this.props.options}
-          >
-          {this.props.children}
+          onChange={this.onChange}>
+            {this.props.children}
         </ChosenComponent>
       </div>
     )

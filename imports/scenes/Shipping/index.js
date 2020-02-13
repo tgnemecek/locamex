@@ -59,43 +59,45 @@ class Shipping extends React.Component {
             type="contract"
             toggleDocuments={this.toggleDocuments}
           />
-          <h3 style={{textAlign: "center", margin: "20px"}}>
-            Itens no Cliente
-          </h3>
-          {/* <CurrentlyRented
-            accessoriesDatabase={this.props.databases.accessoriesDatabase}
-            currentlyRented={this.currentlyRented()}
-            prepareList={this.prepareList}
-          /> */}
-          <h3 style={{textAlign: "center", margin: "20px"}}>Histórico de Remessas</h3>
-          {/* <ShippingHistory
-            contract={this.props.contract}
-            accessoriesDatabase={this.props.databases.accessoriesDatabase}
-            placesDatabase={this.props.databases.placesDatabase}
-            prepareList={this.prepareList}
-          /> */}
-          {this.state.toggleSend ?
-            <Send
-              toggleSend={this.toggleSend}
-              databases={this.props.databases}
+          <div className="main-scene__body">
+            <h3 style={{textAlign: "center", margin: "20px"}}>
+              Itens no Cliente
+            </h3>
+            {/* <CurrentlyRented
+              accessoriesDatabase={this.props.databases.accessoriesDatabase}
+              currentlyRented={this.currentlyRented()}
+              prepareList={this.prepareList}
+            /> */}
+            <h3 style={{textAlign: "center", margin: "20px"}}>Histórico de Remessas</h3>
+            {/* <ShippingHistory
               contract={this.props.contract}
-              snapshot={this.props.snapshot}
-              StockTransition={StockTransition}
-              currentlyRented={this.currentlyRented()}
-            />
-          : null}
-          {this.state.toggleReceive ?
-            <Receive
-              toggleReceive={this.toggleReceive}
-              databases={this.props.databases}
-              contract={{...this.props.contract}}
-              currentlyRented={this.currentlyRented()}
-            />
-          : null}
-          <FooterButtons buttons={[
-            {text: "Enviar Itens", className: "button--secondary", onClick: this.toggleSend},
-            {text: "Receber Itens", className: "button--secondary", onClick: this.toggleReceive},
-          ]}/>
+              accessoriesDatabase={this.props.databases.accessoriesDatabase}
+              placesDatabase={this.props.databases.placesDatabase}
+              prepareList={this.prepareList}
+            /> */}
+            {this.state.toggleSend ?
+              <Send
+                toggleSend={this.toggleSend}
+                databases={this.props.databases}
+                contract={this.props.contract}
+                snapshot={this.props.snapshot}
+                StockTransition={StockTransition}
+                currentlyRented={this.currentlyRented()}
+              />
+            : null}
+            {this.state.toggleReceive ?
+              <Receive
+                toggleReceive={this.toggleReceive}
+                databases={this.props.databases}
+                contract={{...this.props.contract}}
+                currentlyRented={this.currentlyRented()}
+              />
+            : null}
+            <FooterButtons buttons={[
+              {text: "Enviar Itens", className: "button--secondary", onClick: this.toggleSend},
+              {text: "Receber Itens", className: "button--secondary", onClick: this.toggleReceive},
+            ]}/>
+          </div>
         </div>
       </div>
     )
@@ -126,7 +128,7 @@ export default ShippingWrapper = withTracker((props) => {
     modulesDatabase: Modules.find().fetch(),
     containersDatabase: Containers.find().fetch(),
     accessoriesDatabase: Accessories.find().fetch(),
-    packsDatabase: Packs.find().fetch()
+    packsDatabase: Packs.find({rented: false}).fetch()
   }
 
   var snapshot;

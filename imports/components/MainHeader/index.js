@@ -93,20 +93,20 @@ export default class MainHeader extends React.Component {
             <div className="main-header__created-by">
               Versão criada por: <strong>{this.props.createdByName}</strong>
             </div>
-            <h1 className="main-header__title">
-              {this.props.title}
-            </h1>
-            {this.props.snapshots && this.props.snapshots.length ?
-              (this.props.changeSnapshot ?
-              <Input
-                onChange={this.props.changeSnapshot}
-                value={this.props.snapshotIndex}
-                style={this.selectStyle()}
-                className="main-header__snapshot-selection"
-                type="select">
-                  {this.snapshotsOptions()}
-              </Input>
-            : this.props.snapshotIndex) : null}
+            <div className="main-header__title">
+              <h1>{this.props.title}</h1>
+              {this.props.snapshots && this.props.snapshots.length ?
+                (this.props.changeSnapshot ?
+                <Input
+                  onChange={this.props.changeSnapshot}
+                  value={this.props.snapshotIndex}
+                  style={this.selectStyle()}
+                  className="main-header__snapshot-selection"
+                  type="select">
+                    {this.snapshotsOptions()}
+                </Input>
+              : this.props.snapshotIndex) : null}
+            </div>
           </div>
           <div className="main-header__right-side">
             {this.props.toggleBilling ?

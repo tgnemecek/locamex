@@ -11,23 +11,26 @@
   label {
     text-align: left;
     padding-left: 2px;
+    white-space: nowrap;
+    overflow: hidden;
   }
 }
 
 .input input:disabled {
   color: $dark-grey;
-  background: $grey;
+  background: $light-grey;
   cursor: inherit;
 }
 
-// .input input:read-only {
-//   color: $dark-grey;
-//   background: $grey;
-// }
+.input textarea:disabled {
+  color: $dark-grey;
+  background: $light-grey;
+  cursor: inherit;
+}
 
 .input select:disabled {
   color: $dark-grey;
-  background: $grey;
+  background: $light-grey;
 }
 
 input[type="file"] {

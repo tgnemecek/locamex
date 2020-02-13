@@ -26,7 +26,7 @@ export default class AddedItems extends React.Component {
                     <td className="table__wide">
                       {item.description}
                     </td>
-                    <td className="manage-items__buttom-column">
+                    <td className="no-padding">
                       <Input
                         type="currency"
                         style={{width: "100px"}}
@@ -35,7 +35,7 @@ export default class AddedItems extends React.Component {
                         allowNegative={this.props.type === 'services'}
                         onChange={this.props.changePrice}/>
                     </td>
-                    <td className="manage-items__buttom-column">
+                    <td className="no-padding">
                       <Input
                         type="number"
                         style={{width: "45px"}}
@@ -44,7 +44,7 @@ export default class AddedItems extends React.Component {
                         min={1}
                         onChange={this.props.changeQuantity}/>
                     </td>
-                    <td className="manage-items__buttom-column">
+                    <td className="no-padding">
                       <button onClick={() => this.props.removeItem(i)}>
                         <Icon icon="not" />
                       </button>

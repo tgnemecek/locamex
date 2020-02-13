@@ -34,7 +34,7 @@ class ContractsTable extends React.Component {
         const renderContractButton = () => {
           if (tools.isReadAllowed("contract")) {
             return (
-              <td>
+              <td className="no-padding">
                 <Link key={i} to={"/contract/" + item._id}>
                   <Icon icon="edit"/>
                 </Link>
@@ -45,7 +45,7 @@ class ContractsTable extends React.Component {
         const renderBillingButton = () => {
           if (tools.isReadAllowed("billing") && item.status === "active") {
             return (
-              <td>
+              <td className="no-padding">
                 <Link key={i} to={"/billing/" + item._id}>
                   <Icon icon="money"/>
                 </Link>
@@ -56,7 +56,7 @@ class ContractsTable extends React.Component {
         const renderShippingButton = () => {
           if (tools.isReadAllowed("shipping") && item.status === "active") {
             return (
-              <td>
+              <td className="no-padding">
                 <Link key={i} to={"/shipping/" + item._id}>
                   <Icon icon="transaction"  />
                 </Link>

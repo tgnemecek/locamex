@@ -15,11 +15,12 @@ export default class FilterBar extends React.Component {
   };
   render() {
     return (
-      <div className="filter-bar">
-        <Input {...this.props}/>
-        <button className="filter-bar__button" onClick={this.onClick}>
-          <Icon icon="not"/>
-        </button>
+      <div>
+        <Input {...this.props} childrenSide="right">
+          <button onClick={this.onClick}>
+            <Icon icon="not" color="lightGrey"/>
+          </button>
+        </Input>
       </div>
     )
   }

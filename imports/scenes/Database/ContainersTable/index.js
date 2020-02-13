@@ -60,12 +60,12 @@ class ContainersTable extends React.Component {
         <th className="table__wide">Descrição</th>
         <th>Tipo</th>
         <th>Valor Mensal</th>
-        <th>
+        <th className="no-padding">
           <button onClick={generateReport}>
             <Icon icon="report" />
           </button>
         </th>
-        <th>
+        <th className="no-padding">
           <button onClick={() => this.toggleWindow({})}>
             <Icon icon="new" />
           </button>
@@ -93,12 +93,12 @@ class ContainersTable extends React.Component {
             <td>
               {tools.format(item.price, 'currency')}
             </td>
-            <td>
+            <td className="no-padding">
               <button onClick={() => this.toggleFlyerWindow(item)}>
                 <Icon icon="pdf" />
               </button>
             </td>
-            <td>
+            <td className="no-padding">
               <button onClick={() => this.toggleWindow(item)}>
                 <Icon icon="edit" />
               </button>

@@ -56,12 +56,12 @@ export default class StockTransition extends React.Component {
     return (
       <Box
         title="Selecionar Quantidades"
-        className="shipping__select__select-accessories"
+        className="stock-transition"
         closeBox={this.props.toggleWindow}
         >
-          <div>
+          <h4>
             {this.props.title}
-          </div>
+          </h4>
           <PlacesDistribution
             item={this.props.item}
             places={this.props.places}
@@ -71,6 +71,7 @@ export default class StockTransition extends React.Component {
             addToSelection={this.addToSelection}
             removeFromSelection={this.removeFromSelection}
             title={this.props.title}
+            parentDescription={this.props.parentDescription}
             item={this.props.item}
             from={this.state.from}
             places={this.props.places}

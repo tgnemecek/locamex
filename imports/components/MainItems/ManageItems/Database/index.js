@@ -20,7 +20,7 @@ export default class Database extends React.Component {
                     <td className="table__wide">
                       {item.description}
                     </td>
-                    <td className="manage-items__buttom-column">
+                    <td className="no-padding">
                       <button
                         onClick={() => this.props.addItem(item)}>
                         <Icon icon="arrowRight"/>

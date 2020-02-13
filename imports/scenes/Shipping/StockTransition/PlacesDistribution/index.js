@@ -25,10 +25,8 @@ export default class PlacesDistribution extends React.Component {
     this.setState({ hovering: false })
   }
 
-  renderBody = () => {
+  filterPlaces = () => {
     var places = tools.deepCopy(this.props.places);
-
-    // Deducts quantities that are already on the list
     this.props.from.forEach((item) => {
       places.forEach((place) => {
         if (place._id === item._id) {
@@ -36,15 +34,13 @@ export default class PlacesDistribution extends React.Component {
         }
       })
     });
-
-    // Filters available = 0
-
-    var placesWithQuantity = places.filter((item) => {
+    return places.filter((item) => {
       return item.available > 0;
     })
+  }
 
-    // Renders
-
+  renderBody = () => {
+    var placesWithQuantity = this.filterPlaces();
     if (placesWithQuantity.length) {
       return placesWithQuantity.map((place, i) => {
         const onDragStart = (e) => {
@@ -53,7 +49,7 @@ export default class PlacesDistribution extends React.Component {
         }
         return (
           <div key={i}
-            className="shipping__select__place-strip"
+            className="stock-transition__place-strip"
             style={this.style()}
             onMouseOver={this.hoveringState}
             onMouseOut={this.normalState}
@@ -61,23 +57,30 @@ export default class PlacesDistribution extends React.Component {
             onDragStart={onDragStart}
             >
             <div>⧉</div>
-            <div>{place.description}</div>
+            <label
+              style={this.style()}
+              draggable={true}
+              onMouseOver={this.hoveringState}
+              onMouseOut={this.normalState}>
+                {place.description}
+            </label>
             <div>{place.available}</div>
           </div>
         );
       })
-    } else return <p>Não há quantidade disponível do produto em estoque!</p>;
+    } else return null;
   }
 
   render() {
-    return (
-      <>
-        <h4>Estoque do produto:</h4>
+    if (this.filterPlaces().length) {
+      return (
         <div
-          className="shipping__select__places-distribution">
+          className="stock-transition__places">
           {this.renderBody()}
         </div>
-      </>
+      )
+    } else return (
+      <p>Não há quantidade disponível do produto em estoque!</p>
     )
   }
 }

@@ -35,7 +35,7 @@ class ProposalsTable extends React.Component {
         const renderProposalButton = () => {
           if (tools.isReadAllowed("proposal")) {
             return (
-              <td>
+              <td className="no-padding">
                 <Link key={i} to={"/proposal/" + item._id}>
                   <Icon icon="edit"/>
                 </Link>
@@ -73,7 +73,7 @@ class ProposalsTable extends React.Component {
                 <th className="table__wide">Nome do Cliente</th>
                 <th>Status</th>
                 <th className="hide-at-700px">Valor Total da Proposta</th>
-                <th>
+                <th className="no-padding">
                   <Link to="/proposal/new">
                     <Icon icon="new" />
                   </Link>

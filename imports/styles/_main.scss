@@ -1,5 +1,8 @@
 @import './variables';
-@import './mixins';
+@import './reusable';
 @import './base';
+@import './button';
+@import './table';
+@import './main-scene';
 @import '../components/styles';
 @import '../scenes/styles';

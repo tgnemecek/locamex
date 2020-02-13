@@ -38,7 +38,7 @@ class UsersTable extends React.Component {
           <td className="hide-at-700px">
             {item.emails[0].address}
           </td>
-          <td>
+          <td className="no-padding">
             <button onClick={() => this.toggleWindow(item)}>
               <Icon icon="edit" />
             </button>
@@ -63,7 +63,7 @@ class UsersTable extends React.Component {
                 <th className="hide-at-700px">
                   Email
                 </th>
-                <th>
+                <th className="no-padding">
                   <button onClick={() => this.toggleWindow({})}>
                     <Icon icon="new" />
                   </button>

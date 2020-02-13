@@ -9,8 +9,6 @@ import tools from '/imports/startup/tools/index';
 import Icon from '/imports/components/Icon/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 
-
-
 class AccountsTable extends React.Component {
   constructor(props) {
     super(props);
@@ -39,7 +37,7 @@ class AccountsTable extends React.Component {
                 <th>Banco</th>
                 <th>Agência</th>
                 <th>Número da Conta</th>
-                <th>
+                <th className="no-padding">
                   <button onClick={() => this.toggleWindow({})}>
                     <Icon icon="new" />
                   </button>
@@ -57,7 +55,7 @@ class AccountsTable extends React.Component {
                     <td>{item.bank}</td>
                     <td>{item.branch}</td>
                     <td>{item.number}</td>
-                    <td>
+                    <td className="no-padding">
                       <button onClick={() => this.toggleWindow(item)}>
                         <Icon icon="edit"/>
                       </button>

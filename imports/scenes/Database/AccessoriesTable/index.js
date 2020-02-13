@@ -73,12 +73,12 @@ class AccessoriesTable extends React.Component {
         <th>Inativos</th>
         <th>Total</th>
         <th>Valor Mensal</th>
-        <th>
+        <th className="no-padding">
           <button onClick={generateReport}>
             <Icon icon="report" />
           </button>
         </th>
-        <th>
+        <th className="no-padding">
           <button onClick={() => this.toggleWindow({}, 'edit')}>
             <Icon icon="new" />
           </button>
@@ -108,23 +108,23 @@ class AccessoriesTable extends React.Component {
             <td>
               {tools.format(item.price, 'currency')}
             </td>
-            <td>
+            <td className="no-padding">
               <button
                 onClick={() => this.toggleWindow(item, 'edit')}>
                 <Icon icon="edit"/>
               </button>
             </td>
-            <td>
+            <td className="no-padding">
               <button
                 onClick={() => this.toggleWindow(item, 'stock')}>
                 <Icon icon="transaction"/>
               </button>
             </td>
-            <td>
+            <td className="no-padding">
               <button onClick={() => this.toggleWindow(item, 'image')}>
                 <Icon icon="image"/>
               </button>
-          </td>
+            </td>
           </tr>
         )
       })

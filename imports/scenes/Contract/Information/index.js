@@ -3,7 +3,7 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 import tools from '/imports/startup/tools/index';
 
-import Block from '/imports/components/Block/index';
+import Icon from '/imports/components/Icon/index';
 import Input from '/imports/components/Input/index';
 import SuggestionBar from '/imports/components/SuggestionBar/index';
 import CalendarBar from '/imports/components/CalendarBar/index';
@@ -114,6 +114,7 @@ export default class Information extends React.Component {
           </SuggestionBar>
           <Link
             className="grid-span-2"
+            target="_blank"
             to={`/proposal/${this.props.contract.proposalId}`}
             style={{textDecoration: 'none', cursor: 'pointer'}}>
             <Input
@@ -121,9 +122,10 @@ export default class Information extends React.Component {
               name="proposal"
               type="text"
               disabled={true}
-              value={this.props.contract.proposalId + "." + (this.props.contract.proposalIndex+1)}
-              onChange={this.handleChange}
-            />
+              childrenSide="left"
+              value={this.props.contract.proposalId + "." + (this.props.contract.proposalIndex+1)}>
+                <Icon icon="link" color="grey"/>
+            </Input>
           </Link>
           <Input
             title="Endereço de Entrega:"

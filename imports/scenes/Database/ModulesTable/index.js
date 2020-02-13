@@ -68,12 +68,12 @@ class ModulesTable extends React.Component {
         <th>Locados</th>
         <th>Inativos</th>
         <th>Total</th>
-        <th>
+        <th className="no-padding">
           <button onClick={generateReport}>
             <Icon icon="report" />
           </button>
         </th>
-        <th>
+        <th className="no-padding">
           <button onClick={() => this.toggleWindow({}, 'edit')}>
             <Icon icon="new" />
           </button>
@@ -102,12 +102,12 @@ class ModulesTable extends React.Component {
             <td>{item.rented}</td>
             <td>{inactive}</td>
             <td>{available + item.rented + inactive}</td>
-            <td>
+            <td className="no-padding">
               <button onClick={() => this.toggleWindow(item, 'edit')}>
                 <Icon icon="edit" />
               </button>
             </td>
-            <td>
+            <td className="no-padding">
               <button onClick={() => this.toggleWindow(item, 'stock')}>
                 <Icon icon="transaction"  />
               </button>

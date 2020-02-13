@@ -17,8 +17,14 @@ Series.attachSchema(new SimpleSchema({
   'container._id': String,
   'container.description': String,
   place: Object,
-  'place._id': String,
-  'place.description': String,
+  'place._id': {
+    type: String,
+    optional: true
+  },
+  'place.description': {
+    type: String,
+    optional: true
+  },
 
   observations: {
     type: String,

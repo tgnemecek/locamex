@@ -28,21 +28,24 @@ export default class CalendarBar extends React.Component {
     }
     this.props.onChange(e);
   }
+  className = () => {
+    var fromProps = this.props.className || "";
+    return "calendar-bar " + fromProps;
+  }
   render() {
     return (
       <>
-        <div className={this.props.className ? this.props.className + " calendar-bar" : "calendar-bar"}>
-          <div className="calendar-bar__icon" style={this.props.title ? {top: "2.5rem"} : {top: "1rem"}}>
-            <Icon icon="calendar"/>
-          </div>
+        <div className={this.className()}>
           <Input
             title={this.props.title}
-            className={!this.props.disabled ? "calendar-bar__input" : "calendar-bar__input calendar-bar__input--disabled"}
+            className="calendar-bar__input"
             value={moment(this.props.value).format("DD/MM/YYYY")}
-            buttonClick={this.toggleCalendar}
             disabled={this.props.disabled}
+            buttonClick={this.toggleCalendar}
             readOnly={true}
-            />
+            childrenSide="left">
+              <Icon icon="calendar" color="grey"/>
+            </Input>
         </div>
         {this.state.toggleCalendar ?
           <CalendarBox

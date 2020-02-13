@@ -101,19 +101,19 @@ export default class SuggestionBar extends React.Component {
       <div className={this.className()}
         onBlur={this.onBlur}
         onFocus={this.conditionalShowAll}>
-        <div className="suggestion-bar__magnifier" style={this.props.title ? {top: "2.5rem"} : {top: "1rem"}}>
-          <Icon icon="search" />
-        </div>
         <Input
           title={this.props.title}
           type="text"
           style={this.props.style}
           onChange={this.onChange}
           buttonClick={this.buttonClick}
+          childrenSide="left"
           disabled={this.props.disabled}
           error={this.props.error}
           value={this.props.value.description
-          || this.state.input}/>
+          || this.state.input}>
+            <Icon icon="search" color="grey"/>
+          </Input>
         {this.renderResults()}
       </div>
     )

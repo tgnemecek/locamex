@@ -28,6 +28,7 @@ export default class SendPacks extends React.Component {
           description: j+i+1,
           type: "pack",
           modules: [],
+          locked: false,
           container: {
             _id: modular._id,
             description: modular.description
@@ -52,8 +53,41 @@ export default class SendPacks extends React.Component {
     this.props.update({packs}, callback);
   }
 
+  updateWithLockedPack = (e) => {
+    debugger;
+    var _id = e.target.value;
+    var i = e.target.name;
+    var pack;
+    if (!_id) {
+      pack = {
+        ...this.props.packs[i],
+        locked: false,
+        _id: '',
+        description: i+1,
+        modules: []
+      }
+    } else {
+      pack = this.props.packsDatabase.find((item) => {
+        return item._id === _id;
+      }) || {};
+      pack.locked = true;
+    }
+
+    var packs = [...this.props.packs];
+    packs[i] = pack;
+    this.props.update({packs});
+  }
+
   renderBody = () => {
     return this.props.packs.map((item, i) => {
+      var packs = this.props.packsDatabase.filter((item) => {
+        if (item.container._id !== item.container._id) {
+          return false
+        }
+        return !this.props.packs.find((pack, packIndex) => {
+          return (pack._id === item._id && packIndex !== i)
+        })
+      })
       const openModuleList = () => {
         this.setState({ packToEdit: item, indexToEdit: i })
       }
@@ -65,21 +99,37 @@ export default class SendPacks extends React.Component {
           <td className="table__wide">
             {item.container.description}
           </td>
-          <td>
+          <td style={{minWidth: "400px"}}>
+            <Input
+              type="select"
+              value={item._id}
+              name={i}
+              onChange={this.updateWithLockedPack}
+              >
+                <option value=""></option>
+              {packs.map((item, i) => {
+                return (
+                  <option key={i} value={item._id}>
+                    {`Série: ${item.description}. Pátio: ${item.place.description}`}
+                  </option>
+                )
+              })}
+            </Input>
+          </td>
+          <td className="no-padding">
             <button onClick={openModuleList}>
               <Icon icon="transaction"/>
             </button>
           </td>
-          <td>
-            {item.modules.find((module) => {
+          <td className="no-padding">
+            {item.locked || item.modules.find((module) => {
                 return module.from.find((place) => {
                   return place.renting > 0;
                 })
               })
-            ?
-              <span style={{color: 'green'}}>✔</span>
-            :
-              <span style={{color: 'red'}}>⦸</span>}
+              ? <Icon icon="checkmark" color="green"/>
+              : <Icon icon="not" color="red"/>
+            }
           </td>
         </tr>
       )
@@ -91,13 +141,13 @@ export default class SendPacks extends React.Component {
       return (
         <div>
           <h4>Containers Modulares</h4>
-          <table className="table">
+          <table className="table shipping__send-receive-table">
             <thead>
                 <tr>
                   <th>#</th>
                   <th className="table__wide">Produto</th>
-                  <th>
-                    Componentes
+                  <th style={{minWidth: "400px"}}>
+                    Pré-Montados
                   </th>
                 </tr>
             </thead>

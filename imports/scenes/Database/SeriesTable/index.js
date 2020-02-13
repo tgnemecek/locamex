@@ -1,8 +1,7 @@
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Series } from '/imports/api/series/index';
-import { Places } from '/imports/api/places/index';
-import { Containers } from '/imports/api/containers/index';
+import { Packs } from '/imports/api/packs/index';
 
 import RegisterData from '/imports/components/RegisterData/index';
 import tools from '/imports/startup/tools/index';
@@ -44,11 +43,12 @@ class SeriesTable extends React.Component {
   renderFilterOptions = (type) => {
     var uniques = [];
     return this.props.database
-      .filter((series) => {
-        if (uniques.includes(series[type]._id)) {
+      .filter((item) => {
+        if (!item[type]._id) return false;
+        if (uniques.includes(item[type]._id)) {
           return false;
         } else {
-          uniques.push(series[type]._id);
+          uniques.push(item[type]._id);
           return true;
         }
       })
@@ -84,12 +84,12 @@ class SeriesTable extends React.Component {
         <th>Série</th>
         <th className="table__wide">Modelo</th>
         <th>Pátio</th>
-        <th>
+        <th className="no-padding">
           <button onClick={generateReport}>
             <Icon icon="report" />
           </button>
         </th>
-        <th>
+        <th className="no-padding">
           <button onClick={() => this.toggleWindow({}, 'edit')}>
             <Icon icon="new" />
           </button>
@@ -125,15 +125,17 @@ class SeriesTable extends React.Component {
             <td>
               {item.rented ? "Alugado" : item.place.description}
             </td>
-            <td>
+            <td className="no-padding">
               <button onClick={() => this.toggleWindow(item, 'edit')}>
                 <Icon icon="edit" />
               </button>
             </td>
-            <td>
-              <button onClick={() => this.toggleWindow(item, 'image')}>
-                <Icon icon="image" />
-              </button>
+            <td className="no-padding">
+              {item.type === 'series' ?
+                <button onClick={() => this.toggleWindow(item, 'image')}>
+                  <Icon icon="image" />
+                </button>
+              : null}
             </td>
           </tr>
         )
@@ -178,7 +180,7 @@ class SeriesTable extends React.Component {
         </div>
         {this.state.windowType === 'edit' ?
           <RegisterData
-            type='series'
+            type={this.state.item.type || 'series'}
             item={this.state.item}
             toggleWindow={this.toggleWindow}
           />
@@ -196,12 +198,14 @@ class SeriesTable extends React.Component {
 
 export default SeriesTableWrapper = withTracker((props) => {
   Meteor.subscribe('seriesPub');
+  Meteor.subscribe('packsPub');
 
-  var database = Series.find().fetch() || [];
-  var places = [];
+  var series = Series.find().fetch() || [];
+  var packs = Packs.find({rented: false}).fetch() || []
+
+  var database = [...packs, ...series];
 
   return {
-    database,
-    places
+    database
   }
 })(SeriesTable);

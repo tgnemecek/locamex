@@ -44,12 +44,52 @@ export default class Input extends React.PureComponent {
     return result;
   }
   style = () => {
+    var style = {...this.props.style} || {};
     if (this.props.error) {
-      return {
-        ...this.props.style,
+      style = {
+        ...style,
         borderColor: "red"
       }
-    } else return this.props.style;
+    }
+    if (this.props.childrenSide === 'left') {
+      style = {
+        ...style,
+        paddingLeft: "32px"
+      }
+    }
+    return style;
+  }
+
+  labelStyle = () => {
+    var haslabelSpace = this.props.keepLabelHeight
+                        || this.props.title;
+    return {
+      textAlign: "left",
+      paddingLeft: "2px",
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      height: haslabelSpace ? "16px" : "0"
+    }
+  }
+
+  renderChildren = () => {
+    var side = this.props.childrenSide;
+    var haslabelSpace = this.props.keepLabelHeight
+                        || this.props.title;
+    var style = {
+      position: "absolute",
+      top: haslabelSpace ? "17px" : "0",
+      [side]: 0,
+      textAlign: "center"
+    };
+    if (this.props.buttonClick) {
+      style.pointerEvents = "none";
+    }
+    return (
+      <div style={style}>
+        {this.props.children}
+      </div>
+    )
   }
 
   render() {
@@ -99,9 +139,9 @@ export default class Input extends React.PureComponent {
     }
     return (
       <div className={this.className()}>
-        {this.props.title ?
-          <label style={this.props.labelStyle}>{this.props.title}</label>
-        : null}
+        <div style={this.labelStyle()}>
+          {this.props.title}
+        </div>
         <ChosenComponent
           {...this.props}
           style={this.style()}
@@ -109,6 +149,9 @@ export default class Input extends React.PureComponent {
           onChange={this.onChange}>
             {this.props.children}
         </ChosenComponent>
+        {this.props.childrenSide ?
+          this.renderChildren()
+        : null}
       </div>
     )
   }

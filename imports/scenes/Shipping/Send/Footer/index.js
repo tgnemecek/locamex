@@ -13,39 +13,32 @@ export default class Footer extends React.Component {
   }
 
   checkForProblems = () => {
-    const isFormValid = () => {
-      var fixed = this.props.fixed;
-      for (var i = 0; i < fixed.length; i++) {
-        if (fixed[i].seriesId) {
-          return true;
-        }
-      }
-      var packs = this.props.packs;
-      for (var i = 0; i < packs.length; i++) {
-        if (packs[i].modules.reduce((acc, cur) => {
-          return acc + cur.selected.length;
-        }, 0)) {
-          return true;
-        }
-      }
+    var errorMsg;
+    const allEmpty = () => {
+      var series = this.props.series;
+      var seriesEmpty = series.every((item) => {
+        return !item._id;
+      })
+
       var accessories = this.props.accessories;
-      for (var i = 0; i < accessories.length; i++) {
-        if (accessories[i].selected.reduce((acc, cur) => {
-          return acc + cur.selected;
-        }, 0)) {
-          return true;
-        }
-      }
-      return false;
+      var accessoriesEmpty = accessories.every((item) => {
+        return !item.variations.length;
+      })
+
+      var packs = this.props.packs;
+      var packsEmpty = packs.every((item) => {
+        return !item.modules.length;
+      })
+      return seriesEmpty && accessoriesEmpty && packsEmpty;
     }
-    if (isFormValid()) {
+    if (!allEmpty()) {
       this.setState({ errorMsg: "" }, () => {
         this.props.toggleConfirmationWindow();
       })
     } else {
       this.setState({
-        errorMsg: "O formulário contém campos inválidos!"
-      });
+        errorMsg: "O Envio deve incluir ao menos um produto."
+      })
     }
   }
 
@@ -56,7 +49,11 @@ export default class Footer extends React.Component {
         <div className="error-message">{this.state.errorMsg}</div>
         <FooterButtons
           buttons={[
-            {text: "Enviar Produtos", onClick: this.checkForProblems}
+            {text: "Voltar",
+            className: "button--secondary",
+            onClick: this.props.toggleWindow},
+            {text: "Enviar Produtos",
+            onClick: this.checkForProblems}
           ]}/>
       </div>
     )

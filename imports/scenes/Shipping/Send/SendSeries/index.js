@@ -2,7 +2,7 @@ import React from 'react';
 
 import tools from '/imports/startup/tools/index';
 import Input from '/imports/components/Input/index';
-import ImageVisualizer from '/imports/components/ImageVisualizer/index';
+import Icon from '/imports/components/Icon/index';
 
 export default class SendSeries extends React.Component {
   componentDidMount() {
@@ -78,8 +78,11 @@ export default class SendSeries extends React.Component {
                 {this.renderOptions(item._id, item.container._id)}
             </Input>
           </td>
-          <td>
-            {item._id ? <span style={{color: 'green'}}>✔</span> : <span style={{color: 'red'}}>⦸</span>}
+          <td className="no-padding">
+            {item._id
+              ? <Icon icon="checkmark" color="green"/>
+              : <Icon icon="not" color="red"/>
+            }
           </td>
         </tr>
       )
@@ -91,7 +94,7 @@ export default class SendSeries extends React.Component {
       return (
         <div>
           <h4>Containers Fixos</h4>
-          <table className="table">
+          <table className="table shipping__send-receive-table">
             <thead>
               <tr>
                 <th>#</th>

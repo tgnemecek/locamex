@@ -1,8 +1,19 @@
+.error-message {
+  color: red;
+  text-align: center;
+  height: 20px;
+}
+
 .disable-click {
   pointer-events: none;
   cursor: inherit;
 }
 
+.no-padding {
+  padding: 0 !important;
+}
+
+// Grid
 .grid-span-2 {
   grid-column-end: span 2;
 }
@@ -19,6 +30,7 @@
   grid-column-end: span 6;
 }
 
+// Media-Queries
 @media screen and (max-width: 700px) {
   .hide-at-700px {
     display: none;

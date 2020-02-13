@@ -61,11 +61,11 @@ export default class SelectedList extends React.Component {
     return this.props.from.map((item, i) => {
       return (
         <tr key={i}>
-          <td>{this.props.title}</td>
+          <td>{this.props.parentDescription}</td>
           <td>{this.props.item.description}</td>
-          <td>{item.description}</td>
+          <td className="table__wide">{item.description}</td>
           <td>{item.renting}</td>
-          <td className="buttom-column">
+          <td>
             <button onClick={() => this.props.removeFromSelection(i)}>
               <Icon icon="not"/>
             </button>
@@ -100,8 +100,8 @@ export default class SelectedList extends React.Component {
                 <tr>
                   <th>Produto</th>
                   <th>Variação</th>
-                  <th>Pátio</th>
-                  <th>Quantidade</th>
+                  <th className="table__wide">Pátio</th>
+                  <th>Qtd.</th>
                 </tr>
               </thead>
               <tbody>
@@ -113,7 +113,10 @@ export default class SelectedList extends React.Component {
         </>
       )
     } else return (
-      <div onDrop={this.onDrop} onDragOver={this.onDragOver} style={{border: "1px solid grey", height: "50px"}}>
+      <div
+        className="stock-transition__empty-list"
+        onDrop={this.onDrop}
+        onDragOver={this.onDragOver}>
         Nenhuma quantidade adicionada. Para adicionar, selecione e arraste até aqui.
         {this.howManyBox()}
       </div>

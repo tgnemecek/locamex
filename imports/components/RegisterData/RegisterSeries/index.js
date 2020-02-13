@@ -191,8 +191,8 @@ class RegisterSeries extends React.Component {
 export default RegisterSeriesWrapper = withTracker((props) => {
   Meteor.subscribe('containersPub');
   Meteor.subscribe('placesPub');
-  var containersDatabase = Containers.find().fetch();
-  var placesDatabase = Places.find().fetch();
+  var containersDatabase = Containers.find().fetch() || [];
+  var placesDatabase = Places.find().fetch() || [];
   return {
     containersDatabase,
     placesDatabase

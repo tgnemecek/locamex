@@ -1,0 +1,29 @@
+.main-scene {
+  box-shadow: $box-shadow-spread;
+  background: $light-grey;
+}
+
+.main-scene__body {
+  padding: $space;
+}
+
+.main-scene__information--proposal {
+  display: grid;
+  grid-gap: ($space /2);
+  grid-template-columns: repeat(12, 1fr);
+}
+
+.main-scene__information--contract {
+  display: grid;
+  grid-gap: ($space /2);
+  grid-template-columns: repeat(12, 1fr);
+}
+
+.main-scene--disabled {
+  pointer-events: none;
+}
+
+.main-scene__total-value {
+  text-align: center;
+  font-weight: bold;
+}

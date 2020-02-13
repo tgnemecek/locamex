@@ -5,24 +5,17 @@
 
 .calendar-bar__input {
   input {
-    padding-left: 32px !important;
     cursor: pointer;
-    color: black;
-    background: white;
   }
-}
-
-.calendar-bar__input--disabled {
-
-}
-
-.calendar-bar__icon {
-  position: absolute;
-  z-index: 1;
-  left: 1rem;
-  pointer-events: none;
-  filter: grayscale(1);
-  opacity: 0.5;
+  .icon {
+    cursor: pointer;
+  }
+  // input {
+  //   padding-left: 32px !important;
+  //   cursor: pointer;
+  //   color: black;
+  //   background: white;
+  // }
 }
 
 .calendar-bar__box__header {

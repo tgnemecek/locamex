@@ -19,9 +19,9 @@ import styles from './styles/index';
 
 var printer = new PdfPrinter({
   Roboto: {
-    normal: new Buffer(vfs_fonts.pdfMake.vfs['Roboto-Regular.ttf'], 'base64'),
-    bold: new Buffer(vfs_fonts.pdfMake.vfs['Roboto-Medium.ttf'], 'base64'),
-    italics: new Buffer(vfs_fonts.pdfMake.vfs['Roboto-Italic.ttf'], 'base64')
+    normal: Buffer.from(vfs_fonts.pdfMake.vfs['Roboto-Regular.ttf'], 'base64'),
+    bold: Buffer.from(vfs_fonts.pdfMake.vfs['Roboto-Medium.ttf'], 'base64'),
+    italics: Buffer.from(vfs_fonts.pdfMake.vfs['Roboto-Italic.ttf'], 'base64')
   }
 });
 

@@ -15,9 +15,12 @@
 }
 
 .main-header__title {
-  margin-bottom: 0;
-  line-height: 30px;
-  display: inline-block;
+  display: grid;
+  grid-template-columns: 250px 50px;
+  h1 {
+    line-height: 3.5rem;
+    margin-bottom: 0;
+  }
 }
 
 .main-header__snapshot-selection {
@@ -29,12 +32,8 @@
 }
 
 .main-header__button {
-  cursor: pointer;
-  font-size: 2.1rem;
-  height: 25px;
-  width: 25px;
-  border: none;
+  font-size: 1.6rem;
   background: white;
-  line-height: 1px;
   margin-left: 5px;
+  margin-bottom: 5px;
 }

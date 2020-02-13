@@ -26,7 +26,7 @@ if (Meteor.isServer) {
     },
     'aws.write'(dataUrl, filePath) {
       if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
-      var buff = new Buffer(dataUrl.split(',')[1], 'base64');
+      var buff = Buffer.from(dataUrl.split(',')[1], 'base64');
       if (Meteor.isDevelopment) {
         filePath = "tests/" + filePath;
       }

@@ -64,18 +64,8 @@ legend {
   padding: 0 $space;
 }
 
-// textarea {
-//     font-family: inherit;
-//     font-size: $base-font-size;
-//     border: 1px solid $input-border;
-//     resize: none;
-//     overflow: hidden;
-//     padding: ($space /2);
-//     width: 100%;
-// }
-
 input, select, textarea {
-  height: 35px;
+  height: 34px;
   border: 1px solid $input-border;
   font-size: $base-font-size;
   margin: 0;
@@ -97,39 +87,4 @@ input[type="number"] {
 }
 ::-webkit-input-placeholder { /* Chrome/Opera/Safari */
   font-style: italic;
-}
-
-.main-scene {
-  box-shadow: $box-shadow-spread;
-  background: $light-grey;
-}
-
-.main-scene__body {
-  padding: $space;
-}
-
-.main-scene__information--proposal {
-  display: grid;
-  grid-gap: ($space /2);
-  grid-template-columns: repeat(12, 1fr);
-}
-
-.main-scene__information--contract {
-  display: grid;
-  grid-gap: ($space /2);
-  grid-template-columns: repeat(12, 1fr);
-}
-
-.main-scene--disabled {
-  pointer-events: none;
-}
-
-.main-scene__total-value {
-  text-align: center;
-  font-weight: bold;
-}
-.error-message {
-  color: red;
-  text-align: center;
-  height: 20px;
 }

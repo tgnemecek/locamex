@@ -46,7 +46,7 @@ class ClientsTable extends React.Component {
             <td className="table__wide">{item.description}</td>
             <td>{tools.format(item.registry, formatType)}</td>
             <td>{item.type === 'company' ? "PJ" : "PF"}</td>
-            <td>
+            <td className="no-padding">
               <button onClick={() => this.toggleWindow(item)}>
                 <Icon icon="edit" />
               </button>
@@ -70,7 +70,7 @@ class ClientsTable extends React.Component {
                 <th className="table__wide">Nome Fantasia</th>
                 <th>CNPJ/CPF</th>
                 <th>Tipo</th>
-                <th>
+                <th className="no-padding">
                   <button onClick={() => this.toggleWindow({})}>
                     <Icon icon="new" />
                   </button>

@@ -104,12 +104,6 @@ export const appStructure = [
         title: "Componentes",
         link: "/database/modules",
         visible: true
-      },
-      {
-        name: "packs",
-        title: "Montados",
-        link: "/database/packs",
-        visible: true
       }
     ]
   },

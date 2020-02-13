@@ -33,7 +33,7 @@ class PlacesTable extends React.Component {
               <tr>
                 <th className="table__wide">Pátio</th>
                 {tools.isWriteAllowed('places') ?
-                  <th>
+                  <th className="no-padding">
                     <button onClick={() => this.toggleWindow({})}>
                       <Icon icon="new" />
                     </button>
@@ -47,7 +47,7 @@ class PlacesTable extends React.Component {
                   <tr key={i}>
                     <td className="table__wide">{item.description}</td>
                     {tools.isWriteAllowed('places') ?
-                      <td>
+                      <td className="no-padding">
                         <button onClick={() => this.toggleWindow(item)}>
                           <Icon icon="edit" />
                         </button>

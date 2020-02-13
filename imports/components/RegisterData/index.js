@@ -67,6 +67,7 @@ export default class RegisterData extends React.Component {
       case 'modules':
         Component = RegisterModules;
         break;
+      case 'pack':
       case 'packs':
         Component = RegisterPacks;
         break;

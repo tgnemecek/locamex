@@ -36,7 +36,7 @@ export default class SendPacks extends React.Component {
   }
 
   getVariationsList = () => {
-    return this.props.snapshot.accessories.find((item) => {
+    return this.props.accessoriesDatabase.find((item) => {
       return item._id === this.state.accessoryToEdit._id;
     }).variations;
   }
@@ -64,21 +64,20 @@ export default class SendPacks extends React.Component {
               }, 0)
             }, 0)}
           </td>
-          <td>
+          <td className="no-padding">
             <button onClick={openVariationsList}>
               <Icon icon="transaction"/>
             </button>
           </td>
-          <td>
+          <td className="no-padding">
             {item.variations.find((variation) => {
                 return variation.from.find((place) => {
                   return place.renting > 0;
                 })
               })
-            ?
-              <span style={{color: 'green'}}>✔</span>
-            :
-              <span style={{color: 'red'}}>⦸</span>}
+              ? <Icon icon="checkmark" color="green"/>
+              : <Icon icon="not" color="red"/>
+            }
           </td>
         </tr>
       )
@@ -90,14 +89,13 @@ export default class SendPacks extends React.Component {
       return (
         <div>
           <h4>Acessórios</h4>
-          <table className="table">
+          <table className="table shipping__send-receive-table">
             <thead>
                 <tr>
                   <th>#</th>
                   <th className="table__wide">Produto</th>
-                  <th>Contratado</th>
+                  <th>Em Contrato</th>
                   <th>Selecionado</th>
-                  <th>Variações</th>
                 </tr>
             </thead>
             <tbody>
@@ -109,6 +107,7 @@ export default class SendPacks extends React.Component {
               accessory={this.state.accessoryToEdit}
               variationsList={this.getVariationsList()}
               update={this.update}
+              accessoriesDatabase={this.props.accessoriesDatabase}
               StockTransition={this.props.StockTransition}
               toggleWindow={() => this.setState({
                 accessoryToEdit: false

@@ -20,7 +20,7 @@ export default class VariationsList extends React.Component {
     var variations = [...this.state.variations]
     var newItem = this.props.variationsList.find((item) => {
       return item._id === e.target.value;
-    })
+    }) || {};
     variations[e.target.name] = {
       _id: newItem._id,
       description: newItem.description,
@@ -72,11 +72,33 @@ export default class VariationsList extends React.Component {
         )
       })
   }
+  getPlaces = () => {
+    var accessoryFromDB = this.props.accessoriesDatabase.find((item) => {
+      return item._id === this.props.accessory._id;
+    })
+    return accessoryFromDB.variations.find((item) => {
+      return item._id === this.state.variationToEdit._id;
+    }).places;
+  }
+  getMax = () => {
+    var max = this.props.accessory.max;
+    var variations = this.state.variations;
+    variations.forEach((variation, i) => {
+      if (i !== this.state.indexToEdit) {
+        var renting = variation.from.reduce((acc, item) => {
+          return acc + item.renting;
+        }, 0)
+        max -= renting;
+      }
+    })
+    return max;
+  }
   saveEdits = () => {
     var variations = this.state.variations;
     var accessory = {...this.props.accessory};
     variations = variations.filter((variation) => {
-      return variation._id
+      if (!variation._id) return false;
+      return variation.from.length;
     })
     accessory.variations = variations;
     this.props.update(accessory, this.props.toggleWindow);
@@ -101,7 +123,7 @@ export default class VariationsList extends React.Component {
           <td>
             {item.observations}
           </td>
-          <td>
+          <td className="no-padding">
             {item._id ?
               <button onClick={() => this.setState({
                 variationToEdit: item,
@@ -111,10 +133,11 @@ export default class VariationsList extends React.Component {
               </button>
             : null}
           </td>
-          <td>
-            {item.from && item.from.length ?
-              <span style={{color: 'green'}}>✔</span>
-            : <span style={{color: 'red'}}>⦸</span>}
+          <td className="no-padding">
+            {item.from && item.from.length
+              ? <Icon icon="checkmark" color="green"/>
+              : <Icon icon="not" color="red"/>
+            }
           </td>
           <td>
             <button onClick={() => this.removeVariation(i)}>
@@ -129,11 +152,12 @@ export default class VariationsList extends React.Component {
     return (
       <Box
         title="Seleção de Acessório"
+        className="shipping__sub-list"
         closeBox={this.props.toggleWindow}>
         <h4>
           {this.props.accessory.description}
         </h4>
-        <div className="variation-list__scroll">
+        <div className="shipping__sub-list__scroll">
           <table className="table">
             <thead>
               <tr>
@@ -152,9 +176,9 @@ export default class VariationsList extends React.Component {
         <table className="table">
           <tbody>
             <tr>
-              <td className="variation-list__add-new">
+              <td className="shipping__sub-list__add-new">
                 <button onClick={this.addNew}>
-                  Adicionar Grupo de Acessórios
+                  Adicionar Variação
                 </button>
               </td>
             </tr>
@@ -172,13 +196,12 @@ export default class VariationsList extends React.Component {
             <this.props.StockTransition
               update={this.update}
               title={`Acessório: ${this.props.accessory.description}, ${this.state.variationToEdit.description}`}
+              parentDescription={this.props.accessory.description}
               toggleWindow={() => this.setState({
                 variationToEdit: false
               })}
-              places={this.props.variationsList.find((item) => {
-                return item._id === this.state.variationToEdit._id;
-              }).places}
-              max={this.props.accessory.max}
+              places={this.getPlaces()}
+              max={this.getMax()}
               item={this.state.variationToEdit}/>
           : null}
       </Box>

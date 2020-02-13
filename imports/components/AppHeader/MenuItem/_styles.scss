@@ -1,7 +1,10 @@
 .menu-item {
+  display: grid;
+  align-items: center;
+  height: 50px;
   color: white;
   cursor: pointer;
-  padding: $space ($space /2);
+  padding: 0 ($space /2);
   text-decoration: none;
   position: relative;
   font-size: 1.5rem;
@@ -39,6 +42,7 @@
     transform-origin: top;
     transition: transform 0.25s;
     left: 0;
+    top: 36px;
     width: 120px;
     a {
       display: block;
@@ -54,7 +58,7 @@
 }
 
 .menu-item__dropbox--user {
-  left: -95px;
+  left: -75px;
   button {
     display: block;
     color: $dark-grey;

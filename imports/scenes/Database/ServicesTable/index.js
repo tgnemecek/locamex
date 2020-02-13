@@ -45,7 +45,7 @@ class ServicesTable extends React.Component {
             <td>
               {tools.format(item.price, 'currency')}
             </td>
-            <td>
+            <td className="no-padding">
               <button onClick={() => this.toggleWindow(item)}>
                 <Icon icon="edit" />
               </button>
@@ -68,7 +68,7 @@ class ServicesTable extends React.Component {
               <tr>
                 <th className="table__wide">Descrição</th>
                 <th>Valor</th>
-                <th>
+                <th className="no-padding">
                   <button onClick={() => this.toggleWindow({})}>
                     <Icon icon="new" />
                   </button>

@@ -17,7 +17,7 @@ export default class TextArea extends React.Component {
   setHeight = (node) => {
     if (!this.props.manualHeight) {
       node.style.height = "5px";
-      node.style.height = (node.scrollHeight)+"px";
+      node.style.height = (node.scrollHeight+3)+"px";
     }
   }
   onChange = (e) => {
