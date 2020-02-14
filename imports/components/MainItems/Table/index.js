@@ -11,7 +11,7 @@ export default class Table extends React.Component {
           <td className="main-items__list__value-column">
             {tools.format(item.price, "currency")}
           </td>
-          <td>{item.renting}</td>
+          <td>{item.quantity}</td>
         </tr>
       )
     })

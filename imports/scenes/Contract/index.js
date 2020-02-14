@@ -383,15 +383,15 @@ class Contract extends React.Component {
 
     var products = containers.concat(accessories);
     var productsValue = products.reduce((acc, current) => {
-      var renting = current.renting || 1;
-      return acc + (current.price * renting * duration)
+      var quantity = current.quantity || 1;
+      return acc + (current.price * quantity * duration)
     }, 0);
     productsValue = productsValue * (1 - discount);
 
     var services = this.state.snapshot.services || [];
     var servicesValue = services.reduce((acc, current) => {
-      var renting = current.renting ? current.renting : 1;
-      return acc + (current.price * renting)
+      var quantity = current.quantity ? current.quantity : 1;
+      return acc + (current.price * quantity)
     }, 0);
 
     if (option === 'products') {

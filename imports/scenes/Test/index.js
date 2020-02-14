@@ -10,13 +10,16 @@ import Icon from '/imports/components/Icon/index';
 import Input from '/imports/components/Input/index';
 
 class TestPage extends React.Component {
+  onClick = () => {
+    Meteor.call('users.test')
+  }
   render() {
     return (
       <div>
         <Input
           title="teste"
           childrenSide='right'>
-            <button>
+            <button onClick={this.onClick}>
               <Icon icon="calendar"/>
             </button>
           </Input>

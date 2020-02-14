@@ -59,15 +59,15 @@ class ProposalsTable extends React.Component {
         var accessories = item.accessories || [];
         var products = containers.concat(accessories);
         var productsValue = products.reduce((acc, current) => {
-          var renting = current.renting || 1;
-          return acc + (current.price * renting * duration)
+          var quantity = current.quantity || 1;
+          return acc + (current.price * quantity * duration)
         }, 0);
         productsValue = productsValue * (1 - discount);
 
         var services = item.services || [];
         var servicesValue = services.reduce((acc, current) => {
-          var renting = current.renting ? current.renting : 1;
-          return acc + (current.price * renting)
+          var quantity = current.quantity ? current.quantity : 1;
+          return acc + (current.price * quantity)
         }, 0);
 
         return tools.format((productsValue + servicesValue), "currency");

@@ -12,7 +12,7 @@ export const accessoriesSchema = new SimpleSchema({
   description: String,
   price: Number,
   restitution: Number,
-  renting : {
+  quantity : {
     type: SimpleSchema.Integer,
     optional: true
   },

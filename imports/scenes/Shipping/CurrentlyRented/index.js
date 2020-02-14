@@ -35,7 +35,7 @@ export default class CurrentlyRented extends React.Component {
     return this.props.currentlyRented.accessories.map((item, i) => {
       return (
         <tr key={i}>
-          <td>{item.renting}</td>
+          <td>{item.quantity}</td>
           <td>{item.accessory.description}</td>
           <td className="table__wide">
             {item.description}

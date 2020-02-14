@@ -32,8 +32,3 @@ AWS.config.credentials = new AWS.Credentials(
   AWSSecretAccessKey
 )
 AWS.config.region = AWSRegion;
-
-
-
-
-

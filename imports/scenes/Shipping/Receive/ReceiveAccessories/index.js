@@ -23,7 +23,7 @@ export default class ReceivePacks extends React.Component {
         description: accessory.description,
         type: "accessory",
         variations: [],
-        max: accessory.renting
+        max: accessory.quantity
       })
     })
     this.props.update({ accessories });
@@ -60,7 +60,7 @@ export default class ReceivePacks extends React.Component {
           <td>
             {item.variations.reduce((acc, cur) => {
               return acc + cur.from.reduce((acc, cur) => {
-                return acc + cur.renting;
+                return acc + cur.quantity;
               }, 0)
             }, 0)}
           </td>
@@ -72,7 +72,7 @@ export default class ReceivePacks extends React.Component {
           <td className="no-padding">
             {item.variations.find((variation) => {
                 return variation.from.find((place) => {
-                  return place.renting > 0;
+                  return place.quantity > 0;
                 })
               })
               ? <Icon icon="checkmark" color="green"/>

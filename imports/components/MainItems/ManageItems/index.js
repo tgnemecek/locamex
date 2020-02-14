@@ -72,7 +72,7 @@ export default class ManageItems extends React.Component {
     var addedItems = [...this.state.addedItems];
     addedItems.forEach((item) => {
       if (item._id === _id) {
-        item.renting = value;
+        item.quantity = value;
       }
     })
     this.setState({ addedItems });
@@ -90,7 +90,7 @@ export default class ManageItems extends React.Component {
       description: item.description,
       restitution: item.restitution,
       price: item.price,
-      renting: 1
+      quantity: 1
     });
     this.setState({ addedItems });
   }
@@ -106,7 +106,7 @@ export default class ManageItems extends React.Component {
     var addedItems = this.state.addedItems;
     var newArray = [];
     addedItems.forEach((item) => {
-      if (item.renting > 0) newArray.push(item);
+      if (item.quantity > 0) newArray.push(item);
     })
     if (this.props.docType === 'contract') {
       this.props.updateSnapshot({

@@ -30,7 +30,7 @@ export default class PlacesDistribution extends React.Component {
     this.props.from.forEach((item) => {
       places.forEach((place) => {
         if (place._id === item._id) {
-          place.available = place.available - item.renting;
+          place.available = place.available - item.quantity;
         }
       })
     });

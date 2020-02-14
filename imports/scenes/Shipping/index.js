@@ -87,8 +87,8 @@ class Shipping extends React.Component {
             _id: accessory._id,
             description: accessory.description
           },
-          renting: variation.from.reduce((acc, item) => {
-            return acc + item.renting;
+          quantity: variation.from.reduce((acc, item) => {
+            return acc + item.quantity;
           }, 0)
         })
       })
@@ -100,20 +100,20 @@ class Shipping extends React.Component {
         return vari._id === variation._id;
       })
       if (found > -1) {
-        filteredVariations[found].renting += variation.renting;
+        filteredVariations[found].quantity += variation.quantity;
       } else filteredVariations.push(variation);
     })
     filteredVariations.forEach((variation) => {
       allReceives.accessories.forEach((acc) => {
         acc.forEach((vari) => {
           if (vari._id === variation._id) {
-            variation.renting -= vari.returning;
+            variation.quantity -= vari.returning;
           }
         })
       })
     })
     currently.accessories = filteredVariations.filter((item) => {
-      return item.renting > 0;
+      return item.quantity > 0;
     })
     // Packs ---------------------------------------------
     currently.packs = allSends.packs.filter((itemSent) => {

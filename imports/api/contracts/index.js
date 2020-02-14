@@ -61,7 +61,7 @@ Contracts.attachSchema(new SimpleSchema({
   'shipping.$.accessories.$.variations.$.from.$': Object,
   'shipping.$.accessories.$.variations.$.from.$._id': String,
   'shipping.$.accessories.$.variations.$.from.$.description': String,
-  'shipping.$.accessories.$.variations.$.from.$.renting': SimpleSchema.Integer,
+  'shipping.$.accessories.$.variations.$.from.$.quantity': SimpleSchema.Integer,
 
   'shipping.$.packs': Array,
   'shipping.$.packs.$': Object,
@@ -75,13 +75,13 @@ Contracts.attachSchema(new SimpleSchema({
   'shipping.$.packs.$.modules.$': Object,
   'shipping.$.packs.$.modules.$._id': String,
   'shipping.$.packs.$.modules.$.description': String,
-  'shipping.$.packs.$.modules.$.renting': SimpleSchema.Integer,
+  'shipping.$.packs.$.modules.$.quantity': SimpleSchema.Integer,
   'shipping.$.packs.$.modules.$.type': String,
   'shipping.$.packs.$.modules.$.from': Array,
   'shipping.$.packs.$.modules.$.from.$': Object,
   'shipping.$.packs.$.modules.$.from.$._id': String,
   'shipping.$.packs.$.modules.$.from.$.description': String,
-  'shipping.$.packs.$.modules.$.from.$.renting': SimpleSchema.Integer,
+  'shipping.$.packs.$.modules.$.from.$.quantity': SimpleSchema.Integer,
 
   visible: Boolean,
   snapshots: Array,
@@ -154,7 +154,7 @@ Contracts.attachSchema(new SimpleSchema({
     'containers.$.description': String,
     'containers.$.restitution': Number,
     'containers.$.price': Number,
-    'containers.$.renting': SimpleSchema.Integer,
+    'containers.$.quantity': SimpleSchema.Integer,
 
     accessories: Array,
     'accessories.$': Object,
@@ -163,7 +163,7 @@ Contracts.attachSchema(new SimpleSchema({
     'accessories.$.description': String,
     'accessories.$.restitution': Number,
     'accessories.$.price': Number,
-    'accessories.$.renting': SimpleSchema.Integer,
+    'accessories.$.quantity': SimpleSchema.Integer,
 
     services: Array,
     'services.$': Object,
@@ -171,7 +171,7 @@ Contracts.attachSchema(new SimpleSchema({
     'services.$.type': String,
     'services.$.description': String,
     'services.$.price': Number,
-    'services.$.renting': SimpleSchema.Integer
+    'services.$.quantity': SimpleSchema.Integer
   })
 }))
 
@@ -417,8 +417,8 @@ if (Meteor.isServer) {
               var oldPlace = oldVariation.places.find((oldPl) => {
                 return oldPl._id === fromPlace._id;
               })
-              varRented += fromPlace.renting;
-              oldPlace.available -= fromPlace.renting;
+              varRented += fromPlace.quantity;
+              oldPlace.available -= fromPlace.quantity;
               if (oldPlace.available < 0) {
                 throw new Meteor.Error('stock-unavailable', '', {
                   _id: newAccessory._id,
@@ -455,8 +455,8 @@ if (Meteor.isServer) {
                 var oldPlace = newModule.places.find((oldPl) => {
                   return oldPl._id === fromPlace._id;
                 })
-                modRented += fromPlace.renting;
-                oldPlace.available -= fromPlace.renting;
+                modRented += fromPlace.quantity;
+                oldPlace.available -= fromPlace.quantity;
                 if (oldPlace.available < 0) {
                   throw new Meteor.Error('stock-unavailable', '', {
                     _id: newModule._id,

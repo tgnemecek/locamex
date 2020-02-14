@@ -26,14 +26,14 @@ export default class SelectedList extends React.Component {
     e.preventDefault();
     var placesWithQuantity = e.dataTransfer.getData("place");
     var available = Number(e.dataTransfer.getData("available"));
-    var renting = this.props.item.renting || 999;
-    var max = available < renting ? available : renting;
+    var quantity = this.props.item.quantity || 999;
+    var max = available < quantity ? available : quantity;
 
     var selectedListQuantity = this.props.selectedList.reduce((acc, cur) => {
       return acc + cur.selected;
     }, 0)
 
-    max = (renting - selectedListQuantity) < max ? (renting - selectedListQuantity) : max;
+    max = (quantity - selectedListQuantity) < max ? (quantity - selectedListQuantity) : max;
 
     this.setState({
       placesWithQuantity,

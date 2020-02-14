@@ -27,8 +27,8 @@ export default function tableProducts(props) {
           (i+1),
           product.description,
           {text: tools.format(product.price, 'currency'), alignment: 'right'},
-          {text: product.renting.toString(), alignment: 'center'},
-          monthlyPrice(product.price * product.renting),
+          {text: product.quantity.toString(), alignment: 'center'},
+          monthlyPrice(product.price * product.quantity),
           duration(props.dates.duration),
           {text: tools.format(product.finalPrice, 'currency'), alignment: 'right'}
         ];

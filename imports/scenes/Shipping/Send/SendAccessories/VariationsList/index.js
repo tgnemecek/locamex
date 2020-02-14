@@ -85,10 +85,10 @@ export default class VariationsList extends React.Component {
     var variations = this.state.variations;
     variations.forEach((variation, i) => {
       if (i !== this.state.indexToEdit) {
-        var renting = variation.from.reduce((acc, item) => {
-          return acc + item.renting;
+        var quantity = variation.from.reduce((acc, item) => {
+          return acc + item.quantity;
         }, 0)
-        max -= renting;
+        max -= quantity;
       }
     })
     return max;

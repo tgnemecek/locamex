@@ -14,7 +14,8 @@ export default class RegisterUsers extends React.Component {
   constructor(props) {
     super(props);
     var item = this.props.item;
-    var email = (item.emails && item.emails[0]) ? item.emails[0].address : '';
+    var email = (item.emails && item.emails[0]) ?
+      item.emails[0].address : '';
     this.state = {
       _id: item._id || '',
       username: item.username || '',
@@ -79,8 +80,9 @@ export default class RegisterUsers extends React.Component {
     }
     if (errorKeys.length) {
       this.setState({ errorMsg, errorKeys });
-      return
+      return;
     }
+    this.props.databaseLoading();
     if (this.props.item._id) {
       Meteor.call('users.update', this.state, (err, res) => {
         if (err) this.props.databaseFailed(err);

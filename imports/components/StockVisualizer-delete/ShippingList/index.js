@@ -20,11 +20,11 @@ export default class ShippingList extends React.Component {
     })
 
     var available = place.available;
-    var renting = this.props.places.reduce((acc, cur) => {
-      if (cur.renting) return acc + cur.renting;
+    var quantity = this.props.places.reduce((acc, cur) => {
+      if (cur.quantity) return acc + cur.quantity;
     }, 0);
 
-    var max = available < renting ? available : renting;
+    var max = available < quantity ? available : quantity;
 
     if (this.props.item.type === 'accessory') {
 
@@ -35,14 +35,14 @@ export default class ShippingList extends React.Component {
 
 
     var available = Number(e.dataTransfer.getData("available"));
-    var renting = this.props.item.renting;
-    var max = available < renting ? available : renting;
+    var quantity = this.props.item.quantity;
+    var max = available < quantity ? available : quantity;
 
     var selectedListQuantity = this.props.selectedList.reduce((acc, cur) => {
       return acc + cur.selected;
     }, 0)
 
-    max = (renting - selectedListQuantity) < max ? (renting - selectedListQuantity) : max;
+    max = (quantity - selectedListQuantity) < max ? (quantity - selectedListQuantity) : max;
 
     this.setState({
       variationPlace,

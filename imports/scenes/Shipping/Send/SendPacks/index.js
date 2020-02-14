@@ -25,8 +25,8 @@ export default class SendPacks extends React.Component {
           return item.container._id === modular._id
         }).length;
 
-      var renting = modular.renting - rented;
-      for (var i = 0; i < renting; i++) {
+      var quantity = modular.quantity - rented;
+      for (var i = 0; i < quantity; i++) {
         packs.push({
           _id: '',
           description: j+i+1,
@@ -128,7 +128,7 @@ export default class SendPacks extends React.Component {
           <td className="no-padding">
             {item.locked || item.modules.find((module) => {
                 return module.from.find((place) => {
-                  return place.renting > 0;
+                  return place.quantity > 0;
                 })
               })
               ? <Icon icon="checkmark" color="green"/>

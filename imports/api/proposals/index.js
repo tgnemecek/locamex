@@ -57,7 +57,7 @@ Proposals.attachSchema(new SimpleSchema({
     'containers.$.description': String,
     'containers.$.restitution': Number,
     'containers.$.price': Number,
-    'containers.$.renting': SimpleSchema.Integer,
+    'containers.$.quantity': SimpleSchema.Integer,
 
     accessories: Array,
     'accessories.$': Object,
@@ -66,7 +66,7 @@ Proposals.attachSchema(new SimpleSchema({
     'accessories.$.description': String,
     'accessories.$.restitution': Number,
     'accessories.$.price': Number,
-    'accessories.$.renting': SimpleSchema.Integer,
+    'accessories.$.quantity': SimpleSchema.Integer,
 
     services: Array,
     'services.$': Object,
@@ -74,7 +74,7 @@ Proposals.attachSchema(new SimpleSchema({
     'services.$.type': String,
     'services.$.description': String,
     'services.$.price': Number,
-    'services.$.renting': SimpleSchema.Integer
+    'services.$.quantity': SimpleSchema.Integer
   })
 }))
 

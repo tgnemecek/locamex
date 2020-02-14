@@ -112,7 +112,7 @@ class RegisterPacks extends React.Component {
           {this.props.item.modules.map((module, i) => {
             return (
               <div key={i} className="register-packs__module">
-                <div>{module.renting + "x"}</div>
+                <div>{module.quantity + "x"}</div>
                 <div>{module.description}</div>
               </div>
             )

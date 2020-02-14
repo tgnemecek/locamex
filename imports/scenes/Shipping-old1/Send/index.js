@@ -30,7 +30,7 @@ export default class Send extends React.Component {
   setup = () => {
     const countHowManyCanRent = (currentItem) => {
       var productId = currentItem.productId;
-      var renting = currentItem.renting;
+      var quantity = currentItem.quantity;
       var count = 0;
       var all = this.props.currentlyRented.fixed.concat(
         this.props.currentlyRented.accessories,
@@ -40,10 +40,10 @@ export default class Send extends React.Component {
         if (item.productId === productId) {
           if (item.selected) {
             count += item.selected;
-          } else count += item.renting || 1;
+          } else count += item.quantity || 1;
         }
       })
-      return renting - count;
+      return quantity - count;
     }
 
     const setFixed = () => {
@@ -73,7 +73,7 @@ export default class Send extends React.Component {
       var modulars = [];
       this.props.contract.containers.forEach((item) => {
         if (item.type === "modular") {
-          for (var j = 0; j < item.renting; j++) {
+          for (var j = 0; j < item.quantity; j++) {
             modulars.push({
               ...item,
               label: tools.convertToLetter(j)
@@ -108,7 +108,7 @@ export default class Send extends React.Component {
           newArray.push({
             _id: tools.generateId(),
             productId: item.productId,
-            renting: canRent,
+            quantity: canRent,
             selected: [],
             description: productFromDatabase.description
           })

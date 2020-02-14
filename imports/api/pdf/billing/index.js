@@ -19,7 +19,7 @@ export default function billingPdf(props) {
     const charge = props.charge;
 
     const products = contract.containers.concat(contract.accessories).map((item) => {
-      item.monthlyPrice = item.renting * item.price;
+      item.monthlyPrice = item.quantity * item.price;
       return item;
     });
     const totalValueProducts = products.length ? (products.reduce((acc, current) => {

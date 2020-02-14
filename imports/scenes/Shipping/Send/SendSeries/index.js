@@ -18,8 +18,8 @@ export default class SendSeries extends React.Component {
           return item.container._id === fixed._id
         }).length;
 
-      var renting = fixed.renting - rented;
-      for (var i = 0; i < renting; i++) {
+      var quantity = fixed.quantity - rented;
+      for (var i = 0; i < quantity; i++) {
         series.push({
           _id: '',
           container: {

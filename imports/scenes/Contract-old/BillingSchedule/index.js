@@ -42,8 +42,8 @@ export default class BillingSchedule extends React.Component {
     function calcTotalValue (arr, duration) {
       if (arr.length == 0) return 0;
       return arr.reduce((acc, current) => {
-        var renting = current.renting ? current.renting : 1;
-        return acc + (current.price * renting * duration)
+        var quantity = current.quantity ? current.quantity : 1;
+        return acc + (current.price * quantity * duration)
       }, 0);
     }
     this.state = {

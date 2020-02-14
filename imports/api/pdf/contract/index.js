@@ -40,12 +40,12 @@ export default function contractPdf(props) {
   const fileName = `Locamex - Contrato de Locação #${contract._id}_${Number(contract.version)}.pdf`;
 
   const products = contract.containers.concat(contract.accessories).map((item) => {
-    item.monthlyPrice = item.renting * item.price;
+    item.monthlyPrice = item.quantity * item.price;
     item.finalPrice = item.monthlyPrice * contract.dates.duration;
     return item;
   });
   const services = contract.services.map((item) => {
-    item.finalPrice = item.renting * item.price;
+    item.finalPrice = item.quantity * item.price;
     return item;
   })
   const totalValueProducts = products.length ? (products.reduce((acc, current) => {

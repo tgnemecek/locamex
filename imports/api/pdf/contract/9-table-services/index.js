@@ -5,7 +5,7 @@ export default function tableServices(props) {
   const body = () => {
     return props.services.map((service, i) => {
       return [
-        (i+1), service.description, tools.format(service.price, 'currency'), {text: service.renting, alignment: 'center'}, props.resultFormat(service.finalPrice)
+        (i+1), service.description, tools.format(service.price, 'currency'), {text: service.quantity, alignment: 'center'}, props.resultFormat(service.finalPrice)
       ];
     });
   }

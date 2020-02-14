@@ -8,7 +8,7 @@ export default function tableServices(props) {
         (i+1),
         service.description,
         {text: tools.format(service.price, 'currency'), alignment: 'right'},
-        {text: service.renting, alignment: 'center'},
+        {text: service.quantity, alignment: 'center'},
         {text: tools.format(service.finalPrice, 'currency'), alignment: 'right'}
       ];
     });

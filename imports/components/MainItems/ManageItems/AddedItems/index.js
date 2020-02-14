@@ -40,7 +40,7 @@ export default class AddedItems extends React.Component {
                         type="number"
                         style={{width: "45px"}}
                         name={item._id}
-                        value={item.renting || 1}
+                        value={item.quantity || 1}
                         min={1}
                         onChange={this.props.changeQuantity}/>
                     </td>

@@ -25,7 +25,7 @@ export default class ModuleList extends React.Component {
       _id: newItem._id,
       description: newItem.description,
       type: "module",
-      renting: 0,
+      quantity: 0,
       from: []
     };
     this.setState({
@@ -86,18 +86,18 @@ export default class ModuleList extends React.Component {
     var filteredModules = joinedModules.filter((item) => {
       return item._id === this.state.moduleToEdit._id;
     })
-    var rentingByPlace = filteredModules.reduce((acc, item) => {
+    var quantityByPlace = filteredModules.reduce((acc, item) => {
       return acc.concat(item.from);
     }, [])
     return fromDatabase.map((item) => {
-      var renting = rentingByPlace.reduce((acc, cur) => {
+      var quantity = quantityByPlace.reduce((acc, cur) => {
         if (cur._id === item._id) {
-          return acc + cur.renting;
+          return acc + cur.quantity;
         } else return acc;
       }, 0)
       return {
         ...item,
-        available: item.available - renting
+        available: item.available - quantity
       }
     })
   }
@@ -105,7 +105,7 @@ export default class ModuleList extends React.Component {
   renderTransactionCell = (item, i) => {
     if (this.props.disabled) {
       return (
-        <td>{item.renting}</td>
+        <td>{item.quantity}</td>
       )
     } else {
       return (

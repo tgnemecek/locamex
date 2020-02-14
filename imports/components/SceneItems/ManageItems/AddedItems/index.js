@@ -24,7 +24,7 @@ export default class AddedItems extends React.Component {
               type="number"
               name={item._id}
               style={{width: "40px"}}
-              value={item.renting || 1}
+              value={item.quantity || 1}
               min={1}
               onChange={this.props.changeQuantity}/>
           </td>

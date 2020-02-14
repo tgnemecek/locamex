@@ -29,7 +29,7 @@ Packs.attachSchema(new SimpleSchema({
   'modules.$': Object,
   'modules.$._id': String,
   'modules.$.description': String,
-  'modules.$.renting': SimpleSchema.Integer,
+  'modules.$.quantity': SimpleSchema.Integer,
   'modules.$.type': String
 }))
 
@@ -97,11 +97,11 @@ if (Meteor.isServer) {
           return item._id === place._id;
         })
         if (placeExists) {
-          placeExists.available += module.renting;
+          placeExists.available += module.quantity;
         } else {
           newModule.places.push({
             ...place,
-            available: module.renting,
+            available: module.quantity,
             inactive: 0
           })
         }

@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { WebApp } from 'meteor/webapp';
 
 import '../imports/startup/aws-configuration/index';
+import '../imports/startup/email-configuration/index';
 import '../imports/startup/moment-configuration/index';
 import '../imports/startup/simple-schema-configuration/index';
 
@@ -28,5 +29,5 @@ import '../imports/api/test/index';
 import '../imports/api/users/index';
 
 Meteor.startup(() => {
-  Migrations.migrateTo('latest');
+  // Migrations.migrateTo('latest');
 });

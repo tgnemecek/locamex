@@ -30,7 +30,7 @@ export default class SelectedList extends React.Component {
     if (this.props.max !== undefined) {
       max = this.props.max;
       var fromListQuantity = this.props.from.reduce((acc, cur) => {
-        return acc + cur.renting;
+        return acc + cur.quantity;
       }, 0)
       max = max - fromListQuantity;
       // max = max < fromListQuantity ? max : fromListQuantity;
@@ -64,7 +64,7 @@ export default class SelectedList extends React.Component {
           <td>{this.props.parentDescription}</td>
           <td>{this.props.item.description}</td>
           <td className="table__wide">{item.description}</td>
-          <td>{item.renting}</td>
+          <td>{item.quantity}</td>
           <td>
             <button onClick={() => this.props.removeFromSelection(i)}>
               <Icon icon="not"/>

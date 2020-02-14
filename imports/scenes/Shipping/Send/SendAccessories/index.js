@@ -21,11 +21,11 @@ export default class SendPacks extends React.Component {
       var onClient = this.props.currentlyRented.accessories
         .reduce((acc, item) => {
           if (item.accessory._id === accessory._id) {
-            return acc + item.renting;
+            return acc + item.quantity;
           } else return acc;
         }, 0)
 
-      var max = accessory.renting - onClient;
+      var max = accessory.quantity - onClient;
 
       if (max > 0) {
         accessories.push({
@@ -71,7 +71,7 @@ export default class SendPacks extends React.Component {
           <td>
             {item.variations.reduce((acc, cur) => {
               return acc + cur.from.reduce((acc, cur) => {
-                return acc + cur.renting;
+                return acc + cur.quantity;
               }, 0)
             }, 0)}
           </td>
@@ -83,7 +83,7 @@ export default class SendPacks extends React.Component {
           <td className="no-padding">
             {item.variations.find((variation) => {
                 return variation.from.find((place) => {
-                  return place.renting > 0;
+                  return place.quantity > 0;
                 })
               })
               ? <Icon icon="checkmark" color="green"/>

@@ -29,12 +29,12 @@ export default class StockTransition extends React.Component {
       return item._id === placeId;
     })
     if (exists) {
-      exists.renting += howManyToMove;
+      exists.quantity += howManyToMove;
     } else {
       from.push({
         _id: place._id,
         description: place.description,
-        renting: howManyToMove
+        quantity: howManyToMove
       })
     }
     this.setState({ from });

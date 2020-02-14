@@ -36,6 +36,10 @@ if (Meteor.isServer) {
   });
 
   Meteor.methods({
+    'users.test' () {
+      var userId = Meteor.userId()
+      Accounts.sendVerificationEmail(userId);
+    },
     'users.insert'(state) {
       if (!Meteor.userId() || !tools.isWriteAllowed('uers')) {
         throw new Meteor.Error('unauthorized');

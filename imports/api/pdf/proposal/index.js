@@ -23,7 +23,7 @@ export default function proposalPdf(props) {
   const fileName = `Locamex - Proposta de Locação #${proposal._id}_${Number(proposal.version)+1}.pdf`;
 
   const products = proposal.containers.concat(proposal.accessories).map((item) => {
-    item.monthlyPrice = item.renting * item.price;
+    item.monthlyPrice = item.quantity * item.price;
     if (proposal.dates.timeUnit === "months") {
       item.finalPrice = item.monthlyPrice * proposal.dates.duration;
     } else item.finalPrice = item.monthlyPrice;
@@ -31,7 +31,7 @@ export default function proposalPdf(props) {
     return item;
   });
   const services = proposal.services.map((item) => {
-    item.finalPrice = item.renting * item.price;
+    item.finalPrice = item.quantity * item.price;
     return item;
   })
   const totalValueProducts = products.length ? (products.reduce((acc, current) => {
