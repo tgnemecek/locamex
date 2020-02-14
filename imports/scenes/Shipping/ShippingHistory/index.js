@@ -21,7 +21,7 @@ export default class ShippingHistory extends React.Component {
                     }
                   </li>
                 )
-              })}
+              })} 
               {shipping.packs.map((pack, i) => {
                 // var place = typeof pack.place === 'object' ?
                 //               pack.place
