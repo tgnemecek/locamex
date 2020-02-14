@@ -10,9 +10,16 @@ export default class SendSeries extends React.Component {
       .filter((item) => {
         return item.type === "fixed";
       })
+
     var series = [];
     filter.forEach((fixed) => {
-      for (var i = 0; i < fixed.renting; i++) {
+      var rented = this.props.currentlyRented.series
+        .filter((item) => {
+          return item.container._id === fixed._id
+        }).length;
+
+      var renting = fixed.renting - rented;
+      for (var i = 0; i < renting; i++) {
         series.push({
           _id: '',
           container: {
@@ -74,7 +81,7 @@ export default class SendSeries extends React.Component {
               name={i}
               onChange={this.onChange}
               value={item._id}>
-                <option value=''>Selecione uma série</option>
+                <option value=''></option>
                 {this.renderOptions(item._id, item.container._id)}
             </Input>
           </td>

@@ -79,7 +79,7 @@ export default class ModuleList extends React.Component {
 
     var joinedModules = [];
     this.props.packs.forEach((pack) => {
-      if (pack !== this.props.pack && !pack.locked) {
+      if (pack !== this.props.pack) {
         joinedModules = joinedModules.concat(pack.modules);
       }
     })
@@ -103,7 +103,7 @@ export default class ModuleList extends React.Component {
   }
 
   renderTransactionCell = (item, i) => {
-    if (this.props.pack.locked) {
+    if (this.props.disabled) {
       return (
         <td>{item.renting}</td>
       )
@@ -144,7 +144,7 @@ export default class ModuleList extends React.Component {
               name={i}
               value={item._id}
               onChange={this.setModule}
-              disabled={this.props.pack.locked}
+              disabled={this.props.disabled}
               >
               <option value=""></option>
               {this.renderOptions(item._id)}
@@ -152,13 +152,13 @@ export default class ModuleList extends React.Component {
           </td>
           {this.renderTransactionCell(item, i)}
           <td className="no-padding">
-            {this.props.pack.locked ||
+            {this.props.disabled ||
               (item.from && item.from.length)
               ? <Icon icon="checkmark" color="green"/>
               : <Icon icon="not" color="red"/>
             }
           </td>
-          {!this.props.pack.locked ?
+          {!this.props.disabled ?
             <td>
               <button onClick={() => this.removeModule(i)}>
                 <Icon icon="not"/>
@@ -172,7 +172,7 @@ export default class ModuleList extends React.Component {
   render() {
     return (
       <Box
-        title="Montagem de Container Modular"
+        title="Lista de Componentes"
         className="shipping__sub-list"
         closeBox={this.props.toggleWindow}>
         <h4>
@@ -193,7 +193,7 @@ export default class ModuleList extends React.Component {
             </tbody>
           </table>
         </div>
-        {!this.props.pack.locked ?
+        {!this.props.disabled ?
           <table className="table">
             <tbody>
               <tr>
@@ -206,7 +206,7 @@ export default class ModuleList extends React.Component {
             </tbody>
           </table>
         : null}
-          <FooterButtons buttons={!this.props.pack.locked ? [
+          <FooterButtons buttons={!this.props.disabled ? [
             {text: "Voltar",
             className: "button--secondary",
             onClick: this.props.toggleWindow},
@@ -218,7 +218,7 @@ export default class ModuleList extends React.Component {
             className: "button--secondary",
             onClick: this.props.toggleWindow}
           ]}/>
-          {this.state.moduleToEdit ?
+          {!this.props.disabled && this.state.moduleToEdit ?
             <this.props.StockTransition
               update={this.update}
               title={`Produto: ${this.props.pack.container.description}`}

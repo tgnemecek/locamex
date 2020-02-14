@@ -138,7 +138,7 @@ export default class Input extends React.PureComponent {
         ChosenComponent = Text;
     }
     return (
-      <div className={this.className()}>
+      <div className={this.className()} style={this.props.parentStyle}>
         <div style={this.labelStyle()}>
           {this.props.title}
         </div>

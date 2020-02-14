@@ -360,6 +360,8 @@ if (Meteor.isServer) {
 
       var shipping = [...contract.shipping];
 
+      var packCount = Packs.find({}).count();
+
       data = {
         series: data.series.filter((item) => {
           return item._id
@@ -369,12 +371,21 @@ if (Meteor.isServer) {
         }),
         packs: data.packs.filter((item) => {
           return item.modules.length;
+        }).map((item, i) => {
+          var description = (packCount+i).toString();
+          description = "M" + description.padStart(4, '0');
+          var _id = tools.generateId();
+          return {
+            ...item,
+            _id,
+            description
+          }
         }),
         _id: tools.generateId(),
         date: new Date(),
         type: 'send'
       }
-      shipping.push(data);
+      shipping.push(tools.deepCopy(data));
 
       const executeTransactions = (isSimulation) => {
         data.series.forEach((series) => {
@@ -463,11 +474,8 @@ if (Meteor.isServer) {
             })
             if (!isSimulation) {
               delete pack._id;
-              var description = Packs.find({}).count().toString();
-              description = "M" + description.padStart(4, '0');
               Packs.insert({
                 ...pack,
-                description,
                 rented: true,
                 place: {
                   _id: '',
@@ -482,13 +490,9 @@ if (Meteor.isServer) {
       executeTransactions(true);
       executeTransactions(false);
 
-      console.log(shipping)
       Contracts.update({ _id },
         { $set: { shipping }
       });
-      // Meteor.call('history.insert',
-      //   {...currentShipping, contractId: _id},
-      //   'contracts.shipping.send');
       return _id;
     },
     'contracts.shipping.receive'(master) {

@@ -15,10 +15,11 @@ import MainHeader from '/imports/components/MainHeader/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
 import StockTransition from './StockTransition/index';
-// import CurrentlyRented from './CurrentlyRented/index';
-// import ShippingHistory from './ShippingHistory/index';
+import CurrentlyRented from './CurrentlyRented/index';
+import ShippingHistory from './ShippingHistory/index';
 import Send from './Send/index';
-// import Receive from './Receive/index';
+import Receive from './Receive/index';
+import ModuleList from './ModuleList/index';
 
 class Shipping extends React.Component {
   constructor(props) {
@@ -34,17 +35,95 @@ class Shipping extends React.Component {
       toggleSend: !this.state.toggleSend
     });
   }
-  //
-  // toggleReceive = () => {
-  //   this.setState({ toggleReceive: !this.state.toggleReceive });
-  // }
+
+  toggleReceive = () => {
+    this.setState({ toggleReceive: !this.state.toggleReceive
+    });
+  }
 
   currentlyRented = () => {
-    return {
+    var allSends = {
       series: [],
-      packs: [],
-      accessories: []
-    };
+      accessories: [],
+      packs: []
+    }
+    var allReceives = {
+      series: [],
+      accessories: [],
+      packs: []
+    }
+    var currently = {};
+    this.props.contract.shipping.forEach((shipping) => {
+      if (shipping.type === "send") {
+        allSends.series = allSends.series
+                          .concat(shipping.series)
+        allSends.accessories = allSends.accessories
+                          .concat(shipping.accessories)
+        allSends.packs = allSends.packs
+                          .concat(shipping.packs)
+      } else {
+        allReceives.series = allReceives.series
+                          .concat(shipping.series)
+        allReceives.accessories = allReceives.accessories
+                          .concat(shipping.accessories)
+        allReceives.packs = allReceives.packs
+                          .concat(shipping.packs)
+      }
+    })
+    // Series --------------------------------------------
+    currently.series = allSends.series.filter((itemSent) => {
+      return !allReceives.series.find((itemReceived) => {
+        return itemReceived._id === itemSent._id
+      })
+    })
+    // Accessories ---------------------------------------
+    currently.accessories = [];
+    var variations = [];
+    allSends.accessories.forEach((accessory) => {
+      accessory.variations.forEach((variation) => {
+        variations.push({
+          ...variation,
+          accessory: {
+            _id: accessory._id,
+            description: accessory.description
+          },
+          renting: variation.from.reduce((acc, item) => {
+            return acc + item.renting;
+          }, 0)
+        })
+      })
+    })
+
+    var filteredVariations = [];
+    variations.forEach((variation, i) => {
+      var found = filteredVariations.findIndex((vari) => {
+        return vari._id === variation._id;
+      })
+      if (found > -1) {
+        filteredVariations[found].renting += variation.renting;
+      } else filteredVariations.push(variation);
+    })
+    filteredVariations.forEach((variation) => {
+      allReceives.accessories.forEach((acc) => {
+        acc.forEach((vari) => {
+          if (vari._id === variation._id) {
+            variation.renting -= vari.returning;
+          }
+        })
+      })
+    })
+    currently.accessories = filteredVariations.filter((item) => {
+      return item.renting > 0;
+    })
+    // Packs ---------------------------------------------
+    currently.packs = allSends.packs.filter((itemSent) => {
+      return !allReceives.packs.find((itemReceived) => {
+        return itemReceived._id === itemSent._id
+      })
+    }).map((item) => {
+      return {...item, place: {}, unmount: true}
+    })
+    return currently;
   }
 
   render() {
@@ -60,21 +139,12 @@ class Shipping extends React.Component {
             toggleDocuments={this.toggleDocuments}
           />
           <div className="main-scene__body">
-            <h3 style={{textAlign: "center", margin: "20px"}}>
-              Itens no Cliente
-            </h3>
-            {/* <CurrentlyRented
-              accessoriesDatabase={this.props.databases.accessoriesDatabase}
+            <CurrentlyRented
               currentlyRented={this.currentlyRented()}
-              prepareList={this.prepareList}
-            /> */}
-            <h3 style={{textAlign: "center", margin: "20px"}}>Histórico de Remessas</h3>
-            {/* <ShippingHistory
-              contract={this.props.contract}
-              accessoriesDatabase={this.props.databases.accessoriesDatabase}
-              placesDatabase={this.props.databases.placesDatabase}
-              prepareList={this.prepareList}
-            /> */}
+            />
+            <ShippingHistory
+              shipping={this.props.contract.shipping}
+            />
             {this.state.toggleSend ?
               <Send
                 toggleSend={this.toggleSend}
@@ -82,6 +152,7 @@ class Shipping extends React.Component {
                 contract={this.props.contract}
                 snapshot={this.props.snapshot}
                 StockTransition={StockTransition}
+                ModuleList={ModuleList}
                 currentlyRented={this.currentlyRented()}
               />
             : null}
@@ -89,7 +160,8 @@ class Shipping extends React.Component {
               <Receive
                 toggleReceive={this.toggleReceive}
                 databases={this.props.databases}
-                contract={{...this.props.contract}}
+                ModuleList={ModuleList}
+                StockTransition={StockTransition}
                 currentlyRented={this.currentlyRented()}
               />
             : null}

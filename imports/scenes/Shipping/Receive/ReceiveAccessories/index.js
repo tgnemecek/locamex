@@ -7,7 +7,7 @@ import Icon from '/imports/components/Icon/index';
 
 import VariationsList from './VariationsList/index';
 
-export default class SendPacks extends React.Component {
+export default class ReceivePacks extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -18,24 +18,13 @@ export default class SendPacks extends React.Component {
   componentDidMount() {
     var accessories = [];
     this.props.snapshot.accessories.forEach((accessory, j) => {
-      var onClient = this.props.currentlyRented.accessories
-        .reduce((acc, item) => {
-          if (item.accessory._id === accessory._id) {
-            return acc + item.renting;
-          } else return acc;
-        }, 0)
-
-      var max = accessory.renting - onClient;
-
-      if (max > 0) {
-        accessories.push({
-          _id: accessory._id,
-          description: accessory.description,
-          type: "accessory",
-          variations: [],
-          max
-        })
-      }
+      accessories.push({
+        _id: accessory._id,
+        description: accessory.description,
+        type: "accessory",
+        variations: [],
+        max: accessory.renting
+      })
     })
     this.props.update({ accessories });
   }
@@ -100,12 +89,12 @@ export default class SendPacks extends React.Component {
       return (
         <div>
           <h4>Acessórios</h4>
-          <table className="table shipping__send-receive-table">
+          <table className="table shipping__receive-receive-table">
             <thead>
                 <tr>
                   <th>#</th>
                   <th className="table__wide">Produto</th>
-                  <th>Locável</th>
+                  <th>Em Contrato</th>
                   <th>Selecionado</th>
                 </tr>
             </thead>
