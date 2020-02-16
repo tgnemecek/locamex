@@ -146,7 +146,7 @@ class SeriesTable extends React.Component {
     return (
       <ErrorBoundary>
         <RedirectUser currentPage="series"/>
-        <Block columns={2}>
+        <div className="database__series-filter">
           <Input
             title="Modelo"
             type="select"
@@ -167,7 +167,7 @@ class SeriesTable extends React.Component {
             </option>
             {this.renderFilterOptions('place')}
           </Input>
-        </Block>
+        </div>
         <div className="database__scroll-div">
           <table className="table">
             <thead>

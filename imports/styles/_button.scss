@@ -7,6 +7,11 @@
   padding: $input-spacing;
   text-transform: uppercase;
   cursor: pointer;
+  transition: color 0.3s, background-color 0.3s;
+}
+
+.button:hover {
+  background-color: darken($button-bg, 10%);
 }
 
 .button--link {
@@ -20,6 +25,12 @@
   color: $button-pill-color;
   min-width: 28px;
   padding: ($space /2);
+  transition: color 0.3s, background-color 0.3s;
+}
+
+.button--pill:hover {
+  color: white;
+  background-color: $button-pill-color;
 }
 
 .button--disabled {
@@ -36,13 +47,25 @@
   color: $button-secondary-color;
 }
 
+.button--secondary:hover {
+  background-color: darken($button-secondary-bg, 10%);
+}
+
 .button--danger {
   background: $button-danger-bg;
   color: $button-danger-color;
 }
 
+.button--danger:hover {
+  background-color: darken($button-danger-bg, 10%);
+}
+
 .button--green {
   background: $green;
+}
+
+.button--green:hover {
+  background-color: darken($green, 10%);
 }
 
 .button--link-text {

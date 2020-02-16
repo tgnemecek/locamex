@@ -88,7 +88,7 @@ export default class RegisterAccounts extends React.Component {
             />
             <Input
               title="Número do Banco:"
-              type="digits"
+              type="text"
               name="bankNumber"
               error={this.state.errorKeys.includes("bankNumber")}
               value={this.state.bankNumber}
@@ -96,7 +96,7 @@ export default class RegisterAccounts extends React.Component {
             />
             <Input
               title="Agência:"
-              type="digits"
+              type="text"
               name="branch"
               error={this.state.errorKeys.includes("branch")}
               value={this.state.branch}
@@ -104,7 +104,7 @@ export default class RegisterAccounts extends React.Component {
             />
             <Input
               title="Número da Conta:"
-              type="digits"
+              type="text"
               name="number"
               error={this.state.errorKeys.includes("number")}
               value={this.state.number}

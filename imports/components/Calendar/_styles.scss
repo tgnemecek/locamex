@@ -1,0 +1,45 @@
+.calendar {
+  width: 400px;
+  .box__close-button {
+    display: none;
+  }
+}
+
+.calendar__header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: $space;
+  align-items: center;
+}
+.calendar__table {
+  width: 100%;
+  border: 1px solid $black;
+  border-collapse: collapse;
+  th {
+    cursor: pointer;
+    padding: ($space /4);
+    height: 32px;
+    width: 32px;
+    border: 1px solid $dark-grey;
+  }
+  td {
+    height: 40px;
+    width: 40px;
+    border: 1px solid $dark-grey;
+  }
+  button {
+    height: 100%;
+    width: 100%;
+  }
+}
+.calendar__table tr:nth-child(even) {
+  background-color: $grey;
+}
+.calendar__day--grayed {
+  background-color: $dark-grey;
+  cursor: default !important;
+  font-style: italic;
+}
+.calendar__day--active {
+  background-color: $green !important;
+}

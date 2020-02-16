@@ -15,8 +15,7 @@
 }
 
 .main-header__title {
-  display: grid;
-  grid-template-columns: 250px 50px;
+  display: flex;
   h1 {
     line-height: 3.5rem;
     margin-bottom: 0;

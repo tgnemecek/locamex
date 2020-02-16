@@ -69,7 +69,7 @@ export default class Currency extends React.Component {
     }
   }
 
-  unformat = () => {
+  unformat = (e) => {
     var displayValue = this.state.displayValue.replace("R$", "");
     displayValue = displayValue.replace(/\s/g, "");
     this.setState({ displayValue });

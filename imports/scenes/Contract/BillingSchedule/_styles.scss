@@ -2,14 +2,8 @@
 @import './ServicesSection/styles';
 
 .billing-schedule {
-  width: $site-max-width;
   section {
-    margin-top: $space;
-  }
-  textarea {
-    font-size: 1.2rem;
-  }
-  h4 {
+    margin-bottom: $space;
     padding: ($space /2);
   }
   table {
@@ -30,4 +24,23 @@
   margin: 16px 0 0 0;
   justify-content: center;
   align-items: flex-end;
+}
+
+.billing-schedule__scroll-div {
+  max-height: 200px;
+  overflow-y: scroll;
+}
+
+.billing-schedule__value-cell {
+  min-width: 120px;
+  text-align: right;
+}
+
+.billing-schedule__footer {
+  display: block;
+  width: calc(100% - 17px);
+}
+
+.billing-schedule__footer-cell {
+  text-align: right;
 }

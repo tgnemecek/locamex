@@ -75,8 +75,10 @@ class ModuleList extends React.Component {
       .map((item, i) => {
         return (
           <tr key={i}>
-            <td>{item.description}</td>
-            <td className="table__small-column">
+            <td className="table__wide">
+              {item.description}
+            </td>
+            <td>
               <Input
                 key={i}
                 type="checkbox"
@@ -104,8 +106,8 @@ class ModuleList extends React.Component {
           <table className="table">
             <thead>
               <tr>
-                <th>Descrição</th>
-                <th className="table__small-column">
+                <th className="table__wide">Descrição</th>
+                <th>
                   <Input
                     type="checkbox"
                     id="module--all"

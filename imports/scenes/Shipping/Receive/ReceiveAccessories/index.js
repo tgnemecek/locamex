@@ -4,28 +4,18 @@ import tools from '/imports/startup/tools/index';
 
 import Input from '/imports/components/Input/index';
 import Icon from '/imports/components/Icon/index';
+//
+// import VariationsList from './VariationsList/index';
 
-import VariationsList from './VariationsList/index';
-
-export default class ReceivePacks extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      accessoryToEdit: false,
-      indexToEdit: false
-    }
-  }
+export default class ReceiveAccessories extends React.Component {
   componentDidMount() {
-    var accessories = [];
-    this.props.snapshot.accessories.forEach((accessory, j) => {
-      accessories.push({
-        _id: accessory._id,
-        description: accessory.description,
-        type: "accessory",
-        variations: [],
-        max: accessory.quantity
-      })
-    })
+    var accessories = this.props.currentlyRented.accessories
+    .map((item) => {
+      return {
+        ...item,
+        place: {}
+      }
+    });
     this.props.update({ accessories });
   }
 
@@ -35,46 +25,81 @@ export default class ReceivePacks extends React.Component {
     this.props.update({accessories}, callback);
   }
 
-  getVariationsList = () => {
-    return this.props.accessoriesDatabase.find((item) => {
-      return item._id === this.state.accessoryToEdit._id;
-    }).variations;
+  renderOptions = () => {
+    return this.props.placesDatabase.map((place, i) => {
+      return (
+        <option key={i} value={place._id}>
+          {place.description}
+        </option>
+      )
+    })
+  }
+
+  onChange = (e) => {
+    var accessories = [...this.props.accessories];
+    var _id = e.target.value;
+    var i = e.target.name;
+    var place;
+    if (!_id) {
+      place = {};
+    } else {
+      place = this.props.placesDatabase.find((item) => {
+        return item._id === _id;
+      })
+    }
+    accessories[i].place = {
+      _id: place._id,
+      description: place.description
+    }
+    this.props.update({ accessories });
+  }
+
+  onChangeQuantity = (e) => {
+    var accessories = [...this.props.accessories];
+    var i = e.target.name;
+    accessories[i].quantity = e.target.value;
+    this.props.update({ accessories });
   }
 
   renderBody = () => {
-    return this.props.accessories.map((item, i) => {
-      const openVariationsList = () => {
-        this.setState({ accessoryToEdit: item, indexToEdit: i })
-      }
+    return this.props.accessories
+    .map((item, i) => {
       return (
         <tr key={i}>
           <td>
             {i+1}
           </td>
-          <td className="table__wide">
+          <td>
+            {item.accessory.description}
+          </td>
+          <td>
             {item.description}
           </td>
           <td>
-            {item.max}
+            {this.props.currentlyRented.accessories[i].quantity}
           </td>
           <td>
-            {item.variations.reduce((acc, cur) => {
-              return acc + cur.from.reduce((acc, cur) => {
-                return acc + cur.quantity;
-              }, 0)
-            }, 0)}
+            <Input
+              type="number"
+              name={i}
+              min={0}
+              max={this.props.currentlyRented.accessories[i].quantity}
+              value={item.quantity}
+              onChange={this.onChangeQuantity}
+            />
+          </td>
+          <td className="table__wide">
+            <Input
+              type="select"
+              name={i}
+              onChange={this.onChange}
+              value={item.place._id}>
+                <option value=''></option>
+                {this.renderOptions()}
+            </Input>
           </td>
           <td className="no-padding">
-            <button onClick={openVariationsList}>
-              <Icon icon="transaction"/>
-            </button>
-          </td>
-          <td className="no-padding">
-            {item.variations.find((variation) => {
-                return variation.from.find((place) => {
-                  return place.quantity > 0;
-                })
-              })
+            {item.place._id && item.quantity
               ? <Icon icon="checkmark" color="green"/>
               : <Icon icon="not" color="red"/>
             }
@@ -93,16 +118,18 @@ export default class ReceivePacks extends React.Component {
             <thead>
                 <tr>
                   <th>#</th>
-                  <th className="table__wide">Produto</th>
-                  <th>Em Contrato</th>
-                  <th>Selecionado</th>
+                  <th>Produto</th>
+                  <th>Variação</th>
+                  <th>No Cliente</th>
+                  <th>Seleção</th>
+                  <th className="table__wide">Destino</th>
                 </tr>
             </thead>
             <tbody>
               {this.renderBody()}
             </tbody>
           </table>
-          {this.state.accessoryToEdit ?
+          {/* {this.state.accessoryToEdit ?
             <VariationsList
               accessory={this.state.accessoryToEdit}
               variationsList={this.getVariationsList()}
@@ -113,7 +140,7 @@ export default class ReceivePacks extends React.Component {
                 accessoryToEdit: false
               })}
             />
-          : null}
+          : null} */}
         </div>
       )
     } else return null;

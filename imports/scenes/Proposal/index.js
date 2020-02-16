@@ -286,7 +286,6 @@ class Proposal extends React.Component {
   }
 
   render () {
-    console.log(this.props.settings)
     return (
       <div className="page-content">
         <RedirectUser currentPage="proposal"/>

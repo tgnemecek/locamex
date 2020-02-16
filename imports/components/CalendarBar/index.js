@@ -3,7 +3,7 @@ import moment from 'moment';
 
 import Input from '/imports/components/Input/index';
 import Icon from '/imports/components/Icon/index';
-import CalendarBox from './CalendarBox/index';
+import Calendar from '/imports/components/Calendar/index';
 
 export default class CalendarBar extends React.Component {
   constructor(props) {
@@ -48,7 +48,7 @@ export default class CalendarBar extends React.Component {
             </Input>
         </div>
         {this.state.toggleCalendar ?
-          <CalendarBox
+          <Calendar
             value={this.props.value || new Date()}
             closeCalendar={this.toggleCalendar}
             changeDate={this.changeDate}/>

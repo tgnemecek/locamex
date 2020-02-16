@@ -60,24 +60,24 @@ class Configuration extends React.Component {
           <MainHeader
             title="Configurações"
             type="configuration"/>
-            <div>
-              <h2>Configurações de Proposta</h2>
-              <Input
-                title="Condições da Proposta a Longo Prazo"
-                type="textarea"
-                value={this.state.settings.proposal.defaultConditionsMonths}
-                name="defaultConditionsMonths"
-                onChange={this.onChangeProposalConditions}/>
-              <Input
-                title="Condições da Proposta a Curto Prazo"
-                type="textarea"
-                value={this.state.settings.proposal.defaultConditionsDays}
-                name="defaultConditionsDays"
-                onChange={this.onChangeProposalConditions}/>
-            </div>
+          <div className="main-scene__body">
+            <h2>Configurações de Proposta</h2>
+            <Input
+              title="Condições da Proposta a Longo Prazo"
+              type="textarea"
+              value={this.state.settings.proposal.defaultConditionsMonths}
+              name="defaultConditionsMonths"
+              onChange={this.onChangeProposalConditions}/>
+            <Input
+              title="Condições da Proposta a Curto Prazo"
+              type="textarea"
+              value={this.state.settings.proposal.defaultConditionsDays}
+              name="defaultConditionsDays"
+              onChange={this.onChangeProposalConditions}/>
             <FooterButtons buttons={[
               {text: "Salvar Alterações", onClick: this.saveEdits}
             ]}/>
+          </div>
           <DatabaseStatus status={this.state.databaseStatus}/>
         </div>
       </div>

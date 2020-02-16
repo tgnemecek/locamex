@@ -55,15 +55,15 @@ class Shipping extends React.Component {
     var currently = {};
     this.props.contract.shipping.forEach((shipping) => {
       if (shipping.type === "send") {
-        allSends.series = allSends.series
-                          .concat(shipping.series)
+        // allSends.series = allSends.series
+        //                   .concat(shipping.series)
         allSends.accessories = allSends.accessories
                           .concat(shipping.accessories)
         allSends.packs = allSends.packs
                           .concat(shipping.packs)
       } else {
-        allReceives.series = allReceives.series
-                          .concat(shipping.series)
+        // allReceives.series = allReceives.series
+        //                   .concat(shipping.series)
         allReceives.accessories = allReceives.accessories
                           .concat(shipping.accessories)
         allReceives.packs = allReceives.packs
@@ -71,11 +71,33 @@ class Shipping extends React.Component {
       }
     })
     // Series --------------------------------------------
-    currently.series = allSends.series.filter((itemSent) => {
-      return !allReceives.series.find((itemReceived) => {
-        return itemReceived._id === itemSent._id
-      })
-    })
+    currently.series = [];
+    var seriesToIgnore = [];
+    for (
+      var i = this.props.contract.shipping.length-1;
+      i >= 0; i--) {
+      var type = this.props.contract.shipping[i].type;
+      this.props.contract.shipping[i].series
+        .forEach((series) => {
+          if (!seriesToIgnore.includes(series._id)) {
+            seriesToIgnore.push(series._id);
+            if (type === "send") {
+              currently.series.push(series);
+            }
+          }
+        })
+    }
+    //
+    //
+    //
+    //
+    //
+    //
+    // currently.series = allSends.series.filter((itemSent) => {
+    //   return !allReceives.series.find((itemReceived) => {
+    //     return itemReceived._id === itemSent._id
+    //   })
+    // })
     // Accessories ---------------------------------------
     currently.accessories = [];
     var variations = [];
@@ -116,17 +138,38 @@ class Shipping extends React.Component {
       return item.quantity > 0;
     })
     // Packs ---------------------------------------------
-    currently.packs = allSends.packs.filter((itemSent) => {
-      return !allReceives.packs.find((itemReceived) => {
-        return itemReceived._id === itemSent._id
-      })
-    }).map((item) => {
-      return {...item, place: {}, unmount: true}
-    })
+    currently.packs = [];
+    var packsToIgnore = [];
+    for (
+      var i = this.props.contract.shipping.length-1;
+      i >= 0; i--) {
+      var type = this.props.contract.shipping[i].type;
+      this.props.contract.shipping[i].packs
+        .forEach((pack) => {
+          if (!packsToIgnore.includes(pack._id)) {
+            packsToIgnore.push(pack._id);
+            if (type === "send") {
+              currently.packs.push(pack);
+            }
+          }
+        })
+    }
+
+
+
+
+    // currently.packs = allSends.packs.filter((itemSent) => {
+    //   return !allReceives.packs.find((itemReceived) => {
+    //     return itemReceived._id === itemSent._id
+    //   })
+    // }).map((item) => {
+    //   return {...item, place: {}, unmount: true}
+    // })
     return currently;
   }
 
   render() {
+    console.log(this.currentlyRented())
     return (
       <div className="page-content">
         <RedirectUser currentPage="shipping"/>
@@ -160,14 +203,15 @@ class Shipping extends React.Component {
               <Receive
                 toggleReceive={this.toggleReceive}
                 databases={this.props.databases}
+                contract={this.props.contract}
                 ModuleList={ModuleList}
                 StockTransition={StockTransition}
                 currentlyRented={this.currentlyRented()}
               />
             : null}
             <FooterButtons buttons={[
-              {text: "Enviar Itens", className: "button--secondary", onClick: this.toggleSend},
-              {text: "Receber Itens", className: "button--secondary", onClick: this.toggleReceive},
+              {text: "Novo Envio", className: "button--secondary", onClick: this.toggleSend},
+              {text: "Nova Devolução", className: "button--secondary", onClick: this.toggleReceive},
             ]}/>
           </div>
         </div>

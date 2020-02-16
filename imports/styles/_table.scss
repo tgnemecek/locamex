@@ -7,7 +7,15 @@
   white-space: nowrap;
 }
 
-.table th {
+.table {
+  td, th {
+    height: 32px;
+    border: 1px solid $dark-grey;
+    padding: ($space /4) ($space /2) ($space /4) ($space /2);
+  }
+}
+
+.table thead th {
   position: sticky;
   top: 0;
   background: white;
@@ -24,11 +32,6 @@
 .table__wide {
   text-align: left;
   width: 100%;
-}
-
-.table td {
-  border: 1px solid $dark-grey;
-  padding: ($space /4) ($space /2) ($space /4) ($space /2);
 }
 
 .table tr:nth-child(even) {

@@ -4,7 +4,7 @@ import Icon from '/imports/components/Icon/index';
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
-export default class CalendarBox extends React.Component {
+export default class Calendar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -42,18 +42,18 @@ export default class CalendarBox extends React.Component {
       var monthIndex = this.state.monthIndex;
       var dayIndex = this.state.dayIndex;
       if (selectedDate.getFullYear() == yearIndex && selectedDate.getMonth() == monthIndex) {
-        return day == selectedDate.getDate() ? "calendar-bar__box__day--active" : null;
+        return day == selectedDate.getDate() ? "calendar__day--active" : null;
       }
     }
 
     for (var i = (lastMonthLength - startingWeekDay + 1); i <= lastMonthLength; i++) {
-      days.push(<td key={i} className="calendar-bar__box__day--grayed">{i}</td>);
+      days.push(<td key={i} className="calendar__day--grayed">{i}</td>);
     }
     for (var i = 1; i <= monthLength; i++) {
       days.push(<td key={i}><button value={i} className={determineClassName(i)} onClick={this.selectDay}>{i}</button></td>);
     }
     for (var i = 1; i <= nextMonthDays; i++) {
-      days.push(<td key={i} className="calendar-bar__box__day--grayed">{i}</td>);
+      days.push(<td key={i} className="calendar__day--grayed">{i}</td>);
     }
 
     var weekOne = days.slice(0, 7);
@@ -86,17 +86,18 @@ export default class CalendarBox extends React.Component {
 
   render() {
       return (
-        <Box closeBox={this.props.closeCalendar}>
-          <div className="calendar-bar__box__header">
+        <Box className="calendar"
+          closeBox={this.props.closeCalendar}>
+          <div className="calendar__header">
             <button onClick={() => this.changeMonth(-1)}>
               <Icon icon="arrowLeft" />
             </button>
-            <h3>{moment().month(this.state.monthIndex).format('MMMM') + "/" + this.state.yearIndex}</h3>
+            <h3>{moment().month(this.state.monthIndex).format('MMMM') + ", " + this.state.yearIndex}</h3>
             <button onClick={() => this.changeMonth(1)}>
               <Icon icon="arrowRight" />
             </button>
           </div>
-          <table className="calendar-bar__box__table">
+          <table className="calendar__table">
             <tbody>
               <tr>
                 <th>Dom</th>

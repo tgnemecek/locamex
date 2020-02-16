@@ -49,6 +49,11 @@ export default class Box extends React.Component {
           {this.props.title ?
             <div className="box__header">
               <h3>{this.props.title}</h3>
+              {this.props.subtitle ?
+                <p className="box__subtitle">
+                  {this.props.subtitle}
+                </p>
+              : null}
             </div>
           : null}
           {this.props.children}

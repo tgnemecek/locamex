@@ -26,7 +26,7 @@ export default class Table extends React.Component {
               <div>✎</div>
             </div>
             <table className="table main-items__list__table">
-              <tbody>
+              <thead>
                 <tr>
                   <th className="table__wide">Descrição</th>
                   <th className="main-items__list__value-column">
@@ -34,6 +34,8 @@ export default class Table extends React.Component {
                   </th>
                   <th>Qtd.</th>
                 </tr>
+              </thead>
+              <tbody>
                 {this.row()}
               </tbody>
             </table>

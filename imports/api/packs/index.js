@@ -13,6 +13,7 @@ Packs.attachSchema(new SimpleSchema({
     type: String,
     optional: true
   },
+  visible: Boolean,
   place: Object,
   'place._id': {
     type: String,

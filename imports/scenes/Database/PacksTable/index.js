@@ -44,8 +44,8 @@ export default function temp() {
 //           <td>{item.description}</td>
 //           <td className="table__small-column">{tools.translateStatus(item.status, false)}</td>
 //           <td className="table__small-column">{translatePlaces(item.place)}</td>
-//           <td className="table__small-column"><button className="database__table__button" onClick={toggleEditWindow}>🔍</button></td>
-//           <td className="table__small-column"><button className="database__table__button" onClick={toggleTransactionWindow}>⟳</button></td>
+//           <td className="table__small-column"><button className="" onClick={toggleEditWindow}>🔍</button></td>
+//           <td className="table__small-column"><button className="" onClick={toggleTransactionWindow}>⟳</button></td>
 //         </tr>
 //       )
 //     })

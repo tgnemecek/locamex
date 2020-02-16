@@ -65,7 +65,7 @@ export default class SendAccessories extends React.Component {
           <td>{item.description}</td>
           <td className="table__small-column">{item.quantity}</td>
           <td className="table__small-column">{countSelection(item)}</td>
-          <td className="table__small-column"><button className="database__table__button" value={i} onClick={this.toggleMultipleWindow}>⟳</button></td>
+          <td className="table__small-column"><button className="" value={i} onClick={this.toggleMultipleWindow}>⟳</button></td>
           <td className="table__small-column">
             {checkmark(item)}
           </td>

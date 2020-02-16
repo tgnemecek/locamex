@@ -53,9 +53,11 @@ if (Meteor.isServer) {
       if (!Meteor.userId() || !tools.isWriteAllowed('modules')) {
         throw new Meteor.Error('unauthorized');
       }
-      data.places = data.places.filter((place) => {
-        return (place.available || place.inactive)
-      })
+      if (data.places) {
+        data.places = data.places.filter((place) => {
+          return (place.available || place.inactive)
+        })
+      }
       Modules.update({ _id: data._id }, { $set: data });
       Meteor.call('history.insert', data, 'modules.update');
       return true;

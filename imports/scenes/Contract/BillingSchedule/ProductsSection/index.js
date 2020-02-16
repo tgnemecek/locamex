@@ -60,7 +60,7 @@ export default class ProductsSection extends React.Component {
           <td>
             {moment(charge.expiryDate).format("DD/MM/YY")}
           </td>
-          <td>
+          <td className="no-padding">
             <Input
               name={i}
               value={charge.description}
@@ -68,7 +68,7 @@ export default class ProductsSection extends React.Component {
               disabled={this.props.disabled}
               type="textarea"/>
           </td>
-          <td>
+          <td className="no-padding">
             <Input name={i} type="currency"
               style={{textAlign: 'right'}}
               name="value"
@@ -112,27 +112,42 @@ export default class ProductsSection extends React.Component {
               billing={this.props.billingProducts}
               updateBilling={this.updateBilling}/>
           </div>
-          <table className="table table--billing-schedule--products">
-            <thead>
-              <tr>
-                <th>Número</th>
-                <th>Período</th>
-                <th>Vencimento</th>
-                <th>Descrição da Cobrança</th>
-                <th>Valor</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.renderBody()}
-            </tbody>
+          <div className="billing-schedule__scroll-div">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Número</th>
+                  <th>Período</th>
+                  <th>Vencimento</th>
+                  <th className="table__wide">
+                    Descrição da Cobrança
+                  </th>
+                  <th className="billing-schedule__value-cell">
+                    Valor
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.renderBody()}
+              </tbody>
+            </table>
+          </div>
+          <table className="table billing-schedule__footer">
             <tfoot>
               <tr>
-                <td colSpan="3" className="billing-schedule__table__footer">Diferença:</td>
-                <td className="table__small-column">{this.displayDifference()}</td>
+                <td className="billing-schedule__footer-cell table__wide">
+                  Diferença:
+                </td>
+                <td className="billing-schedule__footer-cell billing-schedule__value-cell">
+                  {this.displayDifference()}
+                </td>
               </tr>
               <tr>
-                <th colSpan="3" className="billing-schedule__table__footer"><b>Valor Total de Locação:</b></th>
-                <th className="table__small-column">{tools.format(this.props.productsValue, "currency")}</th>
+                <th className="billing-schedule__footer-cell table__wide">
+                  <b>Valor Total de Locação:</b></th>
+                <th className="billing-schedule__footer-cell billing-schedule__value-cell">
+                  {tools.format(this.props.productsValue, "currency")}
+                </th>
               </tr>
             </tfoot>
           </table>

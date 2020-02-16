@@ -95,13 +95,11 @@ export default class Receive extends React.Component {
           ModuleList={this.props.ModuleList}
           packs={this.state.packs}
         />
-        {/* <ReceiveAccessories
+        <ReceiveAccessories
           update={this.update}
-          snapshot={this.props.snapshot}
-          currentlyRented={this.props.currentlyRented}
-          accessoriesDatabase={this.props.databases.accessoriesDatabase}
-          StockTransition={this.props.StockTransition}
-          accessories={this.state.accessories}/>
+          accessories={this.state.accessories}
+          placesDatabase={this.props.databases.placesDatabase}
+          currentlyRented={this.props.currentlyRented}/>
         <Footer
           hidden={
             !this.state.series.length &&
@@ -112,11 +110,11 @@ export default class Receive extends React.Component {
           accessories={this.state.accessories}
           toggleWindow={this.props.toggleWindow}
           toggleConfirmationWindow={this.toggleConfirmationWindow}
-          /> */}
+          />
         <ConfirmationWindow
           isOpen={this.state.confirmationWindow}
           closeBox={this.toggleConfirmationWindow}
-          message="Deseja enviar os produtos selecionados?"
+          message="Deseja devolver os produtos selecionados?"
           leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
           rightButton={{text: "Sim", className: "button--danger", onClick: this.receiveProducts}}
         />

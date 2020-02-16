@@ -89,13 +89,13 @@ export default class ServicesSection extends React.Component {
       return (
         <tr key={i}>
           <td>{(i + 1) + '/' + array.length}</td>
-          <td>
+          <td className="no-padding">
             <CalendarBar
               onChange={changeExpiryDate}
               disabled={this.props.disabled}
               value={bill.expiryDate}/>
           </td>
-          <td>
+          <td className="no-padding">
             <Input
               name={i}
               value={bill.description} onChange={onChangeDescription}
@@ -103,7 +103,7 @@ export default class ServicesSection extends React.Component {
               type="textarea"/>
           </td>
           <td>{calculateTaxes()}</td>
-          <td>
+          <td className="no-padding">
             <Input name={i} type="currency"
               style={{textAlign: 'right'}}
               name="value"
@@ -152,27 +152,45 @@ export default class ServicesSection extends React.Component {
               billing={this.props.billingServices}
               updateBilling={this.updateBilling}/>
           </div>
-          <table className="table table--billing-schedule--services">
-            <thead>
-              <tr>
-                <th>Número</th>
-                <th>Vencimento</th>
-                <th>Descrição da Cobrança</th>
-                <th>INSS + ISS</th>
-                <th>Valor</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.renderBody()}
-            </tbody>
+          <div className="billing-schedule__scroll-div">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Número</th>
+                  <th style={{minWidth: "120px"}}>
+                    Vencimento
+                  </th>
+                  <th className="table__wide">
+                    Descrição da Cobrança
+                  </th>
+                  <th>INSS + ISS</th>
+                  <th className="billing-schedule__value-cell">
+                    Valor
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.renderBody()}
+              </tbody>
+            </table>
+          </div>
+          <table className="table billing-schedule__footer">
             <tfoot>
               <tr>
-                <td colSpan="3" className="billing-schedule__table__footer">Diferença:</td>
-                <td className="table__small-column">{this.displayDifference()}</td>
+                <td className="billing-schedule__footer-cell table__wide">
+                  Diferença:
+                </td>
+                <td className="billing-schedule__footer-cell billing-schedule__value-cell">
+                  {this.displayDifference()}
+                </td>
               </tr>
               <tr>
-                <th colSpan="3" className="billing-schedule__table__footer"><b>Valor Total do Pacote de Serviços:</b></th>
-                <th className="table__small-column">{tools.format(this.props.servicesValue, "currency")}</th>
+                <th className="billing-schedule__footer-cell table__wide">
+                  <b>Valor Total do Pacote de Serviços:</b>
+                </th>
+                <th className="billing-schedule__footer-cell billing-schedule__value-cell">
+                  {tools.format(this.props.servicesValue, "currency")}
+                </th>
               </tr>
             </tfoot>
           </table>

@@ -78,7 +78,7 @@ export default class Variations extends React.Component {
           </td>
           {variation.new ?
             <td className="register-accessories__table__add-new-column">
-              <button className="database__table__button"
+              <button className=""
                 disabled={this.props.disabled}
                 onClick={removeItem}>
                 <Icon icon="not"/>
@@ -88,7 +88,7 @@ export default class Variations extends React.Component {
           {i === arr.length-1 ?
             <td className="register-accessories__table__add-new-column">
               <button
-                className="database__table__button"
+                className=""
                 disabled={this.props.disabled}
                 onClick={addNewItem}>
                 <Icon icon="new"/>

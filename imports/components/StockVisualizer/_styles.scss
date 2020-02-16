@@ -3,9 +3,12 @@
 }
 
 .stock-visualizer__top {
-  display: flex;
-  justify-content: space-around;
+  display: grid;
+  grid-template-columns: 25% 1fr;
   align-items: center;
+  text-align: left;
+  grid-gap: $space;
+  font-style: italic;
 }
 
 .stock-visualizer__distribution {
@@ -44,7 +47,9 @@
 }
 
 .stock-visualizer__inputs {
-  display: inline-flex;
+  display: grid;
+  grid-template-columns: 1fr 80px;
+  grid-template-rows: 50px;
   button {
     margin: 16px 0 0 0;
   }

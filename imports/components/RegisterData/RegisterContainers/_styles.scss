@@ -1,13 +1,9 @@
 @import './Modular/styles';
 
-.register-containers--choose-type {
-  width: 50vw;
-  .register-containers--choose-type__buttons {
-    .button--pill {
-      padding: 20px;
-      width: 300px;
-    }
-  }
+.register-containers--choose-type__buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: $space;
 }
 
 .register-containers__flyer {

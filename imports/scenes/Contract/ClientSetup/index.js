@@ -36,7 +36,7 @@ export default class ClientSetup extends React.Component {
     };
     this.setState({
       clientWindow,
-      client
+      client: client || this.state.client
     })
   }
   verification = () => {

@@ -137,16 +137,14 @@ class StockVisualizer extends React.Component {
     return (
       <Box
         title="Visualizador de Estoque"
+        subtitle={`Produto: ${this.props.item.description}`}
         className="stock-visualizer"
         closeBox={this.props.toggleWindow}>
           <div className="error-message">{this.state.errorMsg}</div>
-          <div className="stock-visualizer__top">
-            <h4>Produto: {this.props.item.description}</h4>
-            <VariationsFilter
-              setVariationIndex={this.setVariationIndex}
-              variationIndex={this.state.variationIndex}
-              variations={this.props.item.variations}/>
-          </div>
+          <VariationsFilter
+            setVariationIndex={this.setVariationIndex}
+            variationIndex={this.state.variationIndex}
+            variations={this.props.item.variations}/>
           <Distribution
             updateItem={this.updateItem}
             places={this.getPlaces()}/>

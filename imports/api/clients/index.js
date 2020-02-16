@@ -51,6 +51,7 @@ Clients.attachSchema(new SimpleSchema({
   address: addressSchema,
   visible: Boolean
 }), {selector: {type: 'company'}})
+
 Clients.attachSchema(new SimpleSchema({
   _id: String,
   type: String,

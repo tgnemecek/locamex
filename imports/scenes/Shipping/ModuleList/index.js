@@ -105,7 +105,9 @@ export default class ModuleList extends React.Component {
   renderTransactionCell = (item, i) => {
     if (this.props.disabled) {
       return (
-        <td>{item.quantity}</td>
+        <td>{item.from.reduce((acc, place) => {
+          return acc + place.quantity
+        }, 0)}</td>
       )
     } else {
       return (
