@@ -7,7 +7,7 @@ import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 
 import SendPacks from './SendPacks/index';
 import SendSeries from './SendSeries/index';
-import SendVariations from './SendVariations/index';
+import SendAccessories from './SendAccessories/index';
 import Footer from './Footer/index';
 
 export default class Send extends React.Component {
@@ -16,7 +16,7 @@ export default class Send extends React.Component {
     this.state = {
       series: [],
       packs: [],
-      variations: [],
+      accessories: [],
 
       databaseStatus: '',
       confirmationWindow: false
@@ -44,7 +44,7 @@ export default class Send extends React.Component {
       contractId: this.props.contract._id,
       series: this.state.series,
       packs: this.state.packs,
-      variations: this.state.variations,
+      accessories: this.state.accessories,
     }
     this.setState({ databaseStatus: "loading" }, () => {
       Meteor.call('contracts.shipping.send', data, (err, res) => {
@@ -76,7 +76,7 @@ export default class Send extends React.Component {
           currentlyRented={this.props.currentlyRented}
           seriesDatabase={this.props.databases.seriesDatabase}/>
         {!this.state.series.length &&
-          !this.state.variations.length &&
+          !this.state.accessories.length &&
           !this.state.packs.length ?
           "Não há itens disponíveis para envio!"
         : null}
@@ -90,21 +90,21 @@ export default class Send extends React.Component {
           StockTransition={this.props.StockTransition}
           ModuleList={this.props.ModuleList}
           packs={this.state.packs}/>
-        <SendVariations
+        <SendAccessories
           update={this.update}
           snapshot={this.props.snapshot}
           currentlyRented={this.props.currentlyRented}
-          variationsDatabase={this.props.databases.variationsDatabase}
+          accessoriesDatabase={this.props.databases.accessoriesDatabase}
           StockTransition={this.props.StockTransition}
-          variations={this.state.variations}/>
+          accessories={this.state.accessories}/>
         <Footer
           hidden={
             !this.state.series.length &&
-            !this.state.variations.length &&
+            !this.state.accessories.length &&
             !this.state.packs.length}
           series={this.state.series}
           packs={this.state.packs}
-          variations={this.state.variations}
+          accessories={this.state.accessories}
           toggleWindow={this.props.toggleWindow}
           toggleConfirmationWindow={this.toggleConfirmationWindow}
           />

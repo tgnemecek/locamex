@@ -25,7 +25,7 @@ export default class VariationsFilter extends React.Component {
   }
 
   render() {
-    if (this.props.variations) {
+    if (this.props.variations.length) {
       return (
         <div className="stock-visualizer__top">
           <Input

@@ -127,7 +127,7 @@ export default class SendPacks extends React.Component {
           </td>
           <td className="no-padding">
             {item.locked || item.modules.find((module) => {
-                return module.places.find((place) => {
+                return module.from.find((place) => {
                   return place.quantity > 0;
                 })
               })

@@ -1,14 +1,10 @@
-.register-data__variations-block {
+.register-accessories__body {
+  display: grid;
+  grid-template-columns: 50% 1fr 1fr;
+  grid-gap: $space;
+}
+
+.register-accessories__variations-scroll {
   max-height: 396px;
   overflow-y: auto;
-}
-
-.register-accessories__table__variations-column {
-  width: 100px;
-}
-
-.register-accessories__table__add-new-column {
-  text-align: center;
-  width: 50px;
-  font-size: 20px;
 }

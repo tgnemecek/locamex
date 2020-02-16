@@ -16,24 +16,33 @@ class StockVisualizer extends React.Component {
     this.state = {
       variationIndex: 0,
       item: tools.deepCopy(this.props.item),
+      variations: tools.deepCopy(this.props.variations),
       offset: 0,
       errorMsg: '',
       databaseStatus: false
     }
   }
 
+  componentDidUpdate(prevProps) {
+    if (prevProps.variations !== this.props.variations) {
+      this.setState({ variations: this.props.variations });
+    }
+  }
+
   updateItem = (places) => {
-    var item = {...this.state.item};
     if (this.props.item.type === 'module') {
+      var item = {...this.state.item};
       item.places = places;
+      this.setState({ item });
     } else {
+      var variations = [...this.state.variations];
       var index = this.state.variationIndex;
-      item.variations[index] = {
-        ...item.variations[index],
+      variations[index] = {
+        ...variations[index],
         places
       };
+      this.setState({ variations });
     }
-    this.setState({ item });
   }
 
   setVariationIndex = (variationIndex) => {
@@ -48,6 +57,7 @@ class StockVisualizer extends React.Component {
 
   getPlaces = () => {
     function joinPlaces(placesInItem, placesDatabase) {
+      if (!placesInItem) return placesDatabase;
       return placesDatabase.map((place) => {
         var existing = placesInItem.find((placeInItem) => {
           return placeInItem._id === place._id;
@@ -65,9 +75,10 @@ class StockVisualizer extends React.Component {
       return joinPlaces(this.state.item.places,
          this.props.database);
     } else {
-      var variations = this.state.item.variations;
-      var current = variations[this.state.variationIndex];
-      return joinPlaces(current.places, this.props.database);
+      var index = this.state.variationIndex;
+      var variation = this.state.variations[index] || {};
+      return joinPlaces(variation.places,
+         this.props.database);
     }
   }
 
@@ -77,8 +88,8 @@ class StockVisualizer extends React.Component {
       places = this.state.item.places;
     } else {
       places = [];
-      this.state.item.variations.forEach((item) => {
-        places = [...places, ...item.places];
+      this.state.variations.forEach((variation) => {
+        places = [...places, ...variation.places];
       })
     }
 
@@ -93,8 +104,8 @@ class StockVisualizer extends React.Component {
       places = this.props.item.places;
     } else {
       places = [];
-      this.props.item.variations.forEach((item) => {
-        places = [...places, ...item.places];
+      this.props.variations.forEach((variation) => {
+        places = [...places, ...variation.places];
       })
     }
     return this.state.offset + places.reduce((acc, cur) => {
@@ -109,11 +120,16 @@ class StockVisualizer extends React.Component {
     if (difference === 0) {
       this.setState({ databaseStatus: "loading" }, () => {
         var method;
+        var data;
         if (this.props.item.type === 'module') {
           method = 'modules.update';
-        } else method = 'accessories.update';
+          data = this.state.item;
+        } else {
+          method = 'variations.update.stock';
+          data = this.state.variations;
+        }
 
-        Meteor.call(method, this.state.item, (err, res) => {
+        Meteor.call(method, data, (err, res) => {
           var status = {}
           if (res) {
             status.status = "completed";
@@ -144,7 +160,7 @@ class StockVisualizer extends React.Component {
           <VariationsFilter
             setVariationIndex={this.setVariationIndex}
             variationIndex={this.state.variationIndex}
-            variations={this.props.item.variations}/>
+            variations={this.props.variations}/>
           <Distribution
             updateItem={this.updateItem}
             places={this.getPlaces()}/>

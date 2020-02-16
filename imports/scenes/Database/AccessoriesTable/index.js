@@ -1,6 +1,7 @@
 import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Accessories } from '/imports/api/accessories/index';
+import { Variations } from '/imports/api/variations/index';
 import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
 
@@ -95,16 +96,15 @@ class AccessoriesTable extends React.Component {
         )
       })
       .map((item, i) => {
-        var available = count(item, 'available');
-        var rented = countRented(item);
-        var inactive = count(item, 'inactive');
         return (
           <tr key={i}>
             <td className="table__wide">{item.description}</td>
-            <td>{available}</td>
-            <td>{rented}</td>
-            <td>{inactive}</td>
-            <td>{available + rented + inactive}</td>
+            <td>{item.available}</td>
+            <td>{item.rented}</td>
+            <td>{item.inactive}</td>
+            <td>
+              {item.available + item.rented + item.inactive}
+            </td>
             <td>
               {tools.format(item.price, 'currency')}
             </td>
@@ -157,6 +157,11 @@ class AccessoriesTable extends React.Component {
         {this.state.windowType === 'stock' ?
           <StockVisualizer
             item={this.state.item}
+            variations={this.props.variations
+              .filter((variation) => {
+                return variation.accessory._id ===
+                 this.state.item._id
+              })}
             toggleWindow={this.toggleWindow}
           />
         : null}
@@ -171,27 +176,15 @@ class AccessoriesTable extends React.Component {
   }
 }
 
-function count(item, which) {
-  var result = 0;
-  item.variations.forEach((variation) => {
-    result = result + variation.places.reduce((acc, cur) => {
-      return acc + cur[which];
-    }, 0);
-  })
-  return result;
-}
-
-function countRented(item) {
-  var result = 0;
-  return item.variations.reduce((acc, cur) => {
-    return acc + cur.rented;
-  }, 0);
-}
-
 export default AccessoriesTableWrapper = withTracker((props) => {
   Meteor.subscribe('accessoriesPub');
+  Meteor.subscribe('variationsPub');
+
   var database = Accessories.find({visible: true}).fetch() || [];
+  var variations = Variations.find({visible: true}).fetch() || [];
+
   return {
-    database
+    database,
+    variations
   }
 })(AccessoriesTable);

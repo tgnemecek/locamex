@@ -27,6 +27,7 @@ import '../imports/api/settings/index';
 import '../imports/api/snapshots/index';
 import '../imports/api/test/index';
 import '../imports/api/users/index';
+import '../imports/api/variations/index';
 
 Meteor.startup(() => {
   // Migrations.migrateTo('latest');

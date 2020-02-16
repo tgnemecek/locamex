@@ -6,41 +6,17 @@ import { Contracts } from '/imports/api/contracts/index';
 import tools from '/imports/startup/tools/index';
 
 export const Accessories = new Mongo.Collection('accessories');
-export const accessoriesSchema = new SimpleSchema({
+Accessories.attachSchema(new SimpleSchema({
   _id: String,
   type: String,
   description: String,
   price: Number,
   restitution: Number,
-  quantity : {
-    type: SimpleSchema.Integer,
-    optional: true
-  },
-  observations: {
-    type: String,
-    optional: true
-  },
-  variations: Array,
-  'variations.$': Object,
-  'variations.$._id': String,
-  'variations.$.description': String,
-  'variations.$.observations': {
-    type: String,
-    optional: true
-  },
-  'variations.$.rented': SimpleSchema.Integer,
-  'variations.$.places': Array,
-  'variations.$.places.$': Object,
-  'variations.$.places.$._id': String,
-  'variations.$.places.$.description': String,
-  'variations.$.places.$.available': SimpleSchema.Integer,
-  'variations.$.places.$.inactive': SimpleSchema.Integer,
-  'variations.$.visible': Boolean,
-  images: Array,
-  'images.$': String,
+  available: SimpleSchema.Integer,
+  inactive: SimpleSchema.Integer,
+  rented: SimpleSchema.Integer,
   'visible': Boolean
-})
-Accessories.attachSchema(accessoriesSchema);
+}));
 
 Accessories.deny({
   insert() { return true; },
@@ -61,7 +37,6 @@ if (Meteor.isServer) {
       if (!Meteor.userId() || !tools.isWriteAllowed('accessories')) {
         throw new Meteor.Error('unauthorized');
       }
-      var places = Places.find().fetch();
       const _id = tools.generateId();
       var data = {
         _id,
@@ -69,11 +44,12 @@ if (Meteor.isServer) {
         description: state.description,
         price: state.price,
         restitution: state.restitution,
-        observations: state.observations,
-        images: [],
-        variations: state.variations,
+        available: 0,
+        inactive: 0,
+        rented: 0,
         visible: true
       }
+      Meteor.call('variations.update', {...state, _id});
       Accessories.insert(data);
       Meteor.call('history.insert', data, 'accessories.insert');
       return true;
@@ -85,67 +61,70 @@ if (Meteor.isServer) {
       var data = {
         description: state.description,
         price: state.price,
-        restitution: state.restitution,
-        observations: state.observations,
-        variations: state.variations.map((variation) => {
-          return {
-            ...variation,
-            places: variation.places.filter((place) => {
-              return (place.available || place.inactive)
-            })
-          }
-        })
+        restitution: state.restitution
       }
+      Meteor.call('variations.update', state);
       Accessories.update({ _id: state._id }, {$set: data});
       Meteor.call('history.insert', data, 'accessories.update');
       return true;
     },
-    'accessories.update.images'(_id, images) {
+    'accessories.update.stock'(variations) {
       if (!Meteor.userId() || !tools.isWriteAllowed('accessories')) {
         throw new Meteor.Error('unauthorized');
       }
-      Accessories.update({ _id }, { $set: {images} });
-      updateReferences(_id, {images});
-      Meteor.call('history.insert', {_id, images}, 'accessories.update.images');
-      return _id;
-    },
-    'accessories.update.stock'(_id, variations) {
-      if (!Meteor.userId() || !tools.isWriteAllowed('accessories')) {
-        throw new Meteor.Error('unauthorized');
-      }
-      Accessories.update({ _id },
-        { $set: {variations} });
-      updateReferences(_id, {variations});
-      Meteor.call('history.insert', {variations, _id}, 'accessories.update.stock');
+      var available = 0;
+      var inactive = 0;
+
+      variations.forEach((variation) => {
+        variation.places.forEach((place) => {
+          available += place.available;
+          inactive += place.inactive;
+        })
+      })
+      var accessoryId = variations[0].accessory._id;
+      Accessories.update({_id: accessoryId}, {$set: {
+        available,
+        inactive
+      }});
+      // Meteor.call('history.insert', {variations, _id}, 'accessories.update.stock');
       return true;
     },
-    'accessories.shipping.send'(product) { // SimpleSchema not applied
-      if (!Meteor.userId() || !tools.isWriteAllowed('accessories')) {
-        throw new Meteor.Error('unauthorized');
-      }
-      var _id = product._id;
-      delete product._id;
-      Accessories.update({ _id }, product);
-      Meteor.call('history.insert', {product, _id}, 'accessories.shipping.send');
-    },
-    'accessories.shipping.receive'(product) { // SimpleSchema not applied
-      if (!Meteor.userId() || !tools.isWriteAllowed('accessories')) {
-        throw new Meteor.Error('unauthorized');
-      }
-      var _id = product._id;
-      delete product._id;
-      Accessories.update({ _id }, product);
-      Meteor.call('history.insert', {product, _id}, 'accessories.shipping.receive');
-    },
-    'accessories.hide'(_id) {
-      if (!Meteor.userId() || !tools.isWriteAllowed('accessories')) {
-        throw new Meteor.Error('unauthorized');
-      }
-      var visible = false;
-      Accessories.update({ _id }, { $set: {visible} });
-      Meteor.call('history.insert', data, 'accessories.hide');
-      return true;
-    }
+    // 'accessories.update.images'(_id, images) {
+    //   if (!Meteor.userId() || !tools.isWriteAllowed('accessories')) {
+    //     throw new Meteor.Error('unauthorized');
+    //   }
+    //   Accessories.update({ _id }, { $set: {images} });
+    //   updateReferences(_id, {images});
+    //   Meteor.call('history.insert', {_id, images}, 'accessories.update.images');
+    //   return _id;
+    // },
+    // 'accessories.shipping.send'(product) {
+    //   if (!Meteor.userId() || !tools.isWriteAllowed('accessories')) {
+    //     throw new Meteor.Error('unauthorized');
+    //   }
+    //   var _id = product._id;
+    //   delete product._id;
+    //   Accessories.update({ _id }, product);
+    //   Meteor.call('history.insert', {product, _id}, 'accessories.shipping.send');
+    // },
+    // 'accessories.shipping.receive'(product) {
+    //   if (!Meteor.userId() || !tools.isWriteAllowed('accessories')) {
+    //     throw new Meteor.Error('unauthorized');
+    //   }
+    //   var _id = product._id;
+    //   delete product._id;
+    //   Accessories.update({ _id }, product);
+    //   Meteor.call('history.insert', {product, _id}, 'accessories.shipping.receive');
+    // },
+    // 'accessories.hide'(_id) {
+    //   if (!Meteor.userId() || !tools.isWriteAllowed('accessories')) {
+    //     throw new Meteor.Error('unauthorized');
+    //   }
+    //   var visible = false;
+    //   Accessories.update({ _id }, { $set: {visible} });
+    //   Meteor.call('history.insert', data, 'accessories.hide');
+    //   return true;
+    // }
   })
 
   function updateReferences(_id, changes) {

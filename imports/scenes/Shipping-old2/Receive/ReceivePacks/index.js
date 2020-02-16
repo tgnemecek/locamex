@@ -5,7 +5,7 @@ import tools from '/imports/startup/tools/index';
 import Input from '/imports/components/Input/index';
 import Icon from '/imports/components/Icon/index';
 
-export default class SendPacks extends React.Component {
+export default class ReceivePacks extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -14,32 +14,7 @@ export default class SendPacks extends React.Component {
     }
   }
   componentDidMount() {
-    var filter = this.props.snapshot.containers
-      .filter((item) => {
-        return item.type === "modular";
-      })
-    var packs = [];
-    filter.forEach((modular, j) => {
-      var rented = this.props.currentlyRented.packs
-        .filter((item) => {
-          return item.container._id === modular._id
-        }).length;
-
-      var quantity = modular.quantity - rented;
-      for (var i = 0; i < quantity; i++) {
-        packs.push({
-          _id: '',
-          description: j+i+1,
-          type: "pack",
-          modules: [],
-          locked: false,
-          container: {
-            _id: modular._id,
-            description: modular.description
-          }
-        })
-      }
-    })
+    var packs = this.props.currentlyRented.packs;
     this.props.update({ packs });
   }
 
@@ -51,47 +26,40 @@ export default class SendPacks extends React.Component {
     }).allowedModules;
   }
 
-  update = (pack, callback) => {
+  update = (e) => {
     var packs = [...this.props.packs];
-    packs[this.state.indexToEdit] = pack;
-    this.props.update({packs}, callback);
-  }
-
-  updateWithLockedPack = (e) => {
-    debugger;
     var _id = e.target.value;
     var i = e.target.name;
-    var pack;
+    var place;
     if (!_id) {
-      pack = {
-        ...this.props.packs[i],
-        locked: false,
-        _id: '',
-        description: i+1,
-        modules: []
-      }
+      place = {}
     } else {
-      pack = this.props.packsDatabase.find((item) => {
-        return item._id === _id;
-      }) || {};
-      pack.locked = true;
+      place = this.props.placesDatabase.find((item) => {
+        return item._id === _id
+      })
     }
-
-    var packs = [...this.props.packs];
-    packs[i] = pack;
+    packs[i].place = place;
     this.props.update({packs});
+  }
+
+  changeUnmount = (e) => {
+    var packs = [...this.props.packs];
+    packs[e.target.name].unmount = e.target.value;
+    this.props.update({packs});
+  }
+
+  renderOptions = () => {
+    return this.props.placesDatabase.map((place, i) => {
+      return (
+        <option key={i} value={place._id}>
+          {place.description}
+        </option>
+      )
+    })
   }
 
   renderBody = () => {
     return this.props.packs.map((item, i) => {
-      var packs = this.props.packsDatabase.filter((item) => {
-        if (item.container._id !== item.container._id) {
-          return false
-        }
-        return !this.props.packs.find((pack, packIndex) => {
-          return (pack._id === item._id && packIndex !== i)
-        })
-      })
       const openModuleList = () => {
         this.setState({ packToEdit: item, indexToEdit: i })
       }
@@ -106,18 +74,12 @@ export default class SendPacks extends React.Component {
           <td style={{minWidth: "400px"}}>
             <Input
               type="select"
-              value={item._id}
+              value={item.place._id}
               name={i}
-              onChange={this.updateWithLockedPack}
+              onChange={this.update}
               >
                 <option value=""></option>
-              {packs.map((item, i) => {
-                return (
-                  <option key={i} value={item._id}>
-                    {`Série: ${item.description}. Pátio: ${item.place.description}`}
-                  </option>
-                )
-              })}
+                {this.renderOptions()}
             </Input>
           </td>
           <td className="no-padding">
@@ -125,12 +87,18 @@ export default class SendPacks extends React.Component {
               <Icon icon="transaction"/>
             </button>
           </td>
+          <td>
+            <Input
+            type="checkbox"
+            id="unmount"
+            name={i}
+            parentStyle={{marginTop: "0"}}
+            value={item.unmount}
+            onChange={this.changeUnmount}
+            />
+          </td>
           <td className="no-padding">
-            {item.locked || item.modules.find((module) => {
-                return module.places.find((place) => {
-                  return place.quantity > 0;
-                })
-              })
+            {item.place._id
               ? <Icon icon="checkmark" color="green"/>
               : <Icon icon="not" color="red"/>
             }
@@ -145,14 +113,16 @@ export default class SendPacks extends React.Component {
       return (
         <div>
           <h4>Containers Modulares</h4>
-          <table className="table shipping__send-receive-table">
+          <table className="table shipping__receive-receive-table">
             <thead>
                 <tr>
                   <th>#</th>
                   <th className="table__wide">Produto</th>
                   <th style={{minWidth: "400px"}}>
-                    Pré-Montados
+                    Destino
                   </th>
+                  <th>Componentes</th>
+                  <th>Desmontar</th>
                 </tr>
             </thead>
             <tbody>
@@ -164,10 +134,10 @@ export default class SendPacks extends React.Component {
               pack={this.state.packToEdit}
               packs={this.props.packs}
               update={this.update}
-              disabled={this.state.packToEdit.locked}
+              disabled={true}
               StockTransition={this.props.StockTransition}
-              allowedModules={this.getAllowedModules()}
-              modulesDatabase={this.props.modulesDatabase}
+              allowedModules={this.state.packToEdit.modules}
+              modulesDatabase={[]}
               toggleWindow={() => this.setState({
                 packToEdit: false
               })}

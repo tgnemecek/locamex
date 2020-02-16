@@ -31,12 +31,12 @@ export default class CurrentlyRented extends React.Component {
     })
   }
 
-  renderVariations = () => {
-    return this.props.currentlyRented.variations.map((item, i) => {
+  renderAccessories = () => {
+    return this.props.currentlyRented.accessories.map((item, i) => {
       return (
         <tr key={i}>
           <td>{item.quantity}</td>
-          <td>{item.variation.description}</td>
+          <td>{item.accessory.description}</td>
           <td className="table__wide">
             {item.description}
           </td>
@@ -47,7 +47,7 @@ export default class CurrentlyRented extends React.Component {
 
   render() {
     if (!this.props.currentlyRented.series.length
-      && !this.props.currentlyRented.variations.length
+      && !this.props.currentlyRented.accessories.length
       && !this.props.currentlyRented.packs.length) {
       return (
         <p className="currently-rented__title">
@@ -94,7 +94,7 @@ export default class CurrentlyRented extends React.Component {
               </table>
             </>
           : null}
-          {this.props.currentlyRented.variations.length ?
+          {this.props.currentlyRented.accessories.length ?
             <>
               <h4>Acessórios</h4>
               <table className="table">
@@ -106,7 +106,7 @@ export default class CurrentlyRented extends React.Component {
                   </tr>
                 </thead>
                 <tbody>
-                  {this.renderVariations()}
+                  {this.renderAccessories()}
                 </tbody>
               </table>
             </>

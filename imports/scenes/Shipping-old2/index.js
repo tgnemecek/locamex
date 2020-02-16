@@ -8,7 +8,7 @@ import { Places } from '/imports/api/places/index';
 import { Series } from '/imports/api/series/index';
 import { Modules } from '/imports/api/modules/index';
 import { Containers } from '/imports/api/containers/index';
-import { Variations } from '/imports/api/variations/index';
+import { Accessories } from '/imports/api/accessories/index';
 import { Packs } from '/imports/api/packs/index';
 
 import MainHeader from '/imports/components/MainHeader/index';
@@ -44,12 +44,12 @@ class Shipping extends React.Component {
   currentlyRented = () => {
     var allSends = {
       series: [],
-      variations: [],
+      accessories: [],
       packs: []
     }
     var allReceives = {
       series: [],
-      variations: [],
+      accessories: [],
       packs: []
     }
     var currently = {};
@@ -57,15 +57,15 @@ class Shipping extends React.Component {
       if (shipping.type === "send") {
         // allSends.series = allSends.series
         //                   .concat(shipping.series)
-        allSends.variations = allSends.variations
-                          .concat(shipping.variations)
+        allSends.accessories = allSends.accessories
+                          .concat(shipping.accessories)
         allSends.packs = allSends.packs
                           .concat(shipping.packs)
       } else {
         // allReceives.series = allReceives.series
         //                   .concat(shipping.series)
-        allReceives.variations = allReceives.variations
-                          .concat(shipping.variations)
+        allReceives.accessories = allReceives.accessories
+                          .concat(shipping.accessories)
         allReceives.packs = allReceives.packs
                           .concat(shipping.packs)
       }
@@ -98,16 +98,16 @@ class Shipping extends React.Component {
     //     return itemReceived._id === itemSent._id
     //   })
     // })
-    // Variations ---------------------------------------
-    currently.variations = [];
+    // Accessories ---------------------------------------
+    currently.accessories = [];
     var variations = [];
-    allSends.variations.forEach((variation) => {
-      variation.variations.forEach((variation) => {
+    allSends.accessories.forEach((accessory) => {
+      accessory.variations.forEach((variation) => {
         variations.push({
           ...variation,
-          variation: {
-            _id: variation._id,
-            description: variation.description
+          accessory: {
+            _id: accessory._id,
+            description: accessory.description
           },
           quantity: variation.from.reduce((acc, item) => {
             return acc + item.quantity;
@@ -126,7 +126,7 @@ class Shipping extends React.Component {
       } else filteredVariations.push(variation);
     })
     filteredVariations.forEach((variation) => {
-      allReceives.variations.forEach((acc) => {
+      allReceives.accessories.forEach((acc) => {
         acc.forEach((vari) => {
           if (vari._id === variation._id) {
             variation.quantity -= vari.returning;
@@ -134,7 +134,7 @@ class Shipping extends React.Component {
         })
       })
     })
-    currently.variations = filteredVariations.filter((item) => {
+    currently.accessories = filteredVariations.filter((item) => {
       return item.quantity > 0;
     })
     // Packs ---------------------------------------------
@@ -232,7 +232,7 @@ export default ShippingWrapper = withTracker((props) => {
   Meteor.subscribe('seriesPub');
   Meteor.subscribe('modulesPub');
   Meteor.subscribe('containersPub');
-  Meteor.subscribe('variationsPub');
+  Meteor.subscribe('accessoriesPub');
   Meteor.subscribe('packsPub');
 
   var contract = Contracts.findOne({
@@ -243,7 +243,7 @@ export default ShippingWrapper = withTracker((props) => {
     seriesDatabase: Series.find().fetch(),
     modulesDatabase: Modules.find().fetch(),
     containersDatabase: Containers.find().fetch(),
-    variationsDatabase: Variations.find().fetch(),
+    accessoriesDatabase: Accessories.find().fetch(),
     packsDatabase: Packs.find({rented: false}).fetch()
   }
 

@@ -23,7 +23,8 @@ export const userTypes = {
       "billing",
       "accounts",
       "shipping",
-      "modules"
+      "modules",
+      "variations"
     ],
     read: [],
     events: [ // Temporary so it doesn't break!
@@ -41,6 +42,7 @@ export const userTypes = {
       "places",
       "series",
       "accessories",
+      "variations",
       "clients",
       "packs"
     ]
@@ -65,6 +67,7 @@ export const userTypes = {
     write: [
       "series",
       "accessories",
+      "variations",
       "modules",
       "packs",
       "contracts",

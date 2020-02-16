@@ -17,19 +17,19 @@ export default class Footer extends React.Component {
     const allEmpty = () => {
       var series = this.props.series;
       var seriesEmpty = series.every((item) => {
-        return !item._id;
+        return !item.place._id;
       })
 
-      var variations = this.props.variations;
-      var variationsEmpty = variations.every((item) => {
-        return !item.from.length;
+      var accessories = this.props.accessories;
+      var accessoriesEmpty = accessories.every((item) => {
+        return !item.place._id || !item.quantity
       })
 
       var packs = this.props.packs;
       var packsEmpty = packs.every((item) => {
-        return !item.modules.length;
+        return !item.place._id;
       })
-      return seriesEmpty && variationsEmpty && packsEmpty;
+      return seriesEmpty && accessoriesEmpty && packsEmpty;
     }
     if (!allEmpty()) {
       this.setState({ errorMsg: "" }, () => {
@@ -37,7 +37,7 @@ export default class Footer extends React.Component {
       })
     } else {
       this.setState({
-        errorMsg: "O Envio deve incluir ao menos um produto."
+        errorMsg: "A Devolução deve incluir ao menos um produto."
       })
     }
   }
@@ -52,7 +52,7 @@ export default class Footer extends React.Component {
             {text: "Voltar",
             className: "button--secondary",
             onClick: this.props.toggleWindow},
-            {text: "Enviar Produtos",
+            {text: "Devolver Produtos",
             onClick: this.checkForProblems}
           ]}/>
       </div>

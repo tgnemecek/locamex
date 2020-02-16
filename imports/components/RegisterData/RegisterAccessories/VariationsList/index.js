@@ -4,14 +4,7 @@ import tools from '/imports/startup/tools/index';
 import Icon from '/imports/components/Icon/index';
 import Input from '/imports/components/Input/index';
 
-export default class Variations extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      observations: ''
-    }
-  }
-
+export default class VariationsList extends React.Component {
   renderVariations = () => {
     return this.props.variations.map((variation, i, arr) => {
 
@@ -29,22 +22,18 @@ export default class Variations extends React.Component {
       const addNewItem = () => {
         var variations = [...this.props.variations];
         variations.push({
-          _id: tools.generateId(),
           description: "Padrão " + tools.convertToLetter(i+1),
-          observations: this.state.observations,
-          rented: 0,
-          places: [],
-          new: true, // This is only to allow deletion
-          visible: true
+          observations: '',
+          new: true // This is only to allow deletion
         });
+
+        variations[0].description = "Padrão A";
 
         var obj = {target: {
           value: variations,
           name: 'variations'
         }}
-        this.setState({ observations: '' }, () => {
-          this.props.onChange(obj);
-        })
+        this.props.onChange(obj);
       }
 
       const removeItem = () => {
@@ -66,10 +55,10 @@ export default class Variations extends React.Component {
 
       return (
         <tr key={i}>
-          <td className="register-accessories__table__variations-column">
+          <td>
             {variation.description}
           </td>
-          <td>
+          <td className="no-padding">
             <Input
               name={i}
               disabled={this.props.disabled}
@@ -77,7 +66,7 @@ export default class Variations extends React.Component {
               onChange={onChange}/>
           </td>
           {variation.new ?
-            <td className="register-accessories__table__add-new-column">
+            <td className="no-padding">
               <button className=""
                 disabled={this.props.disabled}
                 onClick={removeItem}>
@@ -86,7 +75,7 @@ export default class Variations extends React.Component {
             </td>
           : null}
           {i === arr.length-1 ?
-            <td className="register-accessories__table__add-new-column">
+            <td className="no-padding">
               <button
                 className=""
                 disabled={this.props.disabled}
@@ -101,23 +90,24 @@ export default class Variations extends React.Component {
   }
 
   render() {
-    if (this.props.variations.length < 2) return null;
     return (
-      <div className="register-data__variations-block">
+      <div>
         <h4>Variações:</h4>
-        <table className="table">
-          <thead>
-            <tr>
-              <th className="register-accessories__table__variations-column">
-                Padrão
-              </th>
-              <th>Observações</th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.renderVariations()}
-          </tbody>
-        </table>
+        <div className="register-accessories__variations-scroll">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>
+                  Padrão
+                </th>
+                <th className="table__wide">Observações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.renderVariations()}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   }

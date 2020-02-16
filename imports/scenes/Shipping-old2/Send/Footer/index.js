@@ -20,16 +20,16 @@ export default class Footer extends React.Component {
         return !item._id;
       })
 
-      var variations = this.props.variations;
-      var variationsEmpty = variations.every((item) => {
-        return !item.from.length;
+      var accessories = this.props.accessories;
+      var accessoriesEmpty = accessories.every((item) => {
+        return !item.variations.length;
       })
 
       var packs = this.props.packs;
       var packsEmpty = packs.every((item) => {
         return !item.modules.length;
       })
-      return seriesEmpty && variationsEmpty && packsEmpty;
+      return seriesEmpty && accessoriesEmpty && packsEmpty;
     }
     if (!allEmpty()) {
       this.setState({ errorMsg: "" }, () => {
