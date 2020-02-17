@@ -58,7 +58,6 @@ export default class SendPacks extends React.Component {
   }
 
   updateWithLockedPack = (e) => {
-    debugger;
     var _id = e.target.value;
     var i = e.target.name;
     var pack;
@@ -145,20 +144,22 @@ export default class SendPacks extends React.Component {
       return (
         <div>
           <h4>Containers Modulares</h4>
-          <table className="table shipping__send-receive-table">
-            <thead>
-                <tr>
-                  <th>#</th>
-                  <th className="table__wide">Produto</th>
-                  <th style={{minWidth: "400px"}}>
-                    Pré-Montados
-                  </th>
-                </tr>
-            </thead>
-            <tbody>
-              {this.renderBody()}
-            </tbody>
-          </table>
+          <div className="shipping__table-scroll">
+            <table className="table shipping__send-receive-table">
+              <thead>
+                  <tr>
+                    <th>#</th>
+                    <th className="table__wide">Produto</th>
+                    <th style={{minWidth: "400px"}}>
+                      Pré-Montados
+                    </th>
+                  </tr>
+              </thead>
+              <tbody>
+                {this.renderBody()}
+              </tbody>
+            </table>
+          </div>
           {this.state.packToEdit ?
             <this.props.ModuleList
               pack={this.state.packToEdit}

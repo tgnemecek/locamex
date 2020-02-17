@@ -88,14 +88,14 @@ export default class ShippingHistory extends React.Component {
   render() {
     if (!this.shipping().length) {
       return (
-        <p className="currently-rented__title">
+        <p className="shipping__title">
           Nenhum envio realizado
         </p>
       )
     } else {
       return (
         <div>
-          <h3 className="currently-rented__title">
+          <h3 className="shipping__title">
             Histórico de Remessas
           </h3>
           <table className="table">

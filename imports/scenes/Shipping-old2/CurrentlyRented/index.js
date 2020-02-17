@@ -50,14 +50,14 @@ export default class CurrentlyRented extends React.Component {
       && !this.props.currentlyRented.accessories.length
       && !this.props.currentlyRented.packs.length) {
       return (
-        <p className="currently-rented__title">
+        <p className="shipping__title">
           Não há itens atualmente no cliente
         </p>
       )
     } else {
       return (
         <div>
-          <h3 className="currently-rented__title">
+          <h3 className="shipping__title">
             Itens no Cliente
           </h3>
           {this.props.currentlyRented.series.length ?

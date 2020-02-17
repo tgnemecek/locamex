@@ -29,7 +29,7 @@ export default class SelectedList extends React.Component {
     var max;
     if (this.props.max !== undefined) {
       max = this.props.max;
-      var fromListQuantity = this.props.from.reduce((acc, cur) => {
+      var fromListQuantity = this.props.currentPlaces.reduce((acc, cur) => {
         return acc + cur.quantity;
       }, 0)
       max = max - fromListQuantity;
@@ -58,7 +58,7 @@ export default class SelectedList extends React.Component {
   }
 
   renderBody = () => {
-    return this.props.from.map((item, i) => {
+    return this.props.currentPlaces.map((item, i) => {
       return (
         <tr key={i}>
           <td>{this.props.parentDescription}</td>
@@ -90,7 +90,7 @@ export default class SelectedList extends React.Component {
   }
 
   render() {
-    if (this.props.from.length) {
+    if (this.props.currentPlaces.length) {
       return (
         <>
           <h4>Quantidade adicionada na remessa</h4>

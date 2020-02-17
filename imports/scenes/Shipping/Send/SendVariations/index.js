@@ -14,38 +14,24 @@ export default class SendVariations extends React.Component {
       accessoryToFilter: false
     }
   }
-  // componentDidMount() {
-  //   var accessories = [];
-  //   this.props.snapshot.accessories.forEach((accessory, j) => {
-  //     var onClient = this.props.currentlyRented.accessories
-  //       .reduce((acc, item) => {
-  //         if (item.accessory._id === accessory._id) {
-  //           return acc + item.quantity;
-  //         } else return acc;
-  //       }, 0)
-  //
-  //     var max = accessory.quantity - onClient;
-  //
-  //     if (max > 0) {
-  //       accessories.push({
-  //         _id: accessory._id,
-  //         description: accessory.description,
-  //         type: "accessory",
-  //         variations: [],
-  //         max
-  //       })
-  //     }
-  //   })
-  //   this.props.update({ accessories });
-  // }
-  //
-  //
-  // getVariationsList = () => {
-  //   return this.props.accessoriesDatabase.find((item) => {
-  //     return item._id === this.state.accessoryToFilter._id;
-  //   }).variations;
-  // }
-  //
+
+  filterAccessories = () => {
+    return this.props.snapshot.accessories
+    .filter((accessory) => {
+      accessory.max = accessory.quantity;
+      var found = this.props.currentlyRented.variations
+        .filter((variation) => {
+          return variation.accessory._id === accessory._id;
+        })
+      if (!found.length) return true;
+      var inClient = found.reduce((acc, item) => {
+        return item.quantity;
+      }, 0)
+      accessory.max -= inClient;
+      return accessory.max > 0;
+    })
+  }
+
   renderBody = (filtered) => {
     return filtered.map((item, i) => {
       const openVariationsList = () => {
@@ -68,7 +54,7 @@ export default class SendVariations extends React.Component {
                 return variation.accessory._id === item._id
               })
               .reduce((acc, cur) => {
-              return acc + cur.from.reduce((acc, cur) => {
+              return acc + cur.places.reduce((acc, cur) => {
                 return acc + cur.quantity;
               }, 0)
             }, 0)}
@@ -80,7 +66,7 @@ export default class SendVariations extends React.Component {
           </td>
           {/* <td className="no-padding">
             {item.variations.find((variation) => {
-                return variation.from.find((place) => {
+                return variation.places.find((place) => {
                   return place.quantity > 0;
                 })
               })
@@ -94,30 +80,27 @@ export default class SendVariations extends React.Component {
   }
 
   render() {
-    var filtered = this.props.snapshot.accessories
-      .filter((accessory) => {
-        // ADD CurrentlyRented FILTER HERE!
-        accessory.max = accessory.quantity;
-        return true;
-      })
+    var filtered = this.filterAccessories();
     if (!filtered.length) return null;
 
     return (
       <div>
         <h4>Acessórios</h4>
-        <table className="table shipping__send-receive-table">
-          <thead>
-              <tr>
-                <th>#</th>
-                <th className="table__wide">Produto</th>
-                <th>Locável</th>
-                <th>Selecionado</th>
-              </tr>
-          </thead>
-          <tbody>
-            {this.renderBody(filtered)}
-          </tbody>
-        </table>
+        <div className="shipping__table-scroll">
+          <table className="table shipping__send-receive-table">
+            <thead>
+                <tr>
+                  <th>#</th>
+                  <th className="table__wide">Produto</th>
+                  <th>Locável</th>
+                  <th>Selecionado</th>
+                </tr>
+            </thead>
+            <tbody>
+              {this.renderBody(filtered)}
+            </tbody>
+          </table>
+        </div>
         {this.state.accessoryToFilter ?
           <VariationsList
             accessory={this.state.accessoryToFilter}

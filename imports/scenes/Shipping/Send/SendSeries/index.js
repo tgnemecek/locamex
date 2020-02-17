@@ -101,18 +101,20 @@ export default class SendSeries extends React.Component {
       return (
         <div>
           <h4>Containers Fixos</h4>
-          <table className="table shipping__send-receive-table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Produto</th>
-                <th className="table__wide">Série</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.renderBody()}
-            </tbody>
-          </table>
+          <div className="shipping__table-scroll">
+            <table className="table shipping__send-receive-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Produto</th>
+                  <th className="table__wide">Série</th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.renderBody()}
+              </tbody>
+            </table>
+          </div>
         </div>
       )
     } else return null;

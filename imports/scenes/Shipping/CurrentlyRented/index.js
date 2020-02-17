@@ -32,11 +32,12 @@ export default class CurrentlyRented extends React.Component {
   }
 
   renderVariations = () => {
-    return this.props.currentlyRented.variations.map((item, i) => {
+    return this.props.currentlyRented.variations
+    .map((item, i) => {
       return (
         <tr key={i}>
           <td>{item.quantity}</td>
-          <td>{item.variation.description}</td>
+          <td>{item.accessory.description}</td>
           <td className="table__wide">
             {item.description}
           </td>
@@ -50,19 +51,20 @@ export default class CurrentlyRented extends React.Component {
       && !this.props.currentlyRented.variations.length
       && !this.props.currentlyRented.packs.length) {
       return (
-        <p className="currently-rented__title">
+        <p className="shipping__title">
           Não há itens atualmente no cliente
         </p>
       )
     } else {
       return (
         <div>
-          <h3 className="currently-rented__title">
+          <h3 className="shipping__title">
             Itens no Cliente
           </h3>
-          {this.props.currentlyRented.series.length ?
-            <>
-              <h4>Containers Fixos</h4>
+          <div
+            className="shipping-rented__scroll">
+            <div>
+              <h4>Containers</h4>
               <table className="table">
                 <thead>
                   <tr>
@@ -73,29 +75,11 @@ export default class CurrentlyRented extends React.Component {
                 </thead>
                 <tbody>
                   {this.renderSeries()}
-                </tbody>
-              </table>
-            </>
-          : null}
-          {this.props.currentlyRented.packs.length ?
-            <>
-              <h4>Containers Desmontáveis</h4>
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Qtd.</th>
-                    <th>Série</th>
-                    <th className="table__wide">Modelo</th>
-                  </tr>
-                </thead>
-                <tbody>
                   {this.renderPacks()}
                 </tbody>
               </table>
-            </>
-          : null}
-          {this.props.currentlyRented.variations.length ?
-            <>
+            </div>
+            <div>
               <h4>Acessórios</h4>
               <table className="table">
                 <thead>
@@ -109,8 +93,8 @@ export default class CurrentlyRented extends React.Component {
                   {this.renderVariations()}
                 </tbody>
               </table>
-            </>
-          : null}
+            </div>
+          </div>
         </div>
       )
     }

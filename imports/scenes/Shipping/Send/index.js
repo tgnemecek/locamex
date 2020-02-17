@@ -75,11 +75,6 @@ export default class Send extends React.Component {
           snapshot={this.props.snapshot}
           currentlyRented={this.props.currentlyRented}
           seriesDatabase={this.props.databases.seriesDatabase}/>
-        {!this.state.series.length &&
-          !this.state.variations.length &&
-          !this.state.packs.length ?
-          "Não há itens disponíveis para envio!"
-        : null}
         <SendPacks
           update={this.update}
           snapshot={this.props.snapshot}
@@ -98,13 +93,11 @@ export default class Send extends React.Component {
           StockTransition={this.props.StockTransition}
           variations={this.state.variations}/>
         <Footer
-          hidden={
-            !this.state.series.length &&
-            !this.state.variations.length &&
-            !this.state.packs.length}
+          snapshot={this.props.snapshot}
           series={this.state.series}
           packs={this.state.packs}
           variations={this.state.variations}
+          currentlyRented={this.props.currentlyRented}
           toggleWindow={this.props.toggleWindow}
           toggleConfirmationWindow={this.toggleConfirmationWindow}
           />

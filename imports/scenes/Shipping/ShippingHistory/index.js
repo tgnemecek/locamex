@@ -1,18 +1,38 @@
 import React from 'react';
 import moment from 'moment';
+import { saveAs } from 'file-saver';
 import tools from '/imports/startup/tools/index';
+import Icon from '/imports/components/Icon/index';
+import DatabaseStatus from '/imports/components/DatabaseStatus/index';
+
+import PackInspector from './PackInspector/index';
 
 export default class ShippingHistory extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      packToInspect: false,
+      databaseStatus: false
+    }
+  }
+  togglePackInspector = (packToInspect) => {
+    if (this.state.packToInspect) {
+      this.setState({ packToInspect: false })
+    } else {
+      this.setState({ packToInspect })
+    }
+  }
   shippingSeries = (shipping) => {
     return shipping.series.map((series, i) => {
       return (
-        <li key={i}>
-          {
-            series.container.description +
-            " (Série: "+series.description + ". " +
-            series.place.description+")"
-          }
-        </li>
+        <tr key={i}>
+          <td>1</td>
+          <td>
+            {series.container.description}
+          </td>
+          <td>{series.description}</td>
+          <td>{series.place.description}</td>
+        </tr>
       )
     })
   }
@@ -20,43 +40,99 @@ export default class ShippingHistory extends React.Component {
     return shipping.packs.map((pack, i) => {
       var place;
       if (typeof pack.place === 'object') {
-        place = ". " +
-          pack.place.description
-      } else place = "";
+        place = pack.place.description;
+      } else {
+        var singlePlace = true;
+        pack.modules.forEach((module) => {
+          module.places.forEach((places) => {
+            if (place && place !== places.description) {
+              singlePlace = false;
+            } else {
+              place = places.description;
+            }
+          })
+        })
+        if (!singlePlace) {
+          place = "Múltiplos Pátios"
+        }
+      }
+
+      var placeStyle = {
+        paddingTop: "0",
+        paddingRight: "0",
+        paddingBottom: "0",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center"
+      }
 
       return (
-        <li key={i}>
-          {
-            pack.container.description +
-            " (Série: "+pack.description + place + ")"
-          }
-        </li>
+        <tr key={i}>
+          <td>1</td>
+          <td>
+            {pack.container.description}
+          </td>
+          <td>{pack.description}</td>
+          <td style={placeStyle}>
+            {place}
+            <button onClick={() => this.togglePackInspector(pack)}>
+              <Icon icon="search"/>
+            </button>
+          </td>
+        </tr>
       )
     })
   }
-  shippingAccessories = (shipping) => {
-    var result = [];
-    shipping.accessories.forEach((accessory) => {
-      accessory.variations.forEach((variation, i) => {
-        var placeQuantity = "";
-        variation.from.forEach((place, j) => {
-          if (j !== 0) placeQuantity += ", ";
-          placeQuantity += place.quantity + "x ";
-          placeQuantity += place.description;
+  shippingVariations = (shipping) => {
+    return shipping.variations.map((variation, i) => {
+      var quantity = variation.places.reduce((acc, item) => {
+        return acc + item.quantity
+      }, 0);
+
+      var places;
+      if (variation.places.length === 1) {
+        places = variation.places[0].description;
+      } else {
+        places = variation.places.map((place, i) => {
+          return (
+            <div key={i}>
+              {place.description
+                + " (" + place.quantity + ")"}
+            </div>
+          )
         })
-        result.push(
-          <li key={i}>
-            {
-              accessory.description +
-              " (" +
-              variation.description + ". " +
-              placeQuantity + ")"
-            }
-          </li>
-        )
+      }
+      return (
+        <tr key={i}>
+          <td>{quantity}</td>
+          <td>
+            {variation.accessory.description}
+          </td>
+          <td>{variation.description}</td>
+          <td>{places}</td>
+        </tr>
+      )
+    })
+  }
+  generateDocument = (invertedIndex) => {
+    var item = this.shipping()[invertedIndex];
+    item.index = this.props.shipping.findIndex((shipping) => {
+      return shipping === item;
+    })
+    item.contractId = this.props.contractId;
+
+    this.setState({ databaseStatus: "loading" }, () => {
+      Meteor.call('pdf.generate', item, (err, res) => {
+        if (res) {
+          saveAs(res.data, res.fileName);
+          this.setState({ databaseStatus: "completed" });
+        }
+        if (err) {
+          this.setState({ databaseStatus: "failed" });
+          console.log(err);
+        }
       })
     })
-    return result;
   }
   shipping = () => {
     var shippingInverted = [];
@@ -71,14 +147,25 @@ export default class ShippingHistory extends React.Component {
     return this.shipping().map((shipping, i) => {
       return (
         <tr key={i}>
-          <td>{moment(shipping.date).format("DD-MM-YYYY")}</td>
-          <td>{shipping.type === "send" ? "Envio" : "Devolução"}</td>
-          <td className="table__wide">
-            <ul>
-              {this.shippingSeries(shipping)}
-              {this.shippingPacks(shipping)}
-              {this.shippingAccessories(shipping)}
-            </ul>
+          <td>
+            {moment(shipping.date).format("DD-MM-YYYY")}
+          </td>
+          <td>
+            {shipping.type === "send" ? "Envio" : "Devolução"}
+          </td>
+          <td className="no-padding">
+            <table className="table shipping-history__sub-table">
+              <tbody>
+                {this.shippingSeries(shipping)}
+                {this.shippingPacks(shipping)}
+                {this.shippingVariations(shipping)}
+              </tbody>
+            </table>
+          </td>
+          <td className="no-padding">
+            <button onClick={() => this.generateDocument(i)}>
+              <Icon icon="print"/>
+            </button>
           </td>
         </tr>
       )
@@ -88,28 +175,50 @@ export default class ShippingHistory extends React.Component {
   render() {
     if (!this.shipping().length) {
       return (
-        <p className="currently-rented__title">
+        <p className="shipping__title">
           Nenhum envio realizado
         </p>
       )
     } else {
       return (
         <div>
-          <h3 className="currently-rented__title">
+          <h3 className="shipping__title">
             Histórico de Remessas
           </h3>
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Tipo</th>
-                <th className="table__wide">Produtos</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.renderBody()}
-            </tbody>
-          </table>
+          <div className="shipping-history__scroll">
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>Data</th>
+                  <th>Tipo</th>
+                  <th className="no-padding">
+                    <table className="table shipping-history__sub-table">
+                      <thead>
+                        <tr>
+                          <th>Qtd.</th>
+                          <th>
+                            Produto
+                          </th>
+                          <th>Série/Variação</th>
+                          <th>Origem/Destino</th>
+                        </tr>
+                      </thead>
+                    </table>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {this.renderBody()}
+              </tbody>
+            </table>
+          </div>
+          {this.state.packToInspect ?
+            <PackInspector
+              hasBox={true}
+              toggleWindow={this.togglePackInspector}
+              pack={this.state.packToInspect}/>
+          : null}
+          <DatabaseStatus status={this.state.databaseStatus}/>
         </div>
       )
     }

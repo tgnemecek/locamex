@@ -23,7 +23,7 @@ export default class VariationsList extends React.Component {
     }) || {};
     variations[e.target.name] = {
       ...newItem,
-      from: []
+      places: []
     };
     this.setState({
       variations
@@ -32,7 +32,8 @@ export default class VariationsList extends React.Component {
   addNew = () => {
     var variations = [...this.state.variations]
     variations.push({
-      _id: ''
+      _id: '',
+      places: []
     })
     this.setState({
       variations
@@ -47,7 +48,7 @@ export default class VariationsList extends React.Component {
   }
   update = (from, callback) => {
     var variations = [...this.state.variations];
-    variations[this.state.indexToEdit].from = from;
+    variations[this.state.indexToEdit].places = from;
     this.setState({ variations }, callback);
   }
   renderOptions = (variationId) => {
@@ -80,7 +81,7 @@ export default class VariationsList extends React.Component {
     var variations = this.state.variations;
     variations.forEach((variation, i) => {
       if (i !== this.state.indexToEdit) {
-        var quantity = variation.from.reduce((acc, item) => {
+        var quantity = variation.places.reduce((acc, item) => {
           return acc + item.quantity;
         }, 0)
         max -= quantity;
@@ -92,7 +93,7 @@ export default class VariationsList extends React.Component {
     var variations = [...this.state.variations];
     variations = variations.filter((variation) => {
       if (!variation._id) return false;
-      return variation.from.length;
+      return variation.places.length;
     })
     this.props.update({variations}, this.props.toggleWindow);
   }
@@ -126,7 +127,7 @@ export default class VariationsList extends React.Component {
             : null}
           </td>
           <td className="no-padding">
-            {item.from && item.from.length
+            {item.places && item.places.length
               ? <Icon icon="checkmark" color="green"/>
               : <Icon icon="not" color="red"/>
             }

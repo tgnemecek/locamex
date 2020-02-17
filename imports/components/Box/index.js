@@ -13,16 +13,6 @@ export default class Box extends React.Component {
   className = () => {
     return this.props.className ? "box " + this.props.className : "box";
   }
-  style = () => {
-    return {};
-    // return {
-    //   content: {
-    //     height: this.props.height || "",
-    //     width: this.props.width || "",
-    //     ...this.props.style
-    //   }
-    // };
-  }
   render() {
     return (
       <ReactModal
@@ -31,7 +21,7 @@ export default class Box extends React.Component {
         contentLabel={this.props.title || "Box"}
         appElement={document.body}
         onRequestClose={this.closeBox}
-        style={this.style()}
+        style={this.props.style || {}}
         overlayClassName="box-overlay"
         className={this.className()}>
           {this.props.closeBox ?

@@ -15,7 +15,7 @@ export default class StockTransition extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      from: tools.deepCopy(this.props.item.from) || []
+      from: tools.deepCopy(this.props.item.places) || []
     }
   }
 

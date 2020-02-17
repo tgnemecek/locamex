@@ -68,27 +68,27 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', data, 'accessories.update');
       return true;
     },
-    'accessories.update.stock'(variations) {
-      if (!Meteor.userId() || !tools.isWriteAllowed('accessories')) {
-        throw new Meteor.Error('unauthorized');
-      }
-      var available = 0;
-      var inactive = 0;
-
-      variations.forEach((variation) => {
-        variation.places.forEach((place) => {
-          available += place.available;
-          inactive += place.inactive;
-        })
-      })
-      var accessoryId = variations[0].accessory._id;
-      Accessories.update({_id: accessoryId}, {$set: {
-        available,
-        inactive
-      }});
-      // Meteor.call('history.insert', {variations, _id}, 'accessories.update.stock');
-      return true;
-    },
+    // 'accessories.update.stock'(variations) {
+    //   if (!Meteor.userId() || !tools.isWriteAllowed('accessories')) {
+    //     throw new Meteor.Error('unauthorized');
+    //   }
+    //   var available = 0;
+    //   var inactive = 0;
+    //
+    //   variations.forEach((variation) => {
+    //     variation.places.forEach((place) => {
+    //       available += place.available;
+    //       inactive += place.inactive;
+    //     })
+    //   })
+    //   var accessoryId = variations[0].accessory._id;
+    //   Accessories.update({_id: accessoryId}, {$set: {
+    //     available,
+    //     inactive
+    //   }});
+    //   // Meteor.call('history.insert', {variations, _id}, 'accessories.update.stock');
+    //   return true;
+    // },
     // 'accessories.update.images'(_id, images) {
     //   if (!Meteor.userId() || !tools.isWriteAllowed('accessories')) {
     //     throw new Meteor.Error('unauthorized');

@@ -26,15 +26,15 @@ export default class PlacesDistribution extends React.Component {
   }
 
   filterPlaces = () => {
-    var places = tools.deepCopy(this.props.places);
-    this.props.from.forEach((item) => {
-      places.forEach((place) => {
+    var originalPlaces = tools.deepCopy(this.props.originalPlaces);
+    this.props.currentPlaces.forEach((item) => {
+      originalPlaces.forEach((place) => {
         if (place._id === item._id) {
           place.available = place.available - item.quantity;
         }
       })
     });
-    return places.filter((item) => {
+    return originalPlaces.filter((item) => {
       return item.available > 0;
     })
   }

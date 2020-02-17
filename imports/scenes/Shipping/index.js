@@ -42,34 +42,7 @@ class Shipping extends React.Component {
   }
 
   currentlyRented = () => {
-    var allSends = {
-      series: [],
-      variations: [],
-      packs: []
-    }
-    var allReceives = {
-      series: [],
-      variations: [],
-      packs: []
-    }
     var currently = {};
-    this.props.contract.shipping.forEach((shipping) => {
-      if (shipping.type === "send") {
-        // allSends.series = allSends.series
-        //                   .concat(shipping.series)
-        allSends.variations = allSends.variations
-                          .concat(shipping.variations)
-        allSends.packs = allSends.packs
-                          .concat(shipping.packs)
-      } else {
-        // allReceives.series = allReceives.series
-        //                   .concat(shipping.series)
-        allReceives.variations = allReceives.variations
-                          .concat(shipping.variations)
-        allReceives.packs = allReceives.packs
-                          .concat(shipping.packs)
-      }
-    })
     // Series --------------------------------------------
     currently.series = [];
     var seriesToIgnore = [];
@@ -87,55 +60,35 @@ class Shipping extends React.Component {
           }
         })
     }
-    //
-    //
-    //
-    //
-    //
-    //
-    // currently.series = allSends.series.filter((itemSent) => {
-    //   return !allReceives.series.find((itemReceived) => {
-    //     return itemReceived._id === itemSent._id
-    //   })
-    // })
     // Variations ---------------------------------------
     currently.variations = [];
-    var variations = [];
-    allSends.variations.forEach((variation) => {
-      variation.variations.forEach((variation) => {
-        variations.push({
-          ...variation,
-          variation: {
-            _id: variation._id,
-            description: variation.description
-          },
-          quantity: variation.from.reduce((acc, item) => {
-            return acc + item.quantity;
-          }, 0)
+    this.props.contract.shipping.forEach((shipping) => {
+      shipping.variations.forEach((variation) => {
+        var found = currently.variations.find((item) => {
+          return item._id === variation._id;
         })
-      })
-    })
+        var value = variation.places.reduce((acc, item) => {
+          return acc + item.quantity;
+        }, 0)
 
-    var filteredVariations = [];
-    variations.forEach((variation, i) => {
-      var found = filteredVariations.findIndex((vari) => {
-        return vari._id === variation._id;
-      })
-      if (found > -1) {
-        filteredVariations[found].quantity += variation.quantity;
-      } else filteredVariations.push(variation);
-    })
-    filteredVariations.forEach((variation) => {
-      allReceives.variations.forEach((acc) => {
-        acc.forEach((vari) => {
-          if (vari._id === variation._id) {
-            variation.quantity -= vari.returning;
-          }
-        })
+        value = shipping.type === 'send' ? value : -value;
+
+        if (found) {
+          found.quantity += value;
+        } else {
+          currently.variations.push({
+            _id: variation._id,
+            type: "variation",
+            accessory: variation.accessory,
+            description: variation.description,
+            observations: variation.observations,
+            quantity: value
+          })
+        }
       })
     })
-    currently.variations = filteredVariations.filter((item) => {
-      return item.quantity > 0;
+    currently.variations = currently.variations.filter((item) => {
+      return item.quantity;
     })
     // Packs ---------------------------------------------
     currently.packs = [];
@@ -169,7 +122,6 @@ class Shipping extends React.Component {
   }
 
   render() {
-    console.log(this.currentlyRented())
     return (
       <div className="page-content">
         <RedirectUser currentPage="shipping"/>
@@ -186,6 +138,7 @@ class Shipping extends React.Component {
               currentlyRented={this.currentlyRented()}
             />
             <ShippingHistory
+              contractId={this.props.contract._id}
               shipping={this.props.contract.shipping}
             />
             {this.state.toggleSend ?

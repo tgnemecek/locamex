@@ -53,6 +53,9 @@ Contracts.attachSchema(new SimpleSchema({
     type: String,
     optional: true
   },
+  'shipping.$.variations.$.accessory': Object,
+  'shipping.$.variations.$.accessory._id': String,
+  'shipping.$.variations.$.accessory.description': String,
   'shipping.$.variations.$.places': Array,
   'shipping.$.variations.$.places.$': Object,
   'shipping.$.variations.$.places.$._id': String,
@@ -72,14 +75,14 @@ Contracts.attachSchema(new SimpleSchema({
   'shipping.$.packs.$.modules.$._id': String,
   'shipping.$.packs.$.modules.$.description': String,
   'shipping.$.packs.$.modules.$.type': String,
-  'shipping.$.packs.$.modules.$.from': {
+  'shipping.$.packs.$.modules.$.places': {
     type: Array,
     optional: true
   },
-  'shipping.$.packs.$.modules.$.from.$': Object,
-  'shipping.$.packs.$.modules.$.from.$._id': String,
-  'shipping.$.packs.$.modules.$.from.$.description': String,
-  'shipping.$.packs.$.modules.$.from.$.quantity': SimpleSchema.Integer,
+  'shipping.$.packs.$.modules.$.places.$': Object,
+  'shipping.$.packs.$.modules.$.places.$._id': String,
+  'shipping.$.packs.$.modules.$.places.$.description': String,
+  'shipping.$.packs.$.modules.$.places.$.quantity': SimpleSchema.Integer,
 
   visible: Boolean,
   snapshots: Array,
@@ -365,7 +368,7 @@ if (Meteor.isServer) {
           return item._id
         }),
         variations: data.variations.filter((item) => {
-          return item.from.length;
+          return item.places.length;
         }),
         packs: data.packs.filter((item) => {
           return item.modules.length;
@@ -408,7 +411,7 @@ if (Meteor.isServer) {
         data.variations.forEach((variation) => {
           var varFromDb = Variations.findOne({_id: variation._id})
           var rentedTotal = 0;
-          variation.from.forEach((place) => {
+          variation.places.forEach((place) => {
             var found = varFromDb.places.find((placeFromDb) => {
               return placeFromDb._id === place._id
             })
@@ -439,7 +442,7 @@ if (Meteor.isServer) {
         //   //   var oldVariation = newAccessory.variations.find((oldVar) => {
         //   //     return oldVar._id === variation._id;
         //   //   })
-        //   //   variation.from.forEach((fromPlace) => {
+        //   //   variation.places.forEach((fromPlace) => {
         //   //     var oldPlace = oldVariation.places.find((oldPl) => {
         //   //       return oldPl._id === fromPlace._id;
         //   //     })
@@ -478,24 +481,19 @@ if (Meteor.isServer) {
             pack.modules.forEach((module, m) => {
               var newModule = Modules.findOne({_id: module._id});
               var modRented = 0;
-              module.from.forEach((fromPlace) => {
+              module.places.forEach((fromPlace) => {
                 var oldPlace = newModule.places.find((oldPl) => {
                   return oldPl._id === fromPlace._id;
                 })
                 modRented += fromPlace.quantity;
                 oldPlace.available -= fromPlace.quantity;
                 if (oldPlace.available < 0) {
-                  throw new Meteor.Error('stock-unavailable', '', {
-                    _id: newModule._id,
-                    type: newModule.type,
-                    item: newModule.description,
-                    place: fromPlace.description
-                  })
+                  throw new Meteor.Error('stock-unavailable', '', newModule)
                 }
               })
               newModule.rented += modRented;
               altDataPacks[p].modules[m].quantity = modRented;
-              delete altDataPacks[p].modules[m].from;
+              delete altDataPacks[p].modules[m].places;
               if (!isSimulation) {
                 Modules.update({_id: newModule._id},
                   {$set: newModule})
@@ -537,7 +535,7 @@ if (Meteor.isServer) {
         series: data.series.filter((item) => {
           return item.place._id;
         }),
-        accessories: data.accessories.filter((item) => {
+        variations: data.variations.filter((item) => {
           return item.place._id && item.quantity;
         }),
         packs: data.packs.filter((item) => {
@@ -575,36 +573,35 @@ if (Meteor.isServer) {
             }})
           }
         })
-        data.accessories.forEach((accessory) => {
-          var newAccessory = Accessories.findOne({_id: accessory._id});
-          accessory.variations.forEach((variation) => {
-            var varRented = 0;
-            var oldVariation = newAccessory.variations.find((oldVar) => {
-              return oldVar._id === variation._id;
-            })
-            variation.from.forEach((fromPlace) => {
-              var oldPlace = oldVariation.places.find((oldPl) => {
-                return oldPl._id === fromPlace._id;
-              })
-              varRented += fromPlace.quantity;
-              oldPlace.available -= fromPlace.quantity;
-              if (oldPlace.available < 0) {
-                throw new Meteor.Error('stock-unavailable', '', {
-                  _id: newAccessory._id,
-                  type: newAccessory.type,
-                  item: newAccessory.description,
-                  extra: variation.description,
-                  place: fromPlace.description
-                })
-              }
-            })
-            oldVariation.rented += varRented;
+        data.variations.forEach((variation) => {
+          var varFromDb = Variations.findOne({_id: variation._id});
+          var found = varFromDb.places.find((place) => {
+            return place._id === variation.place._id;
           })
-          if (!isSimulation) {
-            Accessories.update({_id: accessory._id},
-              {$set: newAccessory})
+          if (found) {
+            found.available += variation.quantity;
+          } else {
+            varFromDb.places.push({
+              _id: variation.place._id,
+              description: variation.place.description,
+              available: variation.quantity,
+              inactive: 0
+            })
           }
-        })
+          variation.places = [{
+            ...variation.place,
+            quantity: variation.quantity
+          }];
+
+          if (!isSimulation) {
+            Variations.update({_id: variation._id}, {$set: varFromDb})
+            Accessories.update({_id: variation.accessory._id},
+              {$inc: {
+                available: variation.quantity,
+                rented: -variation.quantity
+              }})
+            }
+          })
         data.packs.forEach((pack) => {
           if (isSimulation) {
             var isRented = false;
@@ -626,7 +623,7 @@ if (Meteor.isServer) {
               pack.modules.forEach((module) => {
                 var moduleFromDb = Modules.findOne({_id: module._id});
                 var received = 0;
-                module.from.forEach((place) => {
+                module.places.forEach((place) => {
                   received += place.quantity;
                   var found = moduleFromDb.places.find((dbPlace) => {
                     return dbPlace._id === place._id;

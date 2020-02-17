@@ -1,6 +1,8 @@
 import tools from '/imports/startup/tools/index';
 
-export default function tableItems(props) {
+// DO THIS NEXT!
+export default function tableAccessories(props) {
+  return "";
   const body = () => {
     return props.list.map((item, i) => {
       if (!item.subList) {

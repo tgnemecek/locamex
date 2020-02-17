@@ -16,13 +16,13 @@ class TestPage extends React.Component {
   render() {
     return (
       <div>
-        <Input
-          title="teste"
-          childrenSide='right'>
-            <button onClick={this.onClick}>
-              <Icon icon="calendar"/>
-            </button>
-          </Input>
+        {this.props.array.map((item) => {
+          return item.places.map((item1) => {
+            return (
+              <p>{item1}</p>
+            )
+          })
+        })}
       </div>
     )
   }
@@ -32,6 +32,6 @@ export default TestWrap = withTracker((props) => {
   // Meteor.subscribe('testPub');
   // var data = Test.find().fetch();
   return {
-
+    array: [{places: ["a", "b"]}, {places: ["c", "d"]}]
   }
 })(TestPage);

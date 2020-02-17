@@ -1,5 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
+import { Accessories } from '/imports/api/accessories/index';
 import tools from '/imports/startup/tools/index';
 
 export const Variations = new Mongo.Collection('variations');
@@ -82,14 +83,19 @@ if (Meteor.isServer) {
       if (!Meteor.userId() || !tools.isWriteAllowed('variations')) {
         throw new Meteor.Error('unauthorized');
       }
+      var available = 0;
+      var inactive = 0;
       variations.forEach((variation) => {
         Variations.update({_id: variation._id}, {$set: {
           places: variation.places.filter((place) => {
+            available += place.available;
+            inactive += place.inactive;
             return place.available || place.inactive;
           })
         }})
       })
-      Meteor.call('accessories.update.stock', variations);
+      Accessories.update({_id: variations[0].accessory._id},
+        {$set: {available, inactive}})
       return true;
     }
   });

@@ -15,40 +15,40 @@ export default class StockTransition extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      from: tools.deepCopy(this.props.item.from) || []
+      places: tools.deepCopy(this.props.item.places) || []
     }
   }
 
   addToSelection = (howManyToMove, placeId) => {
-    var from = [...this.state.from];
+    var places = [...this.state.places];
 
     var place = this.props.places.find((item) => {
       return item._id === placeId;
     })
-    var exists = from.find((item) => {
+    var exists = places.find((item) => {
       return item._id === placeId;
     })
     if (exists) {
       exists.quantity += howManyToMove;
     } else {
-      from.push({
+      places.push({
         _id: place._id,
         description: place.description,
         quantity: howManyToMove
       })
     }
-    this.setState({ from });
+    this.setState({ places });
   }
 
   removeFromSelection = (index, place) => {
-    var from = [...this.state.from];
-    from.splice(index, 1);
+    var places = [...this.state.places];
+    places.splice(index, 1);
 
-    this.setState({ from });
+    this.setState({ places });
   }
 
   saveEdits = () => {
-    this.props.update(this.state.from,
+    this.props.update(this.state.places,
       this.props.toggleWindow);
   }
 
@@ -64,8 +64,8 @@ export default class StockTransition extends React.Component {
           </h4>
           <PlacesDistribution
             item={this.props.item}
-            places={this.props.places}
-            from={this.state.from}
+            originalPlaces={this.props.places}
+            currentPlaces={this.state.places}
           />
           <SelectedList
             addToSelection={this.addToSelection}
@@ -73,8 +73,7 @@ export default class StockTransition extends React.Component {
             title={this.props.title}
             parentDescription={this.props.parentDescription}
             item={this.props.item}
-            from={this.state.from}
-            places={this.props.places}
+            currentPlaces={this.state.places}
             max={this.props.max}
           />
           <Footer

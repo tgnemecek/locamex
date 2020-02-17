@@ -4,25 +4,23 @@ import tools from '/imports/startup/tools/index';
 
 import Input from '/imports/components/Input/index';
 import Icon from '/imports/components/Icon/index';
-//
-// import VariationsList from './VariationsList/index';
 
-export default class ReceiveAccessories extends React.Component {
+export default class ReceiveVariations extends React.Component {
   componentDidMount() {
-    var accessories = this.props.currentlyRented.accessories
+    var variations = this.props.currentlyRented.variations
     .map((item) => {
       return {
         ...item,
         place: {}
       }
     });
-    this.props.update({ accessories });
+    this.props.update({ variations });
   }
 
-  update = (accessory, callback) => {
-    var accessories = [...this.props.accessories];
-    accessories[this.state.indexToEdit] = accessory;
-    this.props.update({accessories}, callback);
+  update = (variation, callback) => {
+    var variations = [...this.props.variations];
+    variations[this.state.indexToEdit] = variation;
+    this.props.update({variations}, callback);
   }
 
   renderOptions = () => {
@@ -36,7 +34,7 @@ export default class ReceiveAccessories extends React.Component {
   }
 
   onChange = (e) => {
-    var accessories = [...this.props.accessories];
+    var variations = [...this.props.variations];
     var _id = e.target.value;
     var i = e.target.name;
     var place;
@@ -47,22 +45,23 @@ export default class ReceiveAccessories extends React.Component {
         return item._id === _id;
       })
     }
-    accessories[i].place = {
+    variations[i].place = {
       _id: place._id,
       description: place.description
     }
-    this.props.update({ accessories });
+    this.props.update({ variations });
   }
 
   onChangeQuantity = (e) => {
-    var accessories = [...this.props.accessories];
+    var variations = [...this.props.variations];
     var i = e.target.name;
-    accessories[i].quantity = e.target.value;
-    this.props.update({ accessories });
+    variations[i].quantity = e.target.value;
+    this.props.update({ variations });
   }
 
   renderBody = () => {
-    return this.props.accessories
+    if (!this.props.variations.length) return null;
+    return this.props.variations
     .map((item, i) => {
       return (
         <tr key={i}>
@@ -76,19 +75,22 @@ export default class ReceiveAccessories extends React.Component {
             {item.description}
           </td>
           <td>
-            {this.props.currentlyRented.accessories[i].quantity}
+            {this.props.currentlyRented.variations[i] ?
+              this.props.currentlyRented.variations[i].quantity
+            : 0}
           </td>
-          <td>
+          <td className="no-padding">
             <Input
               type="number"
               name={i}
               min={0}
-              max={this.props.currentlyRented.accessories[i].quantity}
+              max={this.props.currentlyRented.variations[i] ?
+                this.props.currentlyRented.variations[i].quantity : 0}
               value={item.quantity}
               onChange={this.onChangeQuantity}
             />
           </td>
-          <td className="table__wide">
+          <td className="table__wide no-padding">
             <Input
               type="select"
               name={i}
@@ -110,7 +112,7 @@ export default class ReceiveAccessories extends React.Component {
   }
 
   render() {
-    if (this.props.accessories.length) {
+    if (this.props.variations.length) {
       return (
         <div>
           <h4>Acessórios</h4>

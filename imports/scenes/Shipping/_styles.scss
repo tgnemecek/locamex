@@ -1,7 +1,53 @@
-@import './CurrentlyRented/styles';
 @import './Send/styles';
 @import './StockTransition/styles';
 
+.shipping__title {
+  text-align: center;
+  margin: 20px;
+}
+
 .shipping__how-many-box {
   width: 300px;
+}
+
+.shipping__table-scroll {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.shipping-rented__scroll {
+  max-height: 300px;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: $space;
+}
+
+.shipping-history__scroll {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.shipping-history__sub-table {
+  border: none;
+  box-shadow: none;
+  th, td {
+    white-space: normal;
+  }
+  tr {
+    background-color: transparent !important;
+    th:nth-child(1), td:nth-child(1) {
+      width: 50px;
+    }
+    th:nth-child(2), td:nth-child(2) {
+      width: 300px;
+      text-align: left;
+    }
+    th:nth-child(3), td:nth-child(3) {
+      width: 120px;
+    }
+    th:nth-child(4), td:nth-child(4) {
+      text-align: left;
+    }
+  }
 }

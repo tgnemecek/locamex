@@ -1,7 +1,7 @@
 export default function (props) {
   var string = "";
   if (props.type === "send") {
-    string = `ENTREGA`;
+    string = `ENVIO`;
   } else if (props.type === "receive") {
     string = `DEVOLUÇÃO`;
   }

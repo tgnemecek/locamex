@@ -22,7 +22,7 @@ export default class Footer extends React.Component {
 
       var variations = this.props.variations;
       var variationsEmpty = variations.every((item) => {
-        return !item.from.length;
+        return !item.places.length;
       })
 
       var packs = this.props.packs;
@@ -42,8 +42,34 @@ export default class Footer extends React.Component {
     }
   }
 
+  hidden = () => {
+    const filterAccessories = () => {
+      return this.props.snapshot.accessories
+      .filter((accessory) => {
+        accessory.max = accessory.quantity;
+        var found = this.props.currentlyRented.variations
+          .filter((variation) => {
+            return variation.accessory._id === accessory._id;
+          })
+        if (!found.length) return true;
+        var inClient = found.reduce((acc, item) => {
+          return item.quantity;
+        }, 0)
+        accessory.max -= inClient;
+        return accessory.max > 0;
+      })
+    }
+    return (
+      !filterAccessories().length &&
+      !this.props.series.length &&
+      !this.props.packs.length
+    )
+  }
+
   render() {
-    if (this.props.hidden) return null;
+    if (this.hidden()) {
+      return "Não há itens disponíveis para envio!";
+    }
     return (
       <div>
         <div className="error-message">{this.state.errorMsg}</div>

@@ -7,7 +7,7 @@ import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 
 import ReceivePacks from './ReceivePacks/index';
 import ReceiveSeries from './ReceiveSeries/index';
-import ReceiveAccessories from './ReceiveAccessories/index';
+import ReceiveVariations from './ReceiveVariations/index';
 import Footer from './Footer/index';
 
 export default class Receive extends React.Component {
@@ -16,7 +16,7 @@ export default class Receive extends React.Component {
     this.state = {
       series: [],
       packs: [],
-      accessories: [],
+      variations: [],
 
       databaseStatus: '',
       confirmationWindow: false
@@ -44,7 +44,7 @@ export default class Receive extends React.Component {
       contractId: this.props.contract._id,
       series: this.state.series,
       packs: this.state.packs,
-      accessories: this.state.accessories,
+      variations: this.state.variations,
     }
     this.setState({ databaseStatus: "loading" }, () => {
       Meteor.call('contracts.shipping.receive', data, (err, res) => {
@@ -73,41 +73,27 @@ export default class Receive extends React.Component {
         <ReceiveSeries
           update={this.update}
           series={this.state.series}
-          // snapshot={this.props.snapshot}
           currentlyRented={this.props.currentlyRented}
-          // seriesDatabase={this.props.databases.seriesDatabase}
           placesDatabase={this.props.databases.placesDatabase}
         />
-        {!this.state.series.length &&
-          !this.state.accessories.length &&
-          !this.state.packs.length ?
-          "Não há itens disponíveis para recebimento!"
-        : null}
         <ReceivePacks
           update={this.update}
-          // snapshot={this.props.snapshot}
           modulesDatabase={this.props.databases.modulesDatabase}
-          // containersDatabase={this.props.databases.containersDatabase}
-          // packsDatabase={this.props.databases.packsDatabase}
           placesDatabase={this.props.databases.placesDatabase}
           currentlyRented={this.props.currentlyRented}
           StockTransition={this.props.StockTransition}
           ModuleList={this.props.ModuleList}
           packs={this.state.packs}
         />
-        <ReceiveAccessories
+        <ReceiveVariations
           update={this.update}
-          accessories={this.state.accessories}
+          variations={this.state.variations}
           placesDatabase={this.props.databases.placesDatabase}
           currentlyRented={this.props.currentlyRented}/>
         <Footer
-          hidden={
-            !this.state.series.length &&
-            !this.state.accessories.length &&
-            !this.state.packs.length}
           series={this.state.series}
           packs={this.state.packs}
-          accessories={this.state.accessories}
+          variations={this.state.variations}
           toggleWindow={this.props.toggleWindow}
           toggleConfirmationWindow={this.toggleConfirmationWindow}
           />

@@ -26,7 +26,7 @@ export default class ModuleList extends React.Component {
       description: newItem.description,
       type: "module",
       quantity: 0,
-      from: []
+      places: []
     };
     this.setState({
       modules
@@ -52,7 +52,7 @@ export default class ModuleList extends React.Component {
   }
   update = (from, callback) => {
     var modules = [...this.state.modules];
-    modules[this.state.indexToEdit].from = from;
+    modules[this.state.indexToEdit].places = from;
     this.setState({ modules }, callback);
   }
   renderOptions = (moduleId) => {
@@ -87,7 +87,7 @@ export default class ModuleList extends React.Component {
       return item._id === this.state.moduleToEdit._id;
     })
     var quantityByPlace = filteredModules.reduce((acc, item) => {
-      return acc.concat(item.from);
+      return acc.concat(item.places);
     }, [])
     return fromDatabase.map((item) => {
       var quantity = quantityByPlace.reduce((acc, cur) => {
@@ -105,7 +105,7 @@ export default class ModuleList extends React.Component {
   renderTransactionCell = (item, i) => {
     if (this.props.disabled) {
       return (
-        <td>{item.from.reduce((acc, place) => {
+        <td>{item.places.reduce((acc, place) => {
           return acc + place.quantity
         }, 0)}</td>
       )
@@ -155,7 +155,7 @@ export default class ModuleList extends React.Component {
           {this.renderTransactionCell(item, i)}
           <td className="no-padding">
             {this.props.disabled ||
-              (item.from && item.from.length)
+              (item.places && item.places.length)
               ? <Icon icon="checkmark" color="green"/>
               : <Icon icon="not" color="red"/>
             }

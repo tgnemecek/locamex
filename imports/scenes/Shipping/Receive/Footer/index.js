@@ -20,8 +20,8 @@ export default class Footer extends React.Component {
         return !item.place._id;
       })
 
-      var accessories = this.props.accessories;
-      var accessoriesEmpty = accessories.every((item) => {
+      var variations = this.props.variations;
+      var variationsEmpty = variations.every((item) => {
         return !item.place._id || !item.quantity
       })
 
@@ -29,7 +29,7 @@ export default class Footer extends React.Component {
       var packsEmpty = packs.every((item) => {
         return !item.place._id;
       })
-      return seriesEmpty && accessoriesEmpty && packsEmpty;
+      return seriesEmpty && variationsEmpty && packsEmpty;
     }
     if (!allEmpty()) {
       this.setState({ errorMsg: "" }, () => {
@@ -43,7 +43,13 @@ export default class Footer extends React.Component {
   }
 
   render() {
-    if (this.props.hidden) return null;
+    if (!this.props.series.length &&
+      !this.props.variations.length &&
+      !this.props.packs.length) {
+      return (
+        "Não há itens disponíveis para devolução!"
+      )
+    }
     return (
       <div>
         <div className="error-message">{this.state.errorMsg}</div>

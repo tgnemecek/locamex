@@ -3,7 +3,9 @@ import moment from 'moment';
 
 import title from './title/index';
 import date from './date/index';
-import tableItems from './table-items/index';
+import tableFixed from './table-fixed/index';
+import tableModular from './table-modular/index';
+import tableAccessories from './table-accessories/index';
 import signature from './signature/index';
 
 export default function shippingPdf(props) {
@@ -25,7 +27,7 @@ export default function shippingPdf(props) {
       pageSize: 'A4',
       pageMargins: [ 40, 110, 40, 45 ], //[left, top, right, bottom]
       info: {
-        title: `Relatório de Itens #${master.index} - ${master.contractId}`,
+        title: `Relatório de Itens #${master.index+1} - ${master.contractId}`,
         author: `Locamex`,
         subject: `Relatório de Itens`
       },
@@ -33,7 +35,9 @@ export default function shippingPdf(props) {
       content: [
         title(data),
         date(),
-        tableItems(data)
+        tableFixed(data),
+        tableModular(data),
+        tableAccessories(data)
       ],
       footer: signature(),
       styles
