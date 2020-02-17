@@ -63,7 +63,10 @@ export default class ShippingHistory extends React.Component {
         paddingBottom: "0",
         display: "flex",
         justifyContent: "space-between",
-        alignItems: "center"
+        alignItems: "center",
+        borderLeft: "none",
+        borderRight: "none",
+        borderBottom: "none",
       }
 
       return (
@@ -75,9 +78,12 @@ export default class ShippingHistory extends React.Component {
           <td>{pack.description}</td>
           <td style={placeStyle}>
             {place}
-            <button onClick={() => this.togglePackInspector(pack)}>
-              <Icon icon="search"/>
-            </button>
+            <div>
+              <button onClick={() => this.togglePackInspector(pack)}>
+                <Icon icon="search"/>
+              </button>
+            </div>
+
           </td>
         </tr>
       )
@@ -150,10 +156,10 @@ export default class ShippingHistory extends React.Component {
           <td>
             {moment(shipping.date).format("DD-MM-YYYY")}
           </td>
-          <td>
+          <td style={{borderRight: "none"}}>
             {shipping.type === "send" ? "Envio" : "Devolução"}
           </td>
-          <td className="no-padding">
+          <td className="no-padding" style={{border: "none"}}>
             <table className="table shipping-history__sub-table">
               <tbody>
                 {this.shippingSeries(shipping)}
@@ -190,8 +196,8 @@ export default class ShippingHistory extends React.Component {
               <thead>
                 <tr>
                   <th>Data</th>
-                  <th>Tipo</th>
-                  <th className="no-padding">
+                  <th style={{borderRight: "none"}}>Tipo</th>
+                  <th className="no-padding" style={{border: "none"}}>
                     <table className="table shipping-history__sub-table">
                       <thead>
                         <tr>
