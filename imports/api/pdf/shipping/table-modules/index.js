@@ -1,6 +1,6 @@
 import tools from '/imports/startup/tools/index';
 
-export default function tableModular(props) {
+export default function tableModules(props) {
   if (!props.packs.length) return null;
 
   var preparedModules = []
@@ -54,7 +54,7 @@ export default function tableModular(props) {
       ]
     ],
       body: body(),
-      widths: ['auto', '*', 'auto', 'auto', 16]
+      widths: ['auto', '*', 150, 16]
     })
   ]
 }

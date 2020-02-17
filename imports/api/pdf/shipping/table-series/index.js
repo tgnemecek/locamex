@@ -1,6 +1,6 @@
 import tools from '/imports/startup/tools/index';
 
-export default function tableFixed(props) {
+export default function tableSeries(props) {
   if (!props.series.length) return null;
 
   const body = () => {
@@ -30,7 +30,7 @@ export default function tableFixed(props) {
       ]
     ],
       body: body(),
-      widths: ['auto', '*', 'auto', 'auto', 16]
+      widths: ['auto', '*', 80, 150, 16]
     })
   ]
 }

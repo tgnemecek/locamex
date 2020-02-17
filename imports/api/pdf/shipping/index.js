@@ -3,9 +3,9 @@ import moment from 'moment';
 
 import title from './title/index';
 import date from './date/index';
-import tableFixed from './table-fixed/index';
-import tableModular from './table-modular/index';
-import tableAccessories from './table-accessories/index';
+import tableSeries from './table-series/index';
+import tableModules from './table-modules/index';
+import tableVariations from './table-variations/index';
 import signature from './signature/index';
 
 export default function shippingPdf(props) {
@@ -35,9 +35,9 @@ export default function shippingPdf(props) {
       content: [
         title(data),
         date(),
-        tableFixed(data),
-        tableModular(data),
-        tableAccessories(data)
+        tableSeries(data),
+        tableModules(data),
+        tableVariations(data)
       ],
       footer: signature(),
       styles
