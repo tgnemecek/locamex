@@ -21,20 +21,24 @@ class HistoryTable extends React.Component {
                 <th>Horário</th>
                 <th>Versão</th>
                 <th>Usuário</th>
-                <th className="table__wide">Banco de Dados</th>
-                <th>Item</th>
+                <th className="table__wide">Tipo de Documento</th>
+                <th>ID</th>
+                <th>Operação</th>
               </tr>
             </thead>
             <tbody>
               {this.props.database.map((item, i) => {
                 return (
                   <tr key={i}>
-                    <td>{moment(item.insertionDate).format("DD-MM-YYYY")}</td>
-                    <td>{moment(item.insertionDate).format("HH:mm:ss")}</td>
+                    <td>{moment(item.date).format("DD-MM-YYYY")}</td>
+                    <td>{moment(item.date).format("HH:mm:ss")}</td>
                     <td>{item.version}</td>
-                    <td>{item.user.firstName}</td>
-                    <td className="table__wide">{item.type}</td>
-                    <td>{item.data._id ? item.data._id.toString() : "-"}</td>
+                    <td>
+                      {item.user.profile.firstName + " " + item.user.profile.lastName}
+                    </td>
+                    <td className="table__wide">{item.doc.type}</td>
+                    <td>{item.doc._id}</td>
+                    <td>{item.hook}</td>
                   </tr>
                 )
               })}

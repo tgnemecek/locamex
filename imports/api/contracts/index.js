@@ -67,6 +67,16 @@ Contracts.attachSchema(new SimpleSchema({
   'shipping.$.packs.$._id': String,
   'shipping.$.packs.$.description': String,
   'shipping.$.packs.$.type': String,
+  'shipping.$.packs.$.unmount': {
+    type: Boolean,
+    optional: true
+  },
+  'shipping.$.packs.$.place': {
+    type: Object,
+    optional: true
+  },
+  'shipping.$.packs.$.place._id': String,
+  'shipping.$.packs.$.place.description': String,
   'shipping.$.packs.$.container': Object,
   'shipping.$.packs.$.container._id': String,
   'shipping.$.packs.$.container.description': String,
@@ -75,6 +85,10 @@ Contracts.attachSchema(new SimpleSchema({
   'shipping.$.packs.$.modules.$._id': String,
   'shipping.$.packs.$.modules.$.description': String,
   'shipping.$.packs.$.modules.$.type': String,
+  'shipping.$.packs.$.modules.$.quantity': {
+    type: SimpleSchema.Integer,
+    optional: true
+  },
   'shipping.$.packs.$.modules.$.places': {
     type: Array,
     optional: true
@@ -620,53 +634,15 @@ if (Meteor.isServer) {
             })
           } else {
             if (pack.unmount) {
-              pack.modules.forEach((module) => {
-                var moduleFromDb = Modules.findOne({_id: module._id});
-                var received = 0;
-                module.places.forEach((place) => {
-                  received += place.quantity;
-                  var found = moduleFromDb.places.find((dbPlace) => {
-                    return dbPlace._id === place._id;
-                  })
-                  if (found) {
-                    found.available += module.quantity;
-                  } else {
-                    moduleFromDb.places.push({
-                      _id: place._id,
-                      description: place.description,
-                      available: place.quantity,
-                      inactive: 0
-                    })
-                  }
-                })
-                module.rented -= received;
-                if (module.rented < 0) {
-                  throw new Meteor.Error('stock-unavailable', '', {
-                    _id: module._id,
-                    item: module
-                  })
-                }
-                if (!isSimulation) {
-                  Modules.update({_id: module._id}, {$set: moduleFromDb});
-                }
-              })
-              Packs.update({_id: pack._id}, {$set: {
-                place: {
-                  _id: pack.place._id,
-                  description: pack.place.description
-                },
-                rented: false,
-                visible: false
-              }})
-            } else {
-              Packs.update({_id: pack._id}, {$set: {
-                place: {
-                  _id: pack.place._id,
-                  description: pack.place.description
-                },
-                rented: false
-              }})
+              Meteor.call('packs.unmount', pack._id, pack.place);
             }
+            Meteor.call('packs.update', pack._id, {
+              place: {
+                _id: pack.place._id,
+                description: pack.place.description
+              },
+              rented: false
+            })
           }
         })
       }

@@ -61,6 +61,31 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', {data}, 'packs.update');
       return true;
     },
+    'packs.unmount'(_id, place) {
+      if (!Meteor.userId() || !tools.isWriteAllowed('packs')) {
+        throw new Meteor.Error('unauthorized');
+      }
+      var pack = Packs.findOne({_id});
+      place = place || pack.place;
+      pack.modules.forEach((module) => {
+        var moduleFromDb = Modules.findOne({_id: module._id});
+        var found = moduleFromDb.places.find((placeFromDb) => {
+          return placeFromDb._id === place._id;
+        })
+        if (found) {
+          found.available += module.quantity;
+        } else {
+          moduleFromDb.push({
+            ...place,
+            available: module.quantity,
+            inactive: 0
+          })
+        }
+        Modules.update({_id: module._id}, {$set: moduleFromDb});
+      })
+      Packs.update({_id}, {$set: {visible: false}});
+      return true;
+    }
     // 'packs.check'(_id) {
     //   if (!Meteor.userId() || !tools.isWriteAllowed('packs')) {
     //     throw new Meteor.Error('unauthorized');
@@ -85,36 +110,36 @@ if (Meteor.isServer) {
     //   Packs.remove({ _id });
     //   Meteor.call('history.insert', _id, 'packs.rent');
     // },
-    'packs.unmount' (_id, place) {
-      if (!Meteor.userId() || !tools.isWriteAllowed('packs')) {
-        throw new Meteor.Error('unauthorized');
-      }
-
-      var pack = Packs.findOne({_id});
-
-      pack.modules.forEach((module) => {
-        var newModule = Modules.findOne({_id: module._id});
-        var placeExists = newModule.places.find((item) => {
-          return item._id === place._id;
-        })
-        if (placeExists) {
-          placeExists.available += module.quantity;
-        } else {
-          newModule.places.push({
-            ...place,
-            available: module.quantity,
-            inactive: 0
-          })
-        }
-        Modules.update({_id: module._id}, {$set: newModule});
-      })
-      Packs.remove({_id});
-      return true;
-
-      // Packs.update({ _id }, { $set: data });
-      // Meteor.call('modules.receive', pack.modules);
-      // Meteor.call('containers.update.assembled', pack.containerId, -1);
-      // Meteor.call('history.insert', data, 'packs.unmount');
-    }
+    // 'packs.unmount' (_id, place) {
+    //   if (!Meteor.userId() || !tools.isWriteAllowed('packs')) {
+    //     throw new Meteor.Error('unauthorized');
+    //   }
+    //
+    //   var pack = Packs.findOne({_id});
+    //
+    //   pack.modules.forEach((module) => {
+    //     var newModule = Modules.findOne({_id: module._id});
+    //     var placeExists = newModule.places.find((item) => {
+    //       return item._id === place._id;
+    //     })
+    //     if (placeExists) {
+    //       placeExists.available += module.quantity;
+    //     } else {
+    //       newModule.places.push({
+    //         ...place,
+    //         available: module.quantity,
+    //         inactive: 0
+    //       })
+    //     }
+    //     Modules.update({_id: module._id}, {$set: newModule});
+    //   })
+    //   Packs.remove({_id});
+    //   return true;
+    //
+    //   // Packs.update({ _id }, { $set: data });
+    //   // Meteor.call('modules.receive', pack.modules);
+    //   // Meteor.call('containers.update.assembled', pack.containerId, -1);
+    //   // Meteor.call('history.insert', data, 'packs.unmount');
+    // }
   })
 }

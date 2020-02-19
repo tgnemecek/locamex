@@ -14,7 +14,14 @@ export default class ReceivePacks extends React.Component {
     }
   }
   componentDidMount() {
-    var packs = this.props.currentlyRented.packs;
+    var packs = this.props.currentlyRented.packs
+      .map((pack) => {
+        return {
+          ...pack,
+          place: {},
+          unmount: true
+        }
+      })
     this.props.update({ packs });
   }
 
@@ -90,7 +97,7 @@ export default class ReceivePacks extends React.Component {
           <td>
             <Input
             type="checkbox"
-            id="unmount"
+            id={"unmount-" + i}
             name={i}
             parentStyle={{marginTop: "0"}}
             value={item.unmount}

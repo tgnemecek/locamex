@@ -104,11 +104,15 @@ export default class ModuleList extends React.Component {
 
   renderTransactionCell = (item, i) => {
     if (this.props.disabled) {
-      return (
-        <td>{item.places.reduce((acc, place) => {
-          return acc + place.quantity
-        }, 0)}</td>
-      )
+      if (this.props.pack.locked) {
+        return <td>{item.quantity}</td>
+      } else {
+        return (
+          <td>{item.places.reduce((acc, place) => {
+            return acc + place.quantity
+          }, 0)}</td>
+        )
+      }
     } else {
       return (
         <td className="no-padding">
@@ -175,11 +179,9 @@ export default class ModuleList extends React.Component {
     return (
       <Box
         title="Lista de Componentes"
+        subtitle={this.props.pack.container.description + " #" + this.props.pack.description}
         className="shipping__sub-list"
         closeBox={this.props.toggleWindow}>
-        <h4>
-          {this.props.pack.container.description + " #" + this.props.pack.description}
-        </h4>
         <div className="shipping__sub-list__scroll">
           <table className="table">
             <thead>

@@ -11,6 +11,7 @@ export default class ReceiveVariations extends React.Component {
     .map((item) => {
       return {
         ...item,
+        quantity: 0,
         place: {}
       }
     });

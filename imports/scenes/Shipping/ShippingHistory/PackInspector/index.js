@@ -3,6 +3,37 @@ import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
 export default class PackInspector extends React.Component {
+  renderBody = () => {
+    return this.props.pack.modules.map((module, i) => {
+
+      if (this.props.pack.place) {
+        return (
+          <tr key={i}>
+            <td>{module.quantity}</td>
+            <td className="table__wide">
+              {module.description}
+            </td>
+            <td style={{textAlign: "left"}}>
+              {this.props.pack.place.description}
+            </td>
+          </tr>
+        )
+      }
+      return module.places.map((place) => {
+        return (
+          <tr key={i}>
+            <td>{place.quantity}</td>
+            <td className="table__wide">
+              {module.description}
+            </td>
+            <td style={{textAlign: "left"}}>
+              {place.description}
+            </td>
+          </tr>
+        )
+      })
+    })
+  }
   renderTable = () => {
     return (
       <table className="table">
@@ -14,21 +45,7 @@ export default class PackInspector extends React.Component {
           </tr>
         </thead>
         <tbody>
-          {this.props.pack.modules.map((module, i) => {
-            return module.places.map((place) => {
-              return (
-                <tr key={i}>
-                  <td>{place.quantity}</td>
-                  <td className="table__wide">
-                    {module.description}
-                  </td>
-                  <td style={{textAlign: "left"}}>
-                    {place.description}
-                  </td>
-                </tr>
-              )
-            })
-          })}
+          {this.renderBody()}
         </tbody>
       </table>
     )

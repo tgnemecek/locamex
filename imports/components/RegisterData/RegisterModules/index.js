@@ -44,14 +44,13 @@ export default class RegisterModules extends React.Component {
     } else {
       this.props.databaseLoading();
       if (this.props.item._id) {
-        var data = {
-          _id: this.state._id,
-          description: this.state.description
-        }
-        Meteor.call('modules.update', data, (err, res) => {
-          if (err) this.props.databaseFailed(err);
-          if (res) this.props.databaseCompleted();
-        });
+        Meteor.call('modules.update.description',
+          this.props.item._id,
+          this.state.description,
+          (err, res) => {
+            if (err) this.props.databaseFailed(err);
+            if (res) this.props.databaseCompleted();
+          });
       } else {
         var data = {
           description: this.state.description

@@ -49,7 +49,14 @@ if (Meteor.isServer) {
       Meteor.call('history.insert', data, 'modules.insert');
       return true;
     },
-    'modules.update'(data) {
+    'modules.update.description'(_id, description) {
+      if (!Meteor.userId() || !tools.isWriteAllowed('modules')) {
+        throw new Meteor.Error('unauthorized');
+      }
+      Modules.update({ _id }, { $set: {description} });
+      return true;
+    },
+    'modules.update.stock'(data) {
       if (!Meteor.userId() || !tools.isWriteAllowed('modules')) {
         throw new Meteor.Error('unauthorized');
       }

@@ -37,6 +37,16 @@ export default class SendVariations extends React.Component {
       const openVariationsList = () => {
         this.setState({ accessoryToFilter: item })
       }
+      var selected = this.props.variations
+        .filter((variation) => {
+          return variation.accessory._id === item._id
+        })
+        .reduce((acc, cur) => {
+        return acc + cur.places.reduce((acc, cur) => {
+          return acc + cur.quantity;
+        }, 0)
+      }, 0)
+
       return (
         <tr key={i}>
           <td>
@@ -49,31 +59,19 @@ export default class SendVariations extends React.Component {
             {item.max}
           </td>
           <td>
-            {this.props.variations
-              .filter((variation) => {
-                return variation.accessory._id === item._id
-              })
-              .reduce((acc, cur) => {
-              return acc + cur.places.reduce((acc, cur) => {
-                return acc + cur.quantity;
-              }, 0)
-            }, 0)}
+            {selected}
           </td>
           <td className="no-padding">
             <button onClick={openVariationsList}>
               <Icon icon="transaction"/>
             </button>
           </td>
-          {/* <td className="no-padding">
-            {item.variations.find((variation) => {
-                return variation.places.find((place) => {
-                  return place.quantity > 0;
-                })
-              })
+          <td className="no-padding">
+            {selected > 0
               ? <Icon icon="checkmark" color="green"/>
               : <Icon icon="not" color="red"/>
             }
-          </td> */}
+          </td>
         </tr>
       )
     });

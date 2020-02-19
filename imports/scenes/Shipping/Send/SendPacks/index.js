@@ -58,6 +58,7 @@ export default class SendPacks extends React.Component {
   }
 
   updateWithLockedPack = (e) => {
+    debugger;
     var _id = e.target.value;
     var i = e.target.name;
     var pack;

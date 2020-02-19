@@ -21,7 +21,6 @@ export default class Information extends React.Component {
 
   changeDuration = (e) => {
     var duration = e.target.value;
-    var firstChange = e.target.firstChange;
     var discount = 0;
     if (this.props.snapshot.dates.timeUnit === "months") {
       if (duration >= 3 && duration <= 5) {
@@ -38,14 +37,13 @@ export default class Information extends React.Component {
     dates.duration = duration;
     this.props.updateSnapshot({
       dates,
-      discount: firstChange ? this.props.snapshot.discount : discount
+      discount
     });
   }
 
   changeTimeUnit = (e) => {
     var timeUnit = e.target.value;
     var dates = {...this.props.snapshot.dates};
-    var firstChange = e.target.firstChange;
     var discount = 0;
     var conditions = timeUnit === "months" ?
       this.props.settings
@@ -61,7 +59,7 @@ export default class Information extends React.Component {
     dates.timeUnit = timeUnit;
     this.props.updateSnapshot({
       dates,
-      discount: firstChange ? this.props.snapshot.discount : discount,
+      discount,
       observations
     })
   }
