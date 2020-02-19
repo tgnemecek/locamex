@@ -1,5 +1,7 @@
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
+import { Contracts } from '/imports/api/contracts/index';
+import { Proposals } from '/imports/api/proposals/index';
 import { Series } from '/imports/api/series/index';
 import { modulesSchema } from '/imports/api/modules/index';
 import tools from '/imports/startup/tools/index';
@@ -57,7 +59,7 @@ if (Meteor.isServer) {
         visible: true
       }
       Containers.insert(data);
-      Meteor.call('history.insert', data, 'containers.fixed.insert');
+
       return true;
     },
 
@@ -73,23 +75,10 @@ if (Meteor.isServer) {
 
       Containers.update({ _id: state._id }, { $set: data });
       updateReferences(state._id, {
-        description: state.description,
-        restitution: state.restitution
+        description: data.description,
+        restitution: data.restitution
       })
-      Meteor.call('history.insert', { ...data, _id: state._id }, 'containers.fixed.update');
-      return true;
-    },
 
-    'containers.update.one' (_id, key, value) {
-      if (!Meteor.userId() || !tools.isWriteAllowed('containers')) {
-        throw new Meteor.Error('unauthorized');
-      }
-      var data = {
-        _id,
-        [key]: value
-      }
-      Containers.update({ _id }, {$set: {[key]: value}});
-      Meteor.call('history.insert', data, 'containers.update.one');
       return true;
     },
 
@@ -113,7 +102,7 @@ if (Meteor.isServer) {
         visible: true
       }
       Containers.insert(data);
-      Meteor.call('history.insert', data, 'containers.modular.insert');
+
       return true;
     },
 
@@ -128,11 +117,11 @@ if (Meteor.isServer) {
         allowedModules: state.allowedModules
       }
       Containers.update({ _id: state._id }, { $set: data });
-      // updateReferences(state._id, 'containers', {
-      //   ...data,
-      //   price: undefined
-      // });
-      Meteor.call('history.insert', { ...data, _id: state._id }, 'containers.modular.update');
+      updateReferences(state._id, 'containers', {
+        description: data.description,
+        restitution: data.restitution
+      });
+
       return true;
     },
 
@@ -157,7 +146,7 @@ if (Meteor.isServer) {
       }
 
       Containers.update({ _id: state._id }, {$set: { flyer }})
-      Meteor.call('history.insert', flyer, 'containers.update.flyer');
+
       return state._id;
     },
     'containers.delete.flyer.images' (_id) {
@@ -172,7 +161,7 @@ if (Meteor.isServer) {
         (err, res) => {
           if (err) console.log(err);
           if (res) {
-            Meteor.call('history.insert', item.flyer, 'containers.delete.flyer.images');
+
             resolve(_id);
           }
         })
@@ -184,7 +173,7 @@ if (Meteor.isServer) {
     Proposals.find({status: "inactive"})
     .forEach((proposal) => {
         proposal.snapshots.forEach((snapshot) => {
-          snapshot.accessories = snapshot.accessories
+          snapshot.containers = snapshot.containers
           .map((item) => {
             if (item._id === _id) {
               return {
@@ -200,7 +189,7 @@ if (Meteor.isServer) {
     Contracts.find({status: "inactive"})
     .forEach((contract) => {
         contract.snapshots.forEach((snapshot) => {
-          snapshot.accessories = snapshot.accessories
+          snapshot.containers = snapshot.containers
           .map((item) => {
             if (item._id === _id) {
               return {

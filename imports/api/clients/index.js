@@ -154,7 +154,7 @@ if (Meteor.isServer) {
         };
       }
       Clients.insert(data);
-      Meteor.call('history.insert', data, 'clients');
+      
       return data;
     },
 
@@ -202,7 +202,7 @@ if (Meteor.isServer) {
           Contracts.update({ _id: contract._id },
             {$set: contract});
       })
-      Meteor.call('history.insert', data, 'clients');
+      
       return state._id;
     }
   })

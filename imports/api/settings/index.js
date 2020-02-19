@@ -28,7 +28,7 @@ if (Meteor.isServer) {
       var _id = settings._id;
       delete settings._id;
       Settings.update({_id}, settings);
-      Meteor.call('history.insert', settings, 'settings.update');
+      
       return true;
     }
   })

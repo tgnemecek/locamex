@@ -2,12 +2,9 @@ import React from 'react';
 import moment from 'moment';
 import tools from '/imports/startup/tools/index';
 
-import Box from '/imports/components/Box/index';
-import FooterButtons from '/imports/components/FooterButtons/index';
-
 import FileUploader from './FileUploader/index';
-import SeriesVisualizer from './SeriesVisualizer/index';
-import VariationsVisualizer from './VariationsVisualizer/index';
+import WithoutSnapshots from './WithoutSnapshots/index';
+import WithSnapshots from './WithSnapshots/index';
 
 export default class ImageVisualizer extends React.Component {
   constructor(props) {
@@ -43,33 +40,14 @@ export default class ImageVisualizer extends React.Component {
       }
     }
   }
-  subtitle = () => {
-    var result = "";
-    if (this.props.item.type === 'series') {
-      result = this.props.item.container.description;
-      result += " - Série: " + this.props.item.description;
-    } else {
-      result = this.props.item.description;
-    }
-    return result;
-  }
   render() {
     return (
-      <Box
-        title="Visualizador de Imagens"
-        subtitle={this.subtitle()}
-        className="image-visualizer"
-        closeBox={this.props.toggleWindow}
-        >
+      <>
         {this.props.item.type === "series" ?
-          <SeriesVisualizer {...this.props}
+          <WithSnapshots {...this.props}
             toggleUploadWindow={this.toggleUploadWindow}/>
-        : <VariationsVisualizer {...this.props}
+        : <WithoutSnapshots {...this.props}
             toggleUploadWindow={this.toggleUploadWindow}/>}
-          <FooterButtons buttons={[
-            {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
-            {text: "Novo Registro", className: "button--green", onClick: this.toggleUploadWindow}
-          ]}/>
         {this.state.uploadWindow ?
           <FileUploader {...this.props}
             toggleWindow={this.toggleUploadWindow}
@@ -78,7 +56,7 @@ export default class ImageVisualizer extends React.Component {
             params={this.params()}
           />
         : null}
-      </Box>
+      </>
     )
   }
 }

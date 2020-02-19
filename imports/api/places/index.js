@@ -36,7 +36,7 @@ if (Meteor.isServer) {
         visible: true
       }
       Places.insert(data);
-      Meteor.call('history.insert', data, 'places');
+      
       return true;
     },
     'places.hide'(_id) {
@@ -48,7 +48,7 @@ if (Meteor.isServer) {
         visible: false
       };
       Places.update({ _id }, { $set: data });
-      Meteor.call('history.insert', data, 'places');
+      
       return true;
     },
     'places.update'(_id, description) {
@@ -60,7 +60,7 @@ if (Meteor.isServer) {
         description
       };
       Places.update({ _id }, { $set: data });
-      Meteor.call('history.insert', data, 'places');
+      
       return true;
     }
   });

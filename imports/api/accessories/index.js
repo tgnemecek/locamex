@@ -51,7 +51,7 @@ if (Meteor.isServer) {
       }
       Meteor.call('variations.update', {...state, _id});
       Accessories.insert(data);
-      Meteor.call('history.insert', data, 'accessories.insert');
+
       return true;
     },
     'accessories.update'(state) {
@@ -64,8 +64,46 @@ if (Meteor.isServer) {
         restitution: state.restitution
       }
       Meteor.call('variations.update', state);
+
+      // Updating References:
+      var changes = {
+        description: data.description,
+        restitution: data.restitution
+      }
+      Proposals.find({status: "inactive"})
+      .forEach((proposal) => {
+          proposal.snapshots.forEach((snapshot) => {
+            snapshot.accessories = snapshot.accessories
+            .map((item) => {
+              if (item._id === state._id) {
+                return {
+                  ...item,
+                  ...changes
+                }
+              } else return item;
+            })
+          })
+          Proposals.update({ _id: proposal._id },
+            {$set: proposal});
+      })
+      Contracts.find({status: "inactive"})
+      .forEach((contract) => {
+          contract.snapshots.forEach((snapshot) => {
+            snapshot.accessories = snapshot.accessories
+            .map((item) => {
+              if (item._id === state._id) {
+                return {
+                  ...item,
+                  ...changes
+                }
+              } else return item;
+            })
+          })
+          Contracts.update({ _id: contract._id },
+            {$set: contract});
+      })
+
       Accessories.update({ _id: state._id }, {$set: data});
-      Meteor.call('history.insert', data, 'accessories.update');
       return true;
     },
     // 'accessories.update.stock'(variations) {
@@ -86,7 +124,7 @@ if (Meteor.isServer) {
     //     available,
     //     inactive
     //   }});
-    //   // Meteor.call('history.insert', {variations, _id}, 'accessories.update.stock');
+    //   //
     //   return true;
     // },
     // 'accessories.update.images'(_id, images) {
@@ -95,7 +133,7 @@ if (Meteor.isServer) {
     //   }
     //   Accessories.update({ _id }, { $set: {images} });
     //   updateReferences(_id, {images});
-    //   Meteor.call('history.insert', {_id, images}, 'accessories.update.images');
+    //
     //   return _id;
     // },
     // 'accessories.shipping.send'(product) {
@@ -105,7 +143,7 @@ if (Meteor.isServer) {
     //   var _id = product._id;
     //   delete product._id;
     //   Accessories.update({ _id }, product);
-    //   Meteor.call('history.insert', {product, _id}, 'accessories.shipping.send');
+    //
     // },
     // 'accessories.shipping.receive'(product) {
     //   if (!Meteor.userId() || !tools.isWriteAllowed('accessories')) {
@@ -114,7 +152,7 @@ if (Meteor.isServer) {
     //   var _id = product._id;
     //   delete product._id;
     //   Accessories.update({ _id }, product);
-    //   Meteor.call('history.insert', {product, _id}, 'accessories.shipping.receive');
+    //
     // },
     // 'accessories.hide'(_id) {
     //   if (!Meteor.userId() || !tools.isWriteAllowed('accessories')) {
@@ -122,43 +160,8 @@ if (Meteor.isServer) {
     //   }
     //   var visible = false;
     //   Accessories.update({ _id }, { $set: {visible} });
-    //   Meteor.call('history.insert', data, 'accessories.hide');
+    //
     //   return true;
     // }
   })
-
-  function updateReferences(_id, changes) {
-    Proposals.find({status: "inactive"})
-    .forEach((proposal) => {
-        proposal.snapshots.forEach((snapshot) => {
-          snapshot.accessories = snapshot.accessories
-          .map((item) => {
-            if (item._id === _id) {
-              return {
-                ...item,
-                ...changes
-              }
-            } else return item;
-          })
-        })
-        Proposals.update({ _id: proposal._id },
-          {$set: proposal});
-    })
-    Contracts.find({status: "inactive"})
-    .forEach((contract) => {
-        contract.snapshots.forEach((snapshot) => {
-          snapshot.accessories = snapshot.accessories
-          .map((item) => {
-            if (item._id === _id) {
-              return {
-                ...item,
-                ...changes
-              }
-            } else return item;
-          })
-        })
-        Contracts.update({ _id: contract._id },
-          {$set: contract});
-    })
-  }
 }

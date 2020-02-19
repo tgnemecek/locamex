@@ -16,7 +16,6 @@ import { Services } from '/imports/api/services/index';
 import { Settings } from '/imports/api/settings/index';
 import { Variations } from '/imports/api/variations/index';
 
-
 import tools from '/imports/startup/tools/index';
 
 export const History = new Mongo.Collection('history');

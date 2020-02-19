@@ -46,7 +46,7 @@ if (Meteor.isServer) {
         visible: true
       };
       Modules.insert(data);
-      Meteor.call('history.insert', data, 'modules.insert');
+
       return true;
     },
     'modules.update.description'(_id, description) {
@@ -66,7 +66,7 @@ if (Meteor.isServer) {
         })
       }
       Modules.update({ _id: data._id }, { $set: data });
-      Meteor.call('history.insert', data, 'modules.update');
+
       return true;
     },
     // 'modules.stock.update'(item) {
@@ -77,7 +77,7 @@ if (Meteor.isServer) {
     //     place: item.place
     //   }
     //   Modules.update({ _id: item._id }, { $set: data });
-    //   Meteor.call('history.insert', {...data, _id: item._id}, 'modules.stock.update');
+    //
     //   return true;
     // },
     'modules.shipping.send'(product) {
@@ -87,7 +87,7 @@ if (Meteor.isServer) {
       var _id = product._id;
       delete product._id;
       Modules.update({ _id }, product);
-      Meteor.call('history.insert', {product, _id}, 'modules.shipping.send');
+
       return true;
     },
     'modules.shipping.receive'(product) {
@@ -97,7 +97,7 @@ if (Meteor.isServer) {
       var _id = product._id;
       delete product._id;
       Modules.update({ _id }, product);
-      Meteor.call('history.insert', {product, _id}, 'modules.shipping.receive');
+
       return true;
     },
     'modules.hide'(_id) {
@@ -108,7 +108,7 @@ if (Meteor.isServer) {
         visible: false
       };
       Modules.update({ _id }, { $set: data });
-      Meteor.call('history.insert', {...data, _id}, 'modules.hide');
+
       return true;
     }
   })

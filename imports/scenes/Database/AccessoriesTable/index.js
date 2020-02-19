@@ -157,7 +157,7 @@ class AccessoriesTable extends React.Component {
         {this.state.windowType === 'stock' ?
           <StockVisualizer
             item={this.state.item}
-            variations={this.props.variations
+            entries={this.props.variations
               .filter((variation) => {
                 return variation.accessory._id ===
                  this.state.item._id
@@ -168,6 +168,11 @@ class AccessoriesTable extends React.Component {
         {this.state.windowType === 'image' ?
           <ImageVisualizer
             item={this.state.item}
+            entries={this.props.variations
+              .filter((variation) => {
+                return variation.accessory._id ===
+                 this.state.item._id
+              })}
             toggleWindow={this.toggleWindow}
           />
         : null}

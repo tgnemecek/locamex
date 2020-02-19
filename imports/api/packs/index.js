@@ -58,7 +58,7 @@ if (Meteor.isServer) {
         throw new Meteor.Error('unauthorized');
       }
       Packs.update({ _id }, { $set: data });
-      Meteor.call('history.insert', {data}, 'packs.update');
+      
       return true;
     },
     'packs.unmount'(_id, place) {
@@ -108,7 +108,7 @@ if (Meteor.isServer) {
     //     throw new Meteor.Error('unauthorized');
     //   }
     //   Packs.remove({ _id });
-    //   Meteor.call('history.insert', _id, 'packs.rent');
+    //   
     // },
     // 'packs.unmount' (_id, place) {
     //   if (!Meteor.userId() || !tools.isWriteAllowed('packs')) {
@@ -139,7 +139,7 @@ if (Meteor.isServer) {
     //   // Packs.update({ _id }, { $set: data });
     //   // Meteor.call('modules.receive', pack.modules);
     //   // Meteor.call('containers.update.assembled', pack.containerId, -1);
-    //   // Meteor.call('history.insert', data, 'packs.unmount');
+    //   // 
     // }
   })
 }

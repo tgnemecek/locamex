@@ -289,7 +289,7 @@ if (Meteor.isServer) {
         }]
       }
       Contracts.insert(contract);
-      Meteor.call('history.insert', contract, 'contracts.insert');
+
       return _id;
     },
     'contracts.update'(snapshot, _id, index) {
@@ -323,7 +323,7 @@ if (Meteor.isServer) {
       }
 
       Contracts.update({ _id }, {$set: data})
-      Meteor.call('history.insert', {_id, ...snapshot}, 'contracts.update');
+
       return {
         hasChanged: true,
         snapshot,
@@ -340,7 +340,7 @@ if (Meteor.isServer) {
       contract.snapshots[index].active = true;
 
       Contracts.update({ _id }, {$set: contract});
-      Meteor.call('history.insert', _id, 'contracts.activate');
+
       return true;
     },
     'contracts.finalize'(_id) {
@@ -348,7 +348,7 @@ if (Meteor.isServer) {
         throw new Meteor.Error('unauthorized');
       }
       Contracts.update({ _id }, { $set: { status: "finalized" } } );
-      Meteor.call('history.insert', { _id }, 'contracts.finalize');
+
       return _id;
     },
     'contracts.cancel'(_id) {
@@ -363,7 +363,7 @@ if (Meteor.isServer) {
 
       Proposals.update({ _id: contract.proposalId }, proposal);
       Contracts.update({ _id }, { $set: { status: "cancelled" } } );
-      Meteor.call('history.insert', { _id }, 'contracts.cancel');
+
       return _id;
     },
     'contracts.shipping.send'(data) {

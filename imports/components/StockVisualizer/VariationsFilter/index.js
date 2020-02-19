@@ -2,7 +2,6 @@ import React from 'react';
 import Input from '/imports/components/Input/index';
 
 export default class VariationsFilter extends React.Component {
-
   getValue = () => {
     var index = this.props.variationIndex;
     var variation = this.props.variations[index];

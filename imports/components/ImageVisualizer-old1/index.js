@@ -1,24 +1,30 @@
 import React from 'react';
 import moment from 'moment';
 import tools from '/imports/startup/tools/index';
-
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
+import Selector from './Selector/index';
 import FileUploader from './FileUploader/index';
-import SeriesVisualizer from './SeriesVisualizer/index';
-import VariationsVisualizer from './VariationsVisualizer/index';
+// import WithoutSnapshots from './WithoutSnapshots/index';
+// import WithSnapshots from './WithSnapshots/index';
 
 export default class ImageVisualizer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      entryIndex: 0,
+      imageIndex: 0,
+      databaseStatus: false,
       uploadWindow: false
     }
   }
   toggleUploadWindow = () => {
     var uploadWindow = !this.state.uploadWindow;
     this.setState({ uploadWindow });
+  }
+  setEntryIndex = () => {
+    
   }
   params = () => {
     var general = {
@@ -43,33 +49,37 @@ export default class ImageVisualizer extends React.Component {
       }
     }
   }
-  subtitle = () => {
-    var result = "";
-    if (this.props.item.type === 'series') {
-      result = this.props.item.container.description;
-      result += " - Série: " + this.props.item.description;
-    } else {
-      result = this.props.item.description;
-    }
-    return result;
+  renderImage = () => {
+    if (!this.props.entries.length) return null;
+    var entry = this.props.entries[this.state.entryIndex];
+    var image = entry[this.state.imageIndex];
+    if (image) {
+      return <img src={image}/>
+    } else return null;
   }
   render() {
     return (
       <Box
         title="Visualizador de Imagens"
-        subtitle={this.subtitle()}
+        subtitle={this.props.item.description}
         className="image-visualizer"
-        closeBox={this.props.toggleWindow}
         >
-        {this.props.item.type === "series" ?
-          <SeriesVisualizer {...this.props}
-            toggleUploadWindow={this.toggleUploadWindow}/>
-        : <VariationsVisualizer {...this.props}
-            toggleUploadWindow={this.toggleUploadWindow}/>}
+          <Selector
+            setEntryIndex={this.setEntryIndex}
+            entryIndex={this.state.entryIndex}
+            entries={this.props.entries}/>
+          <div className="image-visualizer__image-wrap">
+            {this.renderImage()}
+          </div>
           <FooterButtons buttons={[
             {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
-            {text: "Novo Registro", className: "button--green", onClick: this.toggleUploadWindow}
+            {text: "Novo Upload", className: "button--green", onClick: this.toggleUploadWindow}
           ]}/>
+        {/* {this.props.item.type === "series" ?
+          <WithSnapshots {...this.props}
+            toggleUploadWindow={this.toggleUploadWindow}/>
+        : <WithoutSnapshots {...this.props}
+            toggleUploadWindow={this.toggleUploadWindow}/>} */}
         {this.state.uploadWindow ?
           <FileUploader {...this.props}
             toggleWindow={this.toggleUploadWindow}

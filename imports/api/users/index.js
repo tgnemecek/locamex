@@ -57,7 +57,7 @@ if (Meteor.isServer) {
       var _id = Accounts.createUser(data);
       if (!_id) throw new Meteor.Error('user-not-created');
 
-      Meteor.call('history.insert', _id, 'users.insert');
+      
       return true;
     },
     // 'users.hide'(_id) {
@@ -69,7 +69,7 @@ if (Meteor.isServer) {
     //     visible: false
     //   }
     //   Meteor.users.update({ _id }, { $set: data });
-    //   Meteor.call('history.insert', data, 'users');
+    //   
     // },
     'users.update'(state) {
       if (!Meteor.userId() || !tools.isWriteAllowed('uers')) {
@@ -90,7 +90,7 @@ if (Meteor.isServer) {
         }
       }
       Meteor.users.update({ _id }, { $set: data });
-      Meteor.call('history.insert', data, 'users');
+      
       return true;
     },
     'users.setPassword'(oldPassword, newPassword, userId) {

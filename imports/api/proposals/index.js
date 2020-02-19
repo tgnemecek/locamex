@@ -112,7 +112,7 @@ if (Meteor.isServer) {
         visible: true
       };
       Proposals.insert(proposal);
-      Meteor.call('history.insert', proposal, 'proposals.insert');
+      
       return proposal;
     },
     'proposals.update'(snapshot, _id, index) {
@@ -130,7 +130,7 @@ if (Meteor.isServer) {
       data.snapshots.push(snapshot)
       Proposals.update({ _id }, {$set: data})
 
-      Meteor.call('history.insert', data, 'proposals.update');
+      
       return {
         hasChanged: true,
         snapshot,
@@ -148,7 +148,7 @@ if (Meteor.isServer) {
       proposal.snapshots[index].active = true;
 
       Proposals.update({ _id }, {$set: proposal});
-      Meteor.call('history.insert', { _id }, 'proposals.activate');
+      
 
       try {
         var contractId = Meteor.call('contracts.insert', _id);
@@ -164,7 +164,7 @@ if (Meteor.isServer) {
         throw new Meteor.Error('unauthorized');
       }
       Proposals.update({ _id }, { $set: { status: "cancelled" } } );
-      Meteor.call('history.insert', { _id }, 'proposals.cancel');
+      
       return _id;
     }
   })

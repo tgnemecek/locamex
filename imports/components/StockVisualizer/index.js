@@ -157,12 +157,12 @@ class StockVisualizer extends React.Component {
         className="stock-visualizer"
         closeBox={this.props.toggleWindow}>
           <div className="error-message">{this.state.errorMsg}</div>
-          {this.props.item.type === 'variation' ?
+          {this.props.item.type === 'module' ? null :
             <VariationsFilter
               setVariationIndex={this.setVariationIndex}
               variationIndex={this.state.variationIndex}
               variations={this.props.variations}/>
-          : null}
+          }
           <Distribution
             updateItem={this.updateItem}
             places={this.getPlaces()}/>

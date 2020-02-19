@@ -2,7 +2,7 @@ import React from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { Series } from '/imports/api/series/index';
 import { Packs } from '/imports/api/packs/index';
-
+import ImageVisualizer from '/imports/components/ImageVisualizer/index';
 import RegisterData from '/imports/components/RegisterData/index';
 import tools from '/imports/startup/tools/index';
 import Icon from '/imports/components/Icon/index';
@@ -188,6 +188,7 @@ class SeriesTable extends React.Component {
         {this.state.windowType === 'image' ?
           <ImageVisualizer
             item={this.state.item}
+            entries={[...this.state.item.snapshots].reverse()}
             toggleWindow={this.toggleWindow}
           />
         : null}

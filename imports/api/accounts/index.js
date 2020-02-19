@@ -45,7 +45,7 @@ if (Meteor.isServer) {
         visible: true
       };
       Accounts.insert(data);
-      Meteor.call('history.insert', data, 'accounts.insert');
+
       return true;
     },
     'accounts.update' (state) {
@@ -62,7 +62,7 @@ if (Meteor.isServer) {
         visible: true
       };
       Accounts.update({_id: state._id}, {$set: data});
-      Meteor.call('history.insert', data, 'accounts.update');
+
       return true;
     },
     'accounts.hide'(_id) {
@@ -74,7 +74,7 @@ if (Meteor.isServer) {
         visible: false
       };
       Accounts.update({ _id }, { $set: data });
-      Meteor.call('history.insert', data, 'accounts.hide');
+
     }
   })
 }

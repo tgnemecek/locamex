@@ -66,7 +66,7 @@ if (Meteor.isServer) {
         visible: true
       }
       Series.insert(data);
-      Meteor.call('history.insert', data, 'series.insert');
+      
       return true;
     },
     'series.update' (state) {
@@ -79,7 +79,7 @@ if (Meteor.isServer) {
         observations: state.observations
       }
       Series.update({_id: state._id}, {$set: data} );
-      Meteor.call('history.insert', data, 'series.update');
+      
       return state._id;
     },
     // 'series.update.snapshots' (_id, snapshots) {
@@ -89,7 +89,7 @@ if (Meteor.isServer) {
     //   snapshots = snapshotsSchema.clean(snapshots);
     //   snapshotsSchema.validate(snapshots);
     //   Series.update({_id: _id}, {$set: snapshots} );
-    //   Meteor.call('history.insert', {_id, snapshots}, 'series.update.snapshots');
+    //   
     //   return _id;
     // },
     'series.delete' (_id) {

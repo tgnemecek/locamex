@@ -38,7 +38,7 @@ if (Meteor.isServer) {
       data.visible = true;
 
       Contracts.insert(data);
-      Meteor.call('history.insert', data, 'contracts.insert');
+      
       return _id;
     },
     'contracts.update'(snapshot) {
@@ -65,7 +65,7 @@ if (Meteor.isServer) {
       data.activeVersion = Number(snapshot.version)+1;
 
       Contracts.update({ _id }, { $set: data });
-      Meteor.call('history.insert', data, 'contracts.update');
+      
       return { hasChanged: true, contract: data };
     },
     'contracts.activate'(contract) {
@@ -74,18 +74,18 @@ if (Meteor.isServer) {
         status: "active",
         activeVersion: Number(contract.version)
       } })
-      Meteor.call('history.insert', { _id }, 'contracts.activate');
+      
       return { _id };
     },
     'contracts.finalize'(_id) {
       Contracts.update({ _id }, { $set: { status: "finalized" } } );
-      Meteor.call('history.insert', { _id }, 'contracts.finalize');
+      
       return _id;
     },
     'contracts.cancel'(_id, proposalId) {
       Proposals.update({ _id: proposalId }, { $set: {status: "cancelled"} });
       Contracts.update({ _id }, { $set: { status: "cancelled" } } );
-      Meteor.call('history.insert', { _id }, 'contracts.cancel');
+      
       return _id;
     },
     'contracts.shipping.send'(master) {
@@ -180,7 +180,7 @@ if (Meteor.isServer) {
       shipping.history ? shipping.history.push(history) : shipping.history = [history];
 
       Contracts.update({ _id }, { $set: { shipping } });
-      Meteor.call('history.insert', {...history, contractId: _id}, 'contracts.shipping.send');
+      
       return shipping;
     },
     'contracts.shipping.receive'(master) {
@@ -280,7 +280,7 @@ if (Meteor.isServer) {
       shipping.history ? shipping.history.push(history) : shipping.history = [history];
 
       Contracts.update({ _id }, { $set: { shipping } });
-      Meteor.call('history.insert', {...history, contractId: _id}, 'contracts.shipping.receive');
+      
       return true;
     },
     'contracts.billing.update' (_id, billing, type) {

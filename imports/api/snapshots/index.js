@@ -32,7 +32,7 @@ if (Meteor.isServer) {
       data.snapshots.push(snapshot);
 
       Database.update({ _id }, { $set: data });
-      Meteor.call('history.insert', { ...snapshots, _id }, 'snapshot.add');
+      
       return urls;
     }
   })
