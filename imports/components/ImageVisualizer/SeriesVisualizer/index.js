@@ -4,7 +4,7 @@ import ErrorBoundary from '/imports/components/ErrorBoundary/index';
 import tools from '/imports/startup/tools/index';
 import moment from 'moment';
 
-import Block from '/imports/components/Block/index';
+import Icon from '/imports/components/Icon/index';
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 import Input from '/imports/components/Input/index';
@@ -13,12 +13,17 @@ export default class SeriesVisualizer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      snapshots: this.props.item.snapshots || [],
-      registryIndex: this.props.item.snapshots.length-1,
-      imageIndex: 0,
-
-      uploadWindow: false,
-      confirmationWindow: false
+      registryIndex: 0,
+      imageIndex: 0
+    }
+  }
+  componentDidUpdate(prevProps) {
+    if (prevProps.item.snapshots.length
+      !== this.props.item.snapshots.length) {
+      this.setState({
+        registryIndex: 0,
+        imageIndex: 0
+      })
     }
   }
   indexUp = () => {
@@ -55,37 +60,39 @@ export default class SeriesVisualizer extends React.Component {
     return (
       <div>
         <div className="image-visualizer__date">
-          {this.getRegistry() ?
-            <Input
-              type="select"
-              className="image-visualizer__select"
-              value={this.state.registryIndex}
-              onChange={this.changeRegistryIndex}
-              >
-                {this.props.item.snapshots.map((snapshot, i) => {
-                  return (
-                    <option key={i} value={i}>
-                      {moment(snapshot.date).format('DD-MM-YYYY')}
-                    </option>
-                  )
-                })}
-            </Input>
-          : null}
+          <div className="image-visualizer__top">
+            {this.getRegistry() ?
+              <Input
+                type="select"
+                value={this.state.registryIndex}
+                onChange={this.changeRegistryIndex}
+                >
+                  {this.props.item.snapshots.map((snapshot, i) => {
+                    return (
+                      <option key={i} value={i}>
+                        {moment(snapshot.date).format('DD-MM-YYYY')}
+                      </option>
+                    )
+                  })}
+              </Input>
+            : null}
+          </div>
         </div>
-        <div className="image-visualizer__image-wrap">
-          {this.state.snapshots.length ?
-            <img
-              src={this.getRegistry().images[this.state.imageIndex]}/>
-          : null}
-        </div>
-        {this.getMaxIndex() ?
-          <div className="image-visualizer__controls-wrap">
+        {this.props.item.snapshots.length ?
+          <img
+            src={this.getRegistry()
+              .images[this.state.imageIndex] + "?" + new Date().getTime()}/>
+        : null}
+        {this.getRegistry().images.length ?
+          <div className="image-visualizer__controls">
             <button onClick={this.indexDown}>
-              ◀
+              <Icon icon="arrowLeft"/>
             </button>
-            {this.state.imageIndex+1} de {this.getMaxIndex()+1}
+            <div>
+              {this.state.imageIndex+1} de {this.getMaxIndex()+1}
+            </div>
             <button onClick={this.indexUp}>
-              ▶
+              <Icon icon="arrowRight"/>
             </button>
           </div>
         : <p>Nenhuma imagem disponível</p>}

@@ -31,7 +31,7 @@ input[type="file"] {
     display: none;
 }
 
-.input__file {
+.input__file__label {
   text-align: center !important;
   background: $light-grey;
   border: 1px solid $grey;
@@ -39,12 +39,14 @@ input[type="file"] {
   padding: 6px 12px;
   cursor: pointer;
 }
-
 .input__file__icon {
-  margin-right: 10px;
+  display: inline-grid !important;
 }
-
 .input__file__max {
   font-style: italic;
   color: $dark-grey;
+}
+.input__file__scroll {
+  height: 300px;
+  overflow-y: auto;
 }

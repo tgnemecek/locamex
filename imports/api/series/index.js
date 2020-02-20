@@ -1,4 +1,5 @@
 import { Mongo } from 'meteor/mongo';
+import moment from 'moment';
 import SimpleSchema from 'simpl-schema';
 import { Meteor } from 'meteor/meteor';
 import tools from '/imports/startup/tools/index';
@@ -31,7 +32,10 @@ Series.attachSchema(new SimpleSchema({
     optional: true
   },
   snapshots: Array,
-  'snapshots.$': String,
+  'snapshots.$': Object,
+  'snapshots.$.date': Date,
+  'snapshots.$.images': Array,
+  'snapshots.$.images.$': String,
   visible: Boolean
 }))
 
@@ -66,7 +70,7 @@ if (Meteor.isServer) {
         visible: true
       }
       Series.insert(data);
-      
+
       return true;
     },
     'series.update' (state) {
@@ -79,19 +83,45 @@ if (Meteor.isServer) {
         observations: state.observations
       }
       Series.update({_id: state._id}, {$set: data} );
-      
+
       return state._id;
     },
-    // 'series.update.snapshots' (_id, snapshots) {
-    // if (!Meteor.userId() || !tools.isWriteAllowed('series')) {
-    //   throw new Meteor.Error('unauthorized');
-    // }
-    //   snapshots = snapshotsSchema.clean(snapshots);
-    //   snapshotsSchema.validate(snapshots);
-    //   Series.update({_id: _id}, {$set: snapshots} );
-    //   
-    //   return _id;
-    // },
+    'series.update.snapshots' (_id, arrayOfDataUrls) {
+      if (!Meteor.userId() || !tools.isWriteAllowed('series')) {
+        throw new Meteor.Error('unauthorized');
+      }
+      var series = Series.findOne({_id});
+      var extension = ".jpg";
+      var date = new Date();
+      var code = date.getTime();
+      var formattedDate = moment(date).format("YYYY-MM-DD");
+      var directory = `user-uploads/images/series
+        /${series.description}/${formattedDate}_${code}/`;
+
+      var files = arrayOfDataUrls.map((dataUrl, i) => {
+        var name = `series-${_id}-${code}-${i}${extension}`;
+        var key = directory + name;
+        return {
+          dataUrl,
+          key
+        }
+      })
+
+      return new Promise((resolve, reject) => {
+        Meteor.call('aws.write.multiple', files, (err, urls) => {
+          if (err) throw new Meteor.Error(err);
+          if (urls) {
+            var snapshots = series.snapshots;
+            snapshots.push({
+              date,
+              images: urls
+            })
+            Series.update({_id}, {$set: {snapshots}} );
+            resolve(_id)
+          }
+        })
+      })
+    },
     'series.delete' (_id) {
       if (!Meteor.userId() || !tools.isWriteAllowed('series')) {
         throw new Meteor.Error('unauthorized');

@@ -9,54 +9,42 @@ export default class VariationsVisualizer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      images: this.props.item.images || [],
-      currentIndex: 0,
-      maxIndex: this.props.item.images ? this.props.item.images.length-1 : 0,
-
-      uploadWindow: false,
-      confirmationWindow: false
+      variationIndex: 0
     }
   }
-  toggleUploadWindow = (fullClose) => {
-    if (fullClose) {
-      this.props.toggleWindow();
-    } else {
-      var uploadWindow = !this.state.uploadWindow;
-      this.setState({ uploadWindow })
-    }
+  getVariation = () => {
+    var index = this.state.variationIndex;
+    return this.props.variations[index] || {};
   }
-  indexUp = () => {
-    var currentIndex = this.state.currentIndex;
-    var nextIndex = currentIndex+1;
-
-    if (nextIndex > this.state.maxIndex) nextIndex = 0;
-    this.setState({ currentIndex: nextIndex })
-  }
-  indexDown = () => {
-    var currentIndex = this.state.currentIndex;
-    var nextIndex = currentIndex-1;
-
-    if (nextIndex < 0) nextIndex = this.state.maxIndex;
-    this.setState({ currentIndex: nextIndex })
+  changeVariationIndex = (e) => {
+    this.setState({
+      variationIndex: e.target.value
+    })
   }
   render() {
     return (
       <div>
-        <div className="image-visualizer__image-wrap">
-          {this.state.images.length ?
-            <img
-              src={this.state.images[this.state.currentIndex]}/>
-          : null}
+        <div className="image-visualizer__date">
+          <div className="image-visualizer__top">
+            <Input
+              type="select"
+              value={this.state.variationIndex}
+              onChange={this.changeVariationIndex}
+              >
+                {this.props.variations.map((variation, i) => {
+                  return (
+                    <option key={i} value={i}>
+                      {variation.description}
+                    </option>
+                  )
+                })}
+            </Input>
+            {this.getVariation().observations}
+          </div>
         </div>
-        <div className="image-visualizer__controls-wrap">
-          <button onClick={this.indexDown}>
-            ◀
-          </button>
-          {this.state.currentIndex+1} de {this.state.maxIndex+1}
-          <button onClick={this.indexUp}>
-            ▶
-          </button>
-        </div>
+        {this.getVariation().image ?
+          <img src={this.getVariation().image + "?" + new Date().getTime()}/>
+        : <p>Nenhuma imagem disponível</p>}
       </div>
     )
   }

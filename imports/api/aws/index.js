@@ -1,9 +1,11 @@
 import AWS from 'aws-sdk';
+import tools from '/imports/startup/tools/index';
 
 if (Meteor.isServer) {
 
   var Bucket = 'locamex-app';
   var s3 = new AWS.S3();
+  var prefix = "https://locamex-app.s3-sa-east-1.amazonaws.com/"
 
   Meteor.methods({
     'aws.read'(Key, callback) {
@@ -24,17 +26,18 @@ if (Meteor.isServer) {
         })
       })
     },
-    'aws.write'(dataUrl, filePath) {
+    'aws.write'(dataUrl, key) {
       if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       var buff = Buffer.from(dataUrl.split(',')[1], 'base64');
+      key = key.replace(prefix);
       if (Meteor.isDevelopment) {
-        filePath = "tests/" + filePath;
+        key = "tests/" + key;
       }
       var params = {
         ACL: 'public-read-write',
         Bucket,
         Body: buff,
-        Key: filePath
+        Key: key
       }
       return new Promise((resolve, reject) => {
         s3.upload(params, (err, data) => {
@@ -51,7 +54,7 @@ if (Meteor.isServer) {
       return new Promise((resolve, reject) => {
         var promises = filesWithUrl.map((file, i) => {
           return new Promise((resolve, reject) => {
-            Meteor.call('aws.write', file.dataUrl, file.filePath, (err, res) => {
+            Meteor.call('aws.write', file.dataUrl, file.key, (err, res) => {
               if (err) reject(err);
               if (res) {
                 resolve(res.Location);
@@ -133,6 +136,10 @@ if (Meteor.isServer) {
     'aws.delete.directory' (folder) {
       if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       return new Promise((resolve, reject) => {
+        if (tools.isUrl(folder)) {
+          folder = folder.replace(prefix, "");
+        }
+
         if (Meteor.isDevelopment) {
           folder = "tests/" + folder;
         }

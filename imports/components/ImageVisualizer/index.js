@@ -1,11 +1,11 @@
 import React from 'react';
 import moment from 'moment';
 import tools from '/imports/startup/tools/index';
-
+import Input from '/imports/components/Input/index';
 import Box from '/imports/components/Box/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
+import FileUploader from '/imports/components/FileUploader/index';
 
-import FileUploader from './FileUploader/index';
 import SeriesVisualizer from './SeriesVisualizer/index';
 import VariationsVisualizer from './VariationsVisualizer/index';
 
@@ -13,34 +13,42 @@ export default class ImageVisualizer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      uploadWindow: false
+      uploadWindow: false,
+      databaseStatus: '',
+      variationToUpload: 0
     }
+  }
+  componentDidUpdate() {
+    console.log("updated")
+  }
+  changeVariationToUpload = (e) => {
+    this.setState({ variationToUpload: e.target.value })
   }
   toggleUploadWindow = () => {
     var uploadWindow = !this.state.uploadWindow;
     this.setState({ uploadWindow });
   }
   params = () => {
-    var general = {
-      allowedFileTypes: ["image/jpeg"],
-      maximum: 10
-    }
-
-    var code = new Date().getTime();
-    var date = moment().format("YYYY-MM-DD") + "_" + code;
-
     if (this.props.item.type === "series") {
       return {
-        ...general,
-        filePath: `user-uploads/snapshots/series/${this.props.item._id}/${date}/`,
-        fileName: `ss-series-${this.props.item._id}-${code}`
+        accept: ".jpg",
+        maximum: 10
       }
-    } else {
+    } else if (this.props.item.type === "accessory") {
       return {
-        ...general,
-        filePath: `user-uploads/images/${this.props.item.type}/${this.props.item._id}/`,
-        fileName: `img-${this.props.item.type}-${this.props.item._id}`
+        accept: ".jpg",
+        maximum: 1
       }
+    }
+  }
+  upload = (arrayOfDataUrls, callback) => {
+    if (this.props.item.type === "series") {
+      Meteor.call('series.update.snapshots',
+      this.props.item._id, arrayOfDataUrls, callback);
+    } else if (this.props.item.type === "accessory") {
+      Meteor.call('variations.update.image',
+      this.props.variations[this.state.variationToUpload]._id,
+      arrayOfDataUrls[0], callback);
     }
   }
   subtitle = () => {
@@ -62,21 +70,41 @@ export default class ImageVisualizer extends React.Component {
         closeBox={this.props.toggleWindow}
         >
         {this.props.item.type === "series" ?
-          <SeriesVisualizer {...this.props}
+          <SeriesVisualizer
+            {...this.props}
+            item={{
+              ...this.props.item,
+              snapshots: [...this.props.item.snapshots].reverse()
+            }}
             toggleUploadWindow={this.toggleUploadWindow}/>
         : <VariationsVisualizer {...this.props}
             toggleUploadWindow={this.toggleUploadWindow}/>}
           <FooterButtons buttons={[
             {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
-            {text: "Novo Registro", className: "button--green", onClick: this.toggleUploadWindow}
+            {text: "Novo Upload", className: "button--green", onClick: this.toggleUploadWindow}
           ]}/>
         {this.state.uploadWindow ?
           <FileUploader {...this.props}
             toggleWindow={this.toggleUploadWindow}
-            closeParent={this.props.toggleWindow}
-            toggleUploadWindow={this.toggleUploadWindow}
-            params={this.params()}
-          />
+            upload={this.upload}
+            {...this.params()}
+          >
+            {this.props.item.type === 'accessory' ?
+              <Input
+                type="select"
+                value={this.state.variationToUpload}
+                onChange={this.changeVariationToUpload}
+                >
+                {this.props.variations.map((variation, i) => {
+                  return (
+                    <option key={i} value={i}>
+                      {variation.description}
+                    </option>
+                  )
+                })}
+              </Input>
+            : null}
+          </FileUploader>
         : null}
       </Box>
     )

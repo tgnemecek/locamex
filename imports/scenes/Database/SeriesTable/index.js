@@ -187,8 +187,9 @@ class SeriesTable extends React.Component {
         : null}
         {this.state.windowType === 'image' ?
           <ImageVisualizer
-            item={this.state.item}
-            entries={[...this.state.item.snapshots].reverse()}
+            item={this.props.database.find((item) => {
+              return item._id === this.state.item._id
+            })}
             toggleWindow={this.toggleWindow}
           />
         : null}

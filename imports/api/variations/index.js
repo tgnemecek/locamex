@@ -1,4 +1,5 @@
 import { Mongo } from 'meteor/mongo';
+import moment from 'moment';
 import SimpleSchema from 'simpl-schema';
 import { Accessories } from '/imports/api/accessories/index';
 import tools from '/imports/startup/tools/index';
@@ -97,6 +98,38 @@ if (Meteor.isServer) {
       Accessories.update({_id: variations[0].accessory._id},
         {$set: {available, inactive}})
       return true;
+    },
+    'variations.update.image'(_id, dataUrl) {
+      if (!Meteor.userId() || !tools.isWriteAllowed('variations')) {
+        throw new Meteor.Error('unauthorized');
+      }
+      var variation = Variations.findOne({_id});
+      var extension = ".jpg";
+      var date = new Date();
+      var formattedDate = moment(date).format("YYYY-MM-DD");
+      var directory = `user-uploads/images/variations
+        /${_id}/${formattedDate}/`;
+      var name = `variation-${_id}${extension}`;
+      var key = directory + name;
+
+      return new Promise((resolve, reject) => {
+        return new Promise((resolve1, reject1) => {
+          if (!variation.image) resolve1();
+          Meteor.call('aws.delete.directory', variation.image, (err, res) => {
+            if (err) throw new Meteor.Error(err);
+            if (res) resolve1();
+          })
+        }).then(() => {
+          Meteor.call('aws.write', dataUrl, key, (err, data) => {
+            if (err) throw new Meteor.Error(err);
+            if (data) {
+              var image = data.Location;
+              Variations.update({_id}, {$set: {image}} );
+              resolve(_id)
+            }
+          })
+        })
+      })
     }
   });
 }

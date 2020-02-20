@@ -168,7 +168,7 @@ class AccessoriesTable extends React.Component {
         {this.state.windowType === 'image' ?
           <ImageVisualizer
             item={this.state.item}
-            entries={this.props.variations
+            variations={this.props.variations
               .filter((variation) => {
                 return variation.accessory._id ===
                  this.state.item._id
