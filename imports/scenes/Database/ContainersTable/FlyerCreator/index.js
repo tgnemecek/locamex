@@ -60,17 +60,12 @@ export default class FlyerCreator extends React.Component {
     this.setState({ images: e.target.value });
   }
 
-  removeImage = (i) => {
-    var images = [...this.state.images];
-    images.splice(i, 1);
-    this.setState({ images });
-  }
-
   print = () => {
     this.setState({ databaseStatus: "loading" }, () => {
       var data = {
         _id : this.props.item._id,
-        type: "flyer"
+        type: "flyer",
+        flyer: this.props.item.flyer
       }
       Meteor.call('pdf.generate', data, (err, res) => {
         if (res) {
@@ -130,12 +125,14 @@ export default class FlyerCreator extends React.Component {
           promises.push(new Promise((resolve, reject) => {
             var reader = new FileReader();
             var _id = this.props.item._id;
-            var filename = this.props.item.description + "_" + i;
+            var filename = this.props.item._id + "_" + i;
             var filePath = `user-uploads/images/flyers/${_id}/${filename}.jpg`;
             reader.onloadend = () => {
               Meteor.call('aws.write', reader.result, filePath, (err, res) => {
                 if (err) reject(err);
-                if (res) resolve(res.Key);
+                if (res) {
+                  resolve(res.Location);
+                }
               })
             }
             reader.readAsDataURL(image);
@@ -144,18 +141,41 @@ export default class FlyerCreator extends React.Component {
         return Promise.all(promises);
       }
 
-      if (this.state.hasFlyer && this.state.newImages) {
-
-        deleteOldImages().then(() => {
-          uploadImages().then((images) => {
-            data.images = images;
+      if (!this.state.hasFlyer) {
+        if (this.props.item.flyer && this.props.item.flyer.images.length) {
+          deleteOldImages().then(() => {
             updateContainer();
-          }).catch((err) => {
-            console.log(err);
           })
-        })
-      } else updateContainer();
+        } else updateContainer();
+      } else {
+        if (this.state.newImages) {
+          deleteOldImages().then(() => {
+            uploadImages().then((images) => {
+              data.images = images;
+              updateContainer();
+            }).catch((err) => {
+              console.log(err);
+            })
+          })
+        } else updateContainer();
+      }
     })
+  }
+
+  footerButtons = () => {
+    var result = [
+      {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+      {text: "Salvar", onClick: this.saveEdits}
+    ]
+
+    if (this.props.item.flyer) {
+      result.unshift({
+        text: "Visualizar Folder Atual",
+        className: "button--pill",
+        onClick: this.print
+      })
+    }
+    return result;
   }
 
   render() {
@@ -213,9 +233,8 @@ export default class FlyerCreator extends React.Component {
               <Input
                 title="Imagens"
                 type="file"
-                accept="image/jpeg"
+                accept=".jpg"
                 preview={true}
-                removeFile={this.removeImage}
                 value={this.state.images}
                 max={2}
                 onChange={this.setImages}/>
@@ -223,11 +242,7 @@ export default class FlyerCreator extends React.Component {
           </div>
         </div>
         <DatabaseStatus status={this.state.databaseStatus}/>
-        <FooterButtons buttons={[
-          {text: "Visualizar Folder Atual", className: "button--pill", onClick: this.print},
-          {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
-          {text: "Salvar", onClick: this.saveEdits}
-        ]}/>
+        <FooterButtons buttons={this.footerButtons()}/>
       </Box>
 
     )

@@ -148,7 +148,6 @@ function fillRows(arrayOfRows, widths) {
     for (var i = 0; i < difference; i++) {
       firstPart.push('');
     }
-    console.log(firstPart.concat(lastPart));
     return firstPart.concat(lastPart);
   })
 }

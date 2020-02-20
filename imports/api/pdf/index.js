@@ -103,17 +103,11 @@ function generateProposal(master) {
       if (master.includeFlyer) {
         var promises = master.containers.map((container) => {
           return new Promise((resolve, reject) => {
+            if (!container.flyer) return resolve([]);
             getFlyerImages(container).then((images) => {
-              var item = Containers.findOne({
-                _id: container.productId
-              });
-              var flyer = flyerPdf({...item, images}, header)
-              var flyerDoc = [];
-              if (flyer) {
-                flyerDoc = flyer.content;
-                flyerDoc.unshift({text: '', pageBreak: 'after'});
-              }
-              resolve(flyerDoc);
+              container.flyer.images = images;
+              var flyer = flyerPdf(container, header);
+              resolve([{text: '', pageBreak: 'after'}, ...flyer.content]);
             })
           })
         })
@@ -244,7 +238,6 @@ function generateFooter(docDefinition) {
 function getFlyerImages(item) {
   var promises = [];
   if (!item.flyer) return Promise.resolve([]);
-
   item.flyer.images.forEach((image) => {
     promises.push(new Promise((resolve, reject) => {
       Meteor.call('aws.read', image, (err, res) => {

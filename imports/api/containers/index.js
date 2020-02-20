@@ -14,9 +14,16 @@ export const containersSchema = new SimpleSchema({
   price: Number,
   restitution: Number,
   flyer: {
+    type: Object,
+    optional: true
+  },
+  'flyer.paragraphs': Array,
+  'flyer.paragraphs.$': {
     type: String,
     optional: true
   },
+  'flyer.images': Array,
+  'flyer.images.$': String,
   allowedModules: {
     type: Array,
     optional: true
@@ -55,7 +62,6 @@ if (Meteor.isServer) {
         type: "fixed",
         price: state.price,
         restitution: state.restitution,
-        flyer: false,
         visible: true
       }
       Containers.insert(data);
@@ -77,7 +83,7 @@ if (Meteor.isServer) {
       updateReferences(state._id, {
         description: data.description,
         restitution: data.restitution
-      })
+      }, [Proposals, Contracts])
 
       return true;
     },
@@ -97,7 +103,6 @@ if (Meteor.isServer) {
 
         price: state.price,
         restitution: state.restitution,
-        flyer: false,
 
         visible: true
       }
@@ -120,7 +125,7 @@ if (Meteor.isServer) {
       updateReferences(state._id, 'containers', {
         description: data.description,
         restitution: data.restitution
-      });
+      }, [Proposals, Contracts]);
 
       return true;
     },
@@ -133,17 +138,18 @@ if (Meteor.isServer) {
       var flyer = {};
       flyer.paragraphs = state.hasFlyer ? state.paragraphs : [];
       if (!state.hasFlyer) {
-        flyer.paragraphs = [];
-        flyer.images = [];
+        flyer = null;
       } else {
         flyer.paragraphs = state.paragraphs;
         if (state.newImages) {
           flyer.images = state.images;
         } else {
           var item = Containers.findOne({ _id: state._id });
-          flyer.images = item.flyer.images;
+          flyer.images = item.flyer ? item.flyer.images : [];
         }
       }
+
+      updateReferences(state._id, {flyer}, [Proposals])
 
       Containers.update({ _id: state._id }, {$set: { flyer }})
 
@@ -169,38 +175,24 @@ if (Meteor.isServer) {
     },
   })
 
-  function updateReferences(_id, changes) {
-    Proposals.find({status: "inactive"})
-    .forEach((proposal) => {
-        proposal.snapshots.forEach((snapshot) => {
-          snapshot.containers = snapshot.containers
-          .map((item) => {
-            if (item._id === _id) {
-              return {
-                ...item,
-                ...changes
-              }
-            } else return item;
+  function updateReferences(_id, changes, Databases) {
+    Databases.forEach((Database) => {
+      Database.find({status: "inactive"})
+      .forEach((proposal) => {
+          proposal.snapshots.forEach((snapshot) => {
+            snapshot.containers = snapshot.containers
+            .map((item) => {
+              if (item._id === _id) {
+                return {
+                  ...item,
+                  ...changes
+                }
+              } else return item;
+            })
           })
-        })
-        Proposals.update({ _id: proposal._id },
-          {$set: proposal});
-    })
-    Contracts.find({status: "inactive"})
-    .forEach((contract) => {
-        contract.snapshots.forEach((snapshot) => {
-          snapshot.containers = snapshot.containers
-          .map((item) => {
-            if (item._id === _id) {
-              return {
-                ...item,
-                ...changes
-              }
-            } else return item;
-          })
-        })
-        Contracts.update({ _id: contract._id },
-          {$set: contract});
+          Proposals.update({ _id: proposal._id },
+            {$set: proposal});
+      })
     })
   }
 }

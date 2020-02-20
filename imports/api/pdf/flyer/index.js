@@ -18,14 +18,14 @@ export default function flyerPdf(item, header) {
         {text: item.flyer.paragraphs[0], style: 'subtitle'},
         {columns: [
           {text: item.flyer.paragraphs[1]},
-          item.images[0] ? {
-              image: item.images[0],
+          item.flyer.images[0] ? {
+              image: item.flyer.images[0],
               fit: [250, 250]
             } : ''
         ], margin: [0, 0, 0, 60]},
         {columns: [
-          item.images[1] ? {
-              image: item.images[1],
+          item.flyer.images[1] ? {
+              image: item.flyer.images[1],
               fit: [250, 250]
             } : '',
           {text: item.flyer.paragraphs[2]}
@@ -34,6 +34,6 @@ export default function flyerPdf(item, header) {
     };
   }
   catch(err) {
-    console.log(err);
+    throw new Meteor.Error(err);
   }
 }

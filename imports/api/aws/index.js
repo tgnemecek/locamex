@@ -5,39 +5,38 @@ if (Meteor.isServer) {
 
   var Bucket = 'locamex-app';
   var s3 = new AWS.S3();
-  var prefix = "https://locamex-app.s3-sa-east-1.amazonaws.com/"
+  var prefix = "https://locamex-app.s3.sa-east-1.amazonaws.com/";
 
   Meteor.methods({
     'aws.read'(Key, callback) {
       if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       var params = {
         Bucket,
-        Key
+        Key: Key.replace(prefix, "")
       }
-
       return new Promise((resolve, reject) => {
         s3.getObject(params, (err, data) => {
           if (err) {
             console.log(err);
-            reject(err);
+            // throw new Meteor.Error(err);
           } else {
             resolve(data);
           }
         })
       })
     },
-    'aws.write'(dataUrl, key) {
+    'aws.write'(dataUrl, Key) {
       if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
       var buff = Buffer.from(dataUrl.split(',')[1], 'base64');
-      key = key.replace(prefix);
+      Key = Key.replace(prefix, "");
       if (Meteor.isDevelopment) {
-        key = "tests/" + key;
+        Key = "tests/" + Key;
       }
       var params = {
         ACL: 'public-read-write',
         Bucket,
         Body: buff,
-        Key: key
+        Key
       }
       return new Promise((resolve, reject) => {
         s3.upload(params, (err, data) => {
@@ -54,7 +53,7 @@ if (Meteor.isServer) {
       return new Promise((resolve, reject) => {
         var promises = filesWithUrl.map((file, i) => {
           return new Promise((resolve, reject) => {
-            Meteor.call('aws.write', file.dataUrl, file.key, (err, res) => {
+            Meteor.call('aws.write', file.dataUrl, file.Key, (err, res) => {
               if (err) reject(err);
               if (res) {
                 resolve(res.Location);

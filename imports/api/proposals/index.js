@@ -58,6 +58,14 @@ Proposals.attachSchema(new SimpleSchema({
     'containers.$.restitution': Number,
     'containers.$.price': Number,
     'containers.$.quantity': SimpleSchema.Integer,
+    'containers.$.flyer': {
+      type: Object,
+      optional: true
+    },
+    'containers.$.flyer.paragraphs': Array,
+    'containers.$.flyer.paragraphs.$': String,
+    'containers.$.flyer.images': Array,
+    'containers.$.flyer.images.$': String,
 
     accessories: Array,
     'accessories.$': Object,
@@ -112,7 +120,7 @@ if (Meteor.isServer) {
         visible: true
       };
       Proposals.insert(proposal);
-      
+
       return proposal;
     },
     'proposals.update'(snapshot, _id, index) {
@@ -130,7 +138,7 @@ if (Meteor.isServer) {
       data.snapshots.push(snapshot)
       Proposals.update({ _id }, {$set: data})
 
-      
+
       return {
         hasChanged: true,
         snapshot,
@@ -148,7 +156,7 @@ if (Meteor.isServer) {
       proposal.snapshots[index].active = true;
 
       Proposals.update({ _id }, {$set: proposal});
-      
+
 
       try {
         var contractId = Meteor.call('contracts.insert', _id);
@@ -164,7 +172,7 @@ if (Meteor.isServer) {
         throw new Meteor.Error('unauthorized');
       }
       Proposals.update({ _id }, { $set: { status: "cancelled" } } );
-      
+
       return _id;
     }
   })

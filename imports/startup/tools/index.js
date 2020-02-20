@@ -321,6 +321,7 @@ export default class tools {
   }
 
   static makeValidFileName = (string) => {
+    if (!string) return ""
     return string.replace(/[<>:"/\\|?*]/g, "").trim();
   }
 
