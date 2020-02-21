@@ -5,7 +5,6 @@ import tools from '/imports/startup/tools/index';
 import Block from '/imports/components/Block/index';
 import Box from '/imports/components/Box/index';
 import Input from '/imports/components/Input/index';
-import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
 import ModuleList from './ModuleList/index';
@@ -21,9 +20,7 @@ export default class Modular extends React.Component {
       allowedModules: this.props.item.allowedModules || [],
 
       errorMsg: '',
-      errorKeys: [],
-
-      confirmationWindow: false
+      errorKeys: []
     }
   }
   renderOptions = (database) => {
@@ -38,13 +35,12 @@ export default class Modular extends React.Component {
 
     this.setState({ [e.target.name]: e.target.value });
   }
-  toggleConfirmationWindow = () => {
-    var confirmationWindow = !this.state.confirmationWindow;
-    this.setState({ confirmationWindow });
-  }
   removeItem = () => {
-    Meteor.call('containers.hide', this.state._id);
-    this.props.toggleWindow();
+    this.props.databaseLoading();
+    Meteor.call('containers.hide', this.props.item._id, (err, res) => {
+      if (err) this.props.databaseFailed(err);
+      if (res) this.props.databaseCompleted();
+    });
   }
   saveEdits = () => {
     var errorKeys = [];
@@ -108,14 +104,21 @@ export default class Modular extends React.Component {
             message="Deseja mesmo excluir este item do banco de dados?"
             leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
             rightButton={{text: "Sim", className: "button--danger", onClick: this.removeItem}}/>
-          <FooterButtons buttons={this.props.item._id ? [
-            {text: "Excluir Registro", className: "button button--danger", onClick: this.toggleConfirmationWindow},
-            {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
-            {text: "Salvar", onClick: this.saveEdits}
-          ] : [
-            {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
-            {text: "Salvar", onClick: this.saveEdits}
-          ]}/>
+            <FooterButtons
+              disabled={!tools.isWriteAllowed('containers')}
+              buttons={this.props.item._id ?
+                [
+                  {text: "Excluir Registro",
+                  className: "button--danger",
+                  onClick: () => this.props.toggleConfirmationWindow(this.removeItem)},
+                  {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+                  {text: "Salvar", onClick: this.saveEdits}
+                ]
+              :
+              [
+                {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+                {text: "Salvar", onClick: this.saveEdits}
+              ]}/>
       </Box>
     )
   }

@@ -46,6 +46,12 @@ export const appStructure = [
     groupTitle: "Geral",
     pages: [
       {
+        name: "clients",
+        title: "Clientes",
+        link: "/database/clients",
+        visible: true
+      },
+      {
         name: "services",
         title: "Serviços",
         link: "/database/services",
@@ -61,18 +67,6 @@ export const appStructure = [
         name: "accounts",
         title: "Contas",
         link: "/database/accounts",
-        visible: true
-      }
-    ]
-  },
-  {
-    groupName: "clients",
-    groupTitle: "Clientes",
-    pages: [
-      {
-        name: "clients",
-        title: "Clientes",
-        link: "/database/clients",
         visible: true
       }
     ]

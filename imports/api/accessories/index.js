@@ -106,6 +106,17 @@ if (Meteor.isServer) {
       Accessories.update({ _id: state._id }, {$set: data});
       return true;
     },
+    'accessories.hide' (_id) {
+      var accessory = Accessories.findOne({_id});
+      if (accessory.rented
+        || accessory.inactive
+        || accessory.available) {
+        throw new Meteor.Error('stock-must-be-zero');
+      }
+      Meteor.call('variations.hide.all', _id);
+      Accessories.update({_id}, {$set: {visible: false}});
+      return true
+    }
     // 'accessories.update.stock'(variations) {
     //   if (!Meteor.userId() || !tools.isWriteAllowed('accessories')) {
     //     throw new Meteor.Error('unauthorized');

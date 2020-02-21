@@ -1,5 +1,6 @@
 import React from 'react';
 
+import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 import tools from '/imports/startup/tools/index';
 
@@ -15,14 +16,23 @@ import RegisterServices from './RegisterServices/index';
 import RegisterSeries from './RegisterSeries/index';
 import RegisterUsers from './RegisterUsers/index';
 
-import Footer from './Footer/index';
-
 export default class RegisterData extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      databaseStatus: false
+      databaseStatus: false,
+      confirmationWindow: false
     }
+    this.confirmationOptions = {};
+    this.confirm;
+  }
+
+  toggleConfirmationWindow = (confirm, options) => {
+    this.confirm = confirm;
+    this.confirmationOptions = options || {};
+    this.setState({
+      confirmationWindow: !this.state.confirmationWindow
+    })
   }
 
   databaseLoading = () => {
@@ -89,7 +99,7 @@ export default class RegisterData extends React.Component {
         databaseLoading={this.databaseLoading}
         databaseFailed={this.databaseFailed}
         databaseCompleted={this.databaseCompleted}
-        Footer={Footer}
+        toggleConfirmationWindow={this.toggleConfirmationWindow}
       />
     )
   }
@@ -98,6 +108,13 @@ export default class RegisterData extends React.Component {
     return (
       <>
         {this.selectComponent()}
+        <ConfirmationWindow
+          isOpen={this.state.confirmationWindow}
+          message={this.confirmationOptions.message
+            || "Deseja mesmo excluir este item do banco de dados?"}
+          leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
+          rightButton={{text: "Sim", className: "button--danger", onClick: this.confirm}}
+          closeBox={this.toggleConfirmationWindow}/>
         <DatabaseStatus status={this.state.databaseStatus}/>
       </>
     )

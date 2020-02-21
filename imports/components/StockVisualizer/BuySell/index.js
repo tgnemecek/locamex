@@ -26,6 +26,7 @@ export default class BuySell extends React.Component {
     } else return {color: "red"}
   }
   render() {
+    if (this.props.disabled) return null;
     return (
       <div className="stock-visualizer__buy-sell">
         <div className="stock-visualizer__inputs">

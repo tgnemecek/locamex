@@ -6,7 +6,6 @@ import tools from '/imports/startup/tools/index';
 import Block from '/imports/components/Block/index';
 import Box from '/imports/components/Box/index';
 import Input from '/imports/components/Input/index';
-import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
 export default class RegisterPlaces extends React.Component {
@@ -17,9 +16,7 @@ export default class RegisterPlaces extends React.Component {
       description: this.props.item.description || '',
 
       errorMsg: '',
-      errorKeys: [],
-
-      confirmationWindow: false
+      errorKeys: []
     }
   }
   onChange = (e) => {
@@ -29,14 +26,10 @@ export default class RegisterPlaces extends React.Component {
 
     this.setState({ [e.target.name]: e.target.value });
   }
-  toggleConfirmationWindow = () => {
-    var confirmationWindow = !this.state.confirmationWindow;
-    this.setState({ confirmationWindow });
-  }
-  removeItem = () => {
-    Meteor.call('places.hide', this.state._id);
-    this.props.toggleWindow();
-  }
+  // removeItem = () => {
+  //   Meteor.call('places.hide', this.state._id);
+  //   this.props.toggleWindow();
+  // }
   saveEdits = () => {
     var errorKeys = [];
     if (!this.state.description.trim()) {
@@ -72,17 +65,7 @@ export default class RegisterPlaces extends React.Component {
               onChange={this.onChange}
             />
           </div>
-          <ConfirmationWindow
-            isOpen={this.state.confirmationWindow}
-            message="Deseja mesmo excluir este item do banco de dados?"
-            leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
-            rightButton={{text: "Sim", className: "button--danger", onClick: this.removeItem}}
-            closeBox={this.toggleConfirmationWindow}/>
-          <FooterButtons buttons={this.props.item._id ? [
-            {text: "Excluir Registro", className: "button--danger", onClick: this.toggleConfirmationWindow},
-            {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
-            {text: "Salvar", onClick: this.saveEdits}
-          ] : [
+          <FooterButtons buttons={[
             {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
             {text: "Salvar", onClick: this.saveEdits}
           ]}/>

@@ -83,7 +83,8 @@ export default class SeriesVisualizer extends React.Component {
             src={this.getRegistry()
               .images[this.state.imageIndex] + "?" + new Date().getTime()}/>
         : null}
-        {this.getRegistry().images.length ?
+        {this.props.item.snapshots.length
+          && this.getRegistry().images.length ?
           <div className="image-visualizer__controls">
             <button onClick={this.indexDown}>
               <Icon icon="arrowLeft"/>

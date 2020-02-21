@@ -50,3 +50,9 @@ input[type="file"] {
   height: 300px;
   overflow-y: auto;
 }
+.input__file__wide-cell {
+  text-align: left;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -18,9 +18,6 @@ export default class ImageVisualizer extends React.Component {
       variationToUpload: 0
     }
   }
-  componentDidUpdate() {
-    console.log("updated")
-  }
   changeVariationToUpload = (e) => {
     this.setState({ variationToUpload: e.target.value })
   }
@@ -79,7 +76,9 @@ export default class ImageVisualizer extends React.Component {
             toggleUploadWindow={this.toggleUploadWindow}/>
         : <VariationsVisualizer {...this.props}
             toggleUploadWindow={this.toggleUploadWindow}/>}
-          <FooterButtons buttons={[
+          <FooterButtons
+            disabled={!tools.isWriteAllowed(this.props.item.type)}
+            buttons={[
             {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
             {text: "Novo Upload", className: "button--green", onClick: this.toggleUploadWindow}
           ]}/>

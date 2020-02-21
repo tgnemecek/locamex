@@ -53,7 +53,7 @@ if (Meteor.isServer) {
       return new Promise((resolve, reject) => {
         var promises = filesWithUrl.map((file, i) => {
           return new Promise((resolve, reject) => {
-            Meteor.call('aws.write', file.dataUrl, file.Key, (err, res) => {
+            Meteor.call('aws.write', file.dataUrl, file.key, (err, res) => {
               if (err) reject(err);
               if (res) {
                 resolve(res.Location);

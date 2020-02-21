@@ -12,7 +12,7 @@ export const Series = new Mongo.Collection('series');
 Series.attachSchema(new SimpleSchema({
   _id: String,
   type: String,
-  description: Number,
+  description: String,
   rented: Boolean,
   container: Object,
   'container._id': String,
@@ -56,11 +56,16 @@ if (Meteor.isServer) {
       if (!Meteor.userId() || !tools.isWriteAllowed('series')) {
         throw new Meteor.Error('unauthorized');
       }
-      var isIdInUse = !!Series.findOne({description: Number(state.description)});
-      if (isIdInUse) throw new Meteor.Error('id-in-use');
+      var found = Series.findOne(
+        {$and: [
+          {description: state.description.toString()},
+          {visible: true}
+        ]});
+
+      if (found) throw new Meteor.Error('description-in-use');
 
       var data = {
-        description: state.description,
+        description: state.description.toString(),
         container: state.container,
         rented: false,
         place: state.place,
@@ -70,7 +75,6 @@ if (Meteor.isServer) {
         visible: true
       }
       Series.insert(data);
-
       return true;
     },
     'series.update' (state) {
@@ -122,29 +126,15 @@ if (Meteor.isServer) {
         })
       })
     },
-    'series.delete' (_id) {
+    'series.hide' (_id) {
       if (!Meteor.userId() || !tools.isWriteAllowed('series')) {
         throw new Meteor.Error('unauthorized');
       }
-      // This function is temporarily disabled
-      // After Shipping module is complete, this must be enabled
-      // It should look into shipping property in contracts and
-      // verify if the series is in one of them.
-      // If found, the function should fail
-      //
-      // var contracts = Contracts.find({}).fetch();
-      // var found = contracts.find((master) => {
-      //   return master.snapshots.find((snapshot) => {
-      //     return snapshot.containers.find((container) => {
-      //       return container.productId === _id;
-      //     })
-      //   })
-      // })
-      // if (found) {
-      //   var reason = "Contrato: " + found._id;
-      //   throw new Meteor.Error('id-in-use', reason);
-      // }
-      Series.remove({ _id });
+      var series = Series.findOne({_id});
+      if (series.rented) {
+        throw new Meteor.Error('item-must-not-be-rented');
+      }
+      Series.update({_id}, {$set: {visible: false}});
       return _id;
     }
   })

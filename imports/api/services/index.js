@@ -45,7 +45,6 @@ if (Meteor.isServer) {
 
       return true;
     },
-
     'services.update'(state) {
       if (!Meteor.userId() || !tools.isWriteAllowed('services')) {
         throw new Meteor.Error('unauthorized');
@@ -99,10 +98,7 @@ if (Meteor.isServer) {
       if (!Meteor.userId() || !tools.isWriteAllowed('services')) {
         throw new Meteor.Error('unauthorized');
       }
-      const data = {
-        visible: false
-      }
-      Services.update({ _id }, { $set: data });
+      Services.update({ _id }, { $set: {visible: false} });
       return true;
     },
   })

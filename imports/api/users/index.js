@@ -36,10 +36,6 @@ if (Meteor.isServer) {
   });
 
   Meteor.methods({
-    'users.test' () {
-      var userId = Meteor.userId()
-      Accounts.sendVerificationEmail(userId);
-    },
     'users.insert'(state) {
       if (!Meteor.userId() || !tools.isWriteAllowed('uers')) {
         throw new Meteor.Error('unauthorized');
@@ -57,7 +53,7 @@ if (Meteor.isServer) {
       var _id = Accounts.createUser(data);
       if (!_id) throw new Meteor.Error('user-not-created');
 
-      
+
       return true;
     },
     // 'users.hide'(_id) {
@@ -69,7 +65,7 @@ if (Meteor.isServer) {
     //     visible: false
     //   }
     //   Meteor.users.update({ _id }, { $set: data });
-    //   
+    //
     // },
     'users.update'(state) {
       if (!Meteor.userId() || !tools.isWriteAllowed('uers')) {
@@ -90,7 +86,7 @@ if (Meteor.isServer) {
         }
       }
       Meteor.users.update({ _id }, { $set: data });
-      
+
       return true;
     },
     'users.setPassword'(oldPassword, newPassword, userId) {

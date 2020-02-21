@@ -5,17 +5,6 @@
 }
 
 .register-packs__module-list {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
   max-height: 300px;
-  overflow: auto;
-  margin: 0 100px;
-}
-
-.register-packs__module {
-  display: grid;
-  grid-template-columns: 30px 1px;
-  align-items: center;
-  border: 1px solid $grey;
-  padding: 5px 0;
+  overflow-y: auto;
 }

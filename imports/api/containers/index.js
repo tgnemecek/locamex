@@ -130,6 +130,34 @@ if (Meteor.isServer) {
       return true;
     },
 
+    'containers.hide' (_id) {
+      var container = Containers.findOne({_id});
+      var verification = false;
+      if (container.type === 'fixed') {
+        var series = Series.find({'container._id': _id}).fetch() || [];
+        verification = series.every((series) => {
+          return !series.rented && !series.visible;
+        })
+        if (!verification) throw new Meteor.Error('stock-must-be-zero');
+      }
+      var contracts = Contracts.find({status: "active"}).fetch() || [];
+      var errorContractId = '';
+      verification = contracts.every((contract) => {
+        var snapshot = contract.snapshots.find((snapshot) => {
+          return snapshot.active;
+        })
+        errorContractId = contract._id;
+        return !snapshot.containers.find((item) => {
+          return item._id === _id;
+        })
+      })
+      if (!verification) {
+        throw new Meteor.Error('active-contract-using-item', errorContractId);
+      }
+      Containers.update({_id}, {$set: {visible: false}})
+      return true;
+    },
+
     // OTHER
     'containers.update.flyer' (state) {
       if (!Meteor.userId() || !tools.isWriteAllowed('containers')) {
@@ -178,8 +206,8 @@ if (Meteor.isServer) {
   function updateReferences(_id, changes, Databases) {
     Databases.forEach((Database) => {
       Database.find({status: "inactive"})
-      .forEach((proposal) => {
-          proposal.snapshots.forEach((snapshot) => {
+      .forEach((doc) => {
+          doc.snapshots.forEach((snapshot) => {
             snapshot.containers = snapshot.containers
             .map((item) => {
               if (item._id === _id) {
@@ -190,8 +218,8 @@ if (Meteor.isServer) {
               } else return item;
             })
           })
-          Proposals.update({ _id: proposal._id },
-            {$set: proposal});
+          Database.update({ _id: doc._id },
+            {$set: doc});
       })
     })
   }

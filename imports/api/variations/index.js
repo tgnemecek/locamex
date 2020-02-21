@@ -130,6 +130,15 @@ if (Meteor.isServer) {
           })
         })
       })
+    },
+    'variations.hide.all'(accessoryId) {
+      var variations = Variations.find({
+        'accessory._id': accessoryId
+      }).fetch() || [];
+      variations.forEach((variation) => {
+        Variations.update({_id: variation._id}, {$set: {visible: false}})
+      })
+      return true;
     }
   });
 }

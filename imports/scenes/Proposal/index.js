@@ -146,10 +146,12 @@ class Proposal extends React.Component {
 
   activateProposal = (callback) => {
     this.setState({ databaseStatus: "loading" }, () => {
-      const activate = () => {
+      const activate = (snapshot, index) => {
         var _id = this.props.proposal._id;
-        var snapshotIndex = this.state.snapshotIndex;
-        Meteor.call('proposals.activate', _id, snapshotIndex, (err, res) => {
+        Meteor.call('proposals.activate',
+        _id,
+        index,
+        (err, res) => {
           if (res) {
             var databaseStatus = {
               status: "completed",
@@ -157,7 +159,10 @@ class Proposal extends React.Component {
             }
             this.setState({ databaseStatus });
           } else if (err) {
-            this.setState({ databaseStatus: "failed" });
+            this.setState({ databaseStatus: {
+              status: "failed",
+              message: tools.translateError(err)
+            } });
             console.log(err);
           }
           callback();
@@ -175,12 +180,12 @@ class Proposal extends React.Component {
       if (this.props.match.params.proposalId == 'new') {
         Meteor.call('proposals.insert', this.state.snapshot, (err, res) => {
           if (res) {
-            var proposal = res;
+            var proposal = res.proposal;
             var index = proposal.snapshots.length-1;
             var snapshot = proposal.snapshots[index];
             this.props.history.push("/proposal/" + proposal._id);
             if (typeof callback === "function") {
-              callback(snapshot);
+              callback(snapshot, index);
             } else this.setState({ snapshot, databaseStatus: "completed" });
           }
           else if (err) {
@@ -210,7 +215,7 @@ class Proposal extends React.Component {
               }
             }
             if (typeof callback === "function") {
-              callback(snapshot);
+              callback(snapshot, snapshotIndex);
             } else {
               this.setState({
                 snapshot,

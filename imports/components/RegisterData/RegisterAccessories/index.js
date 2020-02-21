@@ -5,6 +5,7 @@ import tools from '/imports/startup/tools/index';
 import { Variations } from '/imports/api/variations/index';
 import Box from '/imports/components/Box/index';
 import Input from '/imports/components/Input/index';
+import FooterButtons from '/imports/components/FooterButtons/index';
 
 import VariationsList from './VariationsList/index';
 
@@ -25,8 +26,6 @@ class RegisterAccessories extends React.Component {
 
       errorMsg: '',
       errorKeys: [],
-
-      confirmationWindow: false,
       imageWindow: false
     }
   }
@@ -43,13 +42,12 @@ class RegisterAccessories extends React.Component {
     errorKeys.splice(fieldIndex, 1);
     this.setState({ [e.target.name]: e.target.value, errorKeys });
   }
-  toggleConfirmationWindow = () => {
-    var confirmationWindow = !this.state.confirmationWindow;
-    this.setState({ confirmationWindow });
-  }
   removeItem = () => {
-    Meteor.call('accessories.hide', this.state._id);
-    this.props.toggleWindow();
+    this.props.databaseLoading();
+    Meteor.call('accessories.hide', this.state._id, (err, res) => {
+      if (err) this.props.databaseFailed(err);
+      if (res) this.props.databaseCompleted();
+    });
   }
   saveEdits = () => {
     var errorKeys = [];
@@ -106,9 +104,21 @@ class RegisterAccessories extends React.Component {
             disabled={!tools.isWriteAllowed('accessories')}
             variations={this.state.variations}
             onChange={this.onChange}/>
-          <this.props.Footer {...this.props}
+          <FooterButtons
             disabled={!tools.isWriteAllowed('accessories')}
-            saveEdits={this.saveEdits} removeItem={this.removeItem} />
+            buttons={this.props.item._id ?
+              [
+                {text: "Excluir Registro",
+                className: "button--danger",
+                onClick: () => this.props.toggleConfirmationWindow(this.removeItem)},
+                {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+                {text: "Salvar", onClick: this.saveEdits}
+              ]
+            :
+            [
+              {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+              {text: "Salvar", onClick: this.saveEdits}
+            ]}/>
       </Box>
     )
   }

@@ -30,6 +30,7 @@ export default class Distribution extends React.Component {
                 value={item.available}
                 name={i}
                 onChange={this.onChangeAvailable}
+                disabled={this.props.disabled}
                 style={{color: "green",
                   textAlign: "right"}}
               />
@@ -40,6 +41,7 @@ export default class Distribution extends React.Component {
                 value={item.inactive}
                 name={i}
                 onChange={this.onChangeInactive}
+                disabled={this.props.disabled}
                 style={{color: "red",
                   textAlign: "right"}}
               />

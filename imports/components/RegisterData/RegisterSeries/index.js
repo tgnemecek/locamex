@@ -25,8 +25,7 @@ class RegisterSeries extends React.Component {
       },
       observations: this.props.item.observations || '',
 
-      errorKeys: [],
-      databaseStatus: false
+      errorKeys: []
     }
   }
 
@@ -97,27 +96,12 @@ class RegisterSeries extends React.Component {
     }
   }
 
-  deleteSeries = () => {
-    this.setState({ databaseStatus: "loading" }, () => {
-      Meteor.call('series.delete', this.props.item._id, (err, res) => {
-        if (err) {
-          if (err.error === "id-in-use") {
-            this.setState({ databaseStatus: {
-              status: "failed",
-              message: "Série já em uso! " + err.reason
-            } });
-          } else {
-            this.setState({ databaseStatus: "failed" });
-          }
-        }
-        if (res) {
-          this.setState({ databaseStatus: {
-            status: "completed",
-            callback: this.props.toggleWindow
-          }})
-        }
-      });
-    })
+  hideSeries = () => {
+    this.props.databaseLoading();
+    Meteor.call('series.hide', this.props.item._id, (err, res) => {
+      if (err) this.props.databaseFailed(err);
+      if (res) this.props.databaseCompleted();
+    });
   }
 
   render() {
@@ -174,7 +158,9 @@ class RegisterSeries extends React.Component {
             disabled={!tools.isWriteAllowed('series')}
             buttons={this.props.item._id ?
               [
-                {text: "Excluir Registro", className: "button--danger", onClick: this.deleteSeries},
+                {text: "Excluir Registro",
+                className: "button--danger",
+                onClick: () => this.props.toggleConfirmationWindow(this.hideSeries)},
                 {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
                 {text: "Salvar", onClick: this.saveEdits}
               ]

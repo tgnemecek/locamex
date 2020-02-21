@@ -36,7 +36,7 @@ function afterInsert(userId, doc) {
 }
 
 function afterUpdate(userId, doc, modifier, options) {
-  var user = Meteor.user();
+  var user = Meteor.user() || {};
   History.insert({
     _id: tools.generateId(),
     user: {
@@ -94,7 +94,7 @@ if (Meteor.isServer) {
     if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
     if (!tools.isReadAllowed('history')) return [];
     return History.find({}, {
-      sort: { insertionDate: -1 },
+      sort: { date: -1 },
       limit: limit || 0
     });
   })

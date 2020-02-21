@@ -1,18 +1,20 @@
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 import tools from '/imports/startup/tools/index';
-import { accountsSchema } from '/imports/api/accounts/index';
 import { Proposals } from '/imports/api/proposals/index';
 import { Series } from '/imports/api/series/index';
 import { Modules } from '/imports/api/modules/index';
 import { Packs } from '/imports/api/packs/index';
 import { Accessories } from '/imports/api/accessories/index';
+import { Containers } from '/imports/api/containers/index';
+import { Services } from '/imports/api/services/index';
 import { Variations } from '/imports/api/variations/index';
 
 export const Contracts = new Mongo.Collection('contracts');
 Contracts.attachSchema(new SimpleSchema({
   _id: String,
   status: String,
+  type: String,
   proposalId: String,
   proposalIndex: SimpleSchema.Integer,
   firstSnapshot: {
@@ -144,7 +146,13 @@ Contracts.attachSchema(new SimpleSchema({
     'billingProducts.$.startDate': Date,
     'billingProducts.$.endDate': Date,
     'billingProducts.$.expiryDate': Date,
-    'billingProducts.$.account': accountsSchema,
+    'billingProducts.$.account': Object,
+    'billingProducts.$.account._id': String,
+    'billingProducts.$.account.description': String,
+    'billingProducts.$.account.bank': String,
+    'billingProducts.$.account.bankNumber': String,
+    'billingProducts.$.account.number': String,
+    'billingProducts.$.account.branch': String,
     billingServices: Array,
     'billingServices.$': Object,
     'billingServices.$.description': String,
@@ -160,7 +168,13 @@ Contracts.attachSchema(new SimpleSchema({
     },
     'billingServices.$.value': Number,
     'billingServices.$.expiryDate': Date,
-    'billingServices.$.account': accountsSchema,
+    'billingServices.$.account': Object,
+    'billingServices.$.account._id': String,
+    'billingServices.$.account.description': String,
+    'billingServices.$.account.bank': String,
+    'billingServices.$.account.bankNumber': String,
+    'billingServices.$.account.number': String,
+    'billingServices.$.account.branch': String,
 
     containers: Array,
     'containers.$': Object,
@@ -230,6 +244,7 @@ if (Meteor.isServer) {
       var contract = {
         _id,
         status: 'inactive',
+        type: "contract",
         proposalId: proposalId,
         proposalIndex,
         shipping: [],
@@ -303,7 +318,12 @@ if (Meteor.isServer) {
       );
 
       if (!hasChanged) {
-        return {hasChanged: false};
+        return {
+          hasChanged: false,
+          snapshot,
+          contract: oldContract,
+          index
+        };
       }
 
       var data;
@@ -318,7 +338,7 @@ if (Meteor.isServer) {
         }
       } else {
         newIndex = oldContract.snapshots.length;
-        data = oldContract;
+        data = tools.deepCopy(oldContract);
         data.snapshots.push(snapshot);
       }
 
@@ -327,6 +347,7 @@ if (Meteor.isServer) {
       return {
         hasChanged: true,
         snapshot,
+        contract: data,
         index: newIndex
       };
     },
@@ -334,14 +355,31 @@ if (Meteor.isServer) {
       if (!Meteor.userId() || !tools.isWriteAllowed('contracts')) {
         throw new Meteor.Error('unauthorized');
       }
-      var contract = Contracts.findOne({ _id });
+      var contract = Contracts.findOne({_id});
+      var backupContract = tools.deepCopy(contract);
+      var snapshot = contract.snapshots[index];
+
+      function findDeletedItems(array, Database) {
+        var itemDescription = "";
+        var verification = array.every((item) => {
+          itemDescription = item.description;
+          var itemFromDB = Database.findOne({_id: item._id});
+          return itemFromDB.visible;
+        })
+        if (!verification) {
+          throw new Meteor.Error(
+            'document-contains-deleted-items', itemDescription);
+        }
+      }
+
+      findDeletedItems(snapshot.containers, Containers);
+      findDeletedItems(snapshot.accessories, Accessories);
+      findDeletedItems(snapshot.services, Services);
 
       contract.status = 'active';
       contract.snapshots[index].active = true;
-
       Contracts.update({ _id }, {$set: contract});
-
-      return true;
+      return _id;
     },
     'contracts.finalize'(_id) {
       if (!Meteor.userId() || !tools.isWriteAllowed('contracts')) {

@@ -122,7 +122,7 @@ class StockVisualizer extends React.Component {
         var method;
         var data;
         if (this.props.item.type === 'module') {
-          method = 'modules.update';
+          method = 'modules.update.stock';
           data = this.state.item;
         } else {
           method = 'variations.update.stock';
@@ -164,14 +164,17 @@ class StockVisualizer extends React.Component {
               variations={this.props.variations}/>
           }
           <Distribution
+            disabled={!tools.isWriteAllowed(this.props.item.type)}
             updateItem={this.updateItem}
             places={this.getPlaces()}/>
           <BuySell
+            disabled={!tools.isWriteAllowed(this.props.item.type)}
             offset={this.state.offset}
             setOffset={this.setOffset}
             totalGoal={this.getTotalGoal()}
             sumOfPlaces={this.getSumOfPlaces()}/>
-          <FooterButtons buttons={[
+          <FooterButtons disabled={!tools.isWriteAllowed(this.props.item.type)}
+            buttons={[
             {text: "Voltar",
             className: "button--secondary",
             onClick: this.props.toggleWindow},

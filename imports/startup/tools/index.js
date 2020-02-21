@@ -304,20 +304,24 @@ export default class tools {
   }
 
   static translateError = (error) => {
-    console.log(error);
+    var key;
     if (typeof error === "object") {
       if (error.errorType === "Meteor.Error") {
-        error = error.error;
-      } else error = error.reason;
+        key = error.error;
+      } else key = error.reason;
     }
     var dictionary = {
       'unauthorized': 'Usuário não autorizado.',
       'Incorrect password': 'Senha Incorreta.',
       'Username already exists.': 'Nome de usuário já existe.',
       'duplicate-registry': 'O Cliente que você está tentando cadastrar já existe.',
-      'id-in-use': 'Série já existente. Favor escolher outra.'
+      'description-in-use': 'Série já existente. Favor escolher outra.',
+      'stock-must-be-zero': 'Para exclusão, o estoque deve ser zero, incluindo locações em andamento.',
+      'item-must-not-be-rented': 'O item a ser excluído não pode estar locado.',
+      'active-contract-using-item': 'Para exclusão, nenhum contrato ativo pode conter o item a ser excluído. Contrato: ' + error.reason,
+      'document-contains-deleted-items': 'O documento não pode ser ativado pois contém itens deletados. Item: ' + error.reason
     }
-    return dictionary[error] || 'Erro de Servidor';
+    return dictionary[key] || 'Erro de Servidor';
   }
 
   static makeValidFileName = (string) => {

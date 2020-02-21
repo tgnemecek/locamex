@@ -79,7 +79,7 @@ export default class File extends React.Component {
           <thead>
             <tr>
               <th>#</th>
-              <th className="table__wide">Arquivos Selecionados</th>
+              <th className="input__file__wide-cell">Arquivos Selecionados</th>
               <th className="no-padding">
                 <button onClick={this.removeFiles}>
                   <Icon icon="not"/>
@@ -92,7 +92,9 @@ export default class File extends React.Component {
               return (
                 <tr key={i}>
                   <td>{i+1}</td>
-                  <td className="table__wide" colSpan={2}>{file.name}</td>
+                  <td className="input__file__wide-cell" colSpan={2}>
+                    {file.name}
+                  </td>
                 </tr>
               )
             })}

@@ -47,7 +47,7 @@ $small-width: $small-size/3;
 }
 
 .async-animation--regular {
-  margin-bottom: $regular-height;
+  margin: $space;
   border: 2px solid rgba(0, 0, 0, 0.2);
   border-left-color: $loading-color;
   animation: loader-spin 1.2s infinite linear;

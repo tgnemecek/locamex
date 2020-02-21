@@ -7,7 +7,6 @@ import Block from '/imports/components/Block/index';
 import Box from '/imports/components/Box/index';
 import Input from '/imports/components/Input/index';
 import Tab from '/imports/components/Tab/index';
-import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
 import MainTab from './MainTab/index';
@@ -50,12 +49,9 @@ export default class RegisterClients extends React.Component {
         rg: '',
         visible: true
       }],
-
-      confirmationWindow: false,
       tab: 'main',
       errorMsg: '',
-      errorKeys: [],
-      databaseStatus: ''
+      errorKeys: []
     }
   }
   onChange = (e) => {
@@ -66,14 +62,6 @@ export default class RegisterClients extends React.Component {
     errorKeys.splice(fieldIndex, 1);
 
     this.setState({ [key]: value, errorKeys });
-  }
-  toggleConfirmationWindow = () => {
-    var confirmationWindow = !this.state.confirmationWindow;
-    this.setState({ confirmationWindow });
-  }
-  removeItem = () => {
-    Meteor.call('services.hide', this.state._id);
-    this.props.toggleWindow();
   }
   saveEdits = () => {
     var contacts = [...this.state.contacts];
@@ -179,16 +167,10 @@ export default class RegisterClients extends React.Component {
             <ContactTab key={this.state.tab} onChange={this.onChange} item={this.state}/>
           : null}
           {this.state.tab === 'observations' ? <ObservationsTab onChange={this.onChange} item={this.state}/> : null}
-          <ConfirmationWindow
-            isOpen={this.state.confirmationWindow}
-            closeBox={this.toggleConfirmationWindow}
-            message="Deseja mesmo excluir este item do banco de dados?"
-            leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
-            rightButton={{text: "Sim", className: "button--danger", onClick: this.removeItem}}/>
-          <FooterButtons buttons={[
+          <FooterButtons buttons={tools.isWriteAllowed('clients') ? [
             {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
             {text: "Salvar", onClick: this.saveEdits}
-          ]}/>
+          ] : []}/>
         </Box>
       </ErrorBoundary>
     )

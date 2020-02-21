@@ -26,7 +26,7 @@ class DatabaseStatus extends React.Component {
     }
     if (this.props.status === "failed"
         && prevProps.status !== "failed") {
-      this.waitForAnimation();
+      // this.waitForAnimation();
     }
   }
 
@@ -48,8 +48,12 @@ class DatabaseStatus extends React.Component {
   render() {
     if (this.state.showContent && this.props.status) {
       return (
-        <Box className="database-status">
-          <h2 className={this.className()}>{this.props.message}</h2>
+        <Box
+          title={this.props.status === "failed" ? "Erro" : null}
+          closeBox={this.props.status === "failed"
+          ? () => this.setState({ showContent: false }) : null}
+          className="database-status">
+          <h3 className={this.className()}>{this.props.message}</h3>
           <AsyncAnimation status={this.props.status} />
         </Box>
       )

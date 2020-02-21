@@ -88,7 +88,10 @@ class Contract extends React.Component {
       const activate = () => {
         var _id = this.props.contract._id;
         var snapshotIndex = this.state.snapshotIndex;
-        Meteor.call('contracts.activate', _id, snapshotIndex, (err, res) => {
+        Meteor.call('contracts.activate',
+        _id,
+        snapshotIndex,
+        (err, res) => {
           if (res) {
             var databaseStatus = {
               status: "completed",
@@ -96,7 +99,10 @@ class Contract extends React.Component {
             }
             this.setState({ databaseStatus });
           } else if (err) {
-            this.setState({ databaseStatus: "failed" });
+            this.setState({ databaseStatus: {
+              status: "failed",
+              message: tools.translateError(err)
+            } });
             console.log(err);
           }
           callback();
@@ -160,7 +166,7 @@ class Contract extends React.Component {
             databaseStatus
           }, () => {
             if (typeof callback === "function") {
-              callback(snapshot);
+              callback(snapshot, snapshotIndex);
             }
           });
         } else if (err) {

@@ -4,14 +4,15 @@ import tools from '/imports/startup/tools/index';
 
 import { Series } from '/imports/api/series/index';
 import { Modules } from '/imports/api/modules/index';
-import { Accessories, accessoriesSchema } from '/imports/api/accessories/index';
-import { containersSchema } from '/imports/api/containers/index';
-import { servicesSchema } from '/imports/api/services/index';
+import { Accessories } from '/imports/api/accessories/index';
+import { Containers } from '/imports/api/containers/index';
+import { Services } from '/imports/api/services/index';
 
 export const Proposals = new Mongo.Collection('proposals');
 Proposals.attachSchema(new SimpleSchema({
   _id: String,
   status: String,
+  type: String,
   visible: Boolean,
   snapshots: Array,
   'snapshots.$': new SimpleSchema({
@@ -115,13 +116,18 @@ if (Meteor.isServer) {
 
       var proposal = {
         _id,
+        type: "proposal",
         status: "inactive",
         snapshots: [snapshot],
         visible: true
       };
       Proposals.insert(proposal);
 
-      return proposal;
+      return {
+        proposal,
+        snapshot,
+        index: 0
+      };
     },
     'proposals.update'(snapshot, _id, index) {
       if (!Meteor.userId() || !tools.isWriteAllowed('proposals')) {
@@ -132,16 +138,20 @@ if (Meteor.isServer) {
         oldProposal.snapshots[index], snapshot
       );
       if (!hasChanged) {
-        return {hasChanged: false};
+        return {
+          hasChanged: false,
+          snapshot,
+          proposal: oldProposal,
+          index
+        };
       }
-      var data = oldProposal;
+      var data = tools.deepCopy(oldProposal);
       data.snapshots.push(snapshot)
       Proposals.update({ _id }, {$set: data})
-
-
       return {
         hasChanged: true,
         snapshot,
+        proposal: data,
         index: oldProposal.snapshots.length
       };
     },
@@ -149,15 +159,30 @@ if (Meteor.isServer) {
       if (!Meteor.userId() || !tools.isWriteAllowed('proposals')) {
         throw new Meteor.Error('unauthorized');
       }
-      var proposal = Proposals.findOne({ _id });
-      var backupProposal = {...proposal};
+      var proposal = Proposals.findOne({_id});
+      var backupProposal = tools.deepCopy(proposal);
+      var snapshot = proposal.snapshots[index];
+
+      function findDeletedItems(array, Database) {
+        var itemDescription = "";
+        var verification = array.every((item) => {
+          itemDescription = item.description;
+          var itemFromDB = Database.findOne({_id: item._id});
+          return itemFromDB.visible;
+        })
+        if (!verification) {
+          throw new Meteor.Error(
+            'document-contains-deleted-items', itemDescription);
+        }
+      }
+
+      findDeletedItems(snapshot.containers, Containers);
+      findDeletedItems(snapshot.accessories, Accessories);
+      findDeletedItems(snapshot.services, Services);
 
       proposal.status = 'active';
       proposal.snapshots[index].active = true;
-
       Proposals.update({ _id }, {$set: proposal});
-
-
       try {
         var contractId = Meteor.call('contracts.insert', _id);
         return contractId;

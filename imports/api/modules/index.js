@@ -56,30 +56,16 @@ if (Meteor.isServer) {
       Modules.update({ _id }, { $set: {description} });
       return true;
     },
-    'modules.update.stock'(data) {
+    'modules.update.stock'(module) {
       if (!Meteor.userId() || !tools.isWriteAllowed('modules')) {
         throw new Meteor.Error('unauthorized');
       }
-      if (data.places) {
-        data.places = data.places.filter((place) => {
-          return (place.available || place.inactive)
-        })
-      }
-      Modules.update({ _id: data._id }, { $set: data });
-
+      var places = module.places.filter((place) => {
+        return (place.available || place.inactive)
+      })
+      Modules.update({ _id: module._id }, { $set: {places} });
       return true;
     },
-    // 'modules.stock.update'(item) {
-    //   if (!Meteor.userId() || !tools.isWriteAllowed('modules')) {
-    //     throw new Meteor.Error('unauthorized');
-    //   }
-    //   const data = {
-    //     place: item.place
-    //   }
-    //   Modules.update({ _id: item._id }, { $set: data });
-    //
-    //   return true;
-    // },
     'modules.shipping.send'(product) {
       if (!Meteor.userId() || !tools.isWriteAllowed('modules')) {
         throw new Meteor.Error('unauthorized');
@@ -104,11 +90,17 @@ if (Meteor.isServer) {
       if (!Meteor.userId() || !tools.isWriteAllowed('modules')) {
         throw new Meteor.Error('unauthorized');
       }
-      const data = {
-        visible: false
-      };
-      Modules.update({ _id }, { $set: data });
-
+      var module = Modules.findOne({_id});
+      if (module.rented) {
+        throw new Meteor.Error('stock-must-be-zero');
+      }
+      var verification = module.places.every((place) => {
+        return !place.available && !place.inactive;
+      })
+      if (!verification) {
+        throw new Meteor.Error('stock-must-be-zero');
+      }
+      Modules.update({ _id }, { $set: {visible: false} });
       return true;
     }
   })

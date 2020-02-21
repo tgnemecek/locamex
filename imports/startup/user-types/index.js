@@ -12,19 +12,17 @@ export const userTypes = {
   general: {
     label: "Geral",
     write: [
-      "clients",
+      "clients", "client",
       "series",
-      "accessories",
-      "packs",
-      "proposals",
-      "proposal",
-      "contracts",
-      "contract",
+      "accessories", "accessory",
+      "packs", "pack",
+      "proposals", "proposal",
+      "contracts", "contract",
       "billing",
-      "accounts",
+      "accounts", "account",
       "shipping",
-      "modules",
-      "variations"
+      "modules", "module",
+      "variations", "variation",
     ],
     read: [],
     events: [ // Temporary so it doesn't break!
@@ -35,26 +33,25 @@ export const userTypes = {
   sales: {
     label: "Vendas",
     write: [
-      "proposals",
-      "proposal"
+      "proposals", "proposal"
     ],
     read: [
-      "places",
+      "places", "place",
       "series",
-      "accessories",
-      "variations",
-      "clients",
-      "packs"
+      "accessories", "accessory",
+      "variations", "variation",
+      "clients", "client",
+      "packs", "pack"
     ]
   },
   finances: {
     label: "Financeiro",
     write: [
-      "clients",
-      "contracts",
+      "clients", "client",
+      "contracts", "contract",
       "contract",
       "billing",
-      "accounts"
+      "accounts", "account"
     ],
     read: [],
     events: [ // Temporary so it doesn't break!
@@ -66,11 +63,11 @@ export const userTypes = {
     label: "Manutenção",
     write: [
       "series",
-      "accessories",
-      "variations",
-      "modules",
-      "packs",
-      "contracts",
+      "accessories", "accessory",
+      "variations", "variation",
+      "modules", "module",
+      "packs", "pack",
+      "contracts", "contract",
       "shipping"
     ],
     read: [],

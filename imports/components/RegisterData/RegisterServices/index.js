@@ -6,7 +6,6 @@ import tools from '/imports/startup/tools/index';
 import Block from '/imports/components/Block/index';
 import Box from '/imports/components/Box/index';
 import Input from '/imports/components/Input/index';
-import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
 export default class RegisterServices extends React.Component {
@@ -18,10 +17,7 @@ export default class RegisterServices extends React.Component {
       price: this.props.item.price || 0,
 
       errorMsg: '',
-      errorKeys: [],
-
-      confirmationWindow: false,
-      databaseStatus: false
+      errorKeys: []
     }
   }
   onChange = (e) => {
@@ -30,10 +26,6 @@ export default class RegisterServices extends React.Component {
     errorKeys.splice(fieldIndex, 1);
 
     this.setState({ [e.target.name]: e.target.value });
-  }
-  toggleConfirmationWindow = () => {
-    var confirmationWindow = !this.state.confirmationWindow;
-    this.setState({ confirmationWindow });
   }
   removeItem = () => {
     Meteor.call('services.hide', this.state._id);
@@ -61,22 +53,6 @@ export default class RegisterServices extends React.Component {
           }
         );
       }
-
-      this.setState({ databaseStatus: "loading" }, () => {
-        if (this.props.item._id) {
-
-        } else {
-          Meteor.call(
-            'services.insert',
-            this.state.description,
-            this.state.price,
-            (err, res) => {
-              if (err) error();
-              if (res) success();
-            }
-          );
-        }
-      })
     }
   }
   render() {
@@ -104,20 +80,21 @@ export default class RegisterServices extends React.Component {
               allowNegative={true}
             />
           </Block>
-          <ConfirmationWindow
-            isOpen={this.state.confirmationWindow}
-            message="Deseja mesmo excluir este item do banco de dados?"
-            leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleConfirmationWindow}}
-            rightButton={{text: "Sim", className: "button--danger", onClick: this.removeItem}}
-            closeBox={this.toggleConfirmationWindow}/>
-          <FooterButtons buttons={this.props.item._id ? [
-            {text: "Excluir Registro", className: "button--danger", onClick: this.toggleConfirmationWindow},
-            {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
-            {text: "Salvar", onClick: this.saveEdits}
-          ] : [
-            {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
-            {text: "Salvar", onClick: this.saveEdits}
-          ]}/>
+            <FooterButtons
+              disabled={!tools.isWriteAllowed('services')}
+              buttons={this.props.item._id ?
+                [
+                  {text: "Excluir Registro",
+                  className: "button--danger",
+                  onClick: () => this.props.toggleConfirmationWindow(this.removeItem)},
+                  {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+                  {text: "Salvar", onClick: this.saveEdits}
+                ]
+              :
+              [
+                {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
+                {text: "Salvar", onClick: this.saveEdits}
+              ]}/>
       </Box>
     )
   }

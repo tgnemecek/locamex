@@ -1,5 +1,6 @@
 import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
+import { Contracts } from '/imports/api/contracts/index';
 import tools from '/imports/startup/tools/index';
 
 export const Accounts = new Mongo.Collection('accounts');
@@ -61,8 +62,25 @@ if (Meteor.isServer) {
         branch: state.branch,
         visible: true
       };
-      Accounts.update({_id: state._id}, {$set: data});
 
+      Contracts.find({status: "inactive"})
+      .forEach((contract) => {
+          contract.snapshots.forEach((snapshot) => {
+            const update = (array) => {
+              return array.map((billing) => {
+                return {
+                  ...billing,
+                  account: data
+                }
+              })
+            }
+            snapshot.billingProducts = update(snapshot.billingProducts);
+            snapshot.billingServices = update(snapshot.billingServices);
+          })
+          Contracts.update({ _id: contract._id },
+            {$set: contract});
+      })
+      Accounts.update({_id: state._id}, {$set: data});
       return true;
     },
     'accounts.hide'(_id) {
