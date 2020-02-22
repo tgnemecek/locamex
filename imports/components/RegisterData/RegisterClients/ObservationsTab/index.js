@@ -16,6 +16,7 @@ export default class ObservationsTab extends React.Component {
             name="observations"
             value={this.props.item.observations}
             onChange={this.props.onChange}
+            disabled={this.props.disabled}
           />
         </Block>
       </ErrorBoundary>

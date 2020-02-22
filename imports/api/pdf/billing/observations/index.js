@@ -1,7 +1,7 @@
-export default function (props) {
-  if (props.charge.observations) {
+export default function (observations) {
+  if (observations) {
     return [
-      {text: `Observação: ${props.charge.observations}`, style: 'p'}
+      {text: `Observação: ${observations}`, style: 'p'}
     ]
   } else return null;
 }

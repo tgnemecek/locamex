@@ -153,6 +153,62 @@ Contracts.attachSchema(new SimpleSchema({
     'billingProducts.$.account.bankNumber': String,
     'billingProducts.$.account.number': String,
     'billingProducts.$.account.branch': String,
+    'billingProducts.$.status': {
+      type: String,
+      optional: true
+    },
+    'billingProducts.$._id': {
+      type: String,
+      optional: true
+    },
+    'billingProducts.$.valuePayed': {
+      type: Number,
+      optional: true
+    },
+    'billingProducts.$.observations': {
+      type: String,
+      optional: true
+    },
+    'billingProducts.$.annotations': {
+      type: String,
+      optional: true
+    },
+
+    billingProrogation: Array,
+    'billingProrogation.$': Object,
+    'billingProrogation.$.description': String,
+    'billingProrogation.$.value': Number,
+    'billingProrogation.$.startDate': Date,
+    'billingProrogation.$.endDate': Date,
+    'billingProrogation.$.expiryDate': Date,
+    'billingProrogation.$.account': Object,
+    'billingProrogation.$.account._id': String,
+    'billingProrogation.$.account.description': String,
+    'billingProrogation.$.account.bank': String,
+    'billingProrogation.$.account.bankNumber': String,
+    'billingProrogation.$.account.number': String,
+    'billingProrogation.$.account.branch': String,
+    'billingProrogation.$.status': {
+      type: String,
+      optional: true
+    },
+    'billingProrogation.$._id': {
+      type: String,
+      optional: true
+    },
+    'billingProrogation.$.valuePayed': {
+      type: Number,
+      optional: true
+    },
+    'billingProrogation.$.observations': {
+      type: String,
+      optional: true
+    },
+    'billingProrogation.$.annotations': {
+      type: String,
+      optional: true
+    },
+
     billingServices: Array,
     'billingServices.$': Object,
     'billingServices.$.description': String,
@@ -175,6 +231,22 @@ Contracts.attachSchema(new SimpleSchema({
     'billingServices.$.account.bankNumber': String,
     'billingServices.$.account.number': String,
     'billingServices.$.account.branch': String,
+    'billingServices.$.status': {
+      type: String,
+      optional: true
+    },
+    'billingServices.$.valuePayed': {
+      type: Number,
+      optional: true
+    },
+    'billingServices.$.observations': {
+      type: String,
+      optional: true
+    },
+    'billingServices.$.annotations': {
+      type: String,
+      optional: true
+    },
 
     containers: Array,
     'containers.$': Object,
@@ -297,6 +369,7 @@ if (Meteor.isServer) {
 
           billingProducts: [],
           billingServices: [],
+          billingProrogation: [],
 
           containers: snapshot.containers,
           accessories: snapshot.accessories,
@@ -568,7 +641,6 @@ if (Meteor.isServer) {
 
       executeTransactions(true);
       executeTransactions(false);
-      console.dir(shipping, {depth: null})
       Contracts.update({ _id },
         { $set: { shipping }
       });
@@ -695,15 +767,74 @@ if (Meteor.isServer) {
       });
       return _id;
     },
-    'contracts.billing.update' (_id, billing, type) {
+    'contracts.billing.update' (_id, bill) {
       if (!Meteor.userId() || !tools.isWriteAllowed('contracts')) {
         throw new Meteor.Error('unauthorized');
-      }
+      }console.dir(bill, {depth: null})
+
+
       var contract = Contracts.findOne({_id});
-      var snapshot = contract.snapshots[contract.activeVersion];
-      snapshot[type] = billing;
+      var snapshot = contract.snapshots.find((snapshot) => {
+        return snapshot.active;
+      })
+      var index = bill.index;
+      var billing = snapshot[bill.type];
+      var oldBill = billing[bill.index];
+      var status;
+// PAREI AQUI!!!!
+// CORRIGIR ERRO NO UPDATE DE FATURAS APAGADAS (NAO ATUALIZA)
+      if (oldBill && oldBill.status === "finished") {
+        oldBill.annotations = bill.annotations;
+        oldBill.status = "finished";
+        Contracts.update({_id}, { $set: contract })
+        return bill;
+      }
+
+      if (bill.finished) {
+        status = "finished";
+      } else {
+        switch (bill.status) {
+          case "ready":
+            status = "billed";
+            break;
+          case "late":
+          case "billed":
+            status = "billed";
+            break;
+        }
+      }
+      var billId;
+      if (bill.type !== "billingServices") {
+        var count = 1;
+        Contracts.find({status: {$ne: "inactive"}}).forEach((contract) => {
+          var snapshot = contract.snapshots.find((snapshot) => {
+            return snapshot.active;
+          })
+          if (snapshot) {
+            const countBills = (arr) => {
+              arr.forEach((bill) => {
+                if (bill._id) count++
+              })
+            }
+            countBills(snapshot.billingProducts);
+            countBills(snapshot.billingProrogation);
+          }
+        })
+        billId = count.toString().padStart(4, '0')
+      }
+
+      var newBill = {
+        _id: billId,
+        ...bill,
+        status
+      }
+
+      if (!oldBill) {
+        billing.push(newBill);
+      } else oldBill = newBill;
+
       Contracts.update({_id}, { $set: contract })
-      return _id;
+      return bill;
     }
   })
 }

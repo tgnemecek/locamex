@@ -1,9 +1,9 @@
-export default function (props) {
+export default function (type, index, length) {
   var string = "";
-  if (props.charge.type === "billingProducts") {
-    string = `${props.charge.index+1} DE ${props.charge.length}`;
-  } else if (props.charge.type === "billingProrogation") {
-    string = `PRORROGAÇÃO #${props.charge.index+1}`
+  if (type === "billingProducts") {
+    string = `${index+1} DE ${length}`;
+  } else if (type === "billingProrogation") {
+    string = `PRORROGAÇÃO #${index+1}`
   }
   return [
     {text: `FATURA DE LOCAÇÃO DE MÓDULOS HABITÁVEIS ${string}`, style: 'h1'}

@@ -6,9 +6,9 @@ import tools from '/imports/startup/tools/index';
 import Block from '/imports/components/Block/index';
 import Box from '/imports/components/Box/index';
 import Input from '/imports/components/Input/index';
-import Tab from '/imports/components/Tab/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
+import Tab from './Tab/index';
 import MainTab from './MainTab/index';
 import AddressTab from './AddressTab/index';
 import ContactTab from './ContactTab/index';
@@ -117,11 +117,12 @@ export default class RegisterClients extends React.Component {
         return {value: (i+2), title: `Contato ${i + 1}`}
       } else return {value: (i+2), title: `Contato Adicional ${i + 1}`}
     })
-    var arr3 = [
-      {value: '+', title: '+'},
-      {value: 'observations', title: 'OBS'}
-    ];
-    return arr1.concat(arr2, arr3);
+    var arr3 = [{value: '+', title: '+'}];
+    var arr4 = [{value: 'observations', title: 'OBS'}];
+    if (this.disabled()) {
+      arr3 = [];
+    }
+    return arr1.concat(arr2, arr3, arr4);
   }
   addNewTab = () => {
     var contacts = [...this.state.contacts];
@@ -136,6 +137,10 @@ export default class RegisterClients extends React.Component {
       visible: true
     });
     this.setState({ contacts });
+  }
+  disabled = () => {
+    if (this.props.disabled) return true;
+    return !tools.isWriteAllowed('clients');
   }
   render() {
     return (
@@ -161,16 +166,24 @@ export default class RegisterClients extends React.Component {
             changeTab={this.changeTab}
             tabArray={this.renderTabs()}
           />
-          {this.state.tab === 'main' ? <MainTab onChange={this.onChange} item={this.state}/> : null}
-          {this.state.tab === 'address' ? <AddressTab onChange={this.onChange} item={this.state}/> : null}
-          {Number(this.state.tab) > 1 ?
-            <ContactTab key={this.state.tab} onChange={this.onChange} item={this.state}/>
+          {this.state.tab === 'main' ?
+            <MainTab onChange={this.onChange} item={this.state} disabled={this.disabled()}/>
           : null}
-          {this.state.tab === 'observations' ? <ObservationsTab onChange={this.onChange} item={this.state}/> : null}
-          <FooterButtons buttons={tools.isWriteAllowed('clients') ? [
+          {this.state.tab === 'address' ?
+              <AddressTab onChange={this.onChange} item={this.state} disabled={this.disabled()}/>
+          : null}
+          {Number(this.state.tab) > 1 ?
+            <ContactTab key={this.state.tab} onChange={this.onChange} item={this.state} disabled={this.disabled()}/>
+          : null}
+          {this.state.tab === 'observations' ?
+            <ObservationsTab onChange={this.onChange} item={this.state} disabled={this.disabled()}/>
+          : null}
+          <FooterButtons
+            disabled={this.disabled()}
+            buttons={[
             {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
             {text: "Salvar", onClick: this.saveEdits}
-          ] : []}/>
+          ]}/>
         </Box>
       </ErrorBoundary>
     )

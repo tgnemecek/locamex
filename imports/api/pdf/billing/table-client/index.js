@@ -1,7 +1,7 @@
 import moment from 'moment';
 import tools from '/imports/startup/tools/index';
 
-export default function tableClient(props) {
+export default function tableClient(client, generateTable) {
 
   function formatAddress(address) {
 
@@ -23,33 +23,34 @@ export default function tableClient(props) {
   }
 
   const contacts = () => {
-    var phone = props.client.phone1 || props.client.phone2;
-    if (props.client.type === "person") {
+    var phone = client.phone1 || client.phone2;
+    if (client.type === "person") {
       return [
-        'Contato', props.client.description, 'Telefone', tools.format(phone, 'phone'), 'Email', props.client.email
+        'Contato', client.description, 'Telefone', tools.format(phone, 'phone'), 'Email', client.email
       ]
     } else {
-      return props.client.contacts.map((contact) => {
+      return client.contacts.map((contact) => {
         var phone = contact.phone1 || contact.phone2;
-        return [
-          'Contato', contact.name, 'Telefone', tools.format(phone, 'phone'), 'Email', contact.email
-        ]
+        var arr = ['Contato', contact.name];
+        if (phone) arr.push('Telefone', tools.format(phone, 'phone'));
+        if (contact.email) arr.push('Email', contact.email)
+        return arr;
       })
     }
   }
 
-  var name = props.client.officialName;
+  var name = client.officialName;
   var registryLabel = "CNPJ";
 
-  if (props.client.type === "person") {
-    name = props.client.description;
+  if (client.type === "person") {
+    name = client.description;
     registryLabel = "CPF";
   }
 
-  return props.generateTable({
+  return generateTable({
     body: [
         [ 'Nome do Sacado', {text: name, colSpan: "fill"} ],
-        [ registryLabel, tools.format(props.client.registry, registryLabel), 'Endereço', formatAddress(props.client.address) ],
+        [ registryLabel, tools.format(client.registry, registryLabel), 'Endereço', formatAddress(client.address) ],
         contacts()
       ],
     widths: ['auto', '*', 'auto', 'auto', 'auto', 'auto']

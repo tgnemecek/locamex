@@ -12,78 +12,50 @@ export default class ProductsBox extends React.Component {
     super(props);
     this.state = {
       databaseStatus: '',
-      finished: this.props.charge.status === "finished",
-      valuePayed: this.props.charge.valuePayed || 0,
-      observations: this.props.charge.observations || "",
-      annotations: this.props.charge.annotations || "",
+      finished: this.props.bill.status === "finished",
+      valuePayed: this.props.bill.valuePayed || 0,
+      observations: this.props.bill.observations || "",
+      annotations: this.props.bill.annotations || "",
     }
   }
 
   handleChange = (e) => {
     this.setState({ [e.target.name]: e.target.value })
   }
-
   updateBilling = () => {
     var _id = this.props.contract._id;
-    var charge = this.props.charge;
-    var index = charge.index;
-    var type = charge.type;
-    var contract = this.props.contract;
-    var currentBilling = contract.snapshots[contract.activeVersion][type] || [];
-    var billing = [...currentBilling];
-    var status;
-
-    if (this.state.finished) {
-      status = "finished";
-    } else {
-      switch (this.props.charge.status) {
-        case "ready":
-          status = "billed";
-          break;
-        case "late":
-        case "billed":
-          status = this.state.finished ? "finished" : "billed";
-          break;
-      }
-    }
-
-    billing[index] = {
-      status,
-      accountId: charge.accountId,
-      description: charge.description,
-      endDate: charge.endDate,
-      startDate: charge.startDate,
-      expiryDate: charge.expiryDate,
-      type: charge.type,
-      value: charge.value,
+    var bill = {
+      ...this.props.bill,
+      finished: this.state.finished,
       valuePayed: this.state.valuePayed,
       observations: this.state.observations,
-      annotations: this.state.annotations
+      annotations: this.state.annotations,
     }
-
+console.log(bill)
     this.setState({ databaseStatus: "loading" }, () => {
-      Meteor.call('contracts.billing.update', _id, billing, type, (err, res) => {
+      Meteor.call('contracts.billing.update', _id, bill, (err, res) => {
         if (err) this.setState({ databaseStatus: "failed" });
         if (res) {
-          if (this.props.charge.status === "ready") {
-            this.printBilling(this.props.toggleWindow);
-          } else this.setState({ databaseStatus: "completed" });
+          if (this.props.bill.status === "ready") {
+            this.printBilling('', res, this.props.toggleWindow);
+          } else this.setState({ databaseStatus: {
+            status: "completed",
+            callback: this.props.toggleWindow
+          } });
         }
       })
     });
   }
-  printBilling = (callback) => {
+  printBilling = (e, bill, callback) => {
     this.setState({ databaseStatus: "loading" }, () => {
-      var master = {
-        ...this.props.contract,
+      var props = {
+        contract: this.props.contract,
+        snapshot: this.props.snapshot,
         type: "billing",
-        charge: {
-          ...this.props.charge,
-          ...this.state
-        }
+        bill: bill || this.props.bill
       }
 
-      Meteor.call('pdf.generate', master, (err, res) => {
+      Meteor.call('pdf.generate', props, (err, res) => {
         if (res) {
           saveAs(res.data, res.fileName);
           var databaseStatus = {
@@ -99,27 +71,8 @@ export default class ProductsBox extends React.Component {
       })
     })
   }
-  // printBilling = () => {
-  //   this.setState({ databaseStatus: "loading" }, () => {
-  //
-  //     var pdf = new Pdf(
-  //       {...this.props.contract, type: "billing"},
-  //       this.props.databases,
-  //       {
-  //         ...this.props.charge,
-  //         ...this.state
-  //       });
-  //
-  //     pdf.generate().then(() => {
-  //       this.setState({ databaseStatus: "completed" });
-  //     }).catch((err) => {
-  //       console.log(err);
-  //       this.setState({ databaseStatus: "failed" });
-  //     })
-  //   });
-  // }
   renderInputs = () => {
-    switch (this.props.charge.status) {
+    switch (this.props.bill.status) {
       case "finished":
       case "billed":
       case "late":
@@ -130,7 +83,7 @@ export default class ProductsBox extends React.Component {
               type="currency"
               value={this.state.valuePayed}
               name="valuePayed"
-              disabled={this.props.charge.status === "finished"}
+              disabled={this.props.bill.status === "finished"}
               onChange={this.handleChange}
             />
             <Input
@@ -138,7 +91,7 @@ export default class ProductsBox extends React.Component {
               type="checkbox"
               id="finished-checkbox"
               name="finished"
-              readOnly={this.props.charge.status === "finished"}
+              readOnly={this.props.bill.status === "finished"}
               value={this.state.finished}
               onChange={this.handleChange}/>
           </>
@@ -148,21 +101,15 @@ export default class ProductsBox extends React.Component {
     }
   }
   footerButtons = () => {
-    switch (this.props.charge.status) {
+    switch (this.props.bill.status) {
       case "late":
       case "billed":
+      case "finished":
         return (
           <FooterButtons buttons={[
             {text: "Baixar Fatura", className: "button--pill", onClick: this.printBilling},
             {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
             {text: "Salvar Edições", className: "button--primary", onClick: this.updateBilling},
-          ]}/>
-        )
-      case "finished":
-        return (
-          <FooterButtons buttons={[
-            {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
-            {text: "Baixar Fatura", className: "button--pill", onClick: this.printBilling}
           ]}/>
         )
       case "ready":
@@ -181,12 +128,14 @@ export default class ProductsBox extends React.Component {
           <div>
             <div>
               <label>Contrato: </label>
-              {this.props.contract._id}.{this.props.contract.activeVersion}
+              {this.props.contract._id}.{this.props.snapshotIndex+1}
             </div>
-            <div>
-              <label>Parcela: </label>
-              {this.props.charge.index+1}/{this.props.charge.length}
-            </div>
+            {this.props.bill.type === "billingProrogation" ? null :
+              <div>
+                <label>Parcela: </label>
+                {this.props.bill.index+1}/{this.props.bill.length}
+              </div>
+            }
             <div>
               <label>Período: </label>
               {this.props.getFormattedDate("period")}
@@ -197,21 +146,21 @@ export default class ProductsBox extends React.Component {
             </div>
             <div>
               <label>Valor Base: </label>
-              {tools.format(this.props.charge.value, 'currency')}
+              {tools.format(this.props.bill.value, 'currency')}
             </div>
           </div>
           <div>
             <div>
               <label>Descrição: </label>
-              {this.props.charge.description}
+              {this.props.bill.description}
             </div>
             <div>
               <label>Conta: </label>
-              {this.props.charge.account.description}
+              {this.props.bill.account.description}
             </div>
             <div>
               <label>Status: </label>
-              {this.props.renderStatus(this.props.charge.status, 'billingProducts')}
+              {this.props.translateBillStatus(this.props.bill.status, 'billingProducts').text}
             </div>
           </div>
         </div>
@@ -223,7 +172,7 @@ export default class ProductsBox extends React.Component {
             value={this.state.observations}
             name="observations"
             className="grid-span-2"
-            disabled={this.props.charge.status !== "ready"}
+            disabled={this.props.bill.status !== "ready"}
             onChange={this.handleChange}
           />
           <Input

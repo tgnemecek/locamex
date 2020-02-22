@@ -105,7 +105,7 @@ export default class MainHeader extends React.Component {
                   type="select">
                     {this.snapshotsOptions()}
                 </Input>
-              : this.props.snapshotIndex) : null}
+              : <h1>.{this.props.snapshotIndex+1}</h1>) : null}
             </div>
           </div>
           <div className="main-header__right-side">
@@ -143,49 +143,6 @@ export default class MainHeader extends React.Component {
             message="Deseja cancelar permanentemente este documento? Ele não poderá ser reativado ou editado."
             leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleCancelWindow}}
             rightButton={{text: "Sim", className: "button--danger", onClick: this.cancelMaster}}/>
-
-
-
-
-
-
-          {/* {this.renderCreatedBy()} */}
-          {/* <div className="master__top-buttons"> */}
-            {/* <Icon value='observations' onClick={this.toggleWindow} className={this.checkIfHasContent()} icon="warning"/>
-            {this.state.windowOpen == 'observations' ? <Observations
-                                              master={this.props.master}
-                                              toggleWindow={this.toggleWindow}
-                                              updateMaster={this.props.updateMaster}
-                                              disabled={this.props.disabled}
-                                                  /> : null} */}
-            {/* {this.props.master.type === "contract" ?
-            <button onClick={() => this.toggleWindow({target: {value: "billing"} })}>
-              <Icon
-                icon="money"
-                style={this.props.errorKeys.includes("billing") ? {color: "red"} : null}/>
-            </button>
-            : null}
-            {this.state.windowOpen == 'billing' ?
-            <this.props.BillingSchedule
-              master={this.props.master}
-              accountsDatabase={this.props.databases.accountsDatabase}
-              toggleWindow={this.toggleWindow}
-              updateMaster={this.props.updateMaster}
-              errorKeys={this.props.errorKeys}
-              /> : null}
-            {this.showDocumentsButton()}
-            {this.showDuplicateButton()}
-            {this.showCancelButton()}
-
-          </div>
-          {this.renderTitle()}
-          <div className="master__subtitle">
-            <h3>Status: <Status
-              status={this.props.master.status}
-              extra={this.props.statusExtra}
-              type={this.props.master.type}/>
-            </h3>
-          </div> */}
         </div>
       )
   }

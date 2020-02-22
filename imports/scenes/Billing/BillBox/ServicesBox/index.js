@@ -12,9 +12,9 @@ export default class ServicesBox extends React.Component {
     super(props);
     this.state = {
       databaseStatus: '',
-      status: this.props.charge.status,
-      valuePayed: this.props.charge.valuePayed || 0,
-      annotations: this.props.charge.annotations || "",
+      status: this.props.bill.status,
+      valuePayed: this.props.bill.valuePayed || 0,
+      annotations: this.props.bill.annotations || "",
     }
   }
 
@@ -24,23 +24,20 @@ export default class ServicesBox extends React.Component {
 
   updateBilling = () => {
     var _id = this.props.contract._id;
-    var index = this.props.charge.index;
-    var type = this.props.charge.type;
-    var contract = this.props.contract;
-    var billing = [...contract.snapshots[contract.activeVersion][type]];
-    var status = this.state.status === "ready" ? "billed" : this.state.status;
-
-    billing[index] = {
-      ...billing[index],
-      status,
+    var bill = {
+      ...this.props.bill,
+      status: this.state.status,
       valuePayed: this.state.valuePayed,
-      annotations: this.state.annotations
+      annotations: this.state.annotations,
     }
 
     this.setState({ databaseStatus: "loading" }, () => {
-      Meteor.call('contracts.billing.update', _id, billing, type, (err, res) => {
+      Meteor.call('contracts.billing.update', _id, bill, (err, res) => {
         if (err) this.setState({ databaseStatus: "failed" });
-        if (res) this.setState({ databaseStatus: "completed" });
+        if (res) this.setState({ databaseStatus: {
+          status: "completed",
+          callback: this.props.toggleWindow
+        } });
       })
     });
   }
@@ -51,7 +48,7 @@ export default class ServicesBox extends React.Component {
         this.setState({ status: "finished" });
       } else this.setState({ status: "billed" });
     }
-    switch (this.props.charge.status) {
+    switch (this.props.bill.status) {
       case "finished":
       case "billed":
       case "late":
@@ -62,7 +59,7 @@ export default class ServicesBox extends React.Component {
               type="currency"
               value={this.state.valuePayed}
               name="valuePayed"
-              disabled={this.props.charge.status === "finished"}
+              disabled={this.props.bill.status === "finished"}
               onChange={this.handleChange}
             />
             <Input
@@ -70,7 +67,7 @@ export default class ServicesBox extends React.Component {
               type="checkbox"
               id="finished-checkbox"
               name="status"
-              readOnly={this.props.charge.status === "finished"}
+              readOnly={this.props.bill.status === "finished"}
               value={this.state.status === "finished"}
               onChange={onChange}/>
           </>
@@ -80,7 +77,7 @@ export default class ServicesBox extends React.Component {
     }
   }
   footerButtons = () => {
-    switch (this.props.charge.status) {
+    switch (this.props.bill.status) {
       case "late":
       case "billed":
         return (
@@ -111,11 +108,11 @@ export default class ServicesBox extends React.Component {
           <div>
             <div>
               <label>Contrato: </label>
-              {this.props.contract._id}.{this.props.contract.activeVersion}
+              {this.props.contract._id}.{this.props.snapshotIndex+1}
             </div>
             <div>
               <label>Parcela: </label>
-              {this.props.charge.index+1}/{this.props.charge.length}
+              {this.props.bill.index+1}/{this.props.bill.length}
             </div>
             <div>
               <label>Vencimento: </label>
@@ -123,21 +120,21 @@ export default class ServicesBox extends React.Component {
             </div>
             <div>
               <label>Valor Base: </label>
-              {tools.format(this.props.charge.value, 'currency')}
+              {tools.format(this.props.bill.value, 'currency')}
             </div>
           </div>
           <div>
             <div>
               <label>Descrição: </label>
-              {this.props.charge.description}
+              {this.props.bill.description}
             </div>
             <div>
               <label>Conta: </label>
-              {this.props.charge.account.description}
+              {this.props.bill.account.description}
             </div>
             <div>
               <label>Status: </label>
-              {this.props.renderStatus(this.props.charge.status, 'billingServices')}
+              {this.props.translateBillStatus(this.props.bill.status, 'billingServices').text}
             </div>
           </div>
         </div>

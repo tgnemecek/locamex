@@ -44,6 +44,7 @@ export default function ContactTab (props) {
         style={style("name")}
         value={props.item.contacts[tab].name}
         onChange={onChange}
+        disabled={props.disabled}
       />
       <Input
         title="CPF:"
@@ -52,6 +53,7 @@ export default function ContactTab (props) {
         style={style("cpf")}
         value={props.item.contacts[tab].cpf}
         onChange={onChange}
+        disabled={props.disabled}
       />
       <Input
         title="RG:"
@@ -60,6 +62,7 @@ export default function ContactTab (props) {
         style={style("rg")}
         value={props.item.contacts[tab].rg}
         onChange={onChange}
+        disabled={props.disabled}
       />
       <Input
         title="Email:"
@@ -68,6 +71,7 @@ export default function ContactTab (props) {
         style={style("email")}
         value={props.item.contacts[tab].email}
         onChange={onChange}
+        disabled={props.disabled}
       />
       <Input
         title="Telefone 1:"
@@ -76,6 +80,7 @@ export default function ContactTab (props) {
         style={style("phone1")}
         value={props.item.contacts[tab].phone1}
         onChange={onChange}
+        disabled={props.disabled}
       />
       <Input
         title="Telefone 2:"
@@ -83,6 +88,7 @@ export default function ContactTab (props) {
         name="phone2"
         value={props.item.contacts[tab].phone2}
         onChange={onChange}
+        disabled={props.disabled}
       />
     </Block>
   )

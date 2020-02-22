@@ -18,6 +18,7 @@ export default function Person (props) {
         error={props.item.errorKeys.includes("description")}
         value={props.item.description}
         onChange={props.onChange}
+        disabled={props.disabled}
       />
       <Input
         title="CPF:"
@@ -26,6 +27,7 @@ export default function Person (props) {
         error={props.item.errorKeys.includes("registry")}
         value={props.item.registry}
         onChange={props.onChange}
+        disabled={props.disabled}
       />
       <Input
         title="RG:"
@@ -34,6 +36,7 @@ export default function Person (props) {
         error={props.item.errorKeys.includes("rg")}
         value={props.item.rg}
         onChange={props.onChange}
+        disabled={props.disabled}
       />
       <Input
         title="Email:"
@@ -42,6 +45,7 @@ export default function Person (props) {
         error={props.item.errorKeys.includes("email")}
         value={props.item.email}
         onChange={props.onChange}
+        disabled={props.disabled}
       />
       <Input
         title="Telefone 1:"
@@ -50,6 +54,7 @@ export default function Person (props) {
         error={props.item.errorKeys.includes("phone1")}
         value={props.item.phone1}
         onChange={props.onChange}
+        disabled={props.disabled}
       />
       <Input
         title="Telefone 2:"
@@ -57,6 +62,7 @@ export default function Person (props) {
         name="phone2"
         value={props.item.phone2}
         onChange={props.onChange}
+        disabled={props.disabled}
       />
     </Block>
   )

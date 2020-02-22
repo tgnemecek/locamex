@@ -44,6 +44,7 @@ export default function AddressTab (props) {
         error={props.item.errorKeys.includes("street")}
         value={props.item.address.street}
         onChange={onChange}
+        disabled={props.disabled}
       />
       <Input
         title="CEP:"
@@ -53,6 +54,7 @@ export default function AddressTab (props) {
         buttonClick={cepButtonClick}
         value={props.item.address.cep}
         onChange={onChange}
+        disabled={props.disabled}
       />
       <Input
         title="Cidade:"
@@ -61,6 +63,7 @@ export default function AddressTab (props) {
         error={props.item.errorKeys.includes("city")}
         value={props.item.address.city}
         onChange={onChange}
+        disabled={props.disabled}
       />
       <Input
         title="Estado:"
@@ -68,6 +71,7 @@ export default function AddressTab (props) {
         name="state"
         error={props.item.errorKeys.includes("state")}
         onChange={onChange}
+        disabled={props.disabled}
         value={props.item.address.state}>
         {tools.states.map((item, i) => {
           return <option key={i} value={item}>{item}</option>
@@ -80,6 +84,7 @@ export default function AddressTab (props) {
         error={props.item.errorKeys.includes("number")}
         value={props.item.address.number}
         onChange={onChange}
+        disabled={props.disabled}
       />
       <Input
         title="Complemento:"
@@ -87,6 +92,7 @@ export default function AddressTab (props) {
         type="text"
         value={props.item.address.additional}
         onChange={onChange}
+        disabled={props.disabled}
       />
     </Block>
   )

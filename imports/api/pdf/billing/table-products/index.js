@@ -1,25 +1,26 @@
 import tools from '/imports/startup/tools/index';
 
-export default function tableProducts(props) {
+export default function tableProducts(
+  dates, products, discount, resultFormat, value, generateTable) {
 
-  var timeUnitLabel = props.dates.timeUnit === "months" ? "Meses" : "Dias";
+  var timeUnitLabel = dates.timeUnit === "months" ? "Meses" : "Dias";
 
-  var timeUnitValueLabel = props.dates.timeUnit === "months" ?
+  var timeUnitValueLabel = dates.timeUnit === "months" ?
                         {text: 'Valor Mensal', alignment: 'left'} : null;
 
   const body = () => {
     const monthlyPrice = (price) => {
-      if (props.dates.timeUnit === "months") {
-        return {text: tools.format(price, 'currency'), alignment: 'center'}
+      if (dates.timeUnit === "months") {
+        return {text: tools.format(price, 'currency'), alignment: 'right'}
       } else return null;
     }
     const duration = (duration) =>  {
-      if (props.dates.timeUnit === "months") {
+      if (dates.timeUnit === "months") {
         return {text: duration.toString(), alignment: 'center'}
       } else return {text: "até 30", alignment: 'center'};
     }
-    if (props.products) {
-      return props.products.map((product, i) => {
+    if (products) {
+      return products.map((product, i) => {
         return [
           (i+1),
           product.description,
@@ -32,31 +33,31 @@ export default function tableProducts(props) {
   }
 
   const footer = () => {
-    const discount = () => {
-      if (props.discount) {
+    const getDiscount = () => {
+      if (discount) {
         return [
           {text: 'Desconto por tempo de Locação:', colSpan: 'fill', alignment: 'right', bold: true},
-          {text: `-${props.discount * 100}%`, alignment: 'right', bold: true}
+          {text: `-${discount * 100}%`, alignment: 'right', bold: true}
         ]
       } else return null
     }
     return [
-      discount(),
+      getDiscount(),
       [
-        {text: 'Valor Total Desta Fatura:', colSpan: 'fill', alignment: 'right', bold: true}, props.resultFormat(props.charge.value)
+        {text: 'Valor Total Desta Fatura:', colSpan: 'fill', alignment: 'right', bold: true}, resultFormat(value)
       ]
     ]
   }
 
   const widths = () => {
-    if (props.dates.timeUnit === "months") {
+    if (dates.timeUnit === "months") {
       return ['auto', '*', 'auto', 'auto', 'auto'];
     } else return ['auto', '*', 'auto', 'auto', 'auto'];
   }
 
   return [
     {text: 'Itens Locados', style: 'h2', alignment: 'center'},
-    props.generateTable({
+    generateTable({
       header: [
         [
         '#',

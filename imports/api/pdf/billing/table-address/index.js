@@ -1,6 +1,6 @@
 import tools from '/imports/startup/tools/index';
 
-export default function tableAddress(props) {
+export default function tableAddress(deliveryAddress, generateTable) {
 
   function formatAddress(address) {
 
@@ -23,14 +23,13 @@ export default function tableAddress(props) {
   }
 
 
-  var additional = props.deliveryAddress.additional ? ` (${props.deliveryAddress.additional})` : '';
+  var additional = deliveryAddress.additional ? ` (${deliveryAddress.additional})` : '';
 
   return [
     {text: 'Local de Instalação:', style: 'p'},
-    props.generateTable({
-      body: [[ formatAddress(props.deliveryAddress) ]],
-      widths: ['*'],
-      styles: props.styles
+    generateTable({
+      body: [[ formatAddress(deliveryAddress) ]],
+      widths: ['*']
     })
   ]
 }

@@ -17,6 +17,7 @@ export default function Company (props) {
         error={props.item.errorKeys.includes("description")}
         value={props.item.description}
         onChange={props.onChange}
+        disabled={props.disabled}
       />
       <Input
         title="CNPJ:"
@@ -25,6 +26,7 @@ export default function Company (props) {
         error={props.item.errorKeys.includes("registry")}
         value={props.item.registry}
         onChange={props.onChange}
+        disabled={props.disabled}
       />
       <Input
         title="Razão Social:"
@@ -33,6 +35,7 @@ export default function Company (props) {
         error={props.item.errorKeys.includes("officialName")}
         value={props.item.officialName}
         onChange={props.onChange}
+        disabled={props.disabled}
       />
       <Input
         title="Ins. Municipal:"
@@ -41,6 +44,7 @@ export default function Company (props) {
         error={props.item.errorKeys.includes("registryMU")}
         value={props.item.registryMU}
         onChange={props.onChange}
+        disabled={props.disabled}
       />
       <Input
         title="Ins. Estadual:"
@@ -49,6 +53,7 @@ export default function Company (props) {
         error={props.item.errorKeys.includes("registryES")}
         value={props.item.registryES}
         onChange={props.onChange}
+        disabled={props.disabled}
       />
     </Block>
   )

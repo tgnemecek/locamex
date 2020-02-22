@@ -7,9 +7,9 @@ export default function MainTab (props) {
   return (
     <>
       {props.item.type === 'company' ?
-        <Company onChange={props.onChange} item={props.item}/>
+        <Company onChange={props.onChange} item={props.item} disabled={props.disabled}/>
         :
-        <Person onChange={props.onChange} item={props.item}/>
+        <Person onChange={props.onChange} item={props.item} disabled={props.disabled}/>
       }
     </>
   )

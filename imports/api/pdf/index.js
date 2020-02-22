@@ -141,15 +141,13 @@ function generateContract(master) {
   })
 }
 
-function generateBilling(master) {
+function generateBilling(props) {
   return new Promise((resolve, reject) => {
 
-    var props = {
-      master,
+    props = {
+      ...props,
       header,
-      charge: master.charge,
-      generateTable,
-      styles
+      generateTable
     }
 
     resolve(billingPdf(props));

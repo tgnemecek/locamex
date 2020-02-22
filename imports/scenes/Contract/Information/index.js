@@ -29,7 +29,8 @@ export default class Information extends React.Component {
       dates,
       discount,
       billingProducts: [],
-      billingServices: []
+      billingServices: [],
+      billingProrogation: []
     });
   }
 
@@ -43,7 +44,8 @@ export default class Information extends React.Component {
       dates,
       discount,
       billingProducts: [],
-      billingServices: []
+      billingServices: [],
+      billingProrogation: []
     })
   }
 
@@ -55,7 +57,8 @@ export default class Information extends React.Component {
         startDate
       },
       billingProducts: [],
-      billingServices: []
+      billingServices: [],
+      billingProrogation: []
     })
   }
 

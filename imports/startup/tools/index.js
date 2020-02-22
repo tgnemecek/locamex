@@ -79,49 +79,6 @@ export default class tools {
     } else return [input];
   }
 
-  static getBillingStatus = (charge) => {
-    if (charge.status === "finished") {
-      return charge.status;
-    }
-    var limit = moment().add(30, 'days');
-
-    // Determine if is ready to be payed
-    if (moment(charge.expiryDate).isBetween(moment(), limit)) {
-      return charge.status === "billed" ? "billed" : "ready";
-    }
-
-    // Determine if is late
-    // If its late, but client hasn't been billed,
-    // show as ready to be billed
-    if (moment(charge.expiryDate).isBefore(moment())) {
-      return charge.status === "billed" ? "late" : "ready";
-    }
-
-    return "notReady";
-  }
-
-  static renderBillingStatus = (status, type) => {
-    var dictionary = {
-      notReady: {text: "Em Aguardo", className: "billing__notReady"},
-      late: {text: "Pagamento Atrasado", className: "billing__late"},
-      finished: {text: "Pagamento Quitado", className: "billing__finished"}
-    };
-    if (type === 'billingServices') {
-      dictionary = {
-        ...dictionary,
-        billed: {text: "NFE Enviada", className: "billing__billed"},
-        ready: {text: "Enviar NFE", className: "billing__ready"}
-      }
-    } else {
-      dictionary = {
-        ...dictionary,
-        billed: {text: "Fatura Gerada", className: "billing__billed"},
-        ready: {text: "Fatura Pronta", className: "billing__ready"}
-      }
-    }
-    return dictionary[status];
-  }
-
   static translateAgendaEvent = (type) => {
     var dictionary = {
       notReady: "Cobrança Não Pronta",

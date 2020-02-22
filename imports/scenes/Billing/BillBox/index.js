@@ -8,12 +8,13 @@ import ServicesBox from './ServicesBox/index';
 
 export default function BillBox(props) {
 
-  var SelectedBox = props.charge.type === "billingServices" ? ServicesBox : ProductsBox;
+  var SelectedBox = props.bill.type === "billingServices"
+                    ? ServicesBox : ProductsBox;
 
   const getFormattedDate = (which) => {
-    var start = moment(props.charge.startDate).format("DD/MM/YYYY");
-    var end = moment(props.charge.endDate).format("DD/MM/YYYY");
-    var expiry = moment(props.charge.expiryDate).format("DD/MM/YYYY");
+    var start = moment(props.bill.startDate).format("DD/MM/YYYY");
+    var end = moment(props.bill.endDate).format("DD/MM/YYYY");
+    var expiry = moment(props.bill.expiryDate).format("DD/MM/YYYY");
 
     if (which === "period") {
       return start + " a " + end;

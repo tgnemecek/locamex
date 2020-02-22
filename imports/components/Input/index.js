@@ -57,6 +57,12 @@ export default class Input extends React.PureComponent {
         paddingLeft: "32px"
       }
     }
+    if (this.props.buttonClick) {
+      style = {
+        ...style,
+        cursor: "pointer"
+      }
+    }
     return style;
   }
 
