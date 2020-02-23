@@ -458,8 +458,28 @@ if (Meteor.isServer) {
       if (!Meteor.userId() || !tools.isWriteAllowed('contracts')) {
         throw new Meteor.Error('unauthorized');
       }
-      Contracts.update({ _id }, { $set: { status: "finalized" } } );
+      var contract = Contracts.findOne({_id});
+      var snapshot = contract.snapshots.find((snapshot) => {
+        return snapshot.active;
+      })
 
+      function finalizeBills(billing) {
+        return billing.map((bill) => {
+          return {...bill, status: "finished"}
+        })
+      }
+
+      snapshot.billingProducts = finalizeBills(
+        snapshot.billingProducts
+      )
+      snapshot.billingServices = finalizeBills(
+        snapshot.billingServices
+      )
+      snapshot.billingProrogation = finalizeBills(
+        snapshot.billingProrogation
+      )
+      contract.status = "finalized";
+      Contracts.update({ _id }, { $set: contract } );
       return _id;
     },
     'contracts.cancel'(_id) {
@@ -770,7 +790,8 @@ if (Meteor.isServer) {
     'contracts.billing.update' (_id, bill) {
       if (!Meteor.userId() || !tools.isWriteAllowed('contracts')) {
         throw new Meteor.Error('unauthorized');
-      }console.dir(bill, {depth: null})
+      }
+      console.dir(bill, {depth: null})
 
 
       var contract = Contracts.findOne({_id});
@@ -780,29 +801,43 @@ if (Meteor.isServer) {
       var index = bill.index;
       var billing = snapshot[bill.type];
       var oldBill = billing[bill.index];
-      var status;
-// PAREI AQUI!!!!
-// CORRIGIR ERRO NO UPDATE DE FATURAS APAGADAS (NAO ATUALIZA)
-      if (oldBill && oldBill.status === "finished") {
-        oldBill.annotations = bill.annotations;
-        oldBill.status = "finished";
-        Contracts.update({_id}, { $set: contract })
-        return bill;
-      }
+      var newStatus;
 
-      if (bill.finished) {
-        status = "finished";
-      } else {
-        switch (bill.status) {
-          case "ready":
-            status = "billed";
-            break;
-          case "late":
-          case "billed":
-            status = "billed";
-            break;
-        }
+      switch (bill.status) {
+        case "ready":
+          newStatus = "billed"
+          break;
+        case "billed":
+        case "late":
+          newStatus = bill.payedInFull ? "finished" : "billed";
+          break;
+        case "finished":
+          oldBill.annotations = bill.annotations;
+          Contracts.update({_id}, { $set: contract })
+          return bill;
+        default:
+          throw new Meteor.Error('status-unknown', '', bill);
       }
+      // if (oldBill && oldBill.status === "finished") {
+      //   oldBill.annotations = bill.annotations;
+      //   oldBill.status = "finished";
+      //   Contracts.update({_id}, { $set: contract })
+      //   return bill;
+      // }
+      //
+      // if (bill.payedInFull) {
+      //   status = "finished";
+      // } else {
+      //   switch (bill.status) {
+      //     case "ready":
+      //       status = "billed";
+      //       break;
+      //     case "late":
+      //     case "billed":
+      //       status = "billed";
+      //       break;
+      //   }
+      // }
       var billId;
       if (bill.type !== "billingServices") {
         var count = 1;
@@ -826,12 +861,14 @@ if (Meteor.isServer) {
       var newBill = {
         _id: billId,
         ...bill,
-        status
+        status: newStatus
       }
 
       if (!oldBill) {
         billing.push(newBill);
-      } else oldBill = newBill;
+      } else {
+        billing[bill.index] = newBill;
+      }
 
       Contracts.update({_id}, { $set: contract })
       return bill;

@@ -12,7 +12,7 @@ export default class ProductsBox extends React.Component {
     super(props);
     this.state = {
       databaseStatus: '',
-      finished: this.props.bill.status === "finished",
+      payedInFull: this.props.bill.status === "finished",
       valuePayed: this.props.bill.valuePayed || 0,
       observations: this.props.bill.observations || "",
       annotations: this.props.bill.annotations || "",
@@ -26,7 +26,7 @@ export default class ProductsBox extends React.Component {
     var _id = this.props.contract._id;
     var bill = {
       ...this.props.bill,
-      finished: this.state.finished,
+      payedInFull: this.state.payedInFull,
       valuePayed: this.state.valuePayed,
       observations: this.state.observations,
       annotations: this.state.annotations,
@@ -90,9 +90,9 @@ console.log(bill)
               title="Pagamento Quitado"
               type="checkbox"
               id="finished-checkbox"
-              name="finished"
+              name="payedInFull"
               readOnly={this.props.bill.status === "finished"}
-              value={this.state.finished}
+              value={this.state.payedInFull}
               onChange={this.handleChange}/>
           </>
         )
@@ -160,7 +160,7 @@ console.log(bill)
             </div>
             <div>
               <label>Status: </label>
-              {this.props.translateBillStatus(this.props.bill.status, 'billingProducts').text}
+              {tools.translateBillStatus(this.props.bill.status, 'billingProducts').text}
             </div>
           </div>
         </div>

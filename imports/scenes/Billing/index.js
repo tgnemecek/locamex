@@ -7,13 +7,10 @@ import Icon from '/imports/components/Icon/index';
 import Input from '/imports/components/Input/index';
 import RedirectUser from '/imports/components/RedirectUser/index';
 import { Contracts } from '/imports/api/contracts/index';
-// import { Accounts } from '/imports/api/accounts/index';
-// import { Clients } from '/imports/api/clients/index';
-// import { Containers } from '/imports/api/containers/index';
-// import { Accessories } from '/imports/api/accessories/index';
-// import { Services } from '/imports/api/services/index';
-// import SceneHeader from '/imports/components/SceneHeader/index';
 import MainHeader from '/imports/components/MainHeader/index';
+import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
+import FooterButtons from '/imports/components/FooterButtons/index';
+import DatabaseStatus from '/imports/components/DatabaseStatus/index';
 
 import Information from './Information/index';
 import BillingHistory from './BillingHistory/index';
@@ -23,30 +20,10 @@ class Billing extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      billToEdit: false
+      billToEdit: false,
+      finalizeWindow: false,
+      databaseStatus: false
     }
-  }
-
-  translateBillStatus = (status, type) => {
-    var dictionary = {
-      notReady: {text: "Em Aguardo", className: "billing__notReady"},
-      late: {text: "Pagamento Atrasado", className: "billing__late"},
-      finished: {text: "Pagamento Quitado", className: "billing__finished"}
-    };
-    if (type === 'billingServices') {
-      dictionary = {
-        ...dictionary,
-        billed: {text: "NFE Enviada", className: "billing__billed"},
-        ready: {text: "Enviar NFE", className: "billing__ready"}
-      }
-    } else {
-      dictionary = {
-        ...dictionary,
-        billed: {text: "Fatura Gerada", className: "billing__billed"},
-        ready: {text: "Fatura Pronta", className: "billing__ready"}
-      }
-    }
-    return dictionary[status];
   }
 
   toggleWindow = (billToEdit) => {
@@ -54,8 +31,47 @@ class Billing extends React.Component {
     this.setState({ billToEdit })
   }
 
+  toggleFinalizeWindow = () => {
+    this.setState({ finalizeWindow: !this.state.finalizeWindow })
+  }
+
+  finalizeMessage = () => {
+    var message = "Deseja finalizar este contrato? Ele não poderá ser reativado e todas as cobranças serão finalizadas.";
+    var all = this.props.snapshot.billingProducts.concat(
+      this.props.snapshot.billingServices,
+      this.props.snapshot.billingProrogation
+    )
+    var verification = all.every((bill) => {
+      return bill.status === "finished";
+    })
+    if (!verification) {
+      message = "Atenção: Ainda existem cobranças não quitadas. "
+                + message;
+    }
+    return message;
+  }
+
+  finalizeContract = () => {
+    this.setState({ databaseStatus: "loading" }, () => {
+      Meteor.call('contracts.finalize', this.props.contract._id,
+      (err, res) => {
+        if (err) {
+          this.setState({ databaseStatus: {
+            status: "failed",
+            message: tools.translateError(err)
+          } })
+        }
+        if (res) {
+          this.setState({ databaseStatus: {
+            status: "completed",
+            callback: this.toggleFinalizeWindow
+          } })
+        }
+      })
+    })
+  }
+
   render() {
-    console.log(this.props.snapshot.billingProrogation)
     return (
       <div className="page-content">
         <RedirectUser currentPage="billing"/>
@@ -76,19 +92,33 @@ class Billing extends React.Component {
             />
             <BillingHistory
               snapshot={this.props.snapshot}
-              translateBillStatus={this.translateBillStatus}
               toggleWindow={this.toggleWindow}
             />
+            <FooterButtons
+              disabled={this.props.contract.status !== "active"}
+              buttons={[
+              {
+                text: "Finalizar Contrato",
+                onClick: this.toggleFinalizeWindow
+              }
+            ]}/>
             {this.state.billToEdit ?
               <BillBox
                 toggleWindow={this.toggleWindow}
-                translateBillStatus={this.translateBillStatus}
                 contract={this.props.contract}
                 snapshot={this.props.snapshot}
                 snapshotIndex={this.props.snapshotIndex}
                 bill={this.state.billToEdit}
               />
             : null}
+            <ConfirmationWindow
+              isOpen={this.state.finalizeWindow}
+              closeBox={this.toggleFinalizeWindow}
+              message={this.finalizeMessage()}
+              leftButton={{text: "Não", className: "button--secondary", onClick: this.toggleFinalizeWindow}}
+              rightButton={{text: "Sim", className: "button--danger", onClick: this.finalizeContract}}
+            />
+            <DatabaseStatus status={this.state.databaseStatus}/>
           </div>
         </div>
       </div>
@@ -113,91 +143,28 @@ export default BillingWrapper = withTracker((props) => {
       snapshotIndex = i;
       return snapshot.active;
     })
-    function getBillStatus (bill) {
-      if (bill.status === "finished") {
-        return bill.status;
-      }
-      var limit = moment().add(30, 'days');
-      // Determine if is ready to be payed
-      if (moment(bill.expiryDate).isBetween(moment(), limit)) {
-        return bill.status === "billed" ? "billed" : "ready";
-      }
-      // Determine if is late
-      // If its late, but client hasn't been billed,
-      // show as ready to be billed
-      if (moment(bill.expiryDate).isBefore(moment())) {
-        return bill.status === "billed" ? "late" : "ready";
-      }
-      return "notReady";
-    }
-    function prepareProrogation(snapshot) {
-      // Checking and preparing billingProrogation
-      var lastBill;
-      var billingProducts = snapshot.billingProducts;
-      var billingProrogation = snapshot.billingProrogation;
-      var today = moment();
-      // First we find out what is the lastBill
-      if (billingProrogation.length) {
-        // If there is already a prorogation, the lastBill is in it
-        var lastIndex = billingProrogation.length-1;
-        lastBill = billingProrogation[lastIndex]
-      } else {
-        // If not, the lastBill is in the regular billing
-        // But first we need to know if there is prorogation at all
-        var lastIndex = billingProducts.length-1;
-        var lastRegularBill = billingProducts[lastIndex];
-        if (moment(lastRegularBill.expiryDate).isBefore(today)) {
-          // If today has past the last bill, there is a push
-          lastBill = lastRegularBill;
-        } else return billingProrogation;
-      }
-      // From this point, we are certain a new push is needed
-      // Then we find out if the lastBill date has passed
-      var lastExpiry = moment(lastBill.expiryDate);
-      var lastEnd = moment(lastBill.endDate);
-      if (lastExpiry.isBefore(today)) {
 
-        var expiryDate = lastExpiry.add(1, 'months').toDate();
-        var startDate = lastEnd.add(1, 'days').toDate();
-        var endDate = moment(startDate).add(30, 'days').toDate();
+    snapshot.billingProrogation = tools.prepareProrogation(
+      snapshot, contract.status);
 
-        var newBill = {
-          startDate,
-          endDate,
-          expiryDate
-        }
-
-        newBill = {
-          ...newBill,
-          value: lastBill.value,
-          valuePayed: 0,
-          account: lastBill.account,
-          description: `Prorrogação Automática #${billingProrogation.length+1}`
-        }
-        return [...billingProrogation, newBill]
-      }
-      return billingProrogation
-    }
-
-    snapshot.billingProrogation = prepareProrogation(snapshot);
     snapshot.billingProrogation = snapshot.billingProrogation.map((bill) => {
       return {
         ...bill,
         type: "billingProrogation",
-        status: getBillStatus(bill)
+        status: tools.getBillStatus(bill)
       }
     })
     snapshot.billingProducts = snapshot.billingProducts.map((bill) => {
       return {
         ...bill,
-        status: getBillStatus(bill),
+        status: tools.getBillStatus(bill),
         type: "billingProducts"
       }
     })
     snapshot.billingServices = snapshot.billingServices.map((bill) => {
       return {
         ...bill,
-        status: getBillStatus(bill),
+        status: tools.getBillStatus(bill),
         type: "billingServices"
       }
     })

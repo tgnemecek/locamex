@@ -7,50 +7,6 @@ export default class tools {
 
   // Objects, Arrays
 
-  static explodeProposal = (proposal, forceVersion) => {
-    if (proposal) {
-      var indexToShow;
-      if (forceVersion !== undefined) {
-        indexToShow = forceVersion;
-      }
-      indexToShow = proposal.snapshots.findIndex((item) => {
-        return item.active === true;
-      })
-      if (indexToShow === -1) {
-        indexToShow = proposal.snapshots.length-1
-      }
-      return {
-        ...proposal,
-        ...proposal.snapshots[indexToShow]
-      }
-    } else return false;
-  }
-
-  static explodeContract = (contract, forceVersion) => {
-    if (contract) {
-      var versionToShow;
-      if (forceVersion !== undefined) {
-        versionToShow = forceVersion;
-      } else {
-        if (contract.status === 'inactive') {
-          versionToShow = contract.snapshots.length-1;
-        } else if (contract.status === 'active'
-                || contract.status === 'finalized') {
-          versionToShow = contract.activeVersion;
-        } else if (contract.status === 'cancelled') {
-          if (contract.activeVersion !== undefined) {
-            versionToShow = contract.activeVersion;
-          } else versionToShow = contract.snapshots.length-1;
-        }
-      }
-      return {
-        ...contract,
-        ...contract.snapshots[versionToShow],
-        version: versionToShow
-      }
-    } else return false;
-  }
-
   static totalValue = (snapshot) => {
     var duration = snapshot.dates.timeUnit === "months" ?
                     snapshot.dates.duration : 1;
@@ -90,10 +46,99 @@ export default class tools {
     return dictionary[type];
   }
 
-  static getAccountInfo = (account) => {
-    if (!account) return '';
-    return `Banco ${account.bank} (${account.bankNumber}), Agência: ${account.branch}, C/C: ${account.number}`;
+  static getBillStatus = (bill) => {
+    if (bill.status === "finished") {
+      return bill.status;
+    }
+    var limit = moment().add(30, 'days');
+    // Determine if is ready to be payed
+    if (moment(bill.expiryDate).isBetween(moment(), limit)) {
+      return bill.status === "billed" ? "billed" : "ready";
+    }
+    // Determine if is late
+    // If its late, but client hasn't been billed,
+    // show as ready to be billed
+    if (moment(bill.expiryDate).isBefore(moment())) {
+      return bill.status === "billed" ? "late" : "ready";
+    }
+    return "notReady";
   }
+
+  static translateBillStatus = (status, type) => {
+    var dictionary = {
+      notReady: {text: "Em Aguardo", className: "billing__notReady"},
+      late: {text: "Pagamento Atrasado", className: "billing__late"},
+      finished: {text: "Pagamento Quitado", className: "billing__finished"}
+    };
+    if (type === 'billingServices') {
+      dictionary = {
+        ...dictionary,
+        billed: {text: "NFE Enviada", className: "billing__billed"},
+        ready: {text: "Enviar NFE", className: "billing__ready"}
+      }
+    } else {
+      dictionary = {
+        ...dictionary,
+        billed: {text: "Fatura Gerada", className: "billing__billed"},
+        ready: {text: "Fatura Pronta", className: "billing__ready"}
+      }
+    }
+    return dictionary[status];
+  }
+
+  static prepareProrogation = (snapshot, contractStatus) => {
+    if (contractStatus === "finalized") {
+      return snapshot.billingProrogation;
+    }
+    // Checking and preparing billingProrogation
+    var lastBill;
+    var billingProducts = snapshot.billingProducts;
+    var billingProrogation = snapshot.billingProrogation;
+    var today = moment();
+    // First we find out what is the lastBill
+    if (billingProrogation.length) {
+      // If there is already a prorogation, the lastBill is in it
+      var lastIndex = billingProrogation.length-1;
+      lastBill = billingProrogation[lastIndex]
+    } else {
+      // If not, the lastBill is in the regular billing
+      // But first we need to know if there is prorogation at all
+      var lastIndex = billingProducts.length-1;
+      var lastRegularBill = billingProducts[lastIndex];
+      if (moment(lastRegularBill.expiryDate).isBefore(today)) {
+        // If today has past the last bill, there is a push
+        lastBill = lastRegularBill;
+      } else return billingProrogation;
+    }
+    // From this point, we are certain a new push is needed
+    // Then we find out if the lastBill date has passed
+    var lastExpiry = moment(lastBill.expiryDate);
+    var lastEnd = moment(lastBill.endDate);
+    if (lastExpiry.isBefore(today)) {
+
+      var expiryDate = lastExpiry.add(1, 'months').toDate();
+      var startDate = lastEnd.add(1, 'days').toDate();
+      var endDate = moment(startDate).add(30, 'days').toDate();
+
+      var newBill = {
+        startDate,
+        endDate,
+        expiryDate
+      }
+
+      newBill = {
+        ...newBill,
+        value: lastBill.value,
+        valuePayed: 0,
+        account: lastBill.account,
+        description: `Prorrogação Automática #${billingProrogation.length+1}`
+      }
+      return [...billingProrogation, newBill];
+    }
+    return billingProrogation;
+  }
+
+
 
   static compare = (input1, input2, exception) => {
     function loop(input1, input2) {

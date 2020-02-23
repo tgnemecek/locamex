@@ -3,7 +3,7 @@ import { version } from '/package.json';
 
 import { Accessories } from '/imports/api/accessories/index';
 import { Accounts } from '/imports/api/accounts/index';
-import { Agenda } from '/imports/api/agenda/index';
+import { Events } from '/imports/api/events/index';
 import { Clients } from '/imports/api/clients/index';
 import { Containers } from '/imports/api/containers/index';
 import { Contracts } from '/imports/api/contracts/index';
@@ -56,14 +56,14 @@ Accessories.after.insert(afterInsert)
 Accessories.after.update(afterUpdate)
 Accounts.after.insert(afterInsert)
 Accounts.after.update(afterUpdate)
-Agenda.after.insert(afterInsert)
-Agenda.after.update(afterUpdate)
 Clients.after.insert(afterInsert)
 Clients.after.update(afterUpdate)
 Containers.after.insert(afterInsert)
 Containers.after.update(afterUpdate)
 Contracts.after.insert(afterInsert)
 Contracts.after.update(afterUpdate)
+Events.after.insert(afterInsert)
+Events.after.update(afterUpdate)
 Modules.after.insert(afterInsert)
 Modules.after.update(afterUpdate)
 Packs.after.insert(afterInsert)

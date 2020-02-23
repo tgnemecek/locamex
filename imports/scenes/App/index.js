@@ -24,7 +24,7 @@ class App extends React.Component {
             <Route path="/" render={(props) => <AppHeader {...props}/>}/>
               <Switch>
                 <Route path="/dashboard" render={(props) => {
-                  return <Dashboard {...props}/>
+                  return <Dashboard {...props} user={this.props.user}/>
                 }}/>
                 <Route path="/contract/:contractId" render={(props) => {
                   return <Contract {...props}/>

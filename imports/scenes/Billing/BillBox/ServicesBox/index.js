@@ -12,7 +12,7 @@ export default class ServicesBox extends React.Component {
     super(props);
     this.state = {
       databaseStatus: '',
-      status: this.props.bill.status,
+      payedInFull: this.props.bill.status === "finished",
       valuePayed: this.props.bill.valuePayed || 0,
       annotations: this.props.bill.annotations || "",
     }
@@ -26,7 +26,7 @@ export default class ServicesBox extends React.Component {
     var _id = this.props.contract._id;
     var bill = {
       ...this.props.bill,
-      status: this.state.status,
+      payedInFull: this.state.payedInFull,
       valuePayed: this.state.valuePayed,
       annotations: this.state.annotations,
     }
@@ -42,12 +42,6 @@ export default class ServicesBox extends React.Component {
     });
   }
   renderInputs = () => {
-    const onChange = (e) => {
-      var bool = e.target.value;
-      if (bool) {
-        this.setState({ status: "finished" });
-      } else this.setState({ status: "billed" });
-    }
     switch (this.props.bill.status) {
       case "finished":
       case "billed":
@@ -66,10 +60,10 @@ export default class ServicesBox extends React.Component {
               title="Pagamento Quitado"
               type="checkbox"
               id="finished-checkbox"
-              name="status"
+              name="payedInFull"
               readOnly={this.props.bill.status === "finished"}
-              value={this.state.status === "finished"}
-              onChange={onChange}/>
+              value={this.state.payedInFull}
+              onChange={this.handleChange}/>
           </>
         )
       default:
@@ -80,16 +74,11 @@ export default class ServicesBox extends React.Component {
     switch (this.props.bill.status) {
       case "late":
       case "billed":
+      case "finished":
         return (
           <FooterButtons buttons={[
             {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow},
             {text: "Salvar Edições", className: "button--primary", onClick: this.updateBilling},
-          ]}/>
-        )
-      case "finished":
-        return (
-          <FooterButtons buttons={[
-            {text: "Voltar", className: "button--secondary", onClick: this.props.toggleWindow}
           ]}/>
         )
       case "ready":
@@ -134,7 +123,7 @@ export default class ServicesBox extends React.Component {
             </div>
             <div>
               <label>Status: </label>
-              {this.props.translateBillStatus(this.props.bill.status, 'billingServices').text}
+              {tools.translateBillStatus(this.props.bill.status, 'billingServices').text}
             </div>
           </div>
         </div>

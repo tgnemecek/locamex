@@ -11,7 +11,7 @@ export default class Dashboard extends React.Component {
         <div className="page-content">
           <div className="main-scene dashboard">
             <h1>Página Inicial</h1>
-            <h2>Olá {this.props.user.firstName}.</h2>
+            <h2>Olá {this.props.user.profile.firstName}.</h2>
             <Widgets/>
           </div>
         </div>

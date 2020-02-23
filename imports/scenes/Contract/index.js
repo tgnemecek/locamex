@@ -213,101 +213,6 @@ class Contract extends React.Component {
     }
   }
 
-  //
-  // toggleCancelWindow = () => {
-  //   var toggleCancelWindow = !this.state.toggleCancelWindow;
-  //   this.setState({ toggleCancelWindow });
-  // }
-  //
-  // toggleFinalizeWindow = () => {
-  //   var toggleFinalizeWindow = !this.state.toggleFinalizeWindow;
-  //   this.setState({ toggleFinalizeWindow });
-  // }
-  //
-  // changeVersion = (e) => {
-  //   this.setState({
-  //     snapshot: tools.explodeSnapshot({
-  //       ...this.props.snapshot,
-  //       _id: this.state.snapshot._id
-  //     }, e.target.value)
-  //   });
-  // }
-  //
-  // cancelSnapshot = (callback) => {
-  //   this.setState({ databaseStatus: "loading" }, () => {
-  //     const cancel = (snapshot) => {
-  //       Meteor.call('snapshots.cancel', snapshot._id, (err, res) => {
-  //         if (res) {
-  //           var databaseStatus = {
-  //             status: "completed",
-  //             message: "Proposta Cancelada!"
-  //           }
-  //           snapshot.status = "cancelled";
-  //           this.setState({ snapshot, databaseStatus });
-  //         } else if (err) {
-  //           this.setState({ databaseStatus: "failed" });
-  //           console.log(err);
-  //         }
-  //         callback();
-  //       });
-  //     }
-  //     this.saveEdits(cancel);
-  //   })
-  // }
-  //
-
-  //
-  // finalizeSnapshot = (callback) => {
-  //   this.setState({ databaseStatus: "loading" }, () => {
-  //     const finalize = (snapshot) => {
-  //       Meteor.call('snapshots.finalize', snapshot._id, (err, res) => {
-  //         if (res) {
-  //           var databaseStatus = {
-  //             status: "completed",
-  //             message: "Contrato Finalizado!"
-  //           }
-  //           snapshot.status = "finalized";
-  //           this.setState({ snapshot, databaseStatus });
-  //         } else if (err) {
-  //           this.setState({ databaseStatus: "failed" });
-  //           console.log(err);
-  //         }
-  //         callback();
-  //       });
-  //     }
-  //     this.saveEdits(finalize);
-  //   })
-  // }
-  //
-  // saveEdits = (callback) => {
-  //   this.setState({ databaseStatus: "loading" }, () => {
-  //     // Only update. Snapshots are inserted by activating Proposals
-  //     Meteor.call('snapshots.update', this.state.snapshot, (err, res) => {
-  //       if (res) {
-  //         var snapshot;
-  //         var databaseStatus;
-  //         if (res.hasChanged) {
-  //           snapshot = tools.explodeSnapshot(res.snapshot);
-  //           databaseStatus = "completed";
-  //         } else {
-  //           snapshot = this.state.snapshot;
-  //           databaseStatus = {
-  //             status: "completed",
-  //             message: "Nenhuma alteração realizada."
-  //           }
-  //         }
-  //         if (typeof callback === "function") {
-  //           callback(snapshot);
-  //         } else this.setState({ snapshot, databaseStatus });
-  //       } else if (err) {
-  //         this.setState({ databaseStatus: "failed" });
-  //         console.log(err);
-  //       }
-  //     });
-  //   })
-  // }
-  //
-
   verifyFields = () => {
     var errorKeys = [];
     var errorMsg = '';
@@ -363,9 +268,6 @@ class Contract extends React.Component {
       if (!isBillingCorrect()) {
         errorKeys.push("billing");
       }
-      // if (this.totalValue() <= 0) {
-      //   errorKeys.push("totalValue");
-      // }
     }
 
     setErrorKeys();
@@ -426,7 +328,8 @@ class Contract extends React.Component {
             toggleBilling={this.toggleBilling}
             billingError={this.state.errorKeys.includes('billing')}
 
-            cancelMaster={this.cancelContract}
+            cancelMaster={this.props.contract.status !== "finalized"
+              ? this.cancelContract : null}
             changeSnapshot={this.changeSnapshot}
             snapshotIndex={this.state.snapshotIndex}
             snapshots={this.props.contract.snapshots}
@@ -514,22 +417,12 @@ export default ContractWrapper = withTracker((props) => {
   Meteor.subscribe('proposalsPub');
   Meteor.subscribe('accountsPub');
 
-
-  // Meteor.subscribe('placesPub');
-  // Meteor.subscribe('usersPub');
-
   var databases = {
-    // contractsDatabase: Contracts.find().fetch(),
     clientsDatabase: Clients.find().fetch(),
     accountsDatabase: Accounts.find().fetch(),
-    //
-    // placesDatabase: Places.find().fetch(),
-    //
     containersDatabase: Containers.find().fetch(),
     accessoriesDatabase: Accessories.find().fetch(),
-    servicesDatabase: Services.find().fetch(),
-    //
-    // usersDatabase: Meteor.users.find().fetch()
+    servicesDatabase: Services.find().fetch()
 
   }
   var contract = undefined;

@@ -61,3 +61,22 @@
 .billing__notReady {
   color: black;
 }
+
+.billing-history__table-products,
+.billing-history__table-services {
+  td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+.billing-history__account-cell {
+  max-width: 100px;
+}
+
+.billing-history__status-cell {
+  max-width: 170px;
+}
+
+.billing-history__button-cell {
+  width: 1px;
+}

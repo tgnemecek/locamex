@@ -4,32 +4,32 @@ import { Contracts } from '/imports/api/contracts/index';
 
 import { userTypes } from '/imports/startup/user-types/index';
 
-export const Agenda = new Mongo.Collection('agenda');
+export const Events = new Mongo.Collection('events');
 
-Agenda.deny({
+Events.deny({
   insert() { return true; },
   update() { return true; },
   remove() { return true; },
 });
 
 if (Meteor.isServer) {
-  Meteor.publish('agendaPub', () => {
+  Meteor.publish('eventsPub', () => {
     if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
     var user = Meteor.user();
-    if (user.type === "administrator") {
-      return Agenda.find({});
+    if (user.profile.type === "administrator") {
+      return Events.find({});
     } else {
-      var events = userTypes[user.type].events;
-      return Agenda.find({ type: { $in: events } });
+      var events = userTypes[user.profile.type].events;
+      return Events.find({ type: { $in: events } });
     }
   })
 
   Meteor.methods({
-    'agenda.insert' (data) {
+    'events.insert' (data) {
       if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
-      Agenda.insert({
+      Events.insert({
         insertionDate: new Date(),
-        insertedBy: Meteor.user()._id,
+        insertedBy: Meteor.user(),
         type: data.type,
         date: data.date,
         referral: data.referral,
