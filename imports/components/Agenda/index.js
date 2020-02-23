@@ -11,7 +11,6 @@ import ContentCell from './ContentCell/index';
 import ContentDisplay from './ContentDisplay/index';
 import Legend from './Legend/index';
 import ColorBox from './ColorBox/index';
-import Status from './Status/index';
 
 class Agenda extends React.Component {
   constructor(props) {
@@ -19,8 +18,7 @@ class Agenda extends React.Component {
     this.state = {
       selectedMonth: moment().month(),
       selectedYear: moment().year(),
-      selectedDate: moment(),
-      events: []
+      selectedDate: moment()
     }
   }
 
@@ -39,7 +37,7 @@ class Agenda extends React.Component {
   }
 
   changeSelectedDate = (selectedDate, events) => {
-    this.setState({ selectedDate, events });
+    this.setState({ selectedDate });
   }
 
   jumpToToday = () => {
@@ -83,7 +81,7 @@ class Agenda extends React.Component {
       .date(num);
     }
 
-    var filteredAgenda = this.props.eventsDatabase.filter((event) => {
+    var filteredEvents = this.props.eventsDatabase.filter((event) => {
       if (moment(event.date).year() !== this.state.selectedYear) {
         return false;
       }
@@ -101,7 +99,7 @@ class Agenda extends React.Component {
       })
     }
     for (var i = 1; i <= monthLength; i++) {
-      var events = filteredAgenda.filter((event) => {
+      var events = filteredEvents.filter((event) => {
         return event.date.getDate() === i;
       })
       days.push({
@@ -134,7 +132,6 @@ class Agenda extends React.Component {
             key={i}
             index={i}
             {...day}
-            ColorBox={ColorBox}
             selectedYear={this.state.selectedYear}
             selectedMonth={this.state.selectedMonth}
             selectedDate={this.state.selectedDate}
@@ -174,17 +171,15 @@ class Agenda extends React.Component {
             {this.renderBody()}
           </tbody>
         </table>
-        {/* <Legend
+        <Legend
           ColorBox={ColorBox}
-          Status={Status}
           eventsDatabase={this.props.eventsDatabase}
         />
         <ContentDisplay
           ColorBox={ColorBox}
-          Status={Status}
           selectedDate={this.state.selectedDate}
-          events={this.state.events}
-        /> */}
+          events={this.props.eventsDatabase}
+        />
       </div>
     )
   }
@@ -202,7 +197,6 @@ export default AgendaWrapper = withTracker((props) => {
     var snapshot = contract.snapshots.find((snapshot) => {
       return snapshot.active;
     })
-    // CHECK IF I HAVE TO prepareProrogation
 
     function getBillEvents(snapshot, billingName, contract) {
       var result = [];
@@ -234,10 +228,11 @@ export default AgendaWrapper = withTracker((props) => {
 
         result.push({
           description: <span>{description}{statusJSX}</span>,
-          type: "billing",
+          type: billingName,
+          subType: status,
           date: bill.expiryDate,
-          referral: contract._id,
-          // status
+          legend: textObj.text,
+          link: "/billing/" + contract._id
         })
       })
       return result;
@@ -251,9 +246,11 @@ export default AgendaWrapper = withTracker((props) => {
       snapshot, 'billingProrogation', contract);
 
     eventsDatabase = eventsDatabase.concat(
-      productsEvents, servicesEvents, prorogationEvents);
+      productsEvents, servicesEvents, prorogationEvents)
+      .map((event) => {
+        return {...event, color: tools.getEventColor(event)}
+      })
   })
-console.dir(eventsDatabase, {depth: null})
   return { eventsDatabase }
 
 })(Agenda);

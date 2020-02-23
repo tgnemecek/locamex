@@ -38,30 +38,6 @@
   margin: $space 0;
 }
 
-.billing__finished {
-  color: $billing-finished;
-  font-weight: bold;
-}
-
-.billing__billed {
-  color: $billing-billed;
-  font-weight: bold;
-}
-
-.billing__ready {
-  color: $billing-ready;
-  font-weight: bold;
-}
-
-.billing__late {
-  color: $billing-late;
-  font-weight: bold;
-}
-
-.billing__notReady {
-  color: black;
-}
-
 .billing-history__table-products,
 .billing-history__table-services {
   td {

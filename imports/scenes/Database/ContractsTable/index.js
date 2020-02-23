@@ -43,7 +43,9 @@ class ContractsTable extends React.Component {
           } else return null;
         }
         const renderBillingButton = () => {
-          if (tools.isReadAllowed("billing") && item.status === "active") {
+          if (tools.isReadAllowed("billing")
+              && (item.status === "active"
+                  || item.status === "finalized")) {
             return (
               <td className="no-padding">
                 <Link key={i} to={"/billing/" + item._id}>

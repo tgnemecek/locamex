@@ -2,27 +2,23 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import tools from '/imports/startup/tools/index';
 
-import Block from '/imports/components/Block/index';
 import Icon from '/imports/components/Icon/index';
 
 export default class Legend extends React.Component {
   renderLegend = () => {
-    var legends = [];
-    var exceptions = []; // Add exceptions here
-    this.props.agendaDatabase.forEach((event) => {
-      if (event.type === "billing") {
-        if (!exceptions.includes(event.status)) {
-          if (!legends.includes(event.status)) {
-            legends.push(event.status);
-          }
-        }
+    var uniques = [];
+    var filteredEvents = [];
+    this.props.eventsDatabase.forEach((event) => {
+      if (!uniques.includes(event.legend)) {
+        uniques.push(event.legend);
+        filteredEvents.push(event);
       }
     })
-    return legends.map((legend, i) => {
+    return filteredEvents.map((event, i) => {
       return (
         <div className="agenda__legend-unit" key={i}>
-          <this.props.ColorBox type={legend}/>
-            <div><this.props.Status status={legend}/></div>
+          <this.props.ColorBox {...event}/>
+            <div>{event.legend}</div>
         </div>
       )
     })

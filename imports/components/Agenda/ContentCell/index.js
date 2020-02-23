@@ -50,9 +50,8 @@ export default class ContentCell extends React.Component {
 
   renderContent = () => {
     return this.props.events.map((event, i) => {
-      var className = "agenda__color-box--" + event.status;
       return (
-        <div key={i} className={className}>
+        <div key={i} style={{background: event.color}}>
           <Icon icon="star" className="agenda__star"/>
         </div>
       )

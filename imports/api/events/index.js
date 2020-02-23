@@ -31,9 +31,11 @@ if (Meteor.isServer) {
         insertionDate: new Date(),
         insertedBy: Meteor.user(),
         type: data.type,
+        subType: data.subType,
         date: data.date,
-        referral: data.referral,
-        description: data.description
+        link: data.link,
+        description: data.description,
+        legend: data.legend
       })
     }
   })

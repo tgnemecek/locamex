@@ -10,7 +10,7 @@ export default class BillingHistory extends React.Component {
   renderStatus = (status, type) => {
     var obj = tools.translateBillStatus(status, type);
     return (
-      <span className={obj.className}>
+      <span style={{color: obj.color, fontWeight: "bold"}}>
         {obj.text}
       </span>
     )

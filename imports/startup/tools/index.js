@@ -35,15 +35,13 @@ export default class tools {
     } else return [input];
   }
 
-  static translateAgendaEvent = (type) => {
-    var dictionary = {
-      notReady: "Cobrança Não Pronta",
-      ready: "Cobrança Pronta",
-      billed: "Aguardando Pagamento",
-      finished: "Cobrança Quitada",
-      late: "Pagamento Atrasado"
-    }
-    return dictionary[type];
+  static getEventColor = (event) => {
+    if (event.type === "billingProducts"
+        || event.type === "billingProrogation"
+        || event.type === "billingServices") {
+        return tools.translateBillStatus(event.subType, event.type).color;
+      }
+    else return "black";
   }
 
   static getBillStatus = (bill) => {
@@ -66,21 +64,21 @@ export default class tools {
 
   static translateBillStatus = (status, type) => {
     var dictionary = {
-      notReady: {text: "Em Aguardo", className: "billing__notReady"},
-      late: {text: "Pagamento Atrasado", className: "billing__late"},
-      finished: {text: "Pagamento Quitado", className: "billing__finished"}
+      notReady: {text: "Em Aguardo", color: "#dbb6ce"}, // OR BLACK??
+      late: {text: "Pagamento Atrasado", color: "#db5151"},
+      finished: {text: "Pagamento Quitado", color: "#49ab44"}
     };
     if (type === 'billingServices') {
       dictionary = {
         ...dictionary,
-        billed: {text: "NFE Enviada", className: "billing__billed"},
-        ready: {text: "Enviar NFE", className: "billing__ready"}
+        billed: {text: "NFE Enviada", color: "#5199db"},
+        ready: {text: "Enviar NFE", color: "#dbc451"}
       }
     } else {
       dictionary = {
         ...dictionary,
-        billed: {text: "Fatura Gerada", className: "billing__billed"},
-        ready: {text: "Fatura Pronta", className: "billing__ready"}
+        billed: {text: "Fatura Gerada", color: "#5199db"},
+        ready: {text: "Fatura Pronta", color: "#dbc451"}
       }
     }
     return dictionary[status];

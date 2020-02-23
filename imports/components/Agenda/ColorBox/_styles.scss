@@ -6,23 +6,3 @@
   display: inline-block;
   box-shadow: 2px 2px 1px 0px rgba(0,0,0,0.2);
 }
-
-.agenda__color-box--notReady {
-  background: $billing-notReady;
-}
-
-.agenda__color-box--ready {
-  background: $billing-ready;
-}
-
-.agenda__color-box--billed {
-  background: $billing-billed;
-}
-
-.agenda__color-box--late {
-  background: $billing-late;
-}
-
-.agenda__color-box--finished {
-  background: $billing-finished;
-}
