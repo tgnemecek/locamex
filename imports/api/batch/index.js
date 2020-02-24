@@ -1,6 +1,8 @@
 import moment from 'moment';
+import SimpleSchema from 'simpl-schema';
 import tools from '/imports/startup/tools/index';
 
+import { Accounts } from '/imports/api/accounts/index';
 import { Accessories } from '/imports/api/accessories/index';
 import { Clients } from '/imports/api/clients/index';
 import { Containers } from '/imports/api/containers/index';
@@ -12,8 +14,357 @@ import { Places } from '/imports/api/places/index';
 import { Proposals } from '/imports/api/proposals/index';
 import { Services } from '/imports/api/services/index';
 import { Series } from '/imports/api/series/index';
+import { Variations } from '/imports/api/variations/index';
 
 if (Meteor.isServer && Meteor.isDevelopment) {
+
+  // var allCollections;
+  // var allData;
+  //
+  // const backupAllCollections = () => {
+  //   var accounts = Accounts.find().fetch();
+  //   var accessories = Accessories.find().fetch();
+  //   var clients = Clients.find().fetch();
+  //   var containers = Containers.find().fetch();
+  //   // var contracts = Contracts.find().fetch();
+  //   var modules = Modules.find().fetch();
+  //   // var proposals = Proposals.find().fetch();
+  //   var services = Services.find().fetch();
+  //   var series = Series.find().fetch();
+  //   var variations = Variations.find().fetch();
+  //   allCollections = [
+  //     Accounts,
+  //     Accessories,
+  //     Clients,
+  //     Containers,
+  //     Modules,
+  //     Services,
+  //     Series,
+  //     Variations
+  //   ]
+  //   allData = [
+  //     accounts,
+  //     accessories,
+  //     clients,
+  //     containers,
+  //     modules,
+  //     services,
+  //     series,
+  //     variations
+  //   ]
+  // }
+  //
+  // const restoreCollections = () => {
+  //   allCollections.forEach((collection, i) => {
+  //     allData[i].forEach((item) => {
+  //       collection.upsert({_id: item._id}, {$set: item}, {validate: false});
+  //     })
+  //   })
+  // }
+
+  var items;
+  var errors = []
+  var uniqueErrors = []
+  const errorHandling = (err, item) => {
+    if (!err.details) throw err;
+    err.details.forEach((key) => {
+      // var identifier = item.type + ": " + key.name;
+      var identifier = key.name;
+      if (!uniqueErrors.includes(identifier)) {
+        uniqueErrors.push(identifier);
+        errors.push(err.details[0].name, item.description);
+      }
+    })
+  }
+
+  // MAIN FUNCTIONS
+  const createVariations = (simulation) => {
+    var items = Accessories.find().fetch();
+    items.forEach((item) => {
+      try {
+        item.variations.forEach((variation) => {
+          var newItem = {
+            ...variation,
+            _id: tools.generateId(),
+            type: "variation",
+            place: undefined,
+            places: [],
+            accessory: {
+              _id: item._id,
+              description: item.description
+            }
+          }
+          if (simulation) {
+            newItem = Variations.simpleSchema().clean(newItem);
+            Variations.simpleSchema().validate(newItem);
+          } else {
+            Variations.insert(newItem);
+          }
+        })
+      }
+      catch(err) {
+        errorHandling(err, item)
+      }
+    })
+  }
+
+  const updateContainers = (simulation) => {
+    var items = Containers.find().fetch();
+    items.forEach((item) => {
+      try {
+        var allowedModules = undefined;
+        if (item.type === "modular") {
+          allowedModules = item.allowedModules.map((moduleId) => {
+            console.log(moduleId)
+            var module = Modules.findOne({_id: moduleId});
+            return {
+              _id: module._id,
+              description: module.description
+            }
+          })
+        }
+        var newItem = {
+          ...item,
+          allowedModules,
+          units: undefined,
+          containerId: undefined,
+          flyer: item.flyer || undefined
+        };
+        if (simulation) {
+          newItem = Containers.simpleSchema().clean(newItem);
+          Containers.simpleSchema().validate(newItem);
+        } else {
+          Containers.update({_id: item._id}, {$set: newItem})
+        }
+      }
+      catch(err) {
+        errorHandling(err, newItem);
+      }
+    })
+  }
+
+  const updateSeries = (simulation) => {
+    var items = Series.find().fetch();
+    items.forEach((item) => {
+      try {
+        var place = Places.findOne({_id: item.place});
+        var container = Containers.findOne({_id: item.containerId});
+        if (!place) throw new Meteor.Error('place-not-found', '', item)
+
+        var newItem = {
+          ...item,
+          _id: tools.generateId(),
+          description: item._id,
+          containerId: undefined,
+          container: {
+            _id: container._id,
+            description: container.description
+          },
+          rented: place._id === "aa59b7acc6fd6ca00265cc50",
+          place: {
+            _id: place._id,
+            description: place.description
+          }
+        }
+        if (simulation) {
+          newItem = Series.simpleSchema().clean(newItem);
+          Series.simpleSchema().validate(newItem);
+        } else {
+          Series.insert(newItem);
+        }
+      }
+      catch(err) {
+        errorHandling(err, newItem);
+      }
+    })
+  }
+
+  const updateAccessories = (simulation) => {
+    var items = Accessories.find().fetch();
+    items.forEach((item) => {
+      try {
+        var newItem = {
+          ...item,
+          available: 0,
+          inactive: 0,
+          rented: 0
+        };
+        if (simulation) {
+          newItem = Accessories.simpleSchema().clean(newItem);
+          Accessories.simpleSchema().validate(newItem);
+        } else {
+          Accessories.update({_id: item._id}, {$set: newItem})
+        }
+      }
+      catch(err) {
+        errorHandling(err, newItem);
+      }
+    })
+  }
+
+  const updateModules = (simulation) => {
+    var items = Modules.find().fetch();
+    items.forEach((item) => {
+      try {
+        var place = Places.findOne({_id: item.place});
+        var newItem = {
+          ...item,
+          places: []
+        };
+        if (simulation) {
+          newItem = Modules.simpleSchema().clean(newItem);
+          Modules.simpleSchema().validate(newItem);
+        } else {
+          Modules.update({_id: item._id}, {$set: newItem})
+        }
+      }
+      catch(err) {
+        errorHandling(err, newItem);
+      }
+    })
+  }
+
+  const updateServices = (simulation) => {
+    var items = Services.find().fetch();
+    items.forEach((item) => {
+      try {
+        var newItem = {
+          ...item,
+          price: item.price || 0
+        };
+        if (simulation) {
+          newItem = Services.simpleSchema().clean(newItem);
+          Services.simpleSchema().validate(newItem);
+        } else {
+          Services.update({_id: item._id}, {$set: newItem})
+        }
+      }
+      catch(err) {
+        errorHandling(err, newItem);
+      }
+    })
+  }
+
+  const updateClients = (simulation) => {
+    var items = Clients.find().fetch();
+    items.forEach((item) => {
+      try {
+        var newItem = {
+          ...item
+        };
+        Clients.update({_id: item._id}, {$set: newItem})
+        // if (simulation) {
+        //   newItem = Clients.simpleSchema().clean(newItem);
+        //   Clients.simpleSchema().validate(newItem);
+        // } else {
+        //
+        // }
+      }
+      catch(err) {
+        errorHandling(err, newItem);
+      }
+    })
+  }
+
+  const updateProposals = (simulation) => {
+    var items = Proposals.find().fetch();
+    items.forEach((item) => {
+      try {
+        var newItem = {
+          ...item,
+          type: "proposal",
+          visible: true,
+          snapshots: item.snapshots.map((snapshot) => {
+            return {
+              ...snapshot,
+              dates: {
+                ...snapshot.dates,
+                startDate: snapshot.dates.startDate
+                        || snapshot.dates.billingDate
+              },
+              containers: snapshot.containers.map((container) => {
+                var fromDB = Containers.findOne({_id: container.productId});
+                return {
+                  ...fromDB,
+                  price: container.price,
+                  quantity: container.renting
+                }
+              }),
+              accessories: snapshot.accessories.map((accessory) => {
+                var fromDB = Accessories.findOne({_id: accessory.productId});
+                return {
+                  ...fromDB,
+                  price: accessory.price,
+                  quantity: accessory.renting
+                }
+              }),
+              services: snapshot.services.map((service) => {
+                var fromDB = Services.findOne({_id: service.productId});
+                return {
+                  ...fromDB,
+                  price: service.price,
+                  quantity: service.renting
+                }
+              })
+            }
+          })
+        };
+        if (simulation) {
+          newItem = Proposals.simpleSchema().clean(newItem);
+          Proposals.simpleSchema().validate(newItem);
+        } else {
+          Proposals.update({_id: item._id}, {$set: newItem})
+        }
+      }
+      catch(err) {
+        errorHandling(err, newItem);
+      }
+    })
+  }
+
+
+
+
+  const reinsert = (Databases) => {
+    Databases.forEach((Database, i) => {
+      console.log(i)
+      Database.find().forEach((item) => {
+        Database.update({_id: item._id}, {$set: item})
+      })
+    })
+  }
+
+
+  var runAsSimulation = true;
+
+  // backupAllCollections()
+
+  try {
+    createVariations(runAsSimulation)
+    updateContainers(runAsSimulation)
+    updateSeries(runAsSimulation)
+    updateAccessories(runAsSimulation)
+    updateModules(runAsSimulation)
+    updateServices(runAsSimulation)
+    updateClients(runAsSimulation)
+    updateProposals(true)
+    // History.remove({})
+    // Packs.remove({})
+    // reinsert([Clients, Places, Accounts])
+
+    // console.dir(errors, {depth: null});
+    console.dir(uniqueErrors, {depth: null});
+    console.log("RESTORING...")
+  }
+  catch(err) {
+    // restoreCollections()
+    throw err
+  }
+  // restoreCollections()
+  console.log("DONE!")
+  // Proposals.simpleSchema().namedContext().validate()
+
+
   // var proposals = Proposals.find().fetch();
   //
   // proposals.forEach((pro) => {

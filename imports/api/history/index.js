@@ -21,6 +21,7 @@ import tools from '/imports/startup/tools/index';
 export const History = new Mongo.Collection('history');
 
 function afterInsert(userId, doc) {
+  return;
   var user = Meteor.user();
   History.insert({
     _id: tools.generateId(),
@@ -36,6 +37,7 @@ function afterInsert(userId, doc) {
 }
 
 function afterUpdate(userId, doc, modifier, options) {
+  return;
   var user = Meteor.user() || {};
   History.insert({
     _id: tools.generateId(),

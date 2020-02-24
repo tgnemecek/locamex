@@ -30,7 +30,6 @@ export const containersSchema = new SimpleSchema({
   },
   'allowedModules.$': Object,
   'allowedModules.$._id': String,
-  'allowedModules.$.type': String,
   'allowedModules.$.description': String,
 
   visible: Boolean
