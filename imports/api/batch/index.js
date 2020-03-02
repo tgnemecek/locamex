@@ -115,7 +115,6 @@ if (Meteor.isServer && Meteor.isDevelopment) {
         var allowedModules = undefined;
         if (item.type === "modular") {
           allowedModules = item.allowedModules.map((moduleId) => {
-            console.log(moduleId)
             var module = Modules.findOne({_id: moduleId});
             return {
               _id: module._id,
@@ -266,6 +265,35 @@ if (Meteor.isServer && Meteor.isDevelopment) {
     })
   }
 
+  const updateUsers = (simulation) => {
+    var items = Meteor.users.find().fetch();
+    items.forEach((item) => {
+      try {
+        var newItem = {
+          ...item,
+          profile: {
+            firstName: item.firstName,
+            lastName: item.lastName,
+            type: item.type
+          }
+        };
+        delete newItem.firstName;
+        delete newItem.lastName;
+        delete newItem.type;
+        Meteor.users.update({_id: item._id}, {$set: newItem})
+        // if (simulation) {
+        //   newItem = Clients.simpleSchema().clean(newItem);
+        //   Clients.simpleSchema().validate(newItem);
+        // } else {
+        //
+        // }
+      }
+      catch(err) {
+        errorHandling(err, newItem);
+      }
+    })
+  }
+
   const updateProposals = (simulation) => {
     var items = Proposals.find().fetch();
     items.forEach((item) => {
@@ -335,33 +363,35 @@ if (Meteor.isServer && Meteor.isDevelopment) {
   }
 
 
-  var runAsSimulation = true;
+  var runAsSimulation = false;
 
   // backupAllCollections()
 
   try {
-    createVariations(runAsSimulation)
-    updateContainers(runAsSimulation)
-    updateSeries(runAsSimulation)
-    updateAccessories(runAsSimulation)
-    updateModules(runAsSimulation)
-    updateServices(runAsSimulation)
-    updateClients(runAsSimulation)
-    updateProposals(true)
+    // createVariations(runAsSimulation)
+    // updateContainers(runAsSimulation)
+    // updateSeries(runAsSimulation)
+    // updateAccessories(runAsSimulation)
+    // updateModules(runAsSimulation)
+    // updateServices(runAsSimulation)
+    // updateClients(runAsSimulation)
+    updateUsers(runAsSimulation)
+    // updateProposals(true)
     // History.remove({})
     // Packs.remove({})
     // reinsert([Clients, Places, Accounts])
 
     // console.dir(errors, {depth: null});
     console.dir(uniqueErrors, {depth: null});
-    console.log("RESTORING...")
   }
   catch(err) {
-    // restoreCollections()
     throw err
   }
-  // restoreCollections()
   console.log("DONE!")
+
+
+
+
   // Proposals.simpleSchema().namedContext().validate()
 
 
