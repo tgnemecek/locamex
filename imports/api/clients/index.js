@@ -61,8 +61,14 @@ Clients.attachSchema(new SimpleSchema({
     type: String,
     optional: true
   },
-  rg: String,
-  phone1: String,
+  rg: {
+    type: String,
+    optional: true
+  },
+  phone1: {
+    type: String,
+    optional: true
+  },
   phone2: {
     type: String,
     optional: true
@@ -104,7 +110,7 @@ Clients.deny({
   update() { return true; },
   remove() { return true; },
 });
-
+ 
 if (Meteor.isServer) {
   Meteor.publish('clientsPub', () => {
     if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
@@ -154,7 +160,7 @@ if (Meteor.isServer) {
         };
       }
       Clients.insert(data);
-      
+
       return data;
     },
 
@@ -202,7 +208,7 @@ if (Meteor.isServer) {
           Contracts.update({ _id: contract._id },
             {$set: contract});
       })
-      
+
       return state._id;
     }
   })

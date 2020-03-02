@@ -2,12 +2,7 @@
 
 ## High Priority:
 
-- Add schema for remaining databases (Clients);
-
 ## Medium Priority:
-
-- When something gets deleted, the system must check all databases to see if the item is rented, or the place has things in it;
-- Make functionality to allow users to reset own password;
 
 ## Low Priority: (future implementations)
 

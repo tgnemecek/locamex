@@ -17,379 +17,496 @@ import { Series } from '/imports/api/series/index';
 import { Variations } from '/imports/api/variations/index';
 
 if (Meteor.isServer && Meteor.isDevelopment) {
-
-  // var allCollections;
-  // var allData;
-  //
-  // const backupAllCollections = () => {
-  //   var accounts = Accounts.find().fetch();
-  //   var accessories = Accessories.find().fetch();
-  //   var clients = Clients.find().fetch();
-  //   var containers = Containers.find().fetch();
-  //   // var contracts = Contracts.find().fetch();
-  //   var modules = Modules.find().fetch();
-  //   // var proposals = Proposals.find().fetch();
-  //   var services = Services.find().fetch();
-  //   var series = Series.find().fetch();
-  //   var variations = Variations.find().fetch();
-  //   allCollections = [
-  //     Accounts,
-  //     Accessories,
-  //     Clients,
-  //     Containers,
-  //     Modules,
-  //     Services,
-  //     Series,
-  //     Variations
-  //   ]
-  //   allData = [
-  //     accounts,
-  //     accessories,
-  //     clients,
-  //     containers,
-  //     modules,
-  //     services,
-  //     series,
-  //     variations
-  //   ]
-  // }
-  //
-  // const restoreCollections = () => {
-  //   allCollections.forEach((collection, i) => {
-  //     allData[i].forEach((item) => {
-  //       collection.upsert({_id: item._id}, {$set: item}, {validate: false});
-  //     })
+  // // MIGRATION TO VERSION 3.0 -------------------
+  // var items;
+  // var errors = []
+  // var uniqueErrors = []
+  // const errorHandling = (err, item) => {
+  //   console.dir(item, {depth: null});
+  //   if (!err.details) throw err;
+  //   err.details.forEach((key) => {
+  //     // var identifier = item.type + ": " + key.name;
+  //     var identifier = key.name;
+  //     if (!uniqueErrors.includes(identifier)) {
+  //       uniqueErrors.push(identifier);
+  //       errors.push(err.details[0].name, item.description);
+  //     }
   //   })
   // }
-
-  var items;
-  var errors = []
-  var uniqueErrors = []
-  const errorHandling = (err, item) => {
-    if (!err.details) throw err;
-    err.details.forEach((key) => {
-      // var identifier = item.type + ": " + key.name;
-      var identifier = key.name;
-      if (!uniqueErrors.includes(identifier)) {
-        uniqueErrors.push(identifier);
-        errors.push(err.details[0].name, item.description);
-      }
-    })
-  }
-
-  // MAIN FUNCTIONS
-  const createVariations = (simulation) => {
-    var items = Accessories.find().fetch();
-    items.forEach((item) => {
-      try {
-        item.variations.forEach((variation) => {
-          var newItem = {
-            ...variation,
-            _id: tools.generateId(),
-            type: "variation",
-            place: undefined,
-            places: [],
-            accessory: {
-              _id: item._id,
-              description: item.description
-            }
-          }
-          if (simulation) {
-            newItem = Variations.simpleSchema().clean(newItem);
-            Variations.simpleSchema().validate(newItem);
-          } else {
-            Variations.insert(newItem);
-          }
-        })
-      }
-      catch(err) {
-        errorHandling(err, item)
-      }
-    })
-  }
-
-  const updateContainers = (simulation) => {
-    var items = Containers.find().fetch();
-    items.forEach((item) => {
-      try {
-        var allowedModules = undefined;
-        if (item.type === "modular") {
-          allowedModules = item.allowedModules.map((moduleId) => {
-            var module = Modules.findOne({_id: moduleId});
-            return {
-              _id: module._id,
-              description: module.description
-            }
-          })
-        }
-        var newItem = {
-          ...item,
-          allowedModules,
-          units: undefined,
-          containerId: undefined,
-          flyer: item.flyer || undefined
-        };
-        if (simulation) {
-          newItem = Containers.simpleSchema().clean(newItem);
-          Containers.simpleSchema().validate(newItem);
-        } else {
-          Containers.update({_id: item._id}, {$set: newItem})
-        }
-      }
-      catch(err) {
-        errorHandling(err, newItem);
-      }
-    })
-  }
-
-  const updateSeries = (simulation) => {
-    var items = Series.find().fetch();
-    items.forEach((item) => {
-      try {
-        var place = Places.findOne({_id: item.place});
-        var container = Containers.findOne({_id: item.containerId});
-        if (!place) throw new Meteor.Error('place-not-found', '', item)
-
-        var newItem = {
-          ...item,
-          _id: tools.generateId(),
-          description: item._id,
-          containerId: undefined,
-          container: {
-            _id: container._id,
-            description: container.description
-          },
-          rented: place._id === "aa59b7acc6fd6ca00265cc50",
-          place: {
-            _id: place._id,
-            description: place.description
-          }
-        }
-        if (simulation) {
-          newItem = Series.simpleSchema().clean(newItem);
-          Series.simpleSchema().validate(newItem);
-        } else {
-          Series.insert(newItem);
-        }
-      }
-      catch(err) {
-        errorHandling(err, newItem);
-      }
-    })
-  }
-
-  const updateAccessories = (simulation) => {
-    var items = Accessories.find().fetch();
-    items.forEach((item) => {
-      try {
-        var newItem = {
-          ...item,
-          available: 0,
-          inactive: 0,
-          rented: 0
-        };
-        if (simulation) {
-          newItem = Accessories.simpleSchema().clean(newItem);
-          Accessories.simpleSchema().validate(newItem);
-        } else {
-          Accessories.update({_id: item._id}, {$set: newItem})
-        }
-      }
-      catch(err) {
-        errorHandling(err, newItem);
-      }
-    })
-  }
-
-  const updateModules = (simulation) => {
-    var items = Modules.find().fetch();
-    items.forEach((item) => {
-      try {
-        var place = Places.findOne({_id: item.place});
-        var newItem = {
-          ...item,
-          places: []
-        };
-        if (simulation) {
-          newItem = Modules.simpleSchema().clean(newItem);
-          Modules.simpleSchema().validate(newItem);
-        } else {
-          Modules.update({_id: item._id}, {$set: newItem})
-        }
-      }
-      catch(err) {
-        errorHandling(err, newItem);
-      }
-    })
-  }
-
-  const updateServices = (simulation) => {
-    var items = Services.find().fetch();
-    items.forEach((item) => {
-      try {
-        var newItem = {
-          ...item,
-          price: item.price || 0
-        };
-        if (simulation) {
-          newItem = Services.simpleSchema().clean(newItem);
-          Services.simpleSchema().validate(newItem);
-        } else {
-          Services.update({_id: item._id}, {$set: newItem})
-        }
-      }
-      catch(err) {
-        errorHandling(err, newItem);
-      }
-    })
-  }
-
-  const updateClients = (simulation) => {
-    var items = Clients.find().fetch();
-    items.forEach((item) => {
-      try {
-        var newItem = {
-          ...item
-        };
-        Clients.update({_id: item._id}, {$set: newItem})
-        // if (simulation) {
-        //   newItem = Clients.simpleSchema().clean(newItem);
-        //   Clients.simpleSchema().validate(newItem);
-        // } else {
-        //
-        // }
-      }
-      catch(err) {
-        errorHandling(err, newItem);
-      }
-    })
-  }
-
-  const updateUsers = (simulation) => {
-    var items = Meteor.users.find().fetch();
-    items.forEach((item) => {
-      try {
-        var newItem = {
-          ...item,
-          profile: {
-            firstName: item.firstName,
-            lastName: item.lastName,
-            type: item.type
-          }
-        };
-        delete newItem.firstName;
-        delete newItem.lastName;
-        delete newItem.type;
-        Meteor.users.update({_id: item._id}, {$set: newItem})
-        // if (simulation) {
-        //   newItem = Clients.simpleSchema().clean(newItem);
-        //   Clients.simpleSchema().validate(newItem);
-        // } else {
-        //
-        // }
-      }
-      catch(err) {
-        errorHandling(err, newItem);
-      }
-    })
-  }
-
-  const updateProposals = (simulation) => {
-    var items = Proposals.find().fetch();
-    items.forEach((item) => {
-      try {
-        var newItem = {
-          ...item,
-          type: "proposal",
-          visible: true,
-          snapshots: item.snapshots.map((snapshot) => {
-            return {
-              ...snapshot,
-              dates: {
-                ...snapshot.dates,
-                startDate: snapshot.dates.startDate
-                        || snapshot.dates.billingDate
-              },
-              containers: snapshot.containers.map((container) => {
-                var fromDB = Containers.findOne({_id: container.productId});
-                return {
-                  ...fromDB,
-                  price: container.price,
-                  quantity: container.renting
-                }
-              }),
-              accessories: snapshot.accessories.map((accessory) => {
-                var fromDB = Accessories.findOne({_id: accessory.productId});
-                return {
-                  ...fromDB,
-                  price: accessory.price,
-                  quantity: accessory.renting
-                }
-              }),
-              services: snapshot.services.map((service) => {
-                var fromDB = Services.findOne({_id: service.productId});
-                return {
-                  ...fromDB,
-                  price: service.price,
-                  quantity: service.renting
-                }
-              })
-            }
-          })
-        };
-        if (simulation) {
-          newItem = Proposals.simpleSchema().clean(newItem);
-          Proposals.simpleSchema().validate(newItem);
-        } else {
-          Proposals.update({_id: item._id}, {$set: newItem})
-        }
-      }
-      catch(err) {
-        errorHandling(err, newItem);
-      }
-    })
-  }
-
-
-
-
-  const reinsert = (Databases) => {
-    Databases.forEach((Database, i) => {
-      console.log(i)
-      Database.find().forEach((item) => {
-        Database.update({_id: item._id}, {$set: item})
-      })
-    })
-  }
-
-
-  var runAsSimulation = false;
-
-  // backupAllCollections()
-
-  try {
-    // createVariations(runAsSimulation)
-    // updateContainers(runAsSimulation)
-    // updateSeries(runAsSimulation)
-    // updateAccessories(runAsSimulation)
-    // updateModules(runAsSimulation)
-    // updateServices(runAsSimulation)
-    // updateClients(runAsSimulation)
-    updateUsers(runAsSimulation)
-    // updateProposals(true)
-    // History.remove({})
-    // Packs.remove({})
-    // reinsert([Clients, Places, Accounts])
-
-    // console.dir(errors, {depth: null});
-    console.dir(uniqueErrors, {depth: null});
-  }
-  catch(err) {
-    throw err
-  }
-  console.log("DONE!")
-
-
+  //
+  // // MAIN FUNCTIONS
+  // const createVariations = (simulation) => {
+  //   var items = Accessories.find().fetch();
+  //   items.forEach((item) => {
+  //     try {
+  //       item.variations.forEach((variation) => {
+  //         var newItem = {
+  //           ...variation,
+  //           _id: tools.generateId(),
+  //           type: "variation",
+  //           place: undefined,
+  //           places: [],
+  //           accessory: {
+  //             _id: item._id,
+  //             description: item.description
+  //           }
+  //         }
+  //         if (simulation) {
+  //           newItem = Variations.simpleSchema().clean(newItem);
+  //           Variations.simpleSchema().validate(newItem);
+  //         } else {
+  //           Variations.insert(newItem);
+  //         }
+  //       })
+  //     }
+  //     catch(err) {
+  //       errorHandling(err, item)
+  //     }
+  //   })
+  // }
+  //
+  // const updateContainers = (simulation) => {
+  //   var items = Containers.find().fetch();
+  //   Containers.remove({});
+  //   items.forEach((item) => {
+  //     try {
+  //       var allowedModules = undefined;
+  //       if (item.type === "modular") {
+  //         if (!item.allowedModules) {
+  //           allowedModules = [];
+  //         } else {
+  //           allowedModules = item.allowedModules.map((moduleId, i) => {
+  //             var module = Modules.findOne({_id: moduleId});
+  //             return {
+  //               _id: module._id,
+  //               description: module.description
+  //             }
+  //           })
+  //         }
+  //       }
+  //       var newItem = {
+  //         ...item,
+  //         allowedModules,
+  //         units: undefined,
+  //         containerId: undefined,
+  //         flyer: item.flyer || undefined
+  //       };
+  //       if (simulation) {
+  //         newItem = Containers.simpleSchema().clean(newItem);
+  //         Containers.simpleSchema().validate(newItem);
+  //       } else {
+  //         Containers.insert(newItem)
+  //       }
+  //     }
+  //     catch(err) {
+  //       errorHandling(err, newItem);
+  //     }
+  //   })
+  // }
+  //
+  // const updateSeries = (simulation) => {
+  //   var items = Series.find().fetch();
+  //   Series.remove({});
+  //   items.forEach((item) => {
+  //     try {
+  //       var place = Places.findOne({_id: item.place});
+  //       var container = Containers.findOne({_id: item.containerId});
+  //       if (!place) throw new Meteor.Error('place-not-found', '', item)
+  //
+  //       var newItem = {
+  //         ...item,
+  //         _id: tools.generateId(),
+  //         description: item._id,
+  //         containerId: undefined,
+  //         container: {
+  //           _id: container._id,
+  //           description: container.description
+  //         },
+  //         rented: place._id === "aa59b7acc6fd6ca00265cc50",
+  //         place: {
+  //           _id: place._id,
+  //           description: place.description
+  //         }
+  //       }
+  //       if (simulation) {
+  //         newItem = Series.simpleSchema().clean(newItem);
+  //         Series.simpleSchema().validate(newItem);
+  //       } else {
+  //         Series.insert(newItem);
+  //       }
+  //     }
+  //     catch(err) {
+  //       errorHandling(err, newItem);
+  //     }
+  //   })
+  // }
+  //
+  // const updateAccessories = (simulation) => {
+  //   var items = Accessories.find().fetch();
+  //   Accessories.remove({});
+  //   items.forEach((item) => {
+  //     try {
+  //       var newItem = {
+  //         ...item,
+  //         available: 0,
+  //         inactive: 0,
+  //         rented: 0
+  //       };
+  //       if (simulation) {
+  //         newItem = Accessories.simpleSchema().clean(newItem);
+  //         Accessories.simpleSchema().validate(newItem);
+  //       } else {
+  //         Accessories.insert(newItem)
+  //       }
+  //     }
+  //     catch(err) {
+  //       errorHandling(err, newItem);
+  //     }
+  //   })
+  // }
+  //
+  // const updateModules = (simulation) => {
+  //   var items = Modules.find().fetch();
+  //   Modules.remove({});
+  //   items.forEach((item) => {
+  //     try {
+  //       var newItem = {
+  //         ...item,
+  //         places: []
+  //       };
+  //       if (simulation) {
+  //         Modules.simpleSchema().validate(newItem);
+  //       } else {
+  //         Modules.insert(newItem);
+  //       }
+  //     }
+  //     catch(err) {
+  //       errorHandling(err, newItem);
+  //     }
+  //   })
+  // }
+  //
+  // const updateServices = (simulation) => {
+  //   var items = Services.find().fetch();
+  //   Services.remove({});
+  //   items.forEach((item) => {
+  //     try {
+  //       var newItem = {
+  //         ...item,
+  //         price: item.price || 0
+  //       };
+  //       if (simulation) {
+  //         newItem = Services.simpleSchema().clean(newItem);
+  //         Services.simpleSchema().validate(newItem);
+  //       } else {
+  //         Services.insert(newItem)
+  //       }
+  //     }
+  //     catch(err) {
+  //       errorHandling(err, newItem);
+  //     }
+  //   })
+  // }
+  //
+  // const updateClients = (simulation) => {
+  //   var items = Clients.find().fetch();
+  //   Clients.remove({});
+  //   items.forEach((item) => {
+  //     try {
+  //       var newItem = {
+  //         ...item
+  //       };
+  //       Clients.insert(newItem)
+  //     }
+  //     catch(err) {
+  //       errorHandling(err, newItem);
+  //     }
+  //   })
+  // }
+  //
+  // const updateUsers = () => {
+  //   var items = Meteor.users.find().fetch();
+  //   items.forEach((item) => {
+  //     try {
+  //       var newItem = {
+  //         ...item,
+  //         creationDate: item.createdAt,
+  //         profile: {
+  //           firstName: item.firstName,
+  //           lastName: item.lastName,
+  //           type: item.type
+  //         }
+  //       };
+  //       Meteor.users.update({_id: item._id}, {$set: newItem});
+  //       Meteor.users.update({_id: item._id},
+  //         {
+  //           $unset: {
+  //             createdAt: "",
+  //             firstName: "",
+  //             lastName: "",
+  //             type: "",
+  //             pages: ""
+  //           }
+  //         }
+  //       );
+  //     }
+  //     catch(err) {
+  //       errorHandling(err, newItem);
+  //     }
+  //   })
+  // }
+  //
+  // const manualFixDeletedContainers = () => {
+  //   var deleted = [
+  //     "d545e938fd2b648862efff18",
+  //     "22129942ae191ec32b7f2680",
+  //     "5ced80a43ec369f04b053875",
+  //     "17f5496f71083cc8726f1c2b",
+  //     "60c702e8591a69e433939fa2",
+  //     "26a93d547fb4781fdb12db83"
+  //   ]
+  //   var container = Containers.find().fetch()[0];
+  //   deleted.forEach((_id) => {
+  //     container._id = _id;
+  //     container.description = "CONTAINER DELETADO";
+  //     Containers.insert(container, {bypassCollection2: true});
+  //   })
+  // }
+  //
+  // const updateProposals = (simulation) => {
+  //   var items = Proposals.find().fetch();
+  //   Proposals.remove({})
+  //   items.forEach((item) => {
+  //     try {
+  //       var newItem = {
+  //         ...item,
+  //         type: "proposal",
+  //         visible: true,
+  //         snapshots: item.snapshots.map((snapshot, i) => {
+  //           var active = false;
+  //           if (typeof item.activeVersion === 'number') {
+  //             active = item.activeVersion === i;
+  //           }
+  //           var user = Meteor.users.findOne({_id: snapshot.createdBy});
+  //           var createdByName = user.profile.firstName + " " + user.profile.lastName;
+  //           return {
+  //             ...snapshot,
+  //             active,
+  //             createdById: snapshot.createdBy,
+  //             createdByName,
+  //             dates: {
+  //               ...snapshot.dates,
+  //               duration: Math.round(snapshot.dates.duration),
+  //               startDate: snapshot.dates.startDate
+  //                       || snapshot.dates.billingDate
+  //             },
+  //             containers: snapshot.containers.map((container) => {
+  //               var fromDB = Containers.findOne({_id: container.productId});
+  //               return {
+  //                 ...fromDB,
+  //                 price: container.price,
+  //                 quantity: Math.round(container.renting)
+  //               }
+  //             }),
+  //             accessories: snapshot.accessories.map((accessory) => {
+  //               var fromDB = Accessories.findOne({_id: accessory.productId});
+  //               return {
+  //                 ...fromDB,
+  //                 price: accessory.price,
+  //                 quantity: Math.round(accessory.renting)
+  //               }
+  //             }),
+  //             services: snapshot.services.map((service) => {
+  //               var fromDB = Services.findOne({_id: service.productId});
+  //               return {
+  //                 ...fromDB,
+  //                 price: service.price,
+  //                 quantity: Math.round(service.renting)
+  //               }
+  //             })
+  //           }
+  //         })
+  //       };
+  //       if (simulation) {
+  //         newItem = Proposals.simpleSchema().clean(newItem);
+  //         Proposals.simpleSchema().validate(newItem);
+  //       } else {
+  //         Proposals.insert(newItem)
+  //       }
+  //     }
+  //     catch(err) {
+  //       Proposals.remove({})
+  //       items.forEach((item) => {
+  //         Proposals.insert(item, {bypassCollection2: true})
+  //       })
+  //
+  //       errorHandling(err, newItem);
+  //       throw err;
+  //     }
+  //   })
+  // }
+  //
+  // const updateContracts = (simulation) => {
+  //   var items = Contracts.find().fetch();
+  //   Contracts.remove({})
+  //   items.forEach((item) => {
+  //     try {
+  //       var newItem = {
+  //         ...item,
+  //         type: "contract",
+  //         visible: true,
+  //         proposalId: item.proposal,
+  //         proposalIndex: item.proposalVersion,
+  //         shipping: [],
+  //         snapshots: item.snapshots.map((snapshot, i) => {
+  //           var active = false;
+  //           if (typeof item.activeVersion === 'number') {
+  //             active = item.activeVersion === i;
+  //           }
+  //           var user = Meteor.users.findOne({_id: snapshot.createdBy});
+  //           var createdByName = user.profile.firstName + " " + user.profile.lastName;
+  //           var client = Clients.findOne({_id: snapshot.clientId}) || {}
+  //           var observations;
+  //           if (snapshot.observations) {
+  //             observations = {
+  //               internal: snapshot.observations.internal || '',
+  //               external: snapshot.observations.external || ''
+  //             }
+  //           } else {
+  //             observations = {
+  //               internal: '',
+  //               external: ''
+  //             }
+  //           }
+  //           return {
+  //             ...snapshot,
+  //             active,
+  //             client,
+  //             createdById: snapshot.createdBy,
+  //             createdByName,
+  //             representativesId: [],
+  //             billingProrogation: [],
+  //             billingProducts: snapshot.billingProducts.map((billing) => {
+  //               var account;
+  //               if (billing.accountId) {
+  //                 account = Accounts.findOne({_id: billing.accountId});
+  //               } else {
+  //                 account = Accounts.find().fetch()[0];
+  //               }
+  //               return {
+  //                 ...billing,
+  //                 account
+  //               }
+  //             }),
+  //             billingServices: snapshot.billingServices.map((billing) => {
+  //               var account;
+  //               if (billing.accountId) {
+  //                 account = Accounts.findOne({_id: billing.accountId});
+  //               } else {
+  //                 account = Accounts.find().fetch()[0];
+  //               }
+  //               var inss;
+  //               if (billing.inss === 0) {
+  //                 inss = 0;
+  //               } else {
+  //                 inss = billing.inss / 100;
+  //               }
+  //               var iss;
+  //               if (billing.iss === 0) {
+  //                 iss = 0;
+  //               } else {
+  //                 iss = billing.iss / 100;
+  //               }
+  //               return {
+  //                 ...billing,
+  //                 account,
+  //                 inss,
+  //                 iss
+  //               }
+  //             }),
+  //             observations,
+  //             dates: {
+  //               ...snapshot.dates,
+  //               duration: Math.round(snapshot.dates.duration),
+  //               startDate: snapshot.dates.startDate
+  //                       || snapshot.dates.billingDate
+  //             },
+  //             containers: snapshot.containers.map((container) => {
+  //               var fromDB = Containers.findOne({_id: container.productId});
+  //               return {
+  //                 ...fromDB,
+  //                 price: container.price,
+  //                 quantity: Math.round(container.renting)
+  //               }
+  //             }),
+  //             accessories: snapshot.accessories.map((accessory) => {
+  //               var fromDB = Accessories.findOne({_id: accessory.productId});
+  //               return {
+  //                 ...fromDB,
+  //                 price: accessory.price,
+  //                 quantity: Math.round(accessory.renting)
+  //               }
+  //             }),
+  //             services: snapshot.services.map((service) => {
+  //               var fromDB = Services.findOne({_id: service.productId});
+  //               return {
+  //                 ...fromDB,
+  //                 price: service.price,
+  //                 quantity: Math.round(service.renting)
+  //               }
+  //             })
+  //           }
+  //         })
+  //       };
+  //       if (simulation) {
+  //         newItem = Contracts.simpleSchema().clean(newItem);
+  //         Contracts.simpleSchema().validate(newItem);
+  //       } else {
+  //         Contracts.insert(newItem)
+  //       }
+  //     }
+  //     catch(err) {
+  //       Contracts.remove({})
+  //       items.forEach((item) => {
+  //         Contracts.insert(item, {bypassCollection2: true})
+  //       })
+  //       errorHandling(err, newItem);
+  //       throw err;
+  //     }
+  //   })
+  // }
+  //
+  // try {
+  //   // OK!
+  //   console.log("Starting: createVariations")
+  //   createVariations()
+  //   console.log("Starting: updateContainers")
+  //   manualFixDeletedContainers()
+  //   updateContainers()
+  //   console.log("Starting: updateSeries")
+  //   updateSeries()
+  //   console.log("Starting: updateAccessories")
+  //   updateAccessories()
+  //   console.log("Starting: updateModules")
+  //   updateModules()
+  //   console.log("Starting: updateServices")
+  //   updateServices()
+  //   console.log("Starting: updateClients")
+  //   updateClients()
+  //   console.log("Starting: updateUsers")
+  //   updateUsers()
+  //   History.remove({})
+  //   Packs.remove({})
+  //   updateProposals()
+  //   updateContracts()
+  //   console.dir(uniqueErrors, {depth: null});
+  // }
+  // catch(err) {
+  //   throw err
+  // }
+  // console.log("DONE!")
+  //
+  // // END OF MIGRATION TO VERSION 3.0 -------------------
 
 
   // Proposals.simpleSchema().namedContext().validate()

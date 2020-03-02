@@ -115,7 +115,10 @@ Contracts.attachSchema(new SimpleSchema({
       optional: true
     },
     representativesId: Array,
-    'representativesId.$': String,
+    'representativesId.$': {
+      type: String,
+      optional: true
+    },
     discount: Number,
     observations: Object,
     'observations.internal': {

@@ -1,5 +1,7 @@
 # Changelog:
 
+## Version 3.0.0
+
 - Updated discount for 2020;
 - Added server-side security with user autentication;
 - Added SimpleSchema to other databases;
@@ -8,6 +10,7 @@
 - Added schema for new Users;
 - Some user fields moved to user.profile;
 - Added new userType: 'general' that has almost administrator-level access;
+- Migrated all collections to SimpleSchema patterns;
 
 ## Version 2.4.4
 

@@ -6,11 +6,12 @@ import tools from '/imports/startup/tools/index';
 Meteor.users.attachSchema(new SimpleSchema({
   _id: String,
   username: String,
+  visible: Boolean,
   emails: Array,
   'emails.$': Object,
   'emails.$.address': String,
   'emails.$.verified': Boolean,
-  createdAt: Date,
+  creationDate: Date,
   profile: Object,
   'profile.firstName': String,
   'profile.lastName': String,
@@ -20,7 +21,7 @@ Meteor.users.attachSchema(new SimpleSchema({
     optional: true,
     blackbox: true
   }
-}))
+}));
 
 Meteor.users.deny({
   insert() { return true; },
@@ -52,8 +53,10 @@ if (Meteor.isServer) {
       }
       var _id = Accounts.createUser(data);
       if (!_id) throw new Meteor.Error('user-not-created');
-
-
+      Meteor.users.update({_id}, {$set: {
+        creationDate: new Date(),
+        visible: true
+      }})
       return true;
     },
     // 'users.hide'(_id) {
