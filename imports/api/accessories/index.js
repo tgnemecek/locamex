@@ -26,7 +26,7 @@ if (Meteor.isServer) {
     'accessories.insert'(state) {
       try {
         const _id = tools.generateId();
-        var data = insertSchema.clean({
+        var data = {
           _id,
           type: "accessory",
           description: state.description,
@@ -36,8 +36,7 @@ if (Meteor.isServer) {
           images: [],
           variations: state.variations,
           visible: true
-        })
-        insertSchema.validate(data);
+        }
         Accessories.insert(data);
         Meteor.call('history.insert', data, 'accessories.insert');
       }
