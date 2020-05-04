@@ -49,7 +49,7 @@ class ContainersTable extends React.Component {
       var body = this.props.database.map((item) => {
         return [
           item.description,
-          translate(item.type),
+          tools.translate(item.type),
           item.price
         ]
       })

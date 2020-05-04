@@ -41,7 +41,7 @@ class PacksTable extends React.Component {
       return (
         <tr key={i}>
           <td>{item.description}</td>
-          <td className="table__small-column">{tools.translateStatus(item.status, false)}</td>
+          <td className="table__small-column">{tools.translateStatus(item.status)}</td>
           <td className="table__small-column">{translatePlaces(item.place)}</td>
           <td className="table__small-column"><button className="" onClick={toggleEditWindow}>🔍</button></td>
           <td className="table__small-column"><button className="" onClick={toggleTransactionWindow}>⟳</button></td>

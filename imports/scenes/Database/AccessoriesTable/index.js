@@ -52,16 +52,21 @@ class AccessoriesTable extends React.Component {
         "Valor Mensal"
       ]]
       var body = this.props.database.map((item) => {
-        var available = count(item, 'available');
-        var rented = countRented(item);
-        var inactive = count(item, 'inactive');
+        let {
+          description,
+          available,
+          rented,
+          inactive,
+          price
+        } = item;
+
         return [
-          item.description,
+          description,
           available,
           rented,
           inactive,
           available + rented + inactive,
-          item.price
+          price
         ]
       })
       this.props.generateReport(header.concat(body), 'accessories');

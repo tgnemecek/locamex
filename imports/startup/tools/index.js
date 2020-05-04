@@ -5,6 +5,35 @@ import { userTypes } from '/imports/startup/user-types/index';
 
 export default class tools {
 
+  static translate = (key, options) => {
+
+    let { isPlural } = options || {};
+console.log(key);
+    let dictionary = {
+      // Status
+      available: isPlural ? "Disponíveis" : "Disponível",
+      rented: isPlural ? "Alugados" : "Alugado",
+      inactive: isPlural ? "Inativos" : "Inativo",
+      maintenance: "Manutenção",
+      // Database
+      accessories: "Acessórios",
+      clients: "Clientes",
+      containers: "Modelos",
+      models: "Modelos",
+      history: "Histórico",
+      maintenance: "Manutenção",
+      modules: "Componentes",
+      packs: "Montados",
+      places: "Pátios",
+      services: "Serviços",
+      users: "Usuários",
+      // Other
+      fixed: isPlural ? "Fixos" : "Fixo",
+      modular: isPlural ? "Modulares" : "Modular",
+    }
+    return dictionary[key];
+  }
+
   // Objects, Arrays
 
   static totalValue = (snapshot) => {
@@ -340,30 +369,6 @@ export default class tools {
     // return prefix + "_" + new Meteor.Collection.ObjectID()._str;
   }
 
-  static translateStatus = (status, plural) => {
-    if (status === 'available') return plural ? "Disponíveis" : "Disponível";
-    if (status === 'rented') return plural ? "Alugados" : "Alugado";
-    if (status === 'maintenance') return "Manutenção";
-    if (status === 'inactive') return plural ? "Inativos" : "Inativo";
-    return "";
-  }
-
-  static translateDatabase = (database) => {
-    var dictionary = {
-      accessories: "Acessórios",
-      clients: "Clientes",
-      containers: "Modelos",
-      models: "Modelos",
-      history: "Histórico",
-      maintenance: "Manutenção",
-      modules: "Componentes",
-      packs: "Montados",
-      places: "Pátios",
-      services: "Serviços",
-      users: "Usuários",
-    }
-    return dictionary[database] || database;
-  }
 
   static format = (value, type, externalOptions) => {
     if (value === undefined) return undefined;

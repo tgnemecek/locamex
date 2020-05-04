@@ -7,7 +7,7 @@ import saveExcel from './save-excel/index';
 
 export default function createExcel(table, dbName) {
 
-  var title = tools.translateDatabase(dbName) || dbName;
+  var title = tools.translate(dbName) || dbName;
 
   table.unshift([["Database:"], title], []);
 
@@ -16,7 +16,7 @@ export default function createExcel(table, dbName) {
   var extension = ".xlsx";
   var hour = moment().format("HH-mm");
   var date = moment().format("DD-MM-YY");
-  var filename = `${dbName}_${hour}_${date}${extension}`;
+  var filename = `${title}_${hour}_${date}${extension}`;
 
   var options = {
     bookType: 'xlsx',

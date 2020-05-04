@@ -6,7 +6,6 @@ import ImageVisualizer from '/imports/components/ImageVisualizer/index';
 import RegisterData from '/imports/components/RegisterData/index';
 import tools from '/imports/startup/tools/index';
 import Icon from '/imports/components/Icon/index';
-import Block from '/imports/components/Block/index';
 import Input from '/imports/components/Input/index';
 import RedirectUser from '/imports/components/RedirectUser/index';
 import ErrorBoundary from '/imports/components/ErrorBoundary/index';
@@ -71,9 +70,9 @@ class SeriesTable extends React.Component {
       ]]
       var body = this.props.database.map((item) => {
         return [
-          item._id,
           item.description,
-          item.placeDescription,
+          item.container.description,
+          item.place.description,
           item.observations
         ]
       })

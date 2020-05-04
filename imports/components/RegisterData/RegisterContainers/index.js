@@ -1,8 +1,6 @@
 import React from 'react';
 
 import Box from '/imports/components/Box/index';
-import Block from '/imports/components/Block/index';
-import Input from '/imports/components/Input/index';
 import FooterButtons from '/imports/components/FooterButtons/index';
 
 import Fixed from './Fixed/index';

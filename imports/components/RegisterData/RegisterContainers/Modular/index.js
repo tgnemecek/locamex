@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import React from 'react';
 import tools from '/imports/startup/tools/index';
 
+import ConfirmationWindow from '/imports/components/ConfirmationWindow/index';
 import Block from '/imports/components/Block/index';
 import Box from '/imports/components/Box/index';
 import Input from '/imports/components/Input/index';

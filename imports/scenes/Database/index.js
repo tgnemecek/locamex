@@ -1,6 +1,4 @@
-import { Meteor } from 'meteor/meteor';
 import React from 'react';
-import moment from 'moment';
 import tools from '/imports/startup/tools/index';
 
 import createExcel from '/imports/api/create-excel/index';
@@ -20,6 +18,11 @@ import ServicesTable from './ServicesTable/index';
 import UsersTable from './UsersTable/index';
 
 export default function Database (props) {
+
+  const generateReport = (table) => {
+    createExcel(table, props.match.params.database);
+  }
+
   var Component;
   switch (props.match.params.database) {
     case 'accessories':
@@ -104,7 +107,7 @@ export default function Database (props) {
   return (
     <div className="page-content">
       <div className="database">
-        <Component generateReport={createExcel}/>
+        <Component generateReport={generateReport}/>
       </div>
       {/* {state.stockVisualizer ?
         <StockVisualizer

@@ -5,8 +5,6 @@ import tools from '/imports/startup/tools/index';
 
 import FilterBar from '/imports/components/FilterBar/index';
 import Input from '/imports/components/Input/index';
-import Loading from '/imports/components/Loading/index';
-import NotFound from '/imports/components/NotFound/index';
 
 class ModuleList extends React.Component {
   constructor(props) {
