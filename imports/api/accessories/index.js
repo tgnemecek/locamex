@@ -47,14 +47,13 @@ if (Meteor.isServer) {
     },
     'accessories.update'(state) {
       try {
-        var data = updateSchema.clean({
+        var data = {
           description: state.description,
           price: state.price,
           restitution: state.restitution,
           observations: state.observations,
           variations: state.variations
-        })
-        updateSchema.validate(data);
+        }
         Accessories.update({ _id: state._id }, { $set: data });
         Meteor.call('history.insert', data, 'accessories.update');
       }
