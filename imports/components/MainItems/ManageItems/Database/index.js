@@ -6,8 +6,8 @@ import tools from '/imports/startup/tools/index';
 export default class Database extends React.Component {
   render() {
       return (
-        <div>
-          <table className="table">
+        <div className="manage-items__wrapper">
+          <table className="table manage-items__table">
             <thead>
               <tr>
                 <th className="table__wide">Descrição</th>

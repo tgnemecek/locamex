@@ -51,7 +51,7 @@ export default class BillingHistory extends React.Component {
           <td className="billing-history__status-cell">
             {this.renderStatus(bill.status, 'billingProducts')}
           </td>
-          {status !== "notReady" ?
+          {bill.status !== "notReady" ?
             <td className="no-padding billing-history__button-cell">
               <button onClick={toggleBox}>
                 <Icon icon="money"/>
@@ -95,7 +95,7 @@ export default class BillingHistory extends React.Component {
           <td className="billing-history__status-cell">
             {this.renderStatus(bill.status, 'billingProducts')}
           </td>
-          {status !== "notReady" ?
+          {bill.status !== "notReady" ?
             <td className="no-padding billing-history__button-cell">
               <button onClick={toggleBox}>
                 <Icon icon="money"/>

@@ -13,11 +13,6 @@ import { Settings } from '/imports/api/settings/index';
 import RedirectUser from '/imports/components/RedirectUser/index';
 import tools from '/imports/startup/tools/index';
 
-import Box from '/imports/components/Box/index';
-import Checkmark from '/imports/components/Checkmark/index';
-import AppHeader from '/imports/components/AppHeader/index';
-import Input from '/imports/components/Input/index';
-
 import MainHeader from '/imports/components/MainHeader/index';
 import MainItems from '/imports/components/MainItems/index';
 import DatabaseStatus from '/imports/components/DatabaseStatus/index';
@@ -58,8 +53,7 @@ class Proposal extends React.Component {
         observations: {
           internal: '',
           external: '',
-          conditions: this.props.settings
-                      .defaultConditionsMonths
+          conditions: null
         },
         deliveryAddress: {
           street: '',
@@ -84,6 +78,16 @@ class Proposal extends React.Component {
       errorMsg: '',
       errorKeys: [],
       databaseStatus: ''
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.settings !== this.props.settings) {
+      let observations = this.state.snapshot.observations;
+      if (observations.conditions === null) {
+        observations.conditions = this.props.settings.defaultConditionsMonths;
+        this.updateSnapshot(observations);
+      }
     }
   }
 
@@ -238,12 +242,15 @@ class Proposal extends React.Component {
 
   generateDocument = (includeFlyer) => {
     const generate = (snapshot) => {
-      snapshot._id = this.props.proposal._id;
-      snapshot.type = "proposal";
-      snapshot.includeFlyer = includeFlyer;
-      snapshot.version = this.state.snapshotIndex;
+      let props = {
+        ...snapshot,
+        _id: this.props.proposal._id,
+        type: "proposal",
+        includeFlyer,
+        version: this.state.snapshotIndex
+      }
 
-      Meteor.call('pdf.generate', snapshot, (err, res) => {
+      Meteor.call('pdf.generate', props, (err, res) => {
         if (res) {
           saveAs(res.data, res.fileName);
           this.setState({ databaseStatus: "completed" });
@@ -357,7 +364,6 @@ class Proposal extends React.Component {
 }
 
 function ProposalLoader (props) {
-  if (!props.settings) return null;
   if (props.match.params.proposalId === 'new'
       || props.proposal) {
       return (

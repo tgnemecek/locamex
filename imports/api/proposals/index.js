@@ -9,6 +9,7 @@ import { Containers } from '/imports/api/containers/index';
 import { Services } from '/imports/api/services/index';
 
 export const Proposals = new Mongo.Collection('proposals');
+
 Proposals.attachSchema(new SimpleSchema({
   _id: String,
   status: String,
@@ -137,6 +138,10 @@ if (Meteor.isServer) {
       var hasChanged = !tools.compare(
         oldProposal.snapshots[index], snapshot
       );
+      console.log('OLD: ---------------------');
+      console.log(oldProposal.snapshots[index]);
+      console.log("NEW: ---------------------");
+      console.log(snapshot);
       if (!hasChanged) {
         return {
           hasChanged: false,

@@ -187,13 +187,17 @@ class Contract extends React.Component {
 
   generateDocument = () => {
     const generate = (snapshot) => {
-      snapshot.type = "contract";
-      snapshot._id = this.props.contract._id;
-      snapshot.proposalId = this.props.contract.proposalId;
-      snapshot.proposalIndex = this.props.contract.proposalIndex;
-      snapshot.version = Number(this.state.snapshotIndex)+1;
+      let props = {
+        ...snapshot,
+        _id: this.props.contract._id,
+        proposalId: this.props.contract.proposalId,
+        proposalIndex: this.props.contract.proposalIndex,
+        type: "contract",
+        includeFlyer,
+        version: Number(this.state.snapshotIndex)+1
+      }
 
-      Meteor.call('pdf.generate', snapshot, (err, res) => {
+      Meteor.call('pdf.generate', props, (err, res) => {
         if (res) {
           saveAs(res.data, res.fileName);
           this.setState({ databaseStatus: "completed" });

@@ -1,15 +1,19 @@
 .manage-items {
-  width: ($site-max-width / 1.5);
-}
-
-.manage-items__body {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 70px 1fr;
-  grid-gap: $space;
-  height: 50vh;
-}
-
-.manage-items__subtitle {
-  margin-bottom: 10px;
+  width: $site-max-width;
+  &__body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 70px 1fr;
+    grid-gap: $space;
+    height: 50vh;
+  }
+  &__subtitle {
+    margin-bottom: 10px;
+  }
+  &__wrapper {
+    overflow: auto;
+  }
+  &__table {
+    white-space: normal;
+  }
 }

@@ -45,7 +45,7 @@ class Billing extends React.Component {
       return bill.status === "finished";
     })
     if (!verification) {
-      message = "Atenção: Ainda existem cobranças não quitadas. "
+      message = "Ainda existem cobranças não quitadas. "
                 + message;
     }
     return message;

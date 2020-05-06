@@ -8,8 +8,8 @@ import Icon from '/imports/components/Icon/index';
 export default class AddedItems extends React.Component {
   render() {
       return (
-        <div>
-          <table className="table">
+        <div className="manage-items__wrapper">
+          <table className="table manage-items__table">
             <thead>
               <tr>
                 <th className="table__wide">

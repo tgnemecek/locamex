@@ -56,7 +56,7 @@ class ContractsTable extends React.Component {
           } else return null;
         }
         const renderShippingButton = () => {
-          if (tools.isReadAllowed("shipping") && item.status === "active") {
+          if (tools.isReadAllowed("shipping") && item.status === "active" || item.status === "finalized") {
             return (
               <td className="no-padding">
                 <Link key={i} to={"/shipping/" + item._id}>

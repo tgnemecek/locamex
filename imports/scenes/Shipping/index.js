@@ -162,7 +162,11 @@ class Shipping extends React.Component {
                 currentlyRented={this.currentlyRented()}
               />
             : null}
-            <FooterButtons buttons={[
+            <FooterButtons buttons={this.props.contract.status === "finalized" ? 
+            [
+              {text: "Nova Devolução", className: "button--secondary", onClick: this.toggleReceive},
+            ]
+            : [
               {text: "Novo Envio", className: "button--secondary", onClick: this.toggleSend},
               {text: "Nova Devolução", className: "button--secondary", onClick: this.toggleReceive},
             ]}/>

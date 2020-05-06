@@ -64,7 +64,7 @@ export default function tableProducts(props) {
       return ['auto', '*', 60, 'auto', 60, 'auto', 60];
     } else return ['auto', '*', 60, 'auto', 'auto', 60];
   }
-debugger;
+
   return [
     {text: 'Itens a Serem Locados', style: 'h2', alignment: 'center'},
     props.generateTable({

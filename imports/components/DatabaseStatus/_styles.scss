@@ -3,7 +3,7 @@
 .database-status {
   overflow: hidden;
   border-radius: 20px;
-  width: 50%;
+  width: ($site-max-width / 2);
 }
 
 .database-status__loading::after {

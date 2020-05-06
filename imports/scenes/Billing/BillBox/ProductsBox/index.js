@@ -31,7 +31,7 @@ export default class ProductsBox extends React.Component {
       observations: this.state.observations,
       annotations: this.state.annotations,
     }
-console.log(bill)
+
     this.setState({ databaseStatus: "loading" }, () => {
       Meteor.call('contracts.billing.update', _id, bill, (err, res) => {
         if (err) this.setState({ databaseStatus: "failed" });

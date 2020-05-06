@@ -107,11 +107,13 @@ export default class ModuleList extends React.Component {
       if (this.props.pack.locked) {
         return <td>{item.quantity}</td>
       } else {
-        return (
-          <td>{item.places.reduce((acc, place) => {
-            return acc + place.quantity
-          }, 0)}</td>
-        )
+        if (item.places) {
+          return (
+            <td>{item.places.reduce((acc, place) => {
+              return acc + place.quantity
+            }, 0)}</td>
+          )
+        } else return <td></td>
       }
     } else {
       return (

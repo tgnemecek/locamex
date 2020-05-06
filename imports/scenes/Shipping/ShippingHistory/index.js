@@ -168,7 +168,7 @@ export default class ShippingHistory extends React.Component {
               </tbody>
             </table>
           </td>
-          <td className="no-padding">
+          <td className="no-padding shipping-history__button-cell">
             <button onClick={() => this.generateDocument(i)}>
               <Icon icon="print"/>
             </button>

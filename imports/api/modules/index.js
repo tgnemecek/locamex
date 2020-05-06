@@ -1,4 +1,5 @@
 import { Mongo } from 'meteor/mongo';
+import { Containers } from '/imports/api/containers/index';
 import SimpleSchema from 'simpl-schema';
 import tools from '/imports/startup/tools/index';
 
@@ -54,6 +55,19 @@ if (Meteor.isServer) {
         throw new Meteor.Error('unauthorized');
       }
       Modules.update({ _id }, { $set: {description} });
+      Containers.find({ "allowedModules._id": _id }).forEach((doc) => {
+        let allowedModules = doc.allowedModules.map((module) => {
+          if (module._id === _id) {
+            return {
+              ...module,
+              description
+            }
+          } else return module;
+        })
+        Containers.update({ _id: doc._id }, {
+          $set: { allowedModules }
+        })
+      })
       return true;
     },
     'modules.update.stock'(module) {

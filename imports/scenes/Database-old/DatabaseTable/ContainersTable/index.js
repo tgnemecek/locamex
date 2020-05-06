@@ -40,7 +40,6 @@ class ContainersTable extends React.Component {
       this.props.toggleEditWindow({});
     }
     const generateReport = () => {
-      debugger;
       var header = [[
         "Descrição",
         "Tipo",

@@ -8,7 +8,7 @@ export default class tools {
   static translate = (key, options) => {
 
     let { isPlural } = options || {};
-console.log(key);
+
     let dictionary = {
       // Status
       available: isPlural ? "Disponíveis" : "Disponível",
@@ -26,6 +26,7 @@ console.log(key);
       packs: "Montados",
       places: "Pátios",
       services: "Serviços",
+      series: "Séries",
       users: "Usuários",
       // Other
       fixed: isPlural ? "Fixos" : "Fixo",
