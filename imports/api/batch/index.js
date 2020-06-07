@@ -1,20 +1,20 @@
-import moment from 'moment';
-import SimpleSchema from 'simpl-schema';
-import tools from '/imports/startup/tools/index';
+import moment from "moment";
+import SimpleSchema from "simpl-schema";
+import tools from "/imports/startup/tools/index";
 
-import { Accounts } from '/imports/api/accounts/index';
-import { Accessories } from '/imports/api/accessories/index';
-import { Clients } from '/imports/api/clients/index';
-import { Containers } from '/imports/api/containers/index';
-import { Contracts } from '/imports/api/contracts/index';
-import { History } from '/imports/api/history/index';
-import { Modules } from '/imports/api/modules/index';
-import { Packs } from '/imports/api/packs/index';
-import { Places } from '/imports/api/places/index';
-import { Proposals } from '/imports/api/proposals/index';
-import { Services } from '/imports/api/services/index';
-import { Series } from '/imports/api/series/index';
-import { Variations } from '/imports/api/variations/index';
+import { Accounts } from "/imports/api/accounts/index";
+import { Accessories } from "/imports/api/accessories/index";
+import { Clients } from "/imports/api/clients/index";
+import { Containers } from "/imports/api/containers/index";
+import { Contracts } from "/imports/api/contracts/index";
+import { History } from "/imports/api/history/index";
+import { Modules } from "/imports/api/modules/index";
+import { Packs } from "/imports/api/packs/index";
+import { Places } from "/imports/api/places/index";
+import { Proposals } from "/imports/api/proposals/index";
+import { Services } from "/imports/api/services/index";
+import { Series } from "/imports/api/series/index";
+import { Variations } from "/imports/api/variations/index";
 
 if (Meteor.isServer && Meteor.isDevelopment) {
   // // MIGRATION TO VERSION 3.0 -------------------
@@ -230,31 +230,31 @@ if (Meteor.isServer && Meteor.isDevelopment) {
   //     try {
   //       var newItem = {
   //         ...item,
-  //         creationDate: item.createdAt,
   //         profile: {
   //           firstName: item.firstName,
   //           lastName: item.lastName,
-  //           type: item.type
-  //         }
+  //           type: item.type,
+  //           visible: true,
+  //         },
   //       };
-  //       Meteor.users.update({_id: item._id}, {$set: newItem});
-  //       Meteor.users.update({_id: item._id},
+  //       Meteor.users.update({ _id: item._id }, { $set: newItem });
+  //       Meteor.users.update(
+  //         { _id: item._id },
   //         {
   //           $unset: {
   //             createdAt: "",
   //             firstName: "",
   //             lastName: "",
   //             type: "",
-  //             pages: ""
-  //           }
+  //             pages: "",
+  //           },
   //         }
   //       );
-  //     }
-  //     catch(err) {
+  //     } catch (err) {
   //       errorHandling(err, newItem);
   //     }
-  //   })
-  // }
+  //   });
+  // };
   //
   // const manualFixDeletedContainers = () => {
   //   var deleted = [
@@ -507,11 +507,7 @@ if (Meteor.isServer && Meteor.isDevelopment) {
   // console.log("DONE!")
   //
   // // END OF MIGRATION TO VERSION 3.0 -------------------
-
-
   // Proposals.simpleSchema().namedContext().validate()
-
-
   // var proposals = Proposals.find().fetch();
   //
   // proposals.forEach((pro) => {
@@ -533,15 +529,13 @@ if (Meteor.isServer && Meteor.isDevelopment) {
   //   } } );
   //
   // })
-
-//   Containers.update({}, {
-//     $set: {
-//       flyer: false
-//     }
-//   },
-//   {multi: true}
-// )
-
+  //   Containers.update({}, {
+  //     $set: {
+  //       flyer: false
+  //     }
+  //   },
+  //   {multi: true}
+  // )
   // var collection = Containers.find().fetch();
   // //
   // // Containers.remove({});
@@ -553,9 +547,6 @@ if (Meteor.isServer && Meteor.isDevelopment) {
   //   }
   //   Containers.insert(item);
   // })
-
-
-
   // var collection = Contracts.find().fetch();
   //
   // function convertToDate(value) {
@@ -670,7 +661,6 @@ if (Meteor.isServer && Meteor.isDevelopment) {
   //
   //   Series.insert(newItem);
   // })
-
   //// RENAMING ALL ACCESSORIES
   // collection.forEach((item, n, arr) => {
   //   var code = new Date().getTime();
@@ -691,7 +681,6 @@ if (Meteor.isServer && Meteor.isDevelopment) {
   //     images: newImageArray
   //   });
   // })
-
   // var accessories = Accessories.find().fetch();
   // var datas = [];
   // Accessories.remove({});
@@ -743,10 +732,7 @@ if (Meteor.isServer && Meteor.isDevelopment) {
   // Promise.all(promises).then(() => {
   //   console.log("done!!!!");
   // })
-
   // -------------------------------------------
-
-
   // var accessories = Accessories.find().fetch();
   // var datas = [];
   // Accessories.remove({});
@@ -790,7 +776,6 @@ if (Meteor.isServer && Meteor.isDevelopment) {
   // Promise.all(promises).then(() => {
   //   console.log("done!!!!");
   // })
-
   // var docs = Contracts.find().fetch();
   //
   // Contracts.remove({});
@@ -823,9 +808,6 @@ if (Meteor.isServer && Meteor.isDevelopment) {
   //   }
   //   Contracts.insert(newDoc);
   // })
-
-
-
   // var c = Contracts.find().fetch();
   // Contracts.remove({});
   //
@@ -866,7 +848,6 @@ if (Meteor.isServer && Meteor.isDevelopment) {
   // Modules.update({}, {$set: {
   //   snapshots: []
   // }}, {multi: 1});
-
   // var a = Accessories.find().fetch();
   //
   // Accessories.remove({});
@@ -875,25 +856,19 @@ if (Meteor.isServer && Meteor.isDevelopment) {
   //   delete item._id;
   //   Accessories.insert(item);
   // })
-
   // Accessories.update({}, {$set: {
   //   type: "accessory"
   // }}, {multi: 1});
-
   // var series = Series.find().fetch();
   //
   // series.forEach((item) => {
   //   Series.update({_id: item._id}, {$set: { type: "fixed" }});
   // });
-
   // var containers = Containers.find().fetch();
   //
   // containers.forEach((container) => {
   //   Containers.update({_id: container._id}, {$unset: {units:1}}, {multi: true});
   // })
-
-
-
   // var containers = Containers.find().fetch();
   // var series = Series.find().fetch();
   //
@@ -905,9 +880,6 @@ if (Meteor.isServer && Meteor.isDevelopment) {
   //     }
   //   }
   // })
-
-
-
   // containers.forEach((container) => {
   //   // if (container.units) {
   //   //   container.units.forEach((unit) => {
@@ -917,7 +889,6 @@ if (Meteor.isServer && Meteor.isDevelopment) {
   //   // }
   //   Series.update({ model: container.description }, { model: container._id });
   // })
-
   // // Use meteor debug for bebugger to work!
   // debugger;
   //
@@ -966,7 +937,6 @@ if (Meteor.isServer && Meteor.isDevelopment) {
   //
   //   Containers.insert(container);
   // })
-
   // Modules.remove({});
   // Containers.remove({});
   //

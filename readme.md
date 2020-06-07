@@ -15,7 +15,7 @@ This web-app was developed in Meteor using React and SASS. Other technologies we
 
 - To push to locamex-test use "git push test _BRANCH_:master";
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
-- To test use "meteor", to test with file upload functionality (AWS) use "meteor npm run local-aws".
+- To test run: "npm run start"
 
 ## Author:
 
@@ -30,6 +30,7 @@ Copyright 2019 Thiago Nemecek. All rights reserved.
 [Change Log](changelog.md)
 
 For every new version, version numbers must be changed at:
+
 - readme.md
 - changelog.md
 - package.json

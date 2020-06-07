@@ -3,7 +3,7 @@
   "version": "3.0.1",
   "private": true,
   "scripts": {
-    "local-aws": "meteor --settings settings.json"
+    "start": "meteor --settings settings.json"
   },
   "dependencies": {
     "@babel/runtime": "^7.8.4",
