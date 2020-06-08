@@ -35,6 +35,26 @@ class Billing extends React.Component {
     this.setState({ finalizeWindow: !this.state.finalizeWindow });
   };
 
+  isFinalizeDisabled = () => {
+    if (this.props.contract.status !== "active") return true;
+
+    let isAdministrator = Meteor.user().profile.type === "administrator";
+
+    if (isAdministrator) return false;
+
+    let billingProductsDone = this.props.snapshot.billingProducts.every(
+      (bill) => bill.status === "finished"
+    );
+
+    if (!billingProductsDone) return true;
+
+    let billingServicesDone = this.props.snapshot.billingServices.every(
+      (bill) => bill.status === "finished"
+    );
+
+    if (!billingServicesDone) return true;
+  };
+
   finalizeMessage = () => {
     var message =
       "Deseja finalizar este contrato? Ele não poderá ser reativado e todas as cobranças serão finalizadas.";
@@ -98,10 +118,7 @@ class Billing extends React.Component {
               toggleWindow={this.toggleWindow}
             />
             <FooterButtons
-              disabled={
-                this.props.contract.status !== "active" ||
-                Meteor.user().profile.type !== "administrator"
-              }
+              disabled={this.isFinalizeDisabled()}
               buttons={[
                 {
                   text: "Finalizar Contrato",
