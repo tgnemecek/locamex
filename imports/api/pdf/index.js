@@ -171,7 +171,8 @@ function generateFlyer(master) {
   return new Promise((resolve, reject) => {
     getFlyerImages(master).then((images) => {
       var item = Containers.findOne({ _id: master._id });
-      resolve(flyerPdf({...item, images}, header));
+      item.flyer.images = images;
+      resolve(flyerPdf(item, header));
     });
   })
 }
