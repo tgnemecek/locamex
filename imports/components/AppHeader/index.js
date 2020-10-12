@@ -1,18 +1,18 @@
-import React from 'react';
-import { Accounts } from 'meteor/accounts-base';
-import { Link, Redirect } from 'react-router-dom';
-import Icon from '/imports/components/Icon/index';
-import { appStructure } from './app-structure/index';
-import { userTypes } from '/imports/startup/user-types/index';
-import MenuItem from './MenuItem/index'
+import React from "react";
+import { Accounts } from "meteor/accounts-base";
+import { Link, Redirect } from "react-router-dom";
+import Icon from "/imports/components/Icon/index";
+import { userTypes } from "/imports/startup/user-types/index";
+import { appStructure } from "./app-structure/index";
+import MenuItem from "./MenuItem/index";
 
 export default class AppHeader extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentPage: {}
-    }
-  };
+      currentPage: {},
+    };
+  }
 
   componentDidMount() {
     this.updateLocation();
@@ -22,7 +22,7 @@ export default class AppHeader extends React.Component {
     if (this.props !== prevProps) {
       this.updateLocation();
     }
-  }
+  };
 
   updateLocation = () => {
     var pathname = this.props.location.pathname;
@@ -34,7 +34,7 @@ export default class AppHeader extends React.Component {
         }
       }
     }
-  }
+  };
 
   renderMenuItems = () => {
     var filteredPages = [];
@@ -48,7 +48,7 @@ export default class AppHeader extends React.Component {
       var tempObject = { ...group, pages: [] };
       group.pages.forEach((page) => {
         if (page.visible) {
-          if (currentUserType === 'administrator') {
+          if (currentUserType === "administrator") {
             tempObject.pages.push(page);
           } else if (page.name === "dashboard") {
             tempObject.pages.push(page);
@@ -56,41 +56,39 @@ export default class AppHeader extends React.Component {
             tempObject.pages.push(page);
           }
         }
-      })
+      });
       filteredPages.push(tempObject);
-    })
+    });
 
     return filteredPages.map((group, i) => {
-      return (
-        <MenuItem
-          key={i}
-          title={group.groupTitle}
-          pages={group.pages}/>
-      )
-    })
-  }
+      return <MenuItem key={i} title={group.groupTitle} pages={group.pages} />;
+    });
+  };
 
   render() {
     return (
       <div className="header__background">
         <Link to="/">
-          <img src="https://s3-sa-east-1.amazonaws.com/locamex-app/app-required/logo-sistema-branco_336x104_21-09-2018.png" className="header__logo"/>
+          <img
+            src="/images/logo-sistema-branco_336x104_21-09-2018.png"
+            className="header__logo"
+          />
         </Link>
         <div className="header">
           <h1 className="header__title">{this.state.currentPage.title}</h1>
           <div className="header__mobile-dropdown">
             <button className="header__mobile-menu-icon">
-              <Icon icon="menu" size="2x"/>
+              <Icon icon="menu" size="2x" />
             </button>
             <div className="header__menu">
-            {this.renderMenuItems()}
-            <div className="menu-item">
-              <button onClick={() => Meteor.logout()}>Sair</button>
+              {this.renderMenuItems()}
+              <div className="menu-item">
+                <button onClick={() => Meteor.logout()}>Sair</button>
+              </div>
             </div>
-          </div>
           </div>
         </div>
       </div>
-    )
+    );
   }
 }

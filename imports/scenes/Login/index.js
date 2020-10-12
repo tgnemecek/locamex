@@ -1,17 +1,16 @@
-import React from 'react';
-import { Link, Redirect } from 'react-router-dom';
-import { Meteor } from 'meteor/meteor';
-import Input from '/imports/components/Input/index';
-import FooterButtons from '/imports/components/FooterButtons/index';
+import React from "react";
+import { Meteor } from "meteor/meteor";
+import Input from "/imports/components/Input/index";
+import FooterButtons from "/imports/components/FooterButtons/index";
 
 export default class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       ready: false,
-      username: '',
-      password: '',
-      error: ''
+      username: "",
+      password: "",
+      error: "",
     };
   }
   componentDidMount() {
@@ -22,22 +21,25 @@ export default class Login extends React.Component {
     e.preventDefault();
     let username = this.state.username.trim();
     let password = this.state.password.trim();
-    Meteor.loginWithPassword({username}, password, (err) => {
+    Meteor.loginWithPassword({ username }, password, (err) => {
       if (err) {
-        this.setState({error: 'Falha de Login. Favor checar os dados.'});
+        this.setState({ error: "Falha de Login. Favor checar os dados." });
       } else {
-        this.setState({error: ''});
+        this.setState({ error: "" });
       }
     });
-  }
+  };
   onChange = (e) => {
     this.setState({ [e.target.name]: e.target.value });
-  }
+  };
   render() {
     return (
       <div className="login__background">
         <div className="login__box">
-          <img src="https://s3-sa-east-1.amazonaws.com/locamex-app/app-required/logo-sistema_336x104_21-09-2018.png" className="login__logo"/>
+          <img
+            src="/images/logo-sistema_336x104_21-09-2018.png"
+            className="login__logo"
+          />
           <h1>Login</h1>
           {this.state.error ? <p>{this.state.error}</p> : undefined}
           <form onSubmit={this.submit} className="boxed-view__form">
@@ -55,12 +57,10 @@ export default class Login extends React.Component {
               value={this.state.password}
               onChange={this.onChange}
             />
-            <FooterButtons buttons={[
-              {text: "Login", type: "submit"}
-            ]}/>
+            <FooterButtons buttons={[{ text: "Login", type: "submit" }]} />
           </form>
         </div>
       </div>
-    )
+    );
   }
 }
