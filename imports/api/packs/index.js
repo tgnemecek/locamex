@@ -55,12 +55,6 @@ if (Meteor.isServer) {
     return Packs.find({}, { sort: { description: 1 } });
   });
   Meteor.methods({
-    // 'packs.insert' (pack) {
-    //   if (!Meteor.userId() || !tools.isWriteAllowed('packs')) {
-    //     throw new Meteor.Error('unauthorized');
-    //   }
-    //
-    // },
     "packs.update"(_id, data) {
       if (!Meteor.userId() || !tools.isWriteAllowed("packs")) {
         throw new Meteor.Error("unauthorized");
@@ -89,6 +83,7 @@ if (Meteor.isServer) {
             inactive: 0,
           });
         }
+        moduleFromDb.rented -= module.quantity;
         Modules.update({ _id: module._id }, { $set: moduleFromDb });
       });
       Packs.update({ _id }, { $set: { visible: false } });

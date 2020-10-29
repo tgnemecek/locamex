@@ -1,8 +1,12 @@
-import moment from 'moment';
-import tools from '/imports/startup/tools/index';
+import moment from "moment";
+import tools from "/imports/startup/tools/index";
 
-export default function tableBill(bill, contractId, activeVersion, generateTable) {
-
+export default function tableBill(
+  bill,
+  contractId,
+  activeVersion,
+  generateTable
+) {
   var start = moment(bill.startDate).format("DD/MM/YYYY");
   var end = moment(bill.endDate).format("DD/MM/YYYY");
   var expiry = moment(bill.expiryDate).format("DD/MM/YYYY");
@@ -13,18 +17,18 @@ export default function tableBill(bill, contractId, activeVersion, generateTable
   return generateTable({
     body: [
       [
-        'Vencimento',
-        {text: expiry, bold: true},
-        'Valor Total da Fatura',
-        {text: tools.format(bill.value, 'currency'), bold: true}
+        "Vencimento",
+        { text: expiry, bold: true },
+        "Valor Total da Fatura",
+        { text: tools.format(bill.value, "currency"), bold: true },
       ],
       [
-        'Período de Locação',
-        {text: period, bold: true},
-        'Contrato',
-        {text: contractNumber, bold: true}
-      ]
+        "Período de Locação",
+        { text: period, bold: true },
+        "Número da Fatura",
+        { text: bill._id, bold: true },
+      ],
     ],
-    widths: ['*', '*', '*', '*']
-  })
+    widths: ["*", "*", "*", "*"],
+  });
 }

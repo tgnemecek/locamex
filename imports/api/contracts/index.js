@@ -813,14 +813,15 @@ if (Meteor.isServer) {
           } else {
             if (pack.unmount) {
               Meteor.call("packs.unmount", pack._id, pack.place);
+            } else {
+              Meteor.call("packs.update", pack._id, {
+                place: {
+                  _id: pack.place._id,
+                  description: pack.place.description,
+                },
+                rented: false,
+              });
             }
-            Meteor.call("packs.update", pack._id, {
-              place: {
-                _id: pack.place._id,
-                description: pack.place.description,
-              },
-              rented: false,
-            });
           }
         });
       };
@@ -837,13 +838,11 @@ if (Meteor.isServer) {
       if (!Meteor.userId() || !tools.isWriteAllowed("contracts")) {
         throw new Meteor.Error("unauthorized");
       }
-      console.dir(bill, { depth: null });
 
       var contract = Contracts.findOne({ _id });
       var snapshot = contract.snapshots.find((snapshot) => {
         return snapshot.active;
       });
-      var index = bill.index;
       var billing = snapshot[bill.type];
       var oldBill = billing[bill.index];
       var newStatus;
@@ -863,26 +862,6 @@ if (Meteor.isServer) {
         default:
           throw new Meteor.Error("status-unknown", "", bill);
       }
-      // if (oldBill && oldBill.status === "finished") {
-      //   oldBill.annotations = bill.annotations;
-      //   oldBill.status = "finished";
-      //   Contracts.update({_id}, { $set: contract })
-      //   return bill;
-      // }
-      //
-      // if (bill.payedInFull) {
-      //   status = "finished";
-      // } else {
-      //   switch (bill.status) {
-      //     case "ready":
-      //       status = "billed";
-      //       break;
-      //     case "late":
-      //     case "billed":
-      //       status = "billed";
-      //       break;
-      //   }
-      // }
       var billId;
       if (bill.type !== "billingServices") {
         var count = 1;
@@ -916,7 +895,7 @@ if (Meteor.isServer) {
       }
 
       Contracts.update({ _id }, { $set: contract });
-      return bill;
+      return newBill;
     },
   });
 }
