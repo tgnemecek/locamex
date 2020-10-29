@@ -595,67 +595,54 @@ if (Meteor.isServer) {
           }
         });
         data.variations.forEach((variation) => {
-          var varFromDb = Variations.findOne({ _id: variation._id });
-          var rentedTotal = 0;
-          variation.places.forEach((place) => {
-            var found = varFromDb.places.find((placeFromDb) => {
-              return placeFromDb._id === place._id;
-            });
-            if (found) {
-              found.available -= place.quantity;
-              rentedTotal += place.quantity;
-              if (found.available < 0) {
+          const { places } = Variations.findOne({ _id: variation._id });
+
+          if (isSimulation) {
+            variation.places.forEach((place) => {
+              const { available } = places.find(({ _id }) => _id === place._id);
+              if (place.quantity > available) {
                 throw new Meteor.Error("stock-unavailable", "", variation);
               }
-            } else throw new Meteor.Error("stock-unavailable", "", variation);
-          });
-          if (!isSimulation) {
-            Variations.update({ _id: variation._id }, { $set: varFromDb });
+            });
+          } else {
+            const rentedTotal = variation.places.reduce((acc, cur) => {
+              return acc + cur.quantity;
+            }, 0);
+
+            const newPlaces = places
+              .map((place) => {
+                const { quantity } =
+                  variation.places.find(({ _id }) => _id === place._id) || {};
+                if (typeof quantity === "number") {
+                  return {
+                    ...place,
+                    available: place.available - quantity,
+                  };
+                }
+                return place;
+              })
+              .filter((place) => place.available || place.inactive);
+
+            Variations.update(
+              { _id: variation._id },
+              {
+                $set: {
+                  places: newPlaces,
+                  rented: rentedTotal,
+                },
+              }
+            );
             Accessories.update(
-              { _id: variation.accessory_id },
+              { _id: variation.accessory._id },
               {
                 $inc: {
                   rented: rentedTotal,
+                  available: -rentedTotal,
                 },
               }
             );
           }
         });
-        // data.variations.forEach((variation) => {
-        //
-        //
-        //
-        //
-        //
-        //   // var newAccessory = Accessories.findOne({_id: accessory._id});
-        //   // accessory.variations.forEach((variation) => {
-        //   //   var varRented = 0;
-        //   //   var oldVariation = newAccessory.variations.find((oldVar) => {
-        //   //     return oldVar._id === variation._id;
-        //   //   })
-        //   //   variation.places.forEach((fromPlace) => {
-        //   //     var oldPlace = oldVariation.places.find((oldPl) => {
-        //   //       return oldPl._id === fromPlace._id;
-        //   //     })
-        //   //     varRented += fromPlace.quantity;
-        //   //     oldPlace.available -= fromPlace.quantity;
-        //   //     if (oldPlace.available < 0) {
-        //   //       throw new Meteor.Error('stock-unavailable', '', {
-        //   //         _id: newAccessory._id,
-        //   //         type: newAccessory.type,
-        //   //         item: newAccessory.description,
-        //   //         extra: variation.description,
-        //   //         place: fromPlace.description
-        //   //       })
-        //   //     }
-        //   //   })
-        //   //   oldVariation.rented += varRented;
-        //   // })
-        //   // if (!isSimulation) {
-        //   //   Accessories.update({_id: accessory._id},
-        //   //     {$set: newAccessory})
-        //   // }
-        // })
         var altDataPacks = tools.deepCopy(data.packs);
         data.packs.forEach((pack, p) => {
           if (pack.locked) {
