@@ -525,8 +525,9 @@ if (Meteor.isServer) {
 
       proposal.status = "inactive";
       proposal.snapshots[contract.proposalIndex].active = false;
+      delete proposal._id;
 
-      Proposals.update({ _id: contract.proposalId }, proposal);
+      Proposals.update({ _id: contract.proposalId }, { $set: { ...proposal } });
       Contracts.update({ _id }, { $set: { status: "cancelled" } });
 
       return _id;
