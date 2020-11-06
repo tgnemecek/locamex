@@ -37,7 +37,7 @@ export const userTypes = {
     ],
     read: [
       "places", "place",
-      "series",
+      "series", "containers", "services",
       "accessories", "accessory",
       "variations", "variation",
       "clients", "client",
