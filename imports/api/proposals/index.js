@@ -121,13 +121,12 @@ if (Meteor.isServer) {
         throw new Meteor.Error("unauthorized");
       }
       const prefix = new Date().getFullYear();
-      const suffix = Proposals.find({
-        _id: { $regex: new RegExp(prefix) },
-      })
-        .count()
-        .toString()
-        .padStart(4, "0");
-      var _id = prefix + "-" + suffix;
+      var offset = 1799;
+      const suffix =
+        Proposals.find({
+          _id: { $regex: new RegExp(prefix) },
+        }).count() + offset;
+      var _id = prefix + "-" + suffix.toString().padStart(4, "0");
 
       var proposal = {
         _id,

@@ -315,7 +315,7 @@ if (Meteor.isServer) {
       });
 
       var prefix = new Date().getFullYear();
-      var offset = 32;
+      var offset = 179;
       var suffix =
         Contracts.find({
           _id: {
