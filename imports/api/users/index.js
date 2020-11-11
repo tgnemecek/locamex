@@ -75,7 +75,7 @@ if (Meteor.isServer) {
     //
     // },
     "users.update"(state) {
-      if (!Meteor.userId() || !tools.isWriteAllowed("uers")) {
+      if (!Meteor.userId() || !tools.isWriteAllowed("users")) {
         throw new Meteor.Error("unauthorized");
       }
       if (Meteor.user().profile.type !== "administrator") {
@@ -90,6 +90,7 @@ if (Meteor.isServer) {
           firstName: state.profile.firstName,
           lastName: state.profile.lastName,
           type: state.profile.type,
+          visible: true,
         },
       };
       Meteor.users.update({ _id }, { $set: data });
