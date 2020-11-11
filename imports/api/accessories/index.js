@@ -1,41 +1,48 @@
-import { Mongo } from 'meteor/mongo';
-import SimpleSchema from 'simpl-schema';
-import { Places } from '/imports/api/places/index';
-import { Proposals } from '/imports/api/proposals/index';
-import { Contracts } from '/imports/api/contracts/index';
-import tools from '/imports/startup/tools/index';
+import { Mongo } from "meteor/mongo";
+import SimpleSchema from "simpl-schema";
+import { Places } from "/imports/api/places/index";
+import { Proposals } from "/imports/api/proposals/index";
+import { Contracts } from "/imports/api/contracts/index";
+import tools from "/imports/startup/tools/index";
 
-export const Accessories = new Mongo.Collection('accessories');
-Accessories.attachSchema(new SimpleSchema({
-  _id: String,
-  type: String,
-  description: String,
-  price: Number,
-  restitution: Number,
-  available: SimpleSchema.Integer,
-  inactive: SimpleSchema.Integer,
-  rented: SimpleSchema.Integer,
-  'visible': Boolean
-}));
+export const Accessories = new Mongo.Collection("accessories");
+Accessories.attachSchema(
+  new SimpleSchema({
+    _id: String,
+    type: String,
+    description: String,
+    price: Number,
+    restitution: Number,
+    available: SimpleSchema.Integer,
+    inactive: SimpleSchema.Integer,
+    rented: SimpleSchema.Integer,
+    visible: Boolean,
+  })
+);
 
 Accessories.deny({
-  insert() { return true; },
-  update() { return true; },
-  remove() { return true; },
+  insert() {
+    return true;
+  },
+  update() {
+    return true;
+  },
+  remove() {
+    return true;
+  },
 });
 
 if (Meteor.isServer) {
-
-  Meteor.publish('accessoriesPub', () => {
-    if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
-    if (!tools.isReadAllowed('accessories')) return [];
-    return Accessories.find({ visible: true }, {sort: { description: 1 }});
-  })
+  Meteor.publish("accessoriesPub", () => {
+    if (!Meteor.userId()) throw new Meteor.Error("unauthorized");
+    if (!tools.isReadAllowed("accessories")) return [];
+    return Accessories.find({ visible: true }, { sort: { description: 1 } });
+  });
 
   Meteor.methods({
-    'accessories.insert'(state) {
-      if (!Meteor.userId() || !tools.isWriteAllowed('accessories')) {
-        throw new Meteor.Error('unauthorized');
+    "accessories.insert"(state) {
+      if (!Meteor.userId() || !tools.isWriteAllowed("accessories")) {
+        throw new Meteor.Error("unauthorized");
       }
       const _id = tools.generateId();
       var data = {
@@ -47,76 +54,62 @@ if (Meteor.isServer) {
         available: 0,
         inactive: 0,
         rented: 0,
-        visible: true
-      }
-      Meteor.call('variations.update', {...state, _id});
+        visible: true,
+      };
+      Meteor.call("variations.update", { ...state, _id });
       Accessories.insert(data);
 
       return true;
     },
-    'accessories.update'(state) {
-      if (!Meteor.userId() || !tools.isWriteAllowed('accessories')) {
-        throw new Meteor.Error('unauthorized');
+    "accessories.update"(state) {
+      if (!Meteor.userId() || !tools.isWriteAllowed("accessories")) {
+        throw new Meteor.Error("unauthorized");
       }
       var data = {
         description: state.description,
         price: state.price,
-        restitution: state.restitution
-      }
-      Meteor.call('variations.update', state);
+        restitution: state.restitution,
+      };
+      Meteor.call("variations.update", state);
 
       // Updating References:
       var changes = {
         description: data.description,
-        restitution: data.restitution
-      }
-      Proposals.find({status: "inactive"})
-      .forEach((proposal) => {
-          proposal.snapshots.forEach((snapshot) => {
-            snapshot.accessories = snapshot.accessories
-            .map((item) => {
-              if (item._id === state._id) {
-                return {
-                  ...item,
-                  ...changes
-                }
-              } else return item;
-            })
-          })
-          Proposals.update({ _id: proposal._id },
-            {$set: proposal});
-      })
-      Contracts.find({status: "inactive"})
-      .forEach((contract) => {
-          contract.snapshots.forEach((snapshot) => {
-            snapshot.accessories = snapshot.accessories
-            .map((item) => {
-              if (item._id === state._id) {
-                return {
-                  ...item,
-                  ...changes
-                }
-              } else return item;
-            })
-          })
-          Contracts.update({ _id: contract._id },
-            {$set: contract});
-      })
+        restitution: data.restitution,
+      };
 
-      Accessories.update({ _id: state._id }, {$set: data});
+      const updateDocuments = (Collection) => {
+        Collection.find({ status: "inactive" }).forEach((doc) => {
+          const snapshots = doc.snapshots.map((snapshot) => {
+            const accessories = snapshot.accessories.map((accessory) => {
+              if (accessory._id === state._id) {
+                return {
+                  ...accessory,
+                  ...changes,
+                };
+              } else return accessory;
+            });
+            return { ...snapshot, accessories };
+          });
+          Collection.update({ _id: doc._id }, { $set: { snapshots } });
+        });
+      };
+
+      updateDocuments(Proposals);
+      updateDocuments(Contracts);
+
+      Accessories.update({ _id: state._id }, { $set: data });
       return true;
     },
-    'accessories.hide' (_id) {
-      var accessory = Accessories.findOne({_id});
-      if (accessory.rented
-        || accessory.inactive
-        || accessory.available) {
-        throw new Meteor.Error('stock-must-be-zero');
+    "accessories.hide"(_id) {
+      var accessory = Accessories.findOne({ _id });
+      if (accessory.rented || accessory.inactive || accessory.available) {
+        throw new Meteor.Error("stock-must-be-zero");
       }
-      Meteor.call('variations.hide.all', _id);
-      Accessories.update({_id}, {$set: {visible: false}});
-      return true
-    }
+      Meteor.call("variations.hide.all", _id);
+      Accessories.update({ _id }, { $set: { visible: false } });
+      return true;
+    },
     // 'accessories.update.stock'(variations) {
     //   if (!Meteor.userId() || !tools.isWriteAllowed('accessories')) {
     //     throw new Meteor.Error('unauthorized');
@@ -174,5 +167,5 @@ if (Meteor.isServer) {
     //
     //   return true;
     // }
-  })
+  });
 }

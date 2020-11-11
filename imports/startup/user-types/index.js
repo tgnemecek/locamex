@@ -5,72 +5,96 @@
 export const userTypes = {
   administrator: {
     label: "Administrador",
-    write: ['all'],
-    read: ['all'],
-    events: ['all']
+    write: ["all"],
+    read: ["all"],
+    events: ["all"],
   },
   general: {
     label: "Geral",
     write: [
-      "clients", "client",
+      "clients",
+      "client",
       "series",
-      "accessories", "accessory",
-      "packs", "pack",
-      "proposals", "proposal",
-      "contracts", "contract",
+      "accessories",
+      "accessory",
+      "packs",
+      "pack",
+      "proposals",
+      "proposal",
+      "contracts",
+      "contract",
       "billing",
-      "accounts", "account",
+      "accounts",
+      "account",
       "shipping",
-      "modules", "module",
-      "variations", "variation",
+      "modules",
+      "module",
+      "variations",
+      "variation",
     ],
     read: [],
-    events: [ // Temporary so it doesn't break!
+    events: [
+      // Temporary so it doesn't break!
       "billingProducts",
-      "billingServices"
-    ]
+      "billingServices",
+    ],
   },
   sales: {
     label: "Vendas",
-    write: [
-      "proposals", "proposal"
-    ],
+    write: ["proposals", "proposal", "series.place", "shipping"],
     read: [
-      "places", "place",
-      "series", "containers", "services",
-      "accessories", "accessory",
-      "variations", "variation",
-      "clients", "client",
-      "packs", "pack"
-    ]
+      "places",
+      "place",
+      "series",
+      "containers",
+      "services",
+      "accessories",
+      "accessory",
+      "variations",
+      "variation",
+      "clients",
+      "client",
+      "contracts",
+      "packs",
+      "pack",
+    ],
   },
   finances: {
     label: "Financeiro",
     write: [
-      "clients", "client",
-      "contracts", "contract",
+      "clients",
+      "client",
+      "contracts",
+      "contract",
       "contract",
       "billing",
-      "accounts", "account"
+      "accounts",
+      "account",
     ],
     read: [],
-    events: [ // Temporary so it doesn't break!
+    events: [
+      // Temporary so it doesn't break!
       "billingProducts",
-      "billingServices"
-    ]
+      "billingServices",
+    ],
   },
   maintenance: {
     label: "Manutenção",
     write: [
       "series",
-      "accessories", "accessory",
-      "variations", "variation",
-      "modules", "module",
-      "packs", "pack",
-      "contracts", "contract",
-      "shipping"
+      "accessories",
+      "accessory",
+      "variations",
+      "variation",
+      "modules",
+      "module",
+      "packs",
+      "pack",
+      "contracts",
+      "contract",
+      "shipping",
     ],
     read: [],
-    events: ["deliveryDate"] // Temporary so it doesn't break!
-  }
-}
+    events: ["deliveryDate"], // Temporary so it doesn't break!
+  },
+};

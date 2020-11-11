@@ -83,11 +83,13 @@ class SeriesTable extends React.Component {
             <Icon icon="report" />
           </button>
         </th>
-        <th className="no-padding">
-          <button onClick={() => this.toggleWindow({}, "edit")}>
-            <Icon icon="new" />
-          </button>
-        </th>
+        {tools.isWriteAllowed("series") && (
+          <th className="no-padding">
+            <button onClick={() => this.toggleWindow({}, "edit")}>
+              <Icon icon="new" />
+            </button>
+          </th>
+        )}
       </tr>
     );
   };
