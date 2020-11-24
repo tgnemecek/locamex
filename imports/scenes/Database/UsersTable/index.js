@@ -33,7 +33,9 @@ class UsersTable extends React.Component {
           </td>
           <td>{item.username}</td>
           <td>{userTypes[item.profile.type].label}</td>
-          <td className="hide-at-700px">{item.emails[0].address}</td>
+          <td className="hide-at-700px">
+            {item.emails[0] && item.emails[0].address}
+          </td>
           <td className="no-padding">
             <button onClick={() => this.toggleWindow(item)}>
               <Icon icon="edit" />

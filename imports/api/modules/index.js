@@ -123,6 +123,12 @@ if (Meteor.isServer) {
       if (!verification) {
         throw new Meteor.Error("stock-must-be-zero");
       }
+      Containers.find({ "allowedModules._id": _id }).forEach((doc) => {
+        const allowedModules = doc.allowedModules.filter((m) => {
+          return m._id !== _id;
+        });
+        Containers.update({ _id: doc._id }, { $set: { allowedModules } });
+      });
       Modules.update({ _id }, { $set: { visible: false } });
       return true;
     },

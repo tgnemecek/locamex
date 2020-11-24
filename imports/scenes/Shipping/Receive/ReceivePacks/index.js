@@ -66,7 +66,6 @@ export default class ReceivePacks extends React.Component {
 
   renderBody = () => {
     return this.props.packs.map((item, i) => {
-      console.log(item);
       const openModuleList = () => {
         this.setState({ packToEdit: item, indexToEdit: i });
       };

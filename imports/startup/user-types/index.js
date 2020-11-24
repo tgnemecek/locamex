@@ -41,7 +41,16 @@ export const userTypes = {
   },
   sales: {
     label: "Vendas",
-    write: ["proposals", "proposal", "series.place", "shipping"],
+    write: [
+      "clients",
+      "client",
+      "proposals",
+      "proposal",
+      "series.place",
+      "shipping",
+      "packs",
+      "pack",
+    ],
     read: [
       "places",
       "place",
@@ -55,8 +64,6 @@ export const userTypes = {
       "clients",
       "client",
       "contracts",
-      "packs",
-      "pack",
     ],
   },
   finances: {

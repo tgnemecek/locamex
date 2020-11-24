@@ -533,7 +533,7 @@ if (Meteor.isServer) {
       return _id;
     },
     "contracts.shipping.send"(data) {
-      if (!Meteor.userId() || !tools.isWriteAllowed("contracts")) {
+      if (!Meteor.userId() || !tools.isWriteAllowed("shipping")) {
         throw new Meteor.Error("unauthorized");
       }
       var _id = data.contractId;
@@ -703,7 +703,7 @@ if (Meteor.isServer) {
       return _id;
     },
     "contracts.shipping.receive"(data) {
-      if (!Meteor.userId() || !tools.isWriteAllowed("contracts")) {
+      if (!Meteor.userId() || !tools.isWriteAllowed("shipping")) {
         throw new Meteor.Error("unauthorized");
       }
       var _id = data.contractId;

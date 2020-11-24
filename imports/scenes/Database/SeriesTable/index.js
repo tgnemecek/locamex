@@ -51,6 +51,13 @@ class SeriesTable extends React.Component {
           return true;
         }
       })
+      .sort((a, b) => {
+        const descA = a[type].description.toUpperCase();
+        const descB = b[type].description.toUpperCase();
+        if (descA > descB) return 1;
+        if (descA < descB) return -1;
+        return 0;
+      })
       .map((item, i) => {
         return (
           <option key={i} value={item[type]._id}>
@@ -191,8 +198,7 @@ export default SeriesTableWrapper = withTracker((props) => {
   Meteor.subscribe("packsPub");
 
   var series = Series.find().fetch() || [];
-  var packs =
-    Packs.find({ $and: [{ rented: false }, { visible: true }] }).fetch() || [];
+  var packs = Packs.find({ visible: true }).fetch() || [];
 
   var database = [...packs, ...series];
 

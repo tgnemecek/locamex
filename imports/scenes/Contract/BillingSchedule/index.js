@@ -133,7 +133,6 @@ export default class BillingSchedule extends React.Component {
   };
 
   getEqualValues = (value, duration) => {
-    debugger;
     var equalValue = tools.round(value / duration, 2);
     var remainder = tools.round(value - equalValue * duration, 2);
     return {

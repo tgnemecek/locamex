@@ -81,11 +81,9 @@ if (Meteor.isServer) {
       if (Meteor.user().profile.type !== "administrator") {
         throw new Meteor.Error("unauthorized");
       }
+
       var _id = state._id;
       var data = {
-        _id: state._id,
-        username: state.username,
-        email: state.email,
         profile: {
           firstName: state.profile.firstName,
           lastName: state.profile.lastName,
@@ -93,6 +91,15 @@ if (Meteor.isServer) {
           visible: true,
         },
       };
+
+      const { emails } = Meteor.users.findOne({ _id });
+
+      console.log({ emails });
+
+      Accounts.setUsername(_id, state.username);
+      Accounts.removeEmail(_id, emails[0].address);
+      Accounts.addEmail(_id, state.email);
+
       Meteor.users.update({ _id }, { $set: data });
 
       return true;

@@ -76,7 +76,9 @@ export default class ModuleList extends React.Component {
   getPlaces = () => {
     var fromDatabase = this.props.modulesDatabase.find((item) => {
       return item._id === this.state.moduleToEdit._id;
-    }).places;
+    });
+
+    const placesFromDb = fromDatabase ? fromDatabase.places : [];
 
     var joinedModules = [];
     this.props.packs.forEach((pack) => {
@@ -90,7 +92,7 @@ export default class ModuleList extends React.Component {
     var quantityByPlace = filteredModules.reduce((acc, item) => {
       return acc.concat(item.places);
     }, []);
-    return fromDatabase.map((item) => {
+    return placesFromDb.map((item) => {
       var quantity = quantityByPlace.reduce((acc, cur) => {
         if (cur._id === item._id) {
           return acc + cur.quantity;
