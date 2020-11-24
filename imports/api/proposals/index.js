@@ -151,7 +151,7 @@ if (Meteor.isServer) {
       var hasChanged = !tools.compare(
         oldProposal.snapshots[index],
         snapshot,
-        "internal"
+        "observations.internal"
       );
       if (!hasChanged) {
         return {

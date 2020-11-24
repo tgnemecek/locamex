@@ -404,7 +404,7 @@ if (Meteor.isServer) {
       var hasChanged = !tools.compare(
         oldContract.snapshots[index],
         snapshot,
-        "internal"
+        "observations.internal"
       );
 
       if (!hasChanged) {

@@ -1,5 +1,5 @@
 import { Meteor } from "meteor/meteor";
-import { Mongo } from "meteor/mongo";
+import { isEqual, unset, cloneDeep } from "lodash";
 import moment from "moment";
 import { userTypes } from "/imports/startup/user-types/index";
 
@@ -165,45 +165,55 @@ export default class tools {
   };
 
   static compare = (input1, input2, exception) => {
-    function isException(key) {
-      if (!exception) return false;
-      if (typeof exception === "string") {
-        return key === exception;
-      } else if (Array.isArray(exception)) {
-        return exception.includes(key);
-      }
+    const clone1 = cloneDeep(input1);
+    const clone2 = cloneDeep(input2);
+
+    if (exception) {
+      unset(clone1, exception);
+      unset(clone2, exception);
     }
 
-    function loop(input1, input2) {
-      if (typeof input1 !== typeof input2) return false;
-      if (typeof input1 === "string" || typeof input1 === "number") {
-        return input1 === input2;
-      } else if (input1 instanceof Date) {
-        return input1.getTime() === input2.getTime();
-      } else if (typeof input1 === "object") {
-        if (Array.isArray(input1)) {
-          if (input1.length !== input2.length) return false;
-          return input1.every((item, i) => {
-            return loop(input1[i], input2[i]);
-          });
-        } else {
-          var arrayOfKeys1 = Object.keys(input1);
-          var arrayOfKeys2 = Object.keys(input2);
-          if (arrayOfKeys1.length !== arrayOfKeys2.length) {
-            return false;
-          }
-          return arrayOfKeys1.every((key) => {
-            if (isException(key)) {
-              return true;
-            }
-            return loop(input1[key], input2[key]);
-          });
-        }
-      } else {
-        return true;
-      }
-    }
-    return loop(input1, input2);
+    return isEqual(clone1, clone2);
+
+    // function isException(key) {
+    //   if (!exception) return false;
+    //   if (typeof exception === "string") {
+    //     return key === exception;
+    //   } else if (Array.isArray(exception)) {
+    //     return exception.includes(key);
+    //   }
+    // }
+
+    // function loop(input1, input2) {
+    //   if (typeof input1 !== typeof input2) return false;
+    //   if (typeof input1 === "string" || typeof input1 === "number") {
+    //     return input1 === input2;
+    //   } else if (input1 instanceof Date) {
+    //     return input1.getTime() === input2.getTime();
+    //   } else if (typeof input1 === "object") {
+    //     if (Array.isArray(input1)) {
+    //       if (input1.length !== input2.length) return false;
+    //       return input1.every((item, i) => {
+    //         return loop(input1[i], input2[i]);
+    //       });
+    //     } else {
+    //       var arrayOfKeys1 = Object.keys(input1);
+    //       var arrayOfKeys2 = Object.keys(input2);
+    //       if (arrayOfKeys1.length !== arrayOfKeys2.length) {
+    //         return false;
+    //       }
+    //       return arrayOfKeys1.every((key) => {
+    //         if (isException(key)) {
+    //           return true;
+    //         }
+    //         return loop(input1[key], input2[key]);
+    //       });
+    //     }
+    //   } else {
+    //     return true;
+    //   }
+    // }
+    // return loop(input1, input2);
   };
 
   static filterSearch = (database, state) => {
@@ -318,10 +328,10 @@ export default class tools {
   static isUrl = (str) => {
     var pattern = new RegExp(
       "^(https?:\\/\\/)?" + // protocol
-      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
-      "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
-      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
-      "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+        "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+        "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
         "(\\#[-a-z\\d_]*)?$",
       "i"
     ); // fragment locator

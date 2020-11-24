@@ -196,6 +196,7 @@ class Proposal extends React.Component {
           }
         });
       } else {
+        console.log(this.state);
         Meteor.call(
           "proposals.update",
           this.state.snapshot,
@@ -204,26 +205,35 @@ class Proposal extends React.Component {
           (err, res) => {
             if (res) {
               var snapshot = this.state.snapshot;
-              var snapshotIndex = this.state.snapshotIndex + 1;
               var databaseStatus;
               if (res.hasChanged) {
-                snapshotIndex = res.index;
+                var snapshotIndex = res.index;
                 snapshot = res.snapshot;
                 databaseStatus = "completed";
+                this.setState(
+                  {
+                    snapshot,
+                    snapshotIndex,
+                    databaseStatus,
+                  },
+                  () => {
+                    if (typeof callback === "function") {
+                      callback(snapshot, snapshotIndex);
+                    }
+                  }
+                );
               } else {
                 databaseStatus = {
                   status: "completed",
                   message: "Nenhuma alteração realizada.",
                 };
-              }
-              if (typeof callback === "function") {
-                callback(snapshot, snapshotIndex);
-              } else {
-                this.setState({
-                  snapshot,
-                  snapshotIndex,
-                  databaseStatus,
-                });
+                if (typeof callback === "function") {
+                  callback(snapshot, this.state.snapshotIndex);
+                } else {
+                  this.setState({
+                    databaseStatus,
+                  });
+                }
               }
             } else if (err) {
               this.setState({ databaseStatus: "failed" });
