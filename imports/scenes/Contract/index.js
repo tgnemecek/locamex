@@ -371,6 +371,9 @@ class Contract extends React.Component {
               snapshot={this.state.snapshot}
               databases={this.props.databases}
               updateSnapshot={this.updateSnapshot}
+              currentlyRented={tools.getCurrentlyRentedItems(
+                this.props.contract
+              )}
               docType="contract"
             />
             <div className="error-message">{this.state.errorMsg}</div>

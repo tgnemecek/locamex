@@ -57,6 +57,77 @@ export default class tools {
     return productsValue + servicesValue;
   };
 
+  static getCurrentlyRentedItems = (contract) => {
+    var currently = {};
+    // Series --------------------------------------------
+    currently.series = [];
+    var seriesToIgnore = [];
+    for (var i = contract.shipping.length - 1; i >= 0; i--) {
+      var type = contract.shipping[i].type;
+      contract.shipping[i].series.forEach((series) => {
+        if (!seriesToIgnore.includes(series._id)) {
+          seriesToIgnore.push(series._id);
+          if (type === "send") {
+            currently.series.push(series);
+          }
+        }
+      });
+    }
+    // Variations ---------------------------------------
+    currently.variations = [];
+    contract.shipping.forEach((shipping) => {
+      shipping.variations.forEach((variation) => {
+        var found = currently.variations.find((item) => {
+          return item._id === variation._id;
+        });
+        var value = variation.places.reduce((acc, item) => {
+          return acc + item.quantity;
+        }, 0);
+
+        value = shipping.type === "send" ? value : -value;
+
+        if (found) {
+          found.quantity += value;
+        } else {
+          currently.variations.push({
+            _id: variation._id,
+            type: "variation",
+            accessory: variation.accessory,
+            description: variation.description,
+            observations: variation.observations,
+            quantity: value,
+          });
+        }
+      });
+    });
+    currently.variations = currently.variations.filter((item) => {
+      return item.quantity;
+    });
+    // Packs ---------------------------------------------
+    currently.packs = [];
+    var packsToIgnore = [];
+    for (var i = contract.shipping.length - 1; i >= 0; i--) {
+      var type = contract.shipping[i].type;
+      contract.shipping[i].packs.forEach((pack) => {
+        if (!packsToIgnore.includes(pack._id)) {
+          packsToIgnore.push(pack._id);
+          if (type === "send") {
+            currently.packs.push(pack);
+          }
+        }
+      });
+    }
+
+    // currently.packs = allSends.packs.filter((itemSent) => {
+    //   return !allReceives.packs.find((itemReceived) => {
+    //     return itemReceived._id === itemSent._id
+    //   })
+    // }).map((item) => {
+    //   return {...item, place: {}, unmount: true}
+    // })
+    return currently;
+  };
+
   static deepCopy = (input) => {
     if (Array.isArray(input) || typeof input == "object") {
       return JSON.parse(JSON.stringify(input));

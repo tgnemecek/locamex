@@ -40,77 +40,6 @@ class Shipping extends React.Component {
     this.setState({ toggleReceive: !this.state.toggleReceive });
   };
 
-  currentlyRented = () => {
-    var currently = {};
-    // Series --------------------------------------------
-    currently.series = [];
-    var seriesToIgnore = [];
-    for (var i = this.props.contract.shipping.length - 1; i >= 0; i--) {
-      var type = this.props.contract.shipping[i].type;
-      this.props.contract.shipping[i].series.forEach((series) => {
-        if (!seriesToIgnore.includes(series._id)) {
-          seriesToIgnore.push(series._id);
-          if (type === "send") {
-            currently.series.push(series);
-          }
-        }
-      });
-    }
-    // Variations ---------------------------------------
-    currently.variations = [];
-    this.props.contract.shipping.forEach((shipping) => {
-      shipping.variations.forEach((variation) => {
-        var found = currently.variations.find((item) => {
-          return item._id === variation._id;
-        });
-        var value = variation.places.reduce((acc, item) => {
-          return acc + item.quantity;
-        }, 0);
-
-        value = shipping.type === "send" ? value : -value;
-
-        if (found) {
-          found.quantity += value;
-        } else {
-          currently.variations.push({
-            _id: variation._id,
-            type: "variation",
-            accessory: variation.accessory,
-            description: variation.description,
-            observations: variation.observations,
-            quantity: value,
-          });
-        }
-      });
-    });
-    currently.variations = currently.variations.filter((item) => {
-      return item.quantity;
-    });
-    // Packs ---------------------------------------------
-    currently.packs = [];
-    var packsToIgnore = [];
-    for (var i = this.props.contract.shipping.length - 1; i >= 0; i--) {
-      var type = this.props.contract.shipping[i].type;
-      this.props.contract.shipping[i].packs.forEach((pack) => {
-        if (!packsToIgnore.includes(pack._id)) {
-          packsToIgnore.push(pack._id);
-          if (type === "send") {
-            currently.packs.push(pack);
-          }
-        }
-      });
-    }
-
-    // currently.packs = allSends.packs.filter((itemSent) => {
-    //   return !allReceives.packs.find((itemReceived) => {
-    //     return itemReceived._id === itemSent._id
-    //   })
-    // }).map((item) => {
-    //   return {...item, place: {}, unmount: true}
-    // })
-    return currently;
-  };
-
   render() {
     return (
       <div className="page-content">
@@ -124,7 +53,11 @@ class Shipping extends React.Component {
             toggleDocuments={this.toggleDocuments}
           />
           <div className="main-scene__body">
-            <CurrentlyRented currentlyRented={this.currentlyRented()} />
+            <CurrentlyRented
+              currentlyRented={tools.getCurrentlyRentedItems(
+                this.props.contract
+              )}
+            />
             <ShippingHistory
               contractId={this.props.contract._id}
               shipping={this.props.contract.shipping}
@@ -137,7 +70,9 @@ class Shipping extends React.Component {
                 snapshot={this.props.snapshot}
                 StockTransition={StockTransition}
                 ModuleList={ModuleList}
-                currentlyRented={this.currentlyRented()}
+                currentlyRented={tools.getCurrentlyRentedItems(
+                  this.props.contract
+                )}
               />
             ) : null}
             {this.state.toggleReceive ? (
@@ -147,7 +82,9 @@ class Shipping extends React.Component {
                 contract={this.props.contract}
                 ModuleList={ModuleList}
                 StockTransition={StockTransition}
-                currentlyRented={this.currentlyRented()}
+                currentlyRented={tools.getCurrentlyRentedItems(
+                  this.props.contract
+                )}
               />
             ) : null}
             <FooterButtons
@@ -217,6 +154,9 @@ export default ShippingWrapper = withTracker((props) => {
     snapshot = contract.snapshots.find((item) => {
       return item.active;
     });
+    if (!snapshot) {
+      snapshot = contract.snapshots[contract.snapshots.length - 1];
+    }
   }
 
   return { contract, snapshot, databases };

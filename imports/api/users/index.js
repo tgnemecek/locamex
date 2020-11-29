@@ -94,8 +94,6 @@ if (Meteor.isServer) {
 
       const { emails } = Meteor.users.findOne({ _id });
 
-      console.log({ emails });
-
       Accounts.setUsername(_id, state.username);
       Accounts.removeEmail(_id, emails[0].address);
       Accounts.addEmail(_id, state.email);
