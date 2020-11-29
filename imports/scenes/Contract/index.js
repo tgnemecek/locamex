@@ -43,6 +43,9 @@ class Contract extends React.Component {
       snapshotIndex = this.props.contract.snapshots.findIndex((item) => {
         return item.active === true;
       });
+      if (snapshotIndex === -1) {
+        snapshotIndex = this.props.contract.snapshots.length - 1;
+      }
       snapshot = this.props.contract.snapshots[snapshotIndex];
     }
 

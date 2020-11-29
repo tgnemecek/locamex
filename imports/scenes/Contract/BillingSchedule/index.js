@@ -141,6 +141,33 @@ export default class BillingSchedule extends React.Component {
     };
   };
 
+  getDifference = (billingType) => {
+    const sum = (array) => {
+      return array.reduce((acc, cur) => {
+        return acc + (Number.isNaN(cur.value) ? 0 : cur.value);
+      }, 0);
+    };
+
+    let value;
+    let reference;
+
+    if (billingType === "products") {
+      value = sum(this.state.billingProducts);
+      reference = this.props.totalValue("products");
+    } else if (billingType === "services") {
+      value = sum(this.state.billingServices);
+      reference = this.props.totalValue("services");
+    } else {
+      value = sum([
+        ...this.state.billingProducts,
+        ...this.state.billingServices,
+      ]);
+      reference = this.props.totalValue();
+    }
+
+    return Math.round((value - reference) * 100) / 100;
+  };
+
   saveEdits = () => {
     var allBills = this.state.billingProducts.concat(
       this.state.billingServices
@@ -150,15 +177,6 @@ export default class BillingSchedule extends React.Component {
       return allBills.every((item) => {
         return item.value <= 0;
       });
-    };
-
-    const hasInvalidDifference = () => {
-      var total = allBills.reduce((acc, cur) => {
-        return (acc = acc + Number(cur.value));
-      }, 0);
-      total = tools.round(total, 2);
-      let target = tools.round(this.props.totalValue(), 2);
-      return target - total !== 0;
     };
 
     const hasInvalidAccount = () => {
@@ -171,7 +189,7 @@ export default class BillingSchedule extends React.Component {
       this.setState({ errorMsg: "Favor selecionar a Conta." });
     } else if (hasInvalidValue()) {
       this.setState({ errorMsg: "Não devem haver cobranças com valor zero." });
-    } else if (hasInvalidDifference()) {
+    } else if (this.getDifference() !== 0) {
       this.setState({
         errorMsg:
           "O valor resultante das parcelas não coincide com os Valores Totais.",
@@ -204,6 +222,7 @@ export default class BillingSchedule extends React.Component {
           disabled={this.props.disabled}
           updateBilling={this.updateBilling}
           billingProducts={this.state.billingProducts}
+          getDifference={this.getDifference}
           productsValue={this.props.totalValue("products")}
           calculation={this.getEqualValues(
             this.props.totalValue("products"),
@@ -216,6 +235,7 @@ export default class BillingSchedule extends React.Component {
           disabled={this.props.disabled}
           updateBilling={this.updateBilling}
           billingServices={this.state.billingServices}
+          getDifference={this.getDifference}
           setBilling={this.setBillingServices}
           servicesValue={this.props.totalValue("services")}
           calculation={this.getEqualValues(
@@ -233,7 +253,7 @@ export default class BillingSchedule extends React.Component {
               {
                 text: "Voltar",
                 className: "button--secondary",
-                onClick: this.props.toggleWindow,
+                onClick: this.props.closeWindow,
               },
               { text: "Confirmar Edições", onClick: this.saveEdits },
             ]}
