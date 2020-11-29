@@ -88,6 +88,7 @@ class Shipping extends React.Component {
               />
             ) : null}
             <FooterButtons
+              disabled={this.props.contract.status === "cancelled"}
               buttons={
                 this.props.contract.status === "finalized"
                   ? [

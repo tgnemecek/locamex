@@ -30,7 +30,6 @@ export default class AddedItems extends React.Component {
                       value={item.price}
                       allowNegative={this.props.type === "services"}
                       onChange={this.props.changePrice}
-                      disabled={this.props.currentlyRented[item._id]}
                     />
                   </td>
                   <td className="no-padding">

@@ -117,6 +117,23 @@ class Contract extends React.Component {
   };
 
   cancelContract = (callback) => {
+    const currentlyRented = tools.getCurrentlyRentedItems(this.props.contract);
+
+    const cancelAllowed = Object.keys(currentlyRented).every((key) => {
+      return currentlyRented[key].length === 0;
+    });
+
+    if (!cancelAllowed) {
+      this.setState({
+        databaseStatus: {
+          status: "failed",
+          message:
+            "O contrato não pode ser cancelado enquanto houverem itens locados.",
+        },
+      });
+      return;
+    }
+
     this.setState({ databaseStatus: "loading" }, () => {
       const cancel = () => {
         Meteor.call("contracts.cancel", this.props.contract._id, (err, res) => {
