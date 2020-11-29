@@ -165,7 +165,7 @@ export default class BillingSchedule extends React.Component {
       reference = this.props.totalValue();
     }
 
-    return Math.round((value - reference) * 100) / 100;
+    return tools.round(value - reference, 2);
   };
 
   saveEdits = () => {
