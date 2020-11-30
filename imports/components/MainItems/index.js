@@ -34,6 +34,8 @@ export default class MainItems extends React.Component {
     const { windowType } = this.state;
     const result = {};
 
+    if (!currentlyRented) return {};
+
     if (windowType === "containers") {
       [...currentlyRented.series, ...currentlyRented.packs].forEach((item) => {
         result[item.container._id] = true;
