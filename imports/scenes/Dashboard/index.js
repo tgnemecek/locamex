@@ -1,8 +1,6 @@
-import React from 'react';
-import { Meteor } from 'meteor/meteor';
-import { Users } from '/imports/api/users/index';
+import React from "react";
 
-import Widgets from './Widgets/index';
+import Widgets from "./Widgets/index";
 
 export default class Dashboard extends React.Component {
   render() {
@@ -12,10 +10,10 @@ export default class Dashboard extends React.Component {
           <div className="main-scene dashboard">
             <h1>Página Inicial</h1>
             <h2>Olá {this.props.user.profile.firstName}.</h2>
-            <Widgets/>
+            <Widgets />
           </div>
         </div>
-      )
-    } else return null
+      );
+    } else return null;
   }
 }
