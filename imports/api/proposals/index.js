@@ -108,21 +108,18 @@ Proposals.deny({
 });
 
 if (Meteor.isServer) {
-  Meteor.publish("proposalsPub", (limit) => {
+  Meteor.publish("proposalsPub", ({ query = {}, limit }) => {
     if (!Meteor.userId()) throw new Meteor.Error("unauthorized");
     if (!tools.isReadAllowed("proposals")) return [];
-    return Proposals.find(
-      {},
-      {
-        sort: { _id: -1 },
-        limit: limit || 0,
-        fields: {
-          clientDescription: 1,
-          status: 1,
-          totalValue: 1,
-        },
-      }
-    );
+    return Proposals.find(query, {
+      sort: { _id: -1 },
+      limit: limit || 0,
+      fields: {
+        clientDescription: 1,
+        status: 1,
+        totalValue: 1,
+      },
+    });
   });
   Meteor.publish("proposalPub", (_id) => {
     if (!Meteor.userId()) throw new Meteor.Error("unauthorized");
@@ -148,6 +145,8 @@ if (Meteor.isServer) {
         type: "proposal",
         status: "inactive",
         snapshots: [snapshot],
+        totalValue: tools.totalValue(snapshot),
+        clientDescription: snapshot.client.description,
         visible: true,
       };
       Proposals.insert(proposal);
@@ -178,7 +177,12 @@ if (Meteor.isServer) {
       }
       var data = tools.deepCopy(oldProposal);
       data.snapshots.push(snapshot);
+
+      data.totalValue = tools.totalValue(snapshot);
+      data.clientDescription = snapshot.client.description;
+
       Proposals.update({ _id }, { $set: data });
+
       return {
         hasChanged: true,
         snapshot,

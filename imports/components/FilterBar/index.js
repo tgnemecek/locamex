@@ -1,27 +1,26 @@
-import React from 'react';
+import React from "react";
+import Input from "/imports/components/Input/index";
+import Icon from "/imports/components/Icon/index";
 
-import tools from '/imports/startup/tools/index';
-import Input from '/imports/components/Input/index';
-import Icon from '/imports/components/Icon/index';
-
-export default class FilterBar extends React.Component {
-  onClick = () => {
-    this.props.onChange({
+const FilterBar = ({ value, onChange }) => {
+  onClear = () => {
+    props.onChange({
       target: {
-        value: '',
-        name: this.props.name
-      }
+        value: "",
+        name: props.name,
+      },
     });
   };
-  render() {
-    return (
-      <div>
-        <Input {...this.props} childrenSide="right">
-          <button onClick={this.onClick}>
-            <Icon icon="not" color="lightGrey"/>
-          </button>
-        </Input>
-      </div>
-    )
-  }
-}
+
+  return (
+    <div>
+      <Input value={value} onChange={onChange} childrenSide="right">
+        <button onClick={onClear}>
+          <Icon icon="not" color="lightGrey" />
+        </button>
+      </Input>
+    </div>
+  );
+};
+
+export default FilterBar;

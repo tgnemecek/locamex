@@ -24,22 +24,11 @@ import Footer from "./Footer/index";
 class Proposal extends React.Component {
   constructor(props) {
     super(props);
-    var user = this.props.user;
-    var snapshot;
-    var snapshotIndex = 0;
-    if (this.props.proposal) {
-      if (this.props.proposal.status === "inactive") {
-        snapshotIndex = this.props.proposal.snapshots.length - 1;
-        snapshot = this.props.proposal.snapshots[snapshotIndex];
-      } else {
-        snapshotIndex = this.props.proposal.snapshots.findIndex((item) => {
-          return item.active === true;
-        });
-        snapshot = this.props.proposal.snapshots[snapshotIndex];
-      }
-    }
+
+    const user = this.props.user;
+
     this.state = {
-      snapshot: snapshot || {
+      snapshot: {
         active: false,
         createdById: user._id,
         createdByName: user.profile.firstName + " " + user.profile.lastName,
@@ -73,7 +62,7 @@ class Proposal extends React.Component {
         accessories: [],
         services: [],
       },
-      snapshotIndex,
+      snapshotIndex: 0,
       documentsOpen: false,
       errorMsg: "",
       errorKeys: [],
@@ -89,7 +78,28 @@ class Proposal extends React.Component {
         this.updateSnapshot(observations);
       }
     }
+    if (!prevProps.proposal && this.props.proposal) {
+      this.setupProposal();
+    }
   }
+
+  setupProposal = () => {
+    let snapshot;
+    let snapshotIndex = 0;
+    if (this.props.proposal.status === "inactive") {
+      snapshotIndex = this.props.proposal.snapshots.length - 1;
+      snapshot = this.props.proposal.snapshots[snapshotIndex];
+    } else {
+      snapshotIndex = this.props.proposal.snapshots.findIndex((item) => {
+        return item.active === true;
+      });
+      snapshot = this.props.proposal.snapshots[snapshotIndex];
+    }
+    this.setState({
+      snapshot,
+      snapshotIndex,
+    });
+  };
 
   updateSnapshot = (changes, callback) => {
     var snapshot = {
@@ -316,99 +326,92 @@ class Proposal extends React.Component {
 
   render() {
     return (
-      <div className="page-content">
-        <RedirectUser currentPage="proposal" />
-        <div className="main-scene">
-          <MainHeader
-            createdByName={this.state.snapshot.createdByName}
-            title={
-              this.props.proposal
-                ? "Proposta #" + this.props.proposal._id + "."
-                : "Nova Proposta"
-            }
-            status={
-              this.props.proposal ? this.props.proposal.status : "inactive"
-            }
-            type="proposal"
-            toggleDocuments={this.toggleDocuments}
-            toggleCancel={this.cancelProposal}
-            changeSnapshot={this.changeSnapshot}
-            snapshotIndex={this.state.snapshotIndex}
-            snapshots={this.props.proposal ? this.props.proposal.snapshots : []}
-          />
-          <div className="main-scene__body">
-            <Information
-              disabled={
+      <ErrorBoundary>
+        <div className="page-content">
+          <RedirectUser currentPage="proposal" />
+          <div className="main-scene">
+            <MainHeader
+              createdByName={this.state.snapshot.createdByName}
+              title={
                 this.props.proposal
-                  ? this.props.proposal.status !== "inactive"
-                  : false
-              }
-              snapshot={this.state.snapshot}
-              updateSnapshot={this.updateSnapshot}
-              errorKeys={this.state.errorKeys}
-              settings={this.props.settings}
-            />
-            <MainItems
-              disabled={
-                this.props.proposal
-                  ? this.props.proposal.status !== "inactive"
-                  : false
-              }
-              snapshot={this.state.snapshot}
-              databases={this.props.databases}
-              updateSnapshot={this.updateSnapshot}
-              docType="proposal"
-            />
-            <div className="error-message"></div>
-            <Footer
-              totalValue={this.totalValue()}
-              creationDate={
-                this.props.proposal
-                  ? this.props.proposal.snapshots[0].dates.creationDate
-                  : this.state.snapshot.dates.creationDate
+                  ? "Proposta #" + this.props.proposal._id + "."
+                  : "Nova Proposta"
               }
               status={
                 this.props.proposal ? this.props.proposal.status : "inactive"
               }
-              saveEdits={this.saveEdits}
-              activateProposal={this.activateProposal}
+              type="proposal"
+              toggleDocuments={this.toggleDocuments}
+              toggleCancel={this.cancelProposal}
+              changeSnapshot={this.changeSnapshot}
+              snapshotIndex={this.state.snapshotIndex}
+              snapshots={
+                this.props.proposal ? this.props.proposal.snapshots : []
+              }
             />
+            <div className="main-scene__body">
+              <Information
+                disabled={
+                  this.props.proposal
+                    ? this.props.proposal.status !== "inactive"
+                    : false
+                }
+                snapshot={this.state.snapshot}
+                updateSnapshot={this.updateSnapshot}
+                errorKeys={this.state.errorKeys}
+                settings={this.props.settings}
+              />
+              <MainItems
+                disabled={
+                  this.props.proposal
+                    ? this.props.proposal.status !== "inactive"
+                    : false
+                }
+                snapshot={this.state.snapshot}
+                databases={this.props.databases}
+                updateSnapshot={this.updateSnapshot}
+                docType="proposal"
+              />
+              <div className="error-message"></div>
+              <Footer
+                totalValue={this.totalValue()}
+                creationDate={
+                  this.props.proposal
+                    ? this.props.proposal.snapshots[0].dates.creationDate
+                    : this.state.snapshot.dates.creationDate
+                }
+                status={
+                  this.props.proposal ? this.props.proposal.status : "inactive"
+                }
+                saveEdits={this.saveEdits}
+                activateProposal={this.activateProposal}
+              />
+            </div>
+            <DatabaseStatus status={this.state.databaseStatus} />
+            {this.state.documentsOpen ? (
+              <Documents
+                disabled={
+                  this.props.proposal
+                    ? this.props.proposal.status !== "inactive"
+                    : false
+                }
+                snapshot={this.state.snapshot}
+                updateSnapshot={this.updateSnapshot}
+                disabled={
+                  this.props.proposal
+                    ? this.props.proposal.status !== "inactive"
+                    : false
+                }
+                toggleWindow={this.toggleDocuments}
+                settings={this.props.settings}
+                generateDocument={this.generateDocument}
+              />
+            ) : null}
           </div>
-          <DatabaseStatus status={this.state.databaseStatus} />
-          {this.state.documentsOpen ? (
-            <Documents
-              disabled={
-                this.props.proposal
-                  ? this.props.proposal.status !== "inactive"
-                  : false
-              }
-              snapshot={this.state.snapshot}
-              updateSnapshot={this.updateSnapshot}
-              disabled={
-                this.props.proposal
-                  ? this.props.proposal.status !== "inactive"
-                  : false
-              }
-              toggleWindow={this.toggleDocuments}
-              settings={this.props.settings}
-              generateDocument={this.generateDocument}
-            />
-          ) : null}
         </div>
-      </div>
-    );
-  }
-}
-
-function ProposalLoader(props) {
-  if (props.match.params.proposalId === "new" || props.proposal) {
-    return (
-      <ErrorBoundary>
-        <Proposal {...props} />
       </ErrorBoundary>
     );
   }
-  return null;
 }
 
 export default ProposalWrapper = withTracker((props) => {
@@ -426,7 +429,7 @@ export default ProposalWrapper = withTracker((props) => {
   const _id = props.match.params.proposalId;
   if (_id !== "new") {
     const { ready } = Meteor.subscribe("proposalPub", _id);
-    if (ready()) proposal = Proposals.findOne({});
+    if (ready()) proposal = Proposals.findOne({ _id });
   }
 
   var user = Meteor.user();
@@ -437,4 +440,4 @@ export default ProposalWrapper = withTracker((props) => {
     user,
     settings: settings.proposal,
   };
-})(ProposalLoader);
+})(Proposal);
