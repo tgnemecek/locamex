@@ -13,9 +13,14 @@ export const Proposals = new Mongo.Collection("proposals");
 Proposals.attachSchema(
   new SimpleSchema({
     _id: String,
-    status: String,
     type: String,
+    status: String,
     visible: Boolean,
+    clientDescription: {
+      type: String,
+      optional: true,
+    },
+    totalValue: Number,
     snapshots: Array,
     "snapshots.$": new SimpleSchema({
       active: Boolean,
@@ -111,8 +116,18 @@ if (Meteor.isServer) {
       {
         sort: { _id: -1 },
         limit: limit || 0,
+        fields: {
+          clientDescription: 1,
+          status: 1,
+          totalValue: 1,
+        },
       }
     );
+  });
+  Meteor.publish("proposalPub", (_id) => {
+    if (!Meteor.userId()) throw new Meteor.Error("unauthorized");
+    if (!tools.isReadAllowed("proposals")) return [];
+    return Proposals.find({ _id });
   });
 
   Meteor.methods({

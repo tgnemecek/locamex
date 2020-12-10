@@ -1,70 +1,64 @@
-import React from 'react';
-import { withTracker } from 'meteor/react-meteor-data';
-import { Link } from 'react-router-dom';
-import RedirectUser from '/imports/components/RedirectUser/index';
-import { Proposals } from '/imports/api/proposals/index';
-import ErrorBoundary from '/imports/components/ErrorBoundary/index';
-import FilterBar from '/imports/components/FilterBar/index';
-import tools from '/imports/startup/tools/index';
-import Icon from '/imports/components/Icon/index';
+import React from "react";
+import { withTracker } from "meteor/react-meteor-data";
+import { Link } from "react-router-dom";
+import RedirectUser from "/imports/components/RedirectUser/index";
+import { Proposals } from "/imports/api/proposals/index";
+import ErrorBoundary from "/imports/components/ErrorBoundary/index";
+import FilterBar from "/imports/components/FilterBar/index";
+import tools from "/imports/startup/tools/index";
+import Icon from "/imports/components/Icon/index";
 
-import Status from '/imports/components/Status/index';
-import ShowMore from '/imports/components/ShowMore/index';
+import Status from "/imports/components/Status/index";
+import ShowMore from "/imports/components/ShowMore/index";
 
 class ProposalsTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      filterTerm: ''
-    }
+      filterTerm: "",
+    };
   }
 
   updateFilter = (e) => {
     this.setState({ filterTerm: e.target.value });
-  }
+  };
 
   renderBody = () => {
     return this.props.database
       .filter((item) => {
+        if (!item) return false;
         return tools.findSubstring(this.state.filterTerm, [
-          item._id, item.clientName, item.clientDescription
-        ])
+          item._id,
+          item.clientDescription,
+        ]);
       })
-      .map((item, i) => {
-        if (!item) return null;
-        const renderProposalButton = () => {
-          if (tools.isReadAllowed("proposal")) {
-            return (
+      .map(({ _id, clientDescription, status, totalValue }, i) => {
+        return (
+          <tr key={_id}>
+            <td>{_id}</td>
+            <td className="table__wide">{clientDescription}</td>
+            <td>
+              <Status status={status} type="proposal" />
+            </td>
+            <td className="hide-at-700px">
+              {tools.format(totalValue, "currency")}
+            </td>
+            {tools.isReadAllowed("proposal") && (
               <td className="no-padding">
-                <Link key={i} to={"/proposal/" + item._id}>
-                  <Icon icon="edit"/>
+                <Link to={"/proposal/" + _id}>
+                  <Icon icon="edit" />
                 </Link>
               </td>
-            )
-          } else return null;
-        }
-        return (
-          <tr key={i}>
-            <td>{item._id}</td>
-            <td className="table__wide">{item.clientDescription}</td>
-            <td><Status status={item.status} type="proposal"/></td>
-            <td className="hide-at-700px">
-              {tools.format((
-                tools.totalValue(item.snapshots[item.index])
-              ), "currency")}
-            </td>
-            {renderProposalButton()}
+            )}
           </tr>
-        )
-      })
-  }
-  render () {
+        );
+      });
+  };
+  render() {
     return (
       <ErrorBoundary>
-        <RedirectUser currentPage="proposals"/>
-        <FilterBar
-          value={this.state.filterTerm}
-          onChange={this.updateFilter}/>
+        <RedirectUser currentPage="proposals" />
+        <FilterBar value={this.state.filterTerm} onChange={this.updateFilter} />
         <div className="database__scroll-div">
           <table className="table">
             <thead>
@@ -80,9 +74,7 @@ class ProposalsTable extends React.Component {
                 </th>
               </tr>
             </thead>
-            <tbody>
-              {this.renderBody()}
-            </tbody>
+            <tbody>{this.renderBody()}</tbody>
           </table>
         </div>
         <ShowMore
@@ -90,39 +82,23 @@ class ProposalsTable extends React.Component {
           numberOfRecords={this.props.recordsToShow}
         />
       </ErrorBoundary>
-    )
+    );
   }
 }
 
 export default ProposalsTableWrapper = withTracker((props) => {
-  var recordsToShow = 50;
-  Meteor.subscribe('proposalsPub', recordsToShow);
-  var database = Proposals.find().fetch() || [];
-  database = tools.sortObjects(database, '_id', {reverseOrder: true});
+  const recordsToShow = 50;
+  Meteor.subscribe("proposalsPub", recordsToShow);
 
-  database = database.map((proposal) => {
-    var index = proposal.snapshots.length-1;
-    if (proposal.status === 'active') {
-      index = proposal.snapshots.findIndex((snapshot) => {
-        return snapshot.active;
-      })
-    }
-    var client = proposal.snapshots[index].client;
-    return {
-      ...proposal,
-      index,
-      clientDescription: client.description,
-      clientName: client.name
-    }
-  })
+  const database = Proposals.find().fetch() || [];
 
   const showMore = () => {
-    Meteor.subscribe('proposalsPub', 0);
-  }
+    Meteor.subscribe("proposalsPub", 0);
+  };
 
   return {
     database,
     showMore,
-    recordsToShow
-  }
+    recordsToShow,
+  };
 })(ProposalsTable);

@@ -17,6 +17,26 @@ import { Series } from "/imports/api/series/index";
 import { Variations } from "/imports/api/variations/index";
 
 if (Meteor.isServer && Meteor.isDevelopment) {
+  // Denormalization of fields in publication
+  // Proposals.find().forEach(({ _id, ...proposal }) => {
+  //   let snapshot = proposal.snapshots.find((snapshot) => {
+  //     return snapshot.active;
+  //   });
+  //   if (!snapshot) {
+  //     snapshot = proposal.snapshots[proposal.snapshots.length - 1];
+  //   }
+  //   const totalValue = tools.totalValue(snapshot);
+  //   const clientDescription = snapshot.client.description;
+  //   Proposals.update(
+  //     { _id },
+  //     {
+  //       $set: {
+  //         totalValue,
+  //         clientDescription,
+  //       },
+  //     }
+  //   );
+  // });
   // // MIGRATION TO VERSION 3.0 -------------------
   // var items;
   // var errors = []

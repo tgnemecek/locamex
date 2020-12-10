@@ -412,7 +412,6 @@ function ProposalLoader(props) {
 }
 
 export default ProposalWrapper = withTracker((props) => {
-  Meteor.subscribe("proposalsPub");
   Meteor.subscribe("containersPub");
   Meteor.subscribe("accessoriesPub");
   Meteor.subscribe("servicesPub");
@@ -423,12 +422,13 @@ export default ProposalWrapper = withTracker((props) => {
     accessoriesDatabase: Accessories.find().fetch(),
     servicesDatabase: Services.find().fetch(),
   };
-  var proposal = undefined;
-  if (props.match.params.proposalId !== "new") {
-    proposal = Proposals.findOne({
-      _id: props.match.params.proposalId,
-    });
+  let proposal;
+  const _id = props.match.params.proposalId;
+  if (_id !== "new") {
+    const { ready } = Meteor.subscribe("proposalPub", _id);
+    if (ready()) proposal = Proposals.findOne({});
   }
+
   var user = Meteor.user();
   var settings = Settings.findOne({}) || {};
   return {
