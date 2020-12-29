@@ -1,19 +1,18 @@
-import AWS from 'aws-sdk';
-import tools from '/imports/startup/tools/index';
+import AWS from "aws-sdk";
+import tools from "/imports/startup/tools/index";
 
 if (Meteor.isServer) {
-
-  var Bucket = 'locamex-app';
+  var Bucket = "locamex-app";
   var s3 = new AWS.S3();
   var prefix = "https://locamex-app.s3.sa-east-1.amazonaws.com/";
 
   Meteor.methods({
-    'aws.read'(Key, callback) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+    "aws.read"(Key, callback) {
+      if (!Meteor.userId()) throw new Meteor.Error("unauthorized");
       var params = {
         Bucket,
-        Key: Key.replace(prefix, "")
-      }
+        Key: Key.replace(prefix, ""),
+      };
       return new Promise((resolve, reject) => {
         s3.getObject(params, (err, data) => {
           if (err) {
@@ -22,22 +21,22 @@ if (Meteor.isServer) {
           } else {
             resolve(data);
           }
-        })
-      })
+        });
+      });
     },
-    'aws.write'(dataUrl, Key) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
-      var buff = Buffer.from(dataUrl.split(',')[1], 'base64');
+    "aws.write"(dataUrl, Key) {
+      if (!Meteor.userId()) throw new Meteor.Error("unauthorized");
+      var buff = Buffer.from(dataUrl.split(",")[1], "base64");
       Key = Key.replace(prefix, "");
       if (Meteor.isDevelopment) {
         Key = "tests/" + Key;
       }
       var params = {
-        ACL: 'public-read-write',
+        ACL: "public-read-write",
         Bucket,
         Body: buff,
-        Key
-      }
+        Key,
+      };
       return new Promise((resolve, reject) => {
         s3.upload(params, (err, data) => {
           if (err) {
@@ -46,31 +45,32 @@ if (Meteor.isServer) {
             resolve(data);
           }
         });
-      })
+      });
     },
-    'aws.write.multiple'(filesWithUrl) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+    "aws.write.multiple"(filesWithUrl) {
+      if (!Meteor.userId()) throw new Meteor.Error("unauthorized");
       return new Promise((resolve, reject) => {
         var promises = filesWithUrl.map((file, i) => {
           return new Promise((resolve, reject) => {
-            Meteor.call('aws.write', file.dataUrl, file.key, (err, res) => {
+            Meteor.call("aws.write", file.dataUrl, file.key, (err, res) => {
               if (err) reject(err);
               if (res) {
                 resolve(res.Location);
               }
             });
+          });
+        });
+        Promise.all(promises)
+          .then((urls) => {
+            resolve(urls);
           })
-        })
-        Promise.all(promises).then((urls) => {
-          resolve(urls);
-        })
-        .catch((err) => {
-          reject(err);
-        })
-      })
+          .catch((err) => {
+            reject(err);
+          });
+      });
     },
-    'aws.copy.object' (oldKey, newKey, deleteOrigin) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+    "aws.copy.object"(oldKey, newKey, deleteOrigin) {
+      if (!Meteor.userId()) throw new Meteor.Error("unauthorized");
       return new Promise((resolve, reject) => {
         // if (Meteor.isDevelopment) {
         //   oldKey = "tests/" + oldKey;
@@ -78,31 +78,32 @@ if (Meteor.isServer) {
         // }
 
         var params = {
-          ACL: 'public-read-write',
+          ACL: "public-read-write",
           Bucket,
           CopySource: "/" + Bucket + "/" + oldKey,
-          Key: newKey
-        }
+          Key: newKey,
+        };
 
         s3.copyObject(params, (err, data) => {
-          if (err) reject({
-            ...err,
-            oldKey
-          });
+          if (err)
+            reject({
+              ...err,
+              oldKey,
+            });
           if (data) {
             if (deleteOrigin) {
               var params = {
                 Bucket,
-                Key: oldKey
-              }
+                Key: oldKey,
+              };
               s3.deleteObject(params, (err, data) => {
                 if (err) reject(err);
                 if (data) resolve(data);
-              })
+              });
             } else resolve(data);
           }
-        })
-      })
+        });
+      });
     },
     // 'aws.delete.objects'(Keys) { // NOT YET USED, CHECK IF ITS WORKING
     //  if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
@@ -132,8 +133,8 @@ if (Meteor.isServer) {
     //     })
     //   })
     // },
-    'aws.delete.directory' (folder) {
-      if (!Meteor.userId()) throw new Meteor.Error('unauthorized');
+    "aws.delete.directory"(folder) {
+      if (!Meteor.userId()) throw new Meteor.Error("unauthorized");
       return new Promise((resolve, reject) => {
         if (tools.isUrl(folder)) {
           folder = folder.replace(prefix, "");
@@ -146,29 +147,75 @@ if (Meteor.isServer) {
         var params = {
           Bucket,
           Prefix: folder,
-          MaxKeys: 20
-        }
+          MaxKeys: 20,
+        };
         s3.listObjects(params, (err, data) => {
           if (err) if (err) reject(err);
           if (data) {
             if (data.Contents.length) {
               var Objects = data.Contents.map((item) => {
-                return { Key: item.Key }
-              })
+                return { Key: item.Key };
+              });
               var params = {
                 Bucket,
-                Delete: { Objects }
-              }
+                Delete: { Objects },
+              };
               s3.deleteObjects(params, (err, data) => {
                 if (err) if (err) reject(err);
                 if (data) {
                   resolve(data);
                 }
-              })
+              });
             } else resolve(data);
           }
-        })
-      })
-    }
-  })
+        });
+      });
+    },
+    async "aws.restore.deleted.files"() {
+      if (!Meteor.userId()) throw new Meteor.Error("unauthorized");
+
+      const getMarkers = () => {
+        const params = {
+          Bucket: "locamex-app",
+          Prefix: "user-uploads/",
+        };
+        return new Promise((resolve, reject) => {
+          console.log("Getting Delete Markers...");
+          s3.listObjectVersions(params, (err, data) => {
+            if (err) reject(err);
+            if (data) {
+              console.log("Done!");
+              console.log(`Got: ${data.DeleteMarkers.length} markers.`);
+              resolve(data.DeleteMarkers);
+            }
+          });
+        });
+      };
+
+      const removeDeleteMarkers = async (deleteMarkers) => {
+        const params = {
+          Bucket: "locamex-app",
+          Delete: {
+            Objects: deleteMarkers.map(({ Key, VersionId }) => ({
+              Key,
+              VersionId,
+            })),
+          },
+        };
+        return new Promise((resolve, reject) => {
+          console.log("Removing Delete Markers...");
+          s3.deleteObjects(params, (err, data) => {
+            if (err) reject(err);
+            if (data) {
+              console.log("Done!");
+              resolve(data.DeleteMarkers);
+            }
+          });
+        });
+      };
+      const deleteMarkers = await getMarkers();
+      await removeDeleteMarkers(deleteMarkers);
+      return true;
+    },
+  });
 }
