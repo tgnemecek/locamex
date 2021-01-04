@@ -315,7 +315,7 @@ if (Meteor.isServer) {
       });
 
       var prefix = new Date().getFullYear();
-      var offset = 179;
+      const offset = 0;
       var suffix =
         Contracts.find({
           _id: {
@@ -324,7 +324,6 @@ if (Meteor.isServer) {
         }).count() + offset;
 
       var _id = prefix + "-" + suffix.toString().padStart(3, "0");
-      var user = Meteor.user();
 
       var contract = {
         _id,

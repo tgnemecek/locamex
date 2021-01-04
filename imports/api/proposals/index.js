@@ -133,7 +133,7 @@ if (Meteor.isServer) {
         throw new Meteor.Error("unauthorized");
       }
       const prefix = new Date().getFullYear();
-      var offset = 1799;
+      const offset = 0;
       const suffix =
         Proposals.find({
           _id: { $regex: new RegExp(prefix) },
