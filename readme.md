@@ -15,7 +15,7 @@ This web-app was developed in Meteor using React and SASS. Other technologies we
 
 - To push to locamex-test use "git push test _BRANCH_:master";
 - To push to locamex use "git push production master" (using a branch is possible, but should use master instead);
-- To test run: "npm run start"
+- To run in development mode run: "npm run start"
 
 ## Author:
 

@@ -481,27 +481,6 @@ if (Meteor.isServer) {
         return snapshot.active;
       });
 
-      function isUserAllowedToFinalize() {
-        if (contract.status !== "active") return false;
-        if (Meteor.user().profile.type === "administrator") return true;
-
-        let billingProductsDone = snapshot.billingProducts.every(
-          (bill) => bill.status === "finished"
-        );
-
-        if (!billingProductsDone) return false;
-
-        let billingServicesDone = snapshot.billingServices.every(
-          (bill) => bill.status === "finished"
-        );
-
-        if (!billingServicesDone) return false;
-      }
-
-      if (!isUserAllowedToFinalize()) {
-        throw new Meteor.Error("unauthorized");
-      }
-
       function finalizeBills(billing) {
         return billing.map((bill) => {
           return { ...bill, status: "finished" };
