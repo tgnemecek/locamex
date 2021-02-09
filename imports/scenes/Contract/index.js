@@ -247,7 +247,6 @@ class Contract extends React.Component {
     var errorMsg = "";
 
     const isBillingCorrect = () => {
-      debugger;
       if (!this.state.snapshot.billingProducts.length) return false;
       if (!this.state.snapshot.billingServices.length) return false;
 
