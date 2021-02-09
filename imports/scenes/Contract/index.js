@@ -247,10 +247,11 @@ class Contract extends React.Component {
     var errorMsg = "";
 
     const isBillingCorrect = () => {
+      debugger;
       if (!this.state.snapshot.billingProducts.length) return false;
       if (!this.state.snapshot.billingServices.length) return false;
 
-      var productsGoalValue = this.totalValue("products");
+      var productsGoalValue = tools.round(this.totalValue("products"), 2);
       var productsValue = this.state.snapshot.billingProducts.reduce(
         (acc, cur) => {
           return acc + cur.value;
@@ -260,7 +261,7 @@ class Contract extends React.Component {
       productsValue = tools.round(productsValue, 2);
       if (productsGoalValue !== productsValue) return false;
 
-      var servicesGoalValue = this.totalValue("services");
+      var servicesGoalValue = tools.round(this.totalValue("services"), 2);
       var servicesValue = this.state.snapshot.billingServices.reduce(
         (acc, cur) => {
           return acc + cur.value;
