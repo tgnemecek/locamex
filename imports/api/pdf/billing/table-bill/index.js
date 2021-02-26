@@ -17,11 +17,19 @@ export default function tableBill(
   return generateTable({
     body: [
       [
-        "Vencimento",
-        { text: expiry, bold: true },
         "Valor Total da Fatura",
-        { text: tools.format(bill.value, "currency"), bold: true },
+        {
+          text: `${tools.format(bill.value, "currency")} (${tools.format(
+            bill.value,
+            "extenso",
+            {
+              mode: "currency",
+            }
+          )})`,
+          bold: true,
+        },
       ],
+      ["Vencimento", { text: expiry, bold: true }],
       [
         "Período de Locação",
         { text: period, bold: true },

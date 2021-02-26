@@ -1,10 +1,7 @@
-import moment from 'moment';
-import tools from '/imports/startup/tools/index';
+import tools from "/imports/startup/tools/index";
 
 export default function tableClient(client, generateTable) {
-
   function formatAddress(address) {
-
     function join(current, toAdd, char) {
       if (!toAdd) return current;
       if (toAdd.toString().trim() === "") return current;
@@ -19,25 +16,30 @@ export default function tableClient(client, generateTable) {
     if (address.city) string = join(string, address.city, " - ");
     if (address.state) string = join(string, address.state, " - ");
     if (address.additional) string = join(string, address.additional, " - ");
-    return {text: string, colSpan: "fill"};
+    return { text: string, colSpan: "fill" };
   }
 
   const contacts = () => {
     var phone = client.phone1 || client.phone2;
     if (client.type === "person") {
       return [
-        'Contato', client.description, 'Telefone', tools.format(phone, 'phone'), 'Email', client.email
-      ]
+        "Contato",
+        client.description,
+        "Telefone",
+        tools.format(phone, "phone"),
+        "Email",
+        client.email,
+      ];
     } else {
       return client.contacts.map((contact) => {
         var phone = contact.phone1 || contact.phone2;
-        var arr = ['Contato', contact.name];
-        if (phone) arr.push('Telefone', tools.format(phone, 'phone'));
-        if (contact.email) arr.push('Email', contact.email)
+        var arr = ["Contato", contact.name];
+        if (phone) arr.push("Telefone", tools.format(phone, "phone"));
+        if (contact.email) arr.push("Email", contact.email);
         return arr;
-      })
+      });
     }
-  }
+  };
 
   var name = client.officialName;
   var registryLabel = "CNPJ";
@@ -49,10 +51,16 @@ export default function tableClient(client, generateTable) {
 
   return generateTable({
     body: [
-        [ 'Nome do Sacado', {text: name, colSpan: "fill"} ],
-        [ registryLabel, tools.format(client.registry, registryLabel), 'Endereço', formatAddress(client.address) ],
-        contacts()
+      ["Nome do Sacado", { text: name, colSpan: "fill" }],
+      [registryLabel, tools.format(client.registry, registryLabel)],
+      [
+        "Endereço",
+        formatAddress(client.address),
+        "CEP",
+        tools.format(client.address.cep, "cep"),
       ],
-    widths: ['auto', '*', 'auto', 'auto', 'auto', 'auto']
-  })
+      contacts(),
+    ],
+    widths: ["auto", "*", "auto", "auto", "auto", "auto"],
+  });
 }

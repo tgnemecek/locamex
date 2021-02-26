@@ -1,4 +1,5 @@
 import { Meteor } from "meteor/meteor";
+import extenso from "extenso";
 import { isEqual, unset, cloneDeep } from "lodash";
 import moment from "moment";
 import { userTypes } from "/imports/startup/user-types/index";
@@ -630,6 +631,11 @@ export default class tools {
         } else value = "R$ " + newString;
 
         return value;
+
+      case "extenso":
+        const newValue = tools.round(Number(value), 2);
+        const newValueStr = newValue.toString().replace(".", ",");
+        return extenso(newValueStr, externalOptions);
 
       default:
         return value;
