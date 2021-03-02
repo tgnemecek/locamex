@@ -595,47 +595,22 @@ export default class tools {
         return value;
 
       case "currency":
-        // if (typeof(value) === "string") {
-        //   value = value.replace(/\s/g, "");
-        //   value = Number(value.replace(",", "."));
-        // } else value = Number(value);
+        return new Intl.NumberFormat("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        }).format(value);
 
-        // If string is given, first transform into Number
-        if (typeof value === "string") {
-          value = value.replace(/\s/g, "");
-          value = value.replace(/,/g, ".");
-          value = value.replace(/R\$/g, "");
-          value = Number(value);
-        }
-        value = Math.round(value * 100) / 100;
-        // Old method. Removed because doesn't work on server:
-        // return value.toLocaleString('pt-br', realOptions);
-        value = value.toString().replace(/\./g, ",");
-
-        var thirds = 0;
-        var newString = "";
-        for (var i = value.length - 1; i >= 0; i--) {
-          newString = value.charAt(i) + newString;
-          if (value.charAt(i) === ",") {
-            thirds = 0;
-          } else {
-            thirds++;
-            if (thirds === 3 && i !== 0 && value.charAt(i - 1) !== "-") {
-              newString = "." + newString;
-              thirds = 0;
-            }
-          }
-        }
-        if (!RegExp(",").test(newString)) {
-          value = "R$ " + newString + ",00";
-        } else value = "R$ " + newString;
-
-        return value;
-
-      case "extenso":
-        const newValue = tools.round(Number(value), 2);
-        const newValueStr = newValue.toString().replace(".", ",");
-        return extenso(newValueStr, externalOptions);
+      case "currency-written":
+        const newValue = tools.format(value, "currency");
+        const newValueStr = newValue.replace("R$", "").trim();
+        return extenso(newValueStr, {
+          mode: "currency",
+        });
+      // const newValue = tools.round(Number(value), 2);
+      // const newValueStr = newValue.toString().replace(".", ",");
+      // return extenso(newValueStr, {
+      //   mode: "currency",
+      // });
 
       default:
         return value;

@@ -21,10 +21,7 @@ export default function tableBill(
         {
           text: `${tools.format(bill.value, "currency")} (${tools.format(
             bill.value,
-            "extenso",
-            {
-              mode: "currency",
-            }
+            "currency-written"
           )})`,
           bold: true,
         },
