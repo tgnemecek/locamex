@@ -1,4 +1,4 @@
-import SimpleSchema from 'simpl-schema';
+import SimpleSchema from "simpl-schema";
 
 export const addressSchema = new SimpleSchema({
   number: String,
@@ -8,6 +8,6 @@ export const addressSchema = new SimpleSchema({
   cep: String,
   additional: {
     type: String,
-    optional: true
+    optional: true,
   },
-})
+});

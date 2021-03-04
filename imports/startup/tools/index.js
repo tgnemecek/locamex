@@ -605,12 +605,7 @@ export default class tools {
         const newValueStr = newValue.replace("R$", "").trim();
         return extenso(newValueStr, {
           mode: "currency",
-        });
-      // const newValue = tools.round(Number(value), 2);
-      // const newValueStr = newValue.toString().replace(".", ",");
-      // return extenso(newValueStr, {
-      //   mode: "currency",
-      // });
+        }).replace("de reais", "reais");
 
       default:
         return value;
