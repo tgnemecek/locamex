@@ -1,67 +1,56 @@
-import React from 'react';
-import moment from 'moment';
+import React from "react";
+import moment from "moment";
 
-import tools from '/imports/startup/tools/index';
-import Icon from '/imports/components/Icon/index';
-import Input from '/imports/components/Input/index';
-import RegisterData from '/imports/components/RegisterData/index';
+import tools from "/imports/startup/tools/index";
+import Icon from "/imports/components/Icon/index";
 
 export default class BillingHistory extends React.Component {
   renderStatus = (status, type) => {
     var obj = tools.translateBillStatus(status, type);
     return (
-      <span style={{color: obj.color, fontWeight: "bold"}}>
-        {obj.text}
-      </span>
-    )
-  }
+      <span style={{ color: obj.color, fontWeight: "bold" }}>{obj.text}</span>
+    );
+  };
 
   renderProductsBody = () => {
-    return this.props.snapshot.billingProducts.map(
-      (bill, i, arr) => {
-
+    return this.props.snapshot.billingProducts.map((bill, i, arr) => {
       const toggleBox = () => {
         this.props.toggleWindow({
           ...bill,
           index: i,
-          length: arr.length
+          length: arr.length,
         });
-      }
+      };
 
       return (
         <tr key={i}>
-          <td>{(i+1) + "/" + arr.length}</td>
+          <td>{i + 1 + "/" + arr.length}</td>
           <td>{bill._id || "-"}</td>
           <td className="billing-history__account-cell">
             {bill.account.description}
           </td>
           <td>
-            {moment(bill.startDate).format("DD/MM/YYYY") + " a " +
-            moment(bill.endDate).format("DD/MM/YYYY")}
+            {moment(bill.startDate).format("DD/MM/YYYY") +
+              " a " +
+              moment(bill.endDate).format("DD/MM/YYYY")}
           </td>
-          <td>
-            {moment(bill.expiryDate).format("DD/MM/YYYY")}
-          </td>
-          <td>
-            {tools.format(bill.value, 'currency')}
-          </td>
-          <td>
-            {tools.format(bill.valuePayed || 0, 'currency')}
-          </td>
+          <td>{moment(bill.expiryDate).format("DD/MM/YYYY")}</td>
+          <td>{tools.format(bill.value, "currency")}</td>
+          <td>{tools.format(bill.valuePayed || 0, "currency")}</td>
           <td className="billing-history__status-cell">
-            {this.renderStatus(bill.status, 'billingProducts')}
+            {this.renderStatus(bill.status, "billingProducts")}
           </td>
-          {bill.status !== "notReady" ?
+          {bill.status !== "notReady" ? (
             <td className="no-padding billing-history__button-cell">
               <button onClick={toggleBox}>
-                <Icon icon="money"/>
+                <Icon icon="money" />
               </button>
             </td>
-          : null}
+          ) : null}
         </tr>
-      )
-    })
-  }
+      );
+    });
+  };
 
   renderProrogationBody = () => {
     return this.props.snapshot.billingProrogation.map((bill, i, arr) => {
@@ -69,82 +58,68 @@ export default class BillingHistory extends React.Component {
         this.props.toggleWindow({
           ...bill,
           index: i,
-          length: arr.length
+          length: arr.length,
         });
-      }
+      };
       return (
         <tr key={i}>
-          <td>{"PRO #" + (i+1)}</td>
+          <td>{"PRO #" + (i + 1)}</td>
           <td>{bill._id || "-"}</td>
           <td className="billing-history__account-cell">
             {bill.account.description}
           </td>
           <td>
-            {moment(bill.startDate).format("DD/MM/YYYY") + " a " +
-            moment(bill.endDate).format("DD/MM/YYYY")}
+            {moment(bill.startDate).format("DD/MM/YYYY") +
+              " a " +
+              moment(bill.endDate).format("DD/MM/YYYY")}
           </td>
-          <td>
-            {moment(bill.expiryDate).format("DD/MM/YYYY")}
-          </td>
-          <td>
-            {tools.format(bill.value, 'currency')}
-          </td>
-          <td>
-            {tools.format(bill.valuePayed || 0, 'currency')}
-          </td>
+          <td>{moment(bill.expiryDate).format("DD/MM/YYYY")}</td>
+          <td>{tools.format(bill.value, "currency")}</td>
+          <td>{tools.format(bill.valuePayed || 0, "currency")}</td>
           <td className="billing-history__status-cell">
-            {this.renderStatus(bill.status, 'billingProducts')}
+            {this.renderStatus(bill.status, "billingProducts")}
           </td>
-          {bill.status !== "notReady" ?
+          {bill.status !== "notReady" ? (
             <td className="no-padding billing-history__button-cell">
               <button onClick={toggleBox}>
-                <Icon icon="money"/>
+                <Icon icon="money" />
               </button>
             </td>
-          : null}
+          ) : null}
         </tr>
-      )
-    })
-  }
+      );
+    });
+  };
 
   renderServicesBody = () => {
     return this.props.snapshot.billingServices.map((bill, i, arr) => {
-
       const toggleBox = () => {
         this.props.toggleWindow({
           ...bill,
           index: i,
-          length: arr.length
+          length: arr.length,
         });
-      }
+      };
 
       return (
         <tr key={i}>
-          <td>{(i+1) + "/" + arr.length}</td>
-          <td>
-            {bill.account.description}
-          </td>
-          <td>
-            {moment(bill.expiryDate).format("DD/MM/YYYY")}
-          </td>
-          <td>
-            {tools.format(bill.value, 'currency')}
-          </td>
-          <td>
-            {tools.format(bill.valuePayed || 0, 'currency')}
-          </td>
+          <td>{i + 1 + "/" + arr.length}</td>
+          <td>{bill.account.description}</td>
+          <td>{moment(bill.expiryDate).format("DD/MM/YYYY")}</td>
+          <td>{tools.format(bill.value, "currency")}</td>
+          <td>{tools.format(bill.valuePayed || 0, "currency")}</td>
           <td className="billing-history__status-cell">
-            {this.renderStatus(bill.status, 'billingServices')}
+            {this.renderStatus(bill.status, "billingServices")}
           </td>
           <td className="no-padding billing-history__button-cell">
             <button onClick={toggleBox}>
-              <Icon icon="money"/>
+              <Icon icon="money" />
             </button>
           </td>
         </tr>
-      )
-    })
-  }
+      );
+    });
+  };
 
   render() {
     return (
@@ -181,11 +156,9 @@ export default class BillingHistory extends React.Component {
               <th>Status</th>
             </tr>
           </thead>
-          <tbody>
-            {this.renderServicesBody()}
-          </tbody>
+          <tbody>{this.renderServicesBody()}</tbody>
         </table>
       </div>
-    )
+    );
   }
 }

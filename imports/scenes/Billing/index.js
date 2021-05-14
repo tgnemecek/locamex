@@ -1,10 +1,7 @@
 import React from "react";
-import moment from "moment";
 import { withTracker } from "meteor/react-meteor-data";
 
 import tools from "/imports/startup/tools/index";
-import Icon from "/imports/components/Icon/index";
-import Input from "/imports/components/Input/index";
 import RedirectUser from "/imports/components/RedirectUser/index";
 import { Contracts } from "/imports/api/contracts/index";
 import MainHeader from "/imports/components/MainHeader/index";

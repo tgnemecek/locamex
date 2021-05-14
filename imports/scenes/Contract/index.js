@@ -455,7 +455,6 @@ export default ContractWrapper = withTracker((props) => {
   Meteor.subscribe("containersPub");
   Meteor.subscribe("accessoriesPub");
   Meteor.subscribe("servicesPub");
-  Meteor.subscribe("proposalsPub");
   Meteor.subscribe("accountsPub");
 
   var databases = {
@@ -472,8 +471,9 @@ export default ContractWrapper = withTracker((props) => {
 
   var proposalClient = {};
 
-  if (contract && contract.snapshots.length === 1) {
-    var proposal = Proposals.findOne({ _id: contract.proposalId });
+  if (contract) {
+    Meteor.subscribe("proposalPub", contract.proposalId);
+    const proposal = Proposals.findOne({});
     if (proposal) {
       var index = contract.proposalIndex;
       var proposalIndex = proposal.snapshots[index];

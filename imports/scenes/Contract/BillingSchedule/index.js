@@ -35,7 +35,9 @@ export default class BillingSchedule extends React.Component {
       });
     } else {
       this.setBillingProducts();
-      this.setBillingServices(1);
+      if (!this.props.snapshot.billingServices.length) {
+        this.setBillingServices(1);
+      }
     }
   }
 
@@ -86,10 +88,6 @@ export default class BillingSchedule extends React.Component {
   };
 
   setBillingServices = (duration) => {
-    if (duration === 1 && this.props.snapshot.billingServices.length) {
-      return;
-    }
-
     var oldBilling = this.state.billingServices;
     var billingServices = [];
     var calculation = this.getEqualValues(

@@ -160,8 +160,8 @@ class Proposal extends React.Component {
 
   activateProposal = (callback) => {
     this.setState({ databaseStatus: "loading" }, () => {
-      const activate = (snapshot, index) => {
-        var _id = this.props.proposal._id;
+      const activate = (snapshot, index, proposalId) => {
+        var _id = proposalId || this.props.proposal._id;
         Meteor.call("proposals.activate", _id, index, (err, res) => {
           if (res) {
             var databaseStatus = {

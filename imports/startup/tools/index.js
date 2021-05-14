@@ -149,7 +149,7 @@ export default class tools {
     if (bill.status === "finished") {
       return bill.status;
     }
-    var limit = moment().add(30, "days");
+    var limit = moment().add(60, "days");
     // Determine if is ready to be payed
     if (moment(bill.expiryDate).isBetween(moment(), limit)) {
       return bill.status === "billed" ? "billed" : "ready";
@@ -186,6 +186,7 @@ export default class tools {
   };
 
   static prepareProrogation = (snapshot, contractStatus) => {
+    debugger;
     if (contractStatus === "finalized") {
       return snapshot.billingProrogation;
     }
@@ -204,7 +205,9 @@ export default class tools {
       // But first we need to know if there is prorogation at all
       var lastIndex = billingProducts.length - 1;
       var lastRegularBill = billingProducts[lastIndex];
-      if (moment(lastRegularBill.expiryDate).isBefore(today)) {
+      var prorogationMinDate = today.clone().add(60, "days");
+
+      if (moment(lastRegularBill.expiryDate).isBefore(prorogationMinDate)) {
         // If today has past the last bill, there is a push
         lastBill = lastRegularBill;
       } else return billingProrogation;
@@ -213,27 +216,24 @@ export default class tools {
     // Then we find out if the lastBill date has passed
     var lastExpiry = moment(lastBill.expiryDate);
     var lastEnd = moment(lastBill.endDate);
-    if (lastExpiry.isBefore(today)) {
-      var expiryDate = lastExpiry.add(1, "months").toDate();
-      var startDate = lastEnd.add(1, "days").toDate();
-      var endDate = moment(startDate).add(30, "days").toDate();
+    var expiryDate = lastExpiry.add(1, "months").toDate();
+    var startDate = lastEnd.add(1, "days").toDate();
+    var endDate = moment(startDate).add(30, "days").toDate();
 
-      var newBill = {
-        startDate,
-        endDate,
-        expiryDate,
-      };
+    var newBill = {
+      startDate,
+      endDate,
+      expiryDate,
+    };
 
-      newBill = {
-        ...newBill,
-        value: lastBill.value,
-        valuePayed: 0,
-        account: lastBill.account,
-        description: `Prorrogação Automática #${billingProrogation.length + 1}`,
-      };
-      return [...billingProrogation, newBill];
-    }
-    return billingProrogation;
+    newBill = {
+      ...newBill,
+      value: lastBill.value,
+      valuePayed: 0,
+      account: lastBill.account,
+      description: `Prorrogação Automática #${billingProrogation.length + 1}`,
+    };
+    return [...billingProrogation, newBill];
   };
 
   static compare = (input1, input2, exception) => {
