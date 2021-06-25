@@ -75,7 +75,7 @@ class Proposal extends React.Component {
       let observations = this.state.snapshot.observations;
       if (observations.conditions === null) {
         observations.conditions = this.props.settings.defaultConditionsMonths;
-        this.updateSnapshot(observations);
+        this.updateSnapshot({observations});
       }
     }
     if (!prevProps.proposal && this.props.proposal) {
@@ -86,7 +86,7 @@ class Proposal extends React.Component {
   setupProposal = () => {
     let snapshot;
     let snapshotIndex = 0;
-    if (this.props.proposal.status === "inactive") {
+    if (this.props.proposal.status !== "active") {
       snapshotIndex = this.props.proposal.snapshots.length - 1;
       snapshot = this.props.proposal.snapshots[snapshotIndex];
     } else {
@@ -206,7 +206,6 @@ class Proposal extends React.Component {
           }
         });
       } else {
-        console.log(this.state);
         Meteor.call(
           "proposals.update",
           this.state.snapshot,
@@ -342,7 +341,9 @@ class Proposal extends React.Component {
               }
               type="proposal"
               toggleDocuments={this.toggleDocuments}
-              toggleCancel={this.cancelProposal}
+              cancelMaster={this.props.proposal
+                && this.props.proposal.status === 'inactive'
+                && this.cancelProposal}
               changeSnapshot={this.changeSnapshot}
               snapshotIndex={this.state.snapshotIndex}
               snapshots={
